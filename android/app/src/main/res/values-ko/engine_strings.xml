@@ -1,0 +1,23 @@
+<resources>
+    <string name="engine_storage_error">규칙을 읽거나 저장하지 못했어요. 원본 데이터는 보관되어 있어요.</string>
+    <string name="engine_rule_ready">규칙을 활성화했어요. 위치를 확인하고 설정한 시간에 집중을 시작하세요.</string>
+    <string name="engine_paused">규칙을 일시 중지하고 차단을 해제했어요.</string>
+    <string name="engine_setup_needed">앱 차단을 연결하고 차단할 앱을 선택하세요.</string>
+    <string name="engine_location_needed">정확한 위치 권한을 허용하고 위치 서비스를 켜세요.</string>
+    <string name="engine_outside_schedule">설정한 시간에 집중을 시작하세요.</string>
+    <string name="engine_checking">위치를 확인하고 있어요…</string>
+    <string name="engine_arrived">저장한 장소 근처예요. 준비되면 집중을 시작하세요.</string>
+    <string name="engine_outside_place">저장한 장소에 더 가까이 가서 다시 확인하세요.</string>
+    <string name="engine_left">집중 장소를 벗어나 차단을 해제했어요.</string>
+    <string name="engine_not_ready">위치나 시간을 확인하지 못해 집중을 시작하지 않았어요.</string>
+    <string name="engine_started">집중을 시작했어요. 언제든 무료로 차단을 해제할 수 있어요.</string>
+    <string name="engine_ended">집중이 끝나 차단을 해제했어요.</string>
+    <string name="engine_location_lost">위치를 확인할 수 없어 차단을 해제했어요. 다시 시작하려면 위치를 확인하세요.</string>
+    <string name="engine_monitor_channel">장소 감지</string>
+    <string name="engine_event_channel">집중 상태 알림</string>
+    <string name="engine_monitor_title">Offzone · 장소 감지</string>
+    <string name="engine_monitor_body">장소 감지 중. 도착해도 자동 차단하지 않아요. 차단 해제를 누르면 감지도 중지돼요.</string>
+    <string name="engine_monitor_stopped">장소 감지를 중지하고 차단을 해제했어요.</string>
+    <string name="engine_monitor_start">장소 감지 시작</string>
+    <string name="engine_monitor_stop">장소 감지 중지</string>
+</resources>

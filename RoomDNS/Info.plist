@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>GOOGLE_ANALYTICS_IDFV_COLLECTION_ENABLED</key>
+	<false/>
+	<key>GOOGLE_ANALYTICS_DEFAULT_ALLOW_AD_PERSONALIZATION_SIGNALS</key>
+	<false/>
+	<key>ITSAppUsesNonExemptEncryption</key>
+	<false/>
+	<key>UIBackgroundModes</key>
+	<array>
+		<string>location</string>
+	</array>
+	<key>RoomProOfferReady</key>
+	<false/>
+	<key>RoomUnlockPassReady</key>
+	<false/>
+	<key>RoomUnlockProductID</key>
+	<string>com.exchip.roomdns.unlock.single</string>
+	<key>RevenueCatPublicSDKKey</key>
+	<string>appl_WRfvNiEtCZLOFdcceSzxUUVZvig</string>
+	<key>RoomProEntitlementID</key>
+	<string>offzone_pro</string>
+	<key>RoomProOfferingID</key>
+	<string>offzone_pro</string>
+	<key>RoomProBenefits</key>
+	<array>
+		<string>Plan your week around what matters.</string>
+		<string>Keep a private reflection journal.</string>
+		<string>Review your weekly intentions and reflections.</string>
+	</array>
+	<key>RoomTermsURL</key>
+	<string>https://www.apple.com/legal/internet-services/itunes/dev/stdeula/</string>
+	<key>RoomPrivacyURL</key>
+	<string>https://offzone-privacy-support.wogus5357.chatgpt.site/privacy</string>
+	<key>CFBundleURLTypes</key>
+	<array>
+		<dict>
+			<key>CFBundleTypeRole</key>
+			<string>Editor</string>
+			<key>CFBundleURLSchemes</key>
+			<array>
+				<string>com.googleusercontent.apps.842668693484-0em6loehhrmgkgvc5gnugjkbq7mhgu1p</string>
+			</array>
+		</dict>
+	</array>
+	<key>UIAppFonts</key>
+	<array>
+		<string>Fonts/SUIT-Regular.ttf</string>
+		<string>Fonts/SUIT-Medium.ttf</string>
+		<string>Fonts/SUIT-SemiBold.ttf</string>
+		<string>Fonts/SUIT-Bold.ttf</string>
+	</array>
+</dict>
+</plist>

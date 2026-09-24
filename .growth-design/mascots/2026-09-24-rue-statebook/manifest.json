@@ -1,0 +1,297 @@
+{
+  "name": "Offzone Rue v6 — fresh state-reference study",
+  "status": "selected visual direction; design reference only, not native-ready or store-published",
+  "generationMode": "Codex built-in image_gen; no image_gen.py or direct API/CLI fallback",
+  "editTarget": "../2026-09-24-rue-short-skirt/assets/anchor.png",
+  "anchor": {
+    "path": "assets/anchor-v6.png",
+    "sha256": "f86e78d67a288e1912ced276d1d279112b8509f1b8b596515933978a0fe2310d",
+    "size": [
+      1024,
+      1536
+    ],
+    "origin": "byte copy of user-selected v6"
+  },
+  "sessions": {
+    "portraits-a": "01a0d220-5ae5-77f0-8da3-000515405f16",
+    "portraits-b": "01a0d221-cc87-7553-8494-0a9cfe6378ef",
+    "fullbody": "01a0d223-a854-7f20-a157-493291ded481"
+  },
+  "masters": {
+    "portraits-a": {
+      "path": "assets/sheet-portraits-a.png",
+      "sha256": "a052df5f2605a94bcbd3b9038587f920b4a7d79040d826409d1e3658040fd0a1",
+      "size": [
+        1024,
+        1536
+      ]
+    },
+    "portraits-b": {
+      "path": "assets/sheet-portraits-b.png",
+      "sha256": "ba31ae8c7541b4136fc7e4eaf459cbe0586bb48b413b16298ade7e736a183f25",
+      "size": [
+        1254,
+        1254
+      ]
+    },
+    "fullbody": {
+      "path": "assets/sheet-fullbody.png",
+      "sha256": "848c09ed20b9575102ce83c411c1b33aa5c1bd7f6aed084a9cc241e869e0b828",
+      "size": [
+        1024,
+        1536
+      ]
+    }
+  },
+  "portraits": {
+    "welcome": {
+      "path": "assets/portraits/welcome.png",
+      "source": "portraits-a",
+      "cell": [
+        0,
+        0
+      ],
+      "crop": [
+        0,
+        0,
+        512,
+        768
+      ],
+      "size": [
+        512,
+        768
+      ],
+      "sha256": "d1f5f2c22486aa281b72079cad2dfcab1b60efc2a6ae2f06b440291ca19a5358",
+      "meaning": "Before any blocking; a small greeting"
+    },
+    "ready": {
+      "path": "assets/portraits/ready.png",
+      "source": "portraits-a",
+      "cell": [
+        1,
+        0
+      ],
+      "crop": [
+        536,
+        0,
+        1024,
+        768
+      ],
+      "size": [
+        488,
+        768
+      ],
+      "sha256": "2b73b0b3f9f1a0e1cd26384e7dc8b098ccb2cbef58f4fc344cb6bd5cc1a29881",
+      "meaning": "Attentive before manual Start focus"
+    },
+    "focused": {
+      "path": "assets/portraits/focused.png",
+      "source": "portraits-a",
+      "cell": [
+        0,
+        1
+      ],
+      "crop": [
+        0,
+        768,
+        512,
+        1536
+      ],
+      "size": [
+        512,
+        768
+      ],
+      "sha256": "61514885220a21a0d6ad9b2541e2063058175705a94187049ec495e330c97f73",
+      "meaning": "Only after a confirmed active session"
+    },
+    "reflection": {
+      "path": "assets/portraits/reflection.png",
+      "source": "portraits-a",
+      "cell": [
+        1,
+        1
+      ],
+      "crop": [
+        536,
+        768,
+        1024,
+        1536
+      ],
+      "size": [
+        488,
+        768
+      ],
+      "sha256": "df1eb5ab497076de79232272a40a64ba1a029fb70c0b8c3ab8ed5a7357f4d0a8",
+      "meaning": "Quiet consideration; no automatic break promise"
+    },
+    "finished": {
+      "path": "assets/portraits/finished.png",
+      "source": "portraits-b",
+      "cell": [
+        0,
+        0
+      ],
+      "crop": [
+        0,
+        0,
+        627,
+        627
+      ],
+      "size": [
+        627,
+        627
+      ],
+      "sha256": "61b27e6304702a6ba4e194e0a8c359280283067f24429f2586b2471f3ccf3c3b",
+      "meaning": "Only after a verified focus end"
+    },
+    "recovered": {
+      "path": "assets/portraits/recovered.png",
+      "source": "portraits-b",
+      "cell": [
+        1,
+        0
+      ],
+      "crop": [
+        627,
+        0,
+        1254,
+        627
+      ],
+      "size": [
+        627,
+        627
+      ],
+      "sha256": "9610a9664a357d6dd4f081ad8bf518ff3afcb16c0bc0c9c8361a57c4e4488dc2",
+      "meaning": "After successful free Restore access"
+    },
+    "needs-action": {
+      "path": "assets/portraits/needs-action.png",
+      "source": "portraits-b",
+      "cell": [
+        0,
+        1
+      ],
+      "crop": [
+        0,
+        627,
+        627,
+        1254
+      ],
+      "size": [
+        627,
+        627
+      ],
+      "sha256": "c2270bf32fd04e512cd3165a8a4bfe028d6d61b317f6819c5e92c7279438f8ec",
+      "meaning": "Uncertain, permission or location needs attention"
+    },
+    "failed": {
+      "path": "assets/portraits/failed.png",
+      "source": "portraits-b",
+      "cell": [
+        1,
+        1
+      ],
+      "crop": [
+        627,
+        627,
+        1254,
+        1254
+      ],
+      "size": [
+        627,
+        627
+      ],
+      "sha256": "e6a6ef0c9424e607c26a4d77915189dd986d4023a17ab25c22b3a1cdf439326c",
+      "meaning": "Actionable error, no shame"
+    }
+  },
+  "fullbody": {
+    "welcome": {
+      "path": "assets/fullbody/welcome.png",
+      "source": "fullbody",
+      "cell": [
+        0,
+        0
+      ],
+      "crop": [
+        0,
+        0,
+        512,
+        768
+      ],
+      "size": [
+        512,
+        768
+      ],
+      "sha256": "739c579090d3648c887c51cb782df526b103c61879a5486bc94af5ac08dcca10",
+      "meaning": "Small wave; skirt visible"
+    },
+    "ready": {
+      "path": "assets/fullbody/ready.png",
+      "source": "fullbody",
+      "cell": [
+        1,
+        0
+      ],
+      "crop": [
+        512,
+        0,
+        1024,
+        768
+      ],
+      "size": [
+        512,
+        768
+      ],
+      "sha256": "4e1249fe6d8dc9da4564122c14852911d490802854e32a995ff90f49cd057ee9",
+      "meaning": "Hands clasped before manual start; skirt visible"
+    },
+    "focused": {
+      "path": "assets/fullbody/focused.png",
+      "source": "fullbody",
+      "cell": [
+        0,
+        1
+      ],
+      "crop": [
+        0,
+        768,
+        512,
+        1536
+      ],
+      "size": [
+        512,
+        768
+      ],
+      "sha256": "54746604e88416771e4614f838e88fb70f01db2fbb91c7ef733f358e40f32a0d",
+      "meaning": "Confirmed active session; skirt visible"
+    },
+    "recovered": {
+      "path": "assets/fullbody/recovered.png",
+      "source": "fullbody",
+      "cell": [
+        1,
+        1
+      ],
+      "crop": [
+        512,
+        768,
+        1024,
+        1536
+      ],
+      "size": [
+        512,
+        768
+      ],
+      "sha256": "b0cec8866e5769634456e54dca5ce22411c3482bae672c198bee95a95c0384c3",
+      "meaning": "Free restore verified; skirt visible"
+    }
+  },
+  "kiwiComparison": {
+    "path": "assets/kiwi-current.svg",
+    "sha256": "c732c94ea78dedabb8afb5de76e0c0ef8dd7491b7e46b16b5937f7f15c18fa5f"
+  },
+  "alphaCaveat": "All generated images have alpha pixels, but portraits-a retains a smoky colored backdrop, portraits-b has vivid edge fringes, and fullbody has a halo. No production-clean alpha or dark-surface legibility is established.",
+  "nativeApplied": false,
+  "storePublished": false
+}

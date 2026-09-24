@@ -1,0 +1,12 @@
+{
+  "reference": "Adult Rue v6 selected, asset 00; not an image_gen creation of this turn",
+  "generator": "Codex built-in image_gen, one call per distinct outfit",
+  "releaseReady": false,
+  "alphaWarning": "RGBA/transparent corners exist, but colored halo/fringe still visible; no shippable modular clothing parts or 8 expression sets",
+  "images": [
+    {"file": "assets/00-original.png", "sha256": "f86e78d67a288e1912ced276d1d279112b8509f1b8b596515933978a0fe2310d", "role": "selected v6 anchor; existing"},
+    {"file": "assets/01-navy-terracotta.png", "sha256": "ff7a6caa2411c2e12aace8aa70c69ee9d15c875b825a4e5d2455194652c684fb", "role": "new fullbody outfit study"},
+    {"file": "assets/02-pine-linen.png", "sha256": "5c78c13945fb2e5eaec040d0b78bed1495190fe7cdfa016387103990340f7153", "role": "new fullbody outfit study"},
+    {"file": "assets/03-lavender-indigo.png", "sha256": "301cc299e29fffaa31de28208edf44873ea066962f4eb9fe52f5531f813fc7c0", "role": "new fullbody outfit study"}
+  ]
+}

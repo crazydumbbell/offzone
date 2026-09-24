@@ -1,0 +1,1049 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 46;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		FA2100000000000000000001 /* Fonts in Resources */ = {isa = PBXBuildFile; fileRef = FA2100000000000000000002 /* Fonts */; };
+		A14000000000000000000001 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = A14000000000000000000002 /* Assets.xcassets */; };
+		A13000000000000000000001 /* RestrictionNotificationTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A13000000000000000000002; };
+		A12000000000000000000001 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = A12000000000000000000002; };
+		A10C00000000000000000001 /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = A10C00000000000000000011 /* Localizable.strings */; };
+		A10C00000000000000000002 /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = A10C00000000000000000011 /* Localizable.strings */; };
+		A10C00000000000000000003 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = A10C00000000000000000012 /* InfoPlist.strings */; };
+		1933F230DFFCA2A72D536624 /* RestrictionState.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF7761FAFD979DFDFF4CD1C1 /* RestrictionState.swift */; };
+		19A90B792DA6487EBC2E8F01 /* PrivacyInfo.xcprivacy in Resources */ = {isa = PBXBuildFile; fileRef = 8464AEDE04E848E0A052AF54 /* PrivacyInfo.xcprivacy */; };
+		1C1593A658AE97F98C30E082 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1087AB21DFECA399F264B551 /* Foundation.framework */; };
+		233D4EAE0CFFC877A971E5E1 /* RoomDNSMonitor.appex in Embed App Extensions */ = {isa = PBXBuildFile; fileRef = 46A735DA1AD3701B6BBDA498 /* RoomDNSMonitor.appex */; };
+		287BF9E2125318BFCCD45E99 /* ShieldActionExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 71D4707908B8DD71B2778683 /* ShieldActionExtension.swift */; };
+		346C36A1CE0FCABE1AD8A35F /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1087AB21DFECA399F264B551 /* Foundation.framework */; };
+		39B01724D5610B64C9790864 /* AppModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = F8250C908EA1209E09C7C045 /* AppModel.swift */; };
+		436D2617E1AEBF9134283ECB /* DeviceActivityMonitorExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = E2D8DBF2198A196C4C4638CA /* DeviceActivityMonitorExtension.swift */; };
+		493003AA0C722897503FB5D9 /* RestrictionState.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF7761FAFD979DFDFF4CD1C1 /* RestrictionState.swift */; };
+		4DE89F96711C4460A2EB92F2 /* PrivacyInfo.xcprivacy in Resources */ = {isa = PBXBuildFile; fileRef = 8464AEDE04E848E0A052AF54 /* PrivacyInfo.xcprivacy */; };
+		55F7BD6A3E8D35E9EC01DCEC /* RestrictionPolicyTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6838EE98ED8756EE6BE34903 /* RestrictionPolicyTests.swift */; };
+		5DE067C955A54109450DD77E /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1087AB21DFECA399F264B551 /* Foundation.framework */; };
+		807949B9D7BF395A71730587 /* RoomDNSShieldConfiguration.appex in Embed App Extensions */ = {isa = PBXBuildFile; fileRef = 70F1782D5A400B36F01EE36B /* RoomDNSShieldConfiguration.appex */; };
+		886D7A047F4D31AE0E42C76F /* RoomDNSShieldAction.appex in Embed App Extensions */ = {isa = PBXBuildFile; fileRef = 4718132686598AA57D677726 /* RoomDNSShieldAction.appex */; };
+		8888C6D0DCF24EA4BAC9C2C9 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1087AB21DFECA399F264B551 /* Foundation.framework */; };
+		A3F86EB452F87C4C99B9EFA2 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1087AB21DFECA399F264B551 /* Foundation.framework */; };
+		CCD7DCE4DA8D1EA4B9C02E91 /* ShieldConfigurationExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = C4091B6D0ED0185AD10FB3C8 /* ShieldConfigurationExtension.swift */; };
+		E14573051220E3635645AD1F /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9B9CF4E6150C78EB4FDC15E7 /* ContentView.swift */; };
+		EBBC5723EF2F43430BACBEE2 /* RoomDNSApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 73CE663F252B84BB247A6827 /* RoomDNSApp.swift */; };
+		A11000000000000000000001 /* AccountStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = A11000000000000000000011 /* AccountStore.swift */; };
+		A11000000000000000000002 /* OnboardingProfile.swift in Sources */ = {isa = PBXBuildFile; fileRef = A11000000000000000000012 /* OnboardingProfile.swift */; };
+		A11000000000000000000003 /* AccountViews.swift in Sources */ = {isa = PBXBuildFile; fileRef = A11000000000000000000013 /* AccountViews.swift */; };
+		A11000000000000000000021 /* FirebaseCore in Frameworks */ = {isa = PBXBuildFile; productRef = A11000000000000000000031 /* FirebaseCore */; };
+		A11000000000000000000022 /* FirebaseAuth in Frameworks */ = {isa = PBXBuildFile; productRef = A11000000000000000000032 /* FirebaseAuth */; };
+		A11000000000000000000023 /* FirebaseFirestore in Frameworks */ = {isa = PBXBuildFile; productRef = A11000000000000000000033 /* FirebaseFirestore */; };
+		A11000000000000000000024 /* RevenueCat in Frameworks */ = {isa = PBXBuildFile; productRef = A11000000000000000000034 /* RevenueCat */; };
+		A11000000000000000000025 /* FirebaseFunctions in Frameworks */ = {isa = PBXBuildFile; productRef = A11000000000000000000035 /* FirebaseFunctions */; };
+		A11000000000000000000028 /* FirebaseAnalyticsCore in Frameworks */ = {isa = PBXBuildFile; productRef = A11000000000000000000038 /* FirebaseAnalyticsCore */; };
+		A11000000000000000000051 /* AccountStoreTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A11000000000000000000052 /* AccountStoreTests.swift */; };
+		F19A00000000000000000001 /* ProJournal.swift in Sources */ = {isa = PBXBuildFile; fileRef = F19A00000000000000000011 /* ProJournal.swift */; };
+		F19A00000000000000000002 /* ProJournalView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F19A00000000000000000012 /* ProJournalView.swift */; };
+		A19000000000000000000001 /* StoreKitLocalTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A19000000000000000000002 /* StoreKitLocalTests.swift */; };
+		A19000000000000000000003 /* Offzone.storekit in Resources */ = {isa = PBXBuildFile; fileRef = A19000000000000000000004 /* Offzone.storekit */; };
+		A11000000000000000000026 /* GoogleSignIn in Frameworks */ = {isa = PBXBuildFile; productRef = A11000000000000000000036 /* GoogleSignIn */; };
+		A11000000000000000000027 /* GoogleSignInSwift in Frameworks */ = {isa = PBXBuildFile; productRef = A11000000000000000000037 /* GoogleSignInSwift */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXContainerItemProxy section */
+		0C250943BD20BED05137B517 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = A855A7AD3E1571D5A5AC9978 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = B1C57425735C00BE1528E298;
+			remoteInfo = RoomDNSShieldAction;
+		};
+		2D0C348BC95F97D16751F123 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = A855A7AD3E1571D5A5AC9978 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 7295A99C78CAD24D461F657A;
+			remoteInfo = RoomDNSShieldConfiguration;
+		};
+		5B3222FB53494398FEB0C44C /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = A855A7AD3E1571D5A5AC9978 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 8518AE2F2E7485F183A35CE7;
+			remoteInfo = RoomDNS;
+		};
+		C60331CA311308CE6BDABACE /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = A855A7AD3E1571D5A5AC9978 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = F353EBB634E2FC5A45F8D48D;
+			remoteInfo = RoomDNSMonitor;
+		};
+/* End PBXContainerItemProxy section */
+
+/* Begin PBXCopyFilesBuildPhase section */
+		FFD1B71BE82BBF7A9836928A /* Embed App Extensions */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 13;
+			files = (
+				233D4EAE0CFFC877A971E5E1 /* RoomDNSMonitor.appex in Embed App Extensions */,
+				807949B9D7BF395A71730587 /* RoomDNSShieldConfiguration.appex in Embed App Extensions */,
+				886D7A047F4D31AE0E42C76F /* RoomDNSShieldAction.appex in Embed App Extensions */,
+			);
+			name = "Embed App Extensions";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXCopyFilesBuildPhase section */
+
+/* Begin PBXFileReference section */
+		FA2100000000000000000002 /* Fonts */ = {isa = PBXFileReference; lastKnownFileType = folder; path = Fonts; sourceTree = "<group>"; };
+		A14000000000000000000002 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		A13000000000000000000002 /* RestrictionNotificationTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RestrictionNotificationTests.swift; sourceTree = "<group>"; };
+		A12000000000000000000002 /* GoogleService-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
+		A10C00000000000000000021 /* Localizable.strings */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/Localizable.strings; sourceTree = "<group>"; };
+		A10C00000000000000000022 /* Localizable.strings */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ko; path = ko.lproj/Localizable.strings; sourceTree = "<group>"; };
+		A10C00000000000000000023 /* InfoPlist.strings */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
+		A10C00000000000000000024 /* InfoPlist.strings */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ko; path = ko.lproj/InfoPlist.strings; sourceTree = "<group>"; };
+		0B234F5F48381CD335E5176C /* ShieldConfiguration.entitlements */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.plist.entitlements; path = ShieldConfiguration.entitlements; sourceTree = "<group>"; };
+		1087AB21DFECA399F264B551 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS18.0.sdk/System/Library/Frameworks/Foundation.framework; sourceTree = DEVELOPER_DIR; };
+		2D1EB6798C4533D713B91849 /* Info.plist */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		33F3BAAFE142D844B84E9C9E /* Info.plist */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		46A735DA1AD3701B6BBDA498 /* RoomDNSMonitor.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = RoomDNSMonitor.appex; sourceTree = BUILT_PRODUCTS_DIR; };
+		4718132686598AA57D677726 /* RoomDNSShieldAction.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = RoomDNSShieldAction.appex; sourceTree = BUILT_PRODUCTS_DIR; };
+		48EF7CB154E9D594DDA3AA4F /* Info.plist */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		51038286142CDB0B858E9276 /* RoomDNS.entitlements */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.plist.entitlements; path = RoomDNS.entitlements; sourceTree = "<group>"; };
+		54CA574F26ABD6D9C6490E83 /* ShieldAction.entitlements */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.plist.entitlements; path = ShieldAction.entitlements; sourceTree = "<group>"; };
+		6838EE98ED8756EE6BE34903 /* RestrictionPolicyTests.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = RestrictionPolicyTests.swift; sourceTree = "<group>"; };
+		70F1782D5A400B36F01EE36B /* RoomDNSShieldConfiguration.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = RoomDNSShieldConfiguration.appex; sourceTree = BUILT_PRODUCTS_DIR; };
+		71D4707908B8DD71B2778683 /* ShieldActionExtension.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = ShieldActionExtension.swift; sourceTree = "<group>"; };
+		73CE663F252B84BB247A6827 /* RoomDNSApp.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = RoomDNSApp.swift; sourceTree = "<group>"; };
+		7EF2316D142948B482A4896A /* Info.plist */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		8464AEDE04E848E0A052AF54 /* PrivacyInfo.xcprivacy */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xml; path = PrivacyInfo.xcprivacy; sourceTree = "<group>"; };
+		9535EDA7130F73F49D05B339 /* RoomDNSTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = RoomDNSTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		9B9CF4E6150C78EB4FDC15E7 /* ContentView.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
+		A127A460944FB1CADDCECBCE /* RoomDNS.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = RoomDNS.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		BF7761FAFD979DFDFF4CD1C1 /* RestrictionState.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = RestrictionState.swift; sourceTree = "<group>"; };
+		C2D3E5526FD62B5C55C072AA /* DeviceActivityMonitor.entitlements */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.plist.entitlements; path = DeviceActivityMonitor.entitlements; sourceTree = "<group>"; };
+		C4091B6D0ED0185AD10FB3C8 /* ShieldConfigurationExtension.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = ShieldConfigurationExtension.swift; sourceTree = "<group>"; };
+		E2D8DBF2198A196C4C4638CA /* DeviceActivityMonitorExtension.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = DeviceActivityMonitorExtension.swift; sourceTree = "<group>"; };
+		F8250C908EA1209E09C7C045 /* AppModel.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = AppModel.swift; sourceTree = "<group>"; };
+		A11000000000000000000011 /* AccountStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AccountStore.swift; sourceTree = "<group>"; };
+		A11000000000000000000012 /* OnboardingProfile.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OnboardingProfile.swift; sourceTree = "<group>"; };
+		A11000000000000000000013 /* AccountViews.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AccountViews.swift; sourceTree = "<group>"; };
+		A11000000000000000000052 /* AccountStoreTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AccountStoreTests.swift; sourceTree = "<group>"; };
+		F19A00000000000000000011 /* ProJournal.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProJournal.swift; sourceTree = "<group>"; };
+		F19A00000000000000000012 /* ProJournalView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProJournalView.swift; sourceTree = "<group>"; };
+		A19000000000000000000002 /* StoreKitLocalTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StoreKitLocalTests.swift; sourceTree = "<group>"; };
+		A19000000000000000000004 /* Offzone.storekit */ = {isa = PBXFileReference; lastKnownFileType = text; path = Offzone.storekit; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		50423A50E42C08CC3591C33E /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				5DE067C955A54109450DD77E /* Foundation.framework in Frameworks */,
+				A11000000000000000000024 /* RevenueCat in Frameworks */,
+				A11000000000000000000026 /* GoogleSignIn in Frameworks */,
+				A11000000000000000000027 /* GoogleSignInSwift in Frameworks */,
+				A11000000000000000000025 /* FirebaseFunctions in Frameworks */,
+				A11000000000000000000028 /* FirebaseAnalyticsCore in Frameworks */,
+				A11000000000000000000023 /* FirebaseFirestore in Frameworks */,
+				A11000000000000000000022 /* FirebaseAuth in Frameworks */,
+				A11000000000000000000021 /* FirebaseCore in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		7E3789DB057224388C4826CB /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				A3F86EB452F87C4C99B9EFA2 /* Foundation.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		B493A687058EAB9E7BA14B18 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				1C1593A658AE97F98C30E082 /* Foundation.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		C1CEEC96DC3B59DC5A931276 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				8888C6D0DCF24EA4BAC9C2C9 /* Foundation.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		FB8B072A323F7A8C540365D7 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				346C36A1CE0FCABE1AD8A35F /* Foundation.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		098D48D782E8C91DA2FBD72A /* Extensions */ = {
+			isa = PBXGroup;
+			children = (
+				595C65459572947298242876 /* DeviceActivityMonitor */,
+				EFF7B0B76785DE58C87E17EB /* ShieldConfiguration */,
+				F07F0C6C55CDC57DB65797C6 /* ShieldAction */,
+			);
+			name = Extensions;
+			path = Extensions;
+			sourceTree = "<group>";
+		};
+		1FB2909B6820C10081D49020 /* RoomDNS */ = {
+			isa = PBXGroup;
+			children = (
+				3B1D292B2F00A27F170ACAAA /* App */,
+				429243073609965253CE1306 /* Shared */,
+				A14000000000000000000002 /* Assets.xcassets */,
+				FA2100000000000000000002 /* Fonts */,
+				A10C00000000000000000011 /* Localizable.strings */,
+				A10C00000000000000000012 /* InfoPlist.strings */,
+				7EF2316D142948B482A4896A /* Info.plist */,
+				8464AEDE04E848E0A052AF54 /* PrivacyInfo.xcprivacy */,
+				A12000000000000000000002 /* GoogleService-Info.plist */,
+				51038286142CDB0B858E9276 /* RoomDNS.entitlements */,
+			);
+			name = RoomDNS;
+			path = RoomDNS;
+			sourceTree = "<group>";
+		};
+		2566545E307E805E2225B864 /* iOS */ = {
+			isa = PBXGroup;
+			children = (
+				1087AB21DFECA399F264B551 /* Foundation.framework */,
+			);
+			name = iOS;
+			sourceTree = "<group>";
+		};
+		3B1D292B2F00A27F170ACAAA /* App */ = {
+			isa = PBXGroup;
+			children = (
+				73CE663F252B84BB247A6827 /* RoomDNSApp.swift */,
+				F8250C908EA1209E09C7C045 /* AppModel.swift */,
+				9B9CF4E6150C78EB4FDC15E7 /* ContentView.swift */,
+				F19A00000000000000000011 /* ProJournal.swift */,
+				F19A00000000000000000012 /* ProJournalView.swift */,
+				A11000000000000000000013 /* AccountViews.swift */,
+				A11000000000000000000012 /* OnboardingProfile.swift */,
+				A11000000000000000000011 /* AccountStore.swift */,
+			);
+			name = App;
+			path = App;
+			sourceTree = "<group>";
+		};
+		429243073609965253CE1306 /* Shared */ = {
+			isa = PBXGroup;
+			children = (
+				BF7761FAFD979DFDFF4CD1C1 /* RestrictionState.swift */,
+			);
+			name = Shared;
+			path = Shared;
+			sourceTree = "<group>";
+		};
+		595C65459572947298242876 /* DeviceActivityMonitor */ = {
+			isa = PBXGroup;
+			children = (
+				E2D8DBF2198A196C4C4638CA /* DeviceActivityMonitorExtension.swift */,
+				48EF7CB154E9D594DDA3AA4F /* Info.plist */,
+				C2D3E5526FD62B5C55C072AA /* DeviceActivityMonitor.entitlements */,
+			);
+			name = DeviceActivityMonitor;
+			path = DeviceActivityMonitor;
+			sourceTree = "<group>";
+		};
+		7BFB78C08777CD1EAA48E7E9 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				A127A460944FB1CADDCECBCE /* RoomDNS.app */,
+				46A735DA1AD3701B6BBDA498 /* RoomDNSMonitor.appex */,
+				70F1782D5A400B36F01EE36B /* RoomDNSShieldConfiguration.appex */,
+				4718132686598AA57D677726 /* RoomDNSShieldAction.appex */,
+				9535EDA7130F73F49D05B339 /* RoomDNSTests.xctest */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		829979BA93D7C3325CA10E38 /* RoomDNSTests */ = {
+			isa = PBXGroup;
+			children = (
+				6838EE98ED8756EE6BE34903 /* RestrictionPolicyTests.swift */,
+				A11000000000000000000052 /* AccountStoreTests.swift */,
+				A19000000000000000000002 /* StoreKitLocalTests.swift */,
+				A19000000000000000000004 /* Offzone.storekit */,
+				A13000000000000000000002 /* RestrictionNotificationTests.swift */,
+			);
+			name = RoomDNSTests;
+			path = RoomDNSTests;
+			sourceTree = "<group>";
+		};
+		CF143FA16E1E804E95C2E78E = {
+			isa = PBXGroup;
+			children = (
+				7BFB78C08777CD1EAA48E7E9 /* Products */,
+				F13155475F3BA3CE81513767 /* Frameworks */,
+				1FB2909B6820C10081D49020 /* RoomDNS */,
+				098D48D782E8C91DA2FBD72A /* Extensions */,
+				829979BA93D7C3325CA10E38 /* RoomDNSTests */,
+			);
+			sourceTree = "<group>";
+		};
+		EFF7B0B76785DE58C87E17EB /* ShieldConfiguration */ = {
+			isa = PBXGroup;
+			children = (
+				C4091B6D0ED0185AD10FB3C8 /* ShieldConfigurationExtension.swift */,
+				2D1EB6798C4533D713B91849 /* Info.plist */,
+				0B234F5F48381CD335E5176C /* ShieldConfiguration.entitlements */,
+			);
+			name = ShieldConfiguration;
+			path = ShieldConfiguration;
+			sourceTree = "<group>";
+		};
+		F07F0C6C55CDC57DB65797C6 /* ShieldAction */ = {
+			isa = PBXGroup;
+			children = (
+				71D4707908B8DD71B2778683 /* ShieldActionExtension.swift */,
+				33F3BAAFE142D844B84E9C9E /* Info.plist */,
+				54CA574F26ABD6D9C6490E83 /* ShieldAction.entitlements */,
+			);
+			name = ShieldAction;
+			path = ShieldAction;
+			sourceTree = "<group>";
+		};
+		F13155475F3BA3CE81513767 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				2566545E307E805E2225B864 /* iOS */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		7295A99C78CAD24D461F657A /* RoomDNSShieldConfiguration */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = C2FFBCB0E838E19DBA86D6E9 /* Build configuration list for PBXNativeTarget "RoomDNSShieldConfiguration" */;
+			buildPhases = (
+				4F03C266400CA20D1510B7B4 /* Sources */,
+				C1CEEC96DC3B59DC5A931276 /* Frameworks */,
+				BF76CFFF55EC8E26C3C712B4 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = RoomDNSShieldConfiguration;
+			productName = RoomDNSShieldConfiguration;
+			productReference = 70F1782D5A400B36F01EE36B /* RoomDNSShieldConfiguration.appex */;
+			productType = "com.apple.product-type.app-extension";
+		};
+		8518AE2F2E7485F183A35CE7 /* RoomDNS */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 264CA2E056BE2B7593A25F8B /* Build configuration list for PBXNativeTarget "RoomDNS" */;
+			buildPhases = (
+				792463DAD7128A28383919AB /* Sources */,
+				50423A50E42C08CC3591C33E /* Frameworks */,
+				3AEEC42864C5A850B8E6F2E8 /* Resources */,
+				FFD1B71BE82BBF7A9836928A /* Embed App Extensions */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				E0FF59B806E47C1DCB0FE409 /* PBXTargetDependency */,
+				9DDD0E1D4E77FDA0845A93CF /* PBXTargetDependency */,
+				3D9FF2437A54A029ADC03583 /* PBXTargetDependency */,
+			);
+			packageProductDependencies = (A11000000000000000000031, A11000000000000000000032, A11000000000000000000033, A11000000000000000000034, A11000000000000000000036, A11000000000000000000037, A11000000000000000000035, A11000000000000000000038);
+			name = RoomDNS;
+			productName = RoomDNS;
+			productReference = A127A460944FB1CADDCECBCE /* RoomDNS.app */;
+			productType = "com.apple.product-type.application";
+		};
+		B1C57425735C00BE1528E298 /* RoomDNSShieldAction */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 6AC89E9BFD288E7228FA9086 /* Build configuration list for PBXNativeTarget "RoomDNSShieldAction" */;
+			buildPhases = (
+				DA2EFCA9E490931A9ADE8441 /* Sources */,
+				7E3789DB057224388C4826CB /* Frameworks */,
+				6F1A59A5587E64DF2F5C05ED /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = RoomDNSShieldAction;
+			productName = RoomDNSShieldAction;
+			productReference = 4718132686598AA57D677726 /* RoomDNSShieldAction.appex */;
+			productType = "com.apple.product-type.app-extension";
+		};
+		F353EBB634E2FC5A45F8D48D /* RoomDNSMonitor */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 037131C835E0FAB545F84E57 /* Build configuration list for PBXNativeTarget "RoomDNSMonitor" */;
+			buildPhases = (
+				883B0AEF1DE635DB71B40D25 /* Sources */,
+				FB8B072A323F7A8C540365D7 /* Frameworks */,
+				02E4CE8F1DC2B74F64E4C814 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = RoomDNSMonitor;
+			productName = RoomDNSMonitor;
+			productReference = 46A735DA1AD3701B6BBDA498 /* RoomDNSMonitor.appex */;
+			productType = "com.apple.product-type.app-extension";
+		};
+		F6B1837D0EFFB74AF1386C12 /* RoomDNSTests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = E922E7BD649A2809971946B2 /* Build configuration list for PBXNativeTarget "RoomDNSTests" */;
+			buildPhases = (
+				B237953F6F26E4E046CA881A /* Sources */,
+				B493A687058EAB9E7BA14B18 /* Frameworks */,
+				6BE1DB3A97C1812C908E440A /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				B58D96594E2A84916919FBF0 /* PBXTargetDependency */,
+			);
+			name = RoomDNSTests;
+			productName = RoomDNSTests;
+			productReference = 9535EDA7130F73F49D05B339 /* RoomDNSTests.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		A855A7AD3E1571D5A5AC9978 /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				LastSwiftUpdateCheck = 2660;
+				LastUpgradeCheck = 2660;
+			};
+			buildConfigurationList = 8CFB312B47E66D4FBE1FC942 /* Build configuration list for PBXProject "RoomDNS" */;
+			compatibilityVersion = "Xcode 3.2";
+			developmentRegion = en;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+				ko,
+				Base,
+			);
+			mainGroup = CF143FA16E1E804E95C2E78E;
+			minimizedProjectReferenceProxies = 0;
+			preferredProjectObjectVersion = 77;
+			productRefGroup = 7BFB78C08777CD1EAA48E7E9 /* Products */;
+			packageReferences = (A11000000000000000000041, A11000000000000000000042, A11000000000000000000043);
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				8518AE2F2E7485F183A35CE7 /* RoomDNS */,
+				F353EBB634E2FC5A45F8D48D /* RoomDNSMonitor */,
+				7295A99C78CAD24D461F657A /* RoomDNSShieldConfiguration */,
+				B1C57425735C00BE1528E298 /* RoomDNSShieldAction */,
+				F6B1837D0EFFB74AF1386C12 /* RoomDNSTests */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		02E4CE8F1DC2B74F64E4C814 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				4DE89F96711C4460A2EB92F2 /* PrivacyInfo.xcprivacy in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		3AEEC42864C5A850B8E6F2E8 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				A14000000000000000000001 /* Assets.xcassets in Resources */,
+				FA2100000000000000000001 /* Fonts in Resources */,
+				A10C00000000000000000001 /* Localizable.strings in Resources */,
+				A10C00000000000000000003 /* InfoPlist.strings in Resources */,
+				19A90B792DA6487EBC2E8F01 /* PrivacyInfo.xcprivacy in Resources */,
+				A12000000000000000000001 /* GoogleService-Info.plist in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		6BE1DB3A97C1812C908E440A /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				A19000000000000000000003 /* Offzone.storekit in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		6F1A59A5587E64DF2F5C05ED /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		BF76CFFF55EC8E26C3C712B4 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				A10C00000000000000000002 /* Localizable.strings in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		4F03C266400CA20D1510B7B4 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				CCD7DCE4DA8D1EA4B9C02E91 /* ShieldConfigurationExtension.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		792463DAD7128A28383919AB /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				EBBC5723EF2F43430BACBEE2 /* RoomDNSApp.swift in Sources */,
+				39B01724D5610B64C9790864 /* AppModel.swift in Sources */,
+				E14573051220E3635645AD1F /* ContentView.swift in Sources */,
+				F19A00000000000000000001 /* ProJournal.swift in Sources */,
+				F19A00000000000000000002 /* ProJournalView.swift in Sources */,
+				A11000000000000000000003 /* AccountViews.swift in Sources */,
+				A11000000000000000000002 /* OnboardingProfile.swift in Sources */,
+				A11000000000000000000001 /* AccountStore.swift in Sources */,
+				1933F230DFFCA2A72D536624 /* RestrictionState.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		883B0AEF1DE635DB71B40D25 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				436D2617E1AEBF9134283ECB /* DeviceActivityMonitorExtension.swift in Sources */,
+				493003AA0C722897503FB5D9 /* RestrictionState.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		B237953F6F26E4E046CA881A /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				55F7BD6A3E8D35E9EC01DCEC /* RestrictionPolicyTests.swift in Sources */,
+				A11000000000000000000051 /* AccountStoreTests.swift in Sources */,
+				A19000000000000000000001 /* StoreKitLocalTests.swift in Sources */,
+				A13000000000000000000001 /* RestrictionNotificationTests.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		DA2EFCA9E490931A9ADE8441 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				287BF9E2125318BFCCD45E99 /* ShieldActionExtension.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		3D9FF2437A54A029ADC03583 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			name = RoomDNSShieldAction;
+			target = B1C57425735C00BE1528E298 /* RoomDNSShieldAction */;
+			targetProxy = 0C250943BD20BED05137B517 /* PBXContainerItemProxy */;
+		};
+		9DDD0E1D4E77FDA0845A93CF /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			name = RoomDNSShieldConfiguration;
+			target = 7295A99C78CAD24D461F657A /* RoomDNSShieldConfiguration */;
+			targetProxy = 2D0C348BC95F97D16751F123 /* PBXContainerItemProxy */;
+		};
+		B58D96594E2A84916919FBF0 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			name = RoomDNS;
+			target = 8518AE2F2E7485F183A35CE7 /* RoomDNS */;
+			targetProxy = 5B3222FB53494398FEB0C44C /* PBXContainerItemProxy */;
+		};
+		E0FF59B806E47C1DCB0FE409 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			name = RoomDNSMonitor;
+			target = F353EBB634E2FC5A45F8D48D /* RoomDNSMonitor */;
+			targetProxy = C60331CA311308CE6BDABACE /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
+
+/* Begin PBXVariantGroup section */
+		A10C00000000000000000011 /* Localizable.strings */ = {
+			isa = PBXVariantGroup;
+			children = (
+				A10C00000000000000000021 /* Localizable.strings */,
+				A10C00000000000000000022 /* Localizable.strings */,
+			);
+			name = Localizable.strings;
+			sourceTree = "<group>";
+		};
+		A10C00000000000000000012 /* InfoPlist.strings */ = {
+			isa = PBXVariantGroup;
+			children = (
+				A10C00000000000000000023 /* InfoPlist.strings */,
+				A10C00000000000000000024 /* InfoPlist.strings */,
+			);
+			name = InfoPlist.strings;
+			sourceTree = "<group>";
+		};
+/* End PBXVariantGroup section */
+
+/* Begin XCBuildConfiguration section */
+		1A86FA5A8AFEAB8F8FED5A2E /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CLANG_ENABLE_OBJC_WEAK = NO;
+				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_TEAM = GS2FF7X539;
+				CURRENT_PROJECT_VERSION = 3;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
+				GENERATE_INFOPLIST_FILE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 18.0;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.exchip.roomdns.tests;
+				SDKROOT = iphoneos;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = 1;
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/RoomDNS.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/RoomDNS";
+			};
+			name = Debug;
+		};
+		29D0512E0F55B6105EEB2576 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				APPLICATION_EXTENSION_API_ONLY = YES;
+				CLANG_ENABLE_OBJC_WEAK = NO;
+				CODE_SIGN_ENTITLEMENTS = Extensions/ShieldConfiguration/ShieldConfiguration.entitlements;
+				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_TEAM = GS2FF7X539;
+				CURRENT_PROJECT_VERSION = 3;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
+				GENERATE_INFOPLIST_FILE = NO;
+				INFOPLIST_FILE = Extensions/ShieldConfiguration/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 18.0;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../../Frameworks";
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.exchip.roomdns.shieldconfiguration;
+				SDKROOT = iphoneos;
+				SKIP_INSTALL = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = 1;
+			};
+			name = Debug;
+		};
+		3CA0F4296E56DEEC39E8DF10 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				APPLICATION_EXTENSION_API_ONLY = YES;
+				CLANG_ENABLE_OBJC_WEAK = NO;
+				CODE_SIGN_ENTITLEMENTS = Extensions/ShieldAction/ShieldAction.entitlements;
+				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_TEAM = GS2FF7X539;
+				CURRENT_PROJECT_VERSION = 3;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
+				GENERATE_INFOPLIST_FILE = NO;
+				INFOPLIST_FILE = Extensions/ShieldAction/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 18.0;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../../Frameworks";
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.exchip.roomdns.shieldaction;
+				SDKROOT = iphoneos;
+				SKIP_INSTALL = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = 1;
+				VALIDATE_PRODUCT = YES;
+			};
+			name = Release;
+		};
+		44B5247E41742791B0F6DFC6 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				APPLICATION_EXTENSION_API_ONLY = YES;
+				CLANG_ENABLE_OBJC_WEAK = NO;
+				CODE_SIGN_ENTITLEMENTS = Extensions/DeviceActivityMonitor/DeviceActivityMonitor.entitlements;
+				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_TEAM = GS2FF7X539;
+				CURRENT_PROJECT_VERSION = 3;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
+				GENERATE_INFOPLIST_FILE = NO;
+				INFOPLIST_FILE = Extensions/DeviceActivityMonitor/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 18.0;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../../Frameworks";
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.exchip.roomdns.monitor;
+				SDKROOT = iphoneos;
+				SKIP_INSTALL = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = 1;
+			};
+			name = Debug;
+		};
+		5CC61FC7FCABA0C8CEC2ABFC /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CLANG_ENABLE_OBJC_WEAK = NO;
+				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_TEAM = GS2FF7X539;
+				CURRENT_PROJECT_VERSION = 3;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
+				GENERATE_INFOPLIST_FILE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 18.0;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.exchip.roomdns.tests;
+				SDKROOT = iphoneos;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = 1;
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/RoomDNS.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/RoomDNS";
+				VALIDATE_PRODUCT = YES;
+			};
+			name = Release;
+		};
+		63CEC2C78E2E365236B547CE /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				MTL_FAST_MATH = YES;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_COMPILATION_MODE = wholemodule;
+				SWIFT_OPTIMIZATION_LEVEL = "-O";
+				SWIFT_VERSION = 5.0;
+			};
+			name = Release;
+		};
+		834807061E8C2DE22B29A104 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				MTL_FAST_MATH = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_VERSION = 5.0;
+			};
+			name = Debug;
+		};
+		8CCC4F8B024C93AF25BBC339 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CLANG_ENABLE_OBJC_WEAK = NO;
+				CODE_SIGN_ENTITLEMENTS = RoomDNS/RoomDNS.entitlements;
+				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_TEAM = GS2FF7X539;
+				CURRENT_PROJECT_VERSION = 3;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = RoomDNS/Info.plist;
+				OTHER_LDFLAGS = "$(inherited) -ObjC";
+				INFOPLIST_KEY_CFBundleDisplayName = "Offzone";
+				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.productivity";
+				INFOPLIST_KEY_NSLocationAlwaysAndWhenInUseUsageDescription = "Offzone detects when you enter or leave your chosen place, even when the app is not open.";
+				INFOPLIST_KEY_NSLocationWhenInUseUsageDescription = "Offzone uses your current location to save a place for your rule.";
+				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
+				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 18.0;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.exchip.roomdns;
+				SDKROOT = iphoneos;
+				SUPPORTS_MACCATALYST = NO;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = 1;
+			};
+			name = Debug;
+		};
+		DCE1CAE718354FAA6CE72580 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				APPLICATION_EXTENSION_API_ONLY = YES;
+				CLANG_ENABLE_OBJC_WEAK = NO;
+				CODE_SIGN_ENTITLEMENTS = Extensions/DeviceActivityMonitor/DeviceActivityMonitor.entitlements;
+				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_TEAM = GS2FF7X539;
+				CURRENT_PROJECT_VERSION = 3;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
+				GENERATE_INFOPLIST_FILE = NO;
+				INFOPLIST_FILE = Extensions/DeviceActivityMonitor/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 18.0;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../../Frameworks";
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.exchip.roomdns.monitor;
+				SDKROOT = iphoneos;
+				SKIP_INSTALL = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = 1;
+				VALIDATE_PRODUCT = YES;
+			};
+			name = Release;
+		};
+		E3FE3FE4B7DFDF2EC4334BD6 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				APPLICATION_EXTENSION_API_ONLY = YES;
+				CLANG_ENABLE_OBJC_WEAK = NO;
+				CODE_SIGN_ENTITLEMENTS = Extensions/ShieldConfiguration/ShieldConfiguration.entitlements;
+				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_TEAM = GS2FF7X539;
+				CURRENT_PROJECT_VERSION = 3;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
+				GENERATE_INFOPLIST_FILE = NO;
+				INFOPLIST_FILE = Extensions/ShieldConfiguration/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 18.0;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../../Frameworks";
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.exchip.roomdns.shieldconfiguration;
+				SDKROOT = iphoneos;
+				SKIP_INSTALL = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = 1;
+				VALIDATE_PRODUCT = YES;
+			};
+			name = Release;
+		};
+		EB3A1979BCD4A3FB0D72A26C /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				APPLICATION_EXTENSION_API_ONLY = YES;
+				CLANG_ENABLE_OBJC_WEAK = NO;
+				CODE_SIGN_ENTITLEMENTS = Extensions/ShieldAction/ShieldAction.entitlements;
+				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_TEAM = GS2FF7X539;
+				CURRENT_PROJECT_VERSION = 3;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
+				GENERATE_INFOPLIST_FILE = NO;
+				INFOPLIST_FILE = Extensions/ShieldAction/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 18.0;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../../Frameworks";
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.exchip.roomdns.shieldaction;
+				SDKROOT = iphoneos;
+				SKIP_INSTALL = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = 1;
+			};
+			name = Debug;
+		};
+		F74D2B1DE374D753856A7D60 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CLANG_ENABLE_OBJC_WEAK = NO;
+				CODE_SIGN_ENTITLEMENTS = RoomDNS/RoomDNS.entitlements;
+				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_TEAM = GS2FF7X539;
+				CURRENT_PROJECT_VERSION = 3;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = RoomDNS/Info.plist;
+				OTHER_LDFLAGS = "$(inherited) -ObjC";
+				INFOPLIST_KEY_CFBundleDisplayName = "Offzone";
+				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.productivity";
+				INFOPLIST_KEY_NSLocationAlwaysAndWhenInUseUsageDescription = "Offzone detects when you enter or leave your chosen place, even when the app is not open.";
+				INFOPLIST_KEY_NSLocationWhenInUseUsageDescription = "Offzone uses your current location to save a place for your rule.";
+				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
+				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 18.0;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.exchip.roomdns;
+				SDKROOT = iphoneos;
+				SUPPORTS_MACCATALYST = NO;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = 1;
+				VALIDATE_PRODUCT = YES;
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		037131C835E0FAB545F84E57 /* Build configuration list for PBXNativeTarget "RoomDNSMonitor" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				DCE1CAE718354FAA6CE72580 /* Release */,
+				44B5247E41742791B0F6DFC6 /* Debug */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		264CA2E056BE2B7593A25F8B /* Build configuration list for PBXNativeTarget "RoomDNS" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				F74D2B1DE374D753856A7D60 /* Release */,
+				8CCC4F8B024C93AF25BBC339 /* Debug */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		6AC89E9BFD288E7228FA9086 /* Build configuration list for PBXNativeTarget "RoomDNSShieldAction" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				3CA0F4296E56DEEC39E8DF10 /* Release */,
+				EB3A1979BCD4A3FB0D72A26C /* Debug */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		8CFB312B47E66D4FBE1FC942 /* Build configuration list for PBXProject "RoomDNS" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				834807061E8C2DE22B29A104 /* Debug */,
+				63CEC2C78E2E365236B547CE /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		C2FFBCB0E838E19DBA86D6E9 /* Build configuration list for PBXNativeTarget "RoomDNSShieldConfiguration" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				E3FE3FE4B7DFDF2EC4334BD6 /* Release */,
+				29D0512E0F55B6105EEB2576 /* Debug */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		E922E7BD649A2809971946B2 /* Build configuration list for PBXNativeTarget "RoomDNSTests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				5CC61FC7FCABA0C8CEC2ABFC /* Release */,
+				1A86FA5A8AFEAB8F8FED5A2E /* Debug */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+/* Begin XCRemoteSwiftPackageReference section */
+        A11000000000000000000041 = {isa = XCRemoteSwiftPackageReference; repositoryURL = "https://github.com/firebase/firebase-ios-sdk"; requirement = {kind = exactVersion; version = 12.18.0; }; };
+        A11000000000000000000042 = {isa = XCRemoteSwiftPackageReference; repositoryURL = "https://github.com/RevenueCat/purchases-ios"; requirement = {kind = exactVersion; version = 5.88.0; }; };
+        A11000000000000000000043 = {isa = XCRemoteSwiftPackageReference; repositoryURL = "https://github.com/google/GoogleSignIn-iOS"; requirement = {kind = exactVersion; version = 9.2.0; }; };
+/* End XCRemoteSwiftPackageReference section */
+/* Begin XCSwiftPackageProductDependency section */
+		A11000000000000000000031 /* FirebaseCore */ = {isa = XCSwiftPackageProductDependency; package = A11000000000000000000041; productName = FirebaseCore; };
+		A11000000000000000000032 /* FirebaseAuth */ = {isa = XCSwiftPackageProductDependency; package = A11000000000000000000041; productName = FirebaseAuth; };
+		A11000000000000000000033 /* FirebaseFirestore */ = {isa = XCSwiftPackageProductDependency; package = A11000000000000000000041; productName = FirebaseFirestore; };
+		A11000000000000000000034 /* RevenueCat */ = {isa = XCSwiftPackageProductDependency; package = A11000000000000000000042; productName = RevenueCat; };
+		A11000000000000000000035 /* FirebaseFunctions */ = {isa = XCSwiftPackageProductDependency; package = A11000000000000000000041; productName = FirebaseFunctions; };
+		A11000000000000000000038 /* FirebaseAnalyticsCore */ = {isa = XCSwiftPackageProductDependency; package = A11000000000000000000041; productName = FirebaseAnalyticsCore; };
+		A11000000000000000000036 /* GoogleSignIn */ = {isa = XCSwiftPackageProductDependency; package = A11000000000000000000043; productName = GoogleSignIn; };
+		A11000000000000000000037 /* GoogleSignInSwift */ = {isa = XCSwiftPackageProductDependency; package = A11000000000000000000043; productName = GoogleSignInSwift; };
+/* End XCSwiftPackageProductDependency section */
+	};
+	rootObject = A855A7AD3E1571D5A5AC9978 /* Project object */;
+}

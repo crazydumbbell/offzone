@@ -1,0 +1,23 @@
+<resources>
+    <string name="engine_storage_error">Saved rules could not be read or written. Original data is kept.</string>
+    <string name="engine_rule_ready">Rule activated. Check your location, then start focus during its schedule.</string>
+    <string name="engine_paused">Rules paused. Access is restored.</string>
+    <string name="engine_setup_needed">Connect app blocking and choose apps before starting focus.</string>
+    <string name="engine_location_needed">Allow precise location and turn on Location Services.</string>
+    <string name="engine_outside_schedule">Start focus during your saved schedule.</string>
+    <string name="engine_checking">Checking your location…</string>
+    <string name="engine_arrived">You are near your saved place. Start focus when you are ready.</string>
+    <string name="engine_outside_place">Move closer to your saved place, then check again.</string>
+    <string name="engine_left">You left the focus place. Access is restored.</string>
+    <string name="engine_not_ready">Location or schedule could not be confirmed. Focus has not started.</string>
+    <string name="engine_started">Focus started. You can restore access at any time.</string>
+    <string name="engine_ended">Focus ended. Access is restored.</string>
+    <string name="engine_location_lost">Location could not be confirmed. Access is restored; check your location to start again.</string>
+    <string name="engine_monitor_channel">Place monitoring</string>
+    <string name="engine_event_channel">Focus updates</string>
+    <string name="engine_monitor_title">Offzone · place monitoring</string>
+    <string name="engine_monitor_body">Monitoring your place. Arrival never starts blocking automatically. Restore access to stop.</string>
+    <string name="engine_monitor_stopped">Place monitoring stopped. Access is restored.</string>
+    <string name="engine_monitor_start">Start place monitoring</string>
+    <string name="engine_monitor_stop">Stop monitoring</string>
+</resources>

@@ -1,0 +1,21 @@
+{
+  "firestore": {
+    "database": "(default)",
+    "location": "us-central1",
+    "rules": "firestore.rules"
+  },
+  "functions": {
+    "source": "functions",
+    "runtime": "nodejs22",
+    "predeploy": [
+      "npm --prefix functions test"
+    ],
+    "ignore": [
+      "node_modules",
+      ".git",
+      ".env*",
+      "*.test.js",
+      "*-debug.log"
+    ]
+  }
+}

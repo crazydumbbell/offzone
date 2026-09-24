@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>CLIENT_ID</key>
+	<string>842668693484-0em6loehhrmgkgvc5gnugjkbq7mhgu1p.apps.googleusercontent.com</string>
+	<key>REVERSED_CLIENT_ID</key>
+	<string>com.googleusercontent.apps.842668693484-0em6loehhrmgkgvc5gnugjkbq7mhgu1p</string>
+	<key>API_KEY</key>
+	<string>AIzaSyBRSffER_YzsBMRB3xSaN9j_tupKshvr7o</string>
+	<key>GCM_SENDER_ID</key>
+	<string>842668693484</string>
+	<key>PLIST_VERSION</key>
+	<string>1</string>
+	<key>BUNDLE_ID</key>
+	<string>com.exchip.roomdns</string>
+	<key>PROJECT_ID</key>
+	<string>roomdns-exchip</string>
+	<key>STORAGE_BUCKET</key>
+	<string>roomdns-exchip.firebasestorage.app</string>
+	<key>IS_ADS_ENABLED</key>
+	<false></false>
+	<key>IS_ANALYTICS_ENABLED</key>
+	<true/>
+	<key>IS_APPINVITE_ENABLED</key>
+	<true></true>
+	<key>IS_GCM_ENABLED</key>
+	<true></true>
+	<key>IS_SIGNIN_ENABLED</key>
+	<true></true>
+	<key>GOOGLE_APP_ID</key>
+	<string>1:842668693484:ios:563c1ca176f723d5f212c9</string>
+</dict>
+</plist>

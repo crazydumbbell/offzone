@@ -1,0 +1,81 @@
+{
+  "identifier": "AA190001",
+  "nonRenewingSubscriptions": [],
+  "products": [
+    {
+      "displayPrice": "0.99",
+      "familyShareable": false,
+      "internalID": "68190764",
+      "localizations": [
+        {
+          "description": "One early session ending",
+          "displayName": "One Unlock Pass",
+          "locale": "en_US"
+        }
+      ],
+      "productID": "com.exchip.roomdns.unlock.single",
+      "referenceName": "One Unlock Pass",
+      "type": "Consumable"
+    }
+  ],
+  "settings": {
+    "_failTransactionsEnabled": false,
+    "_locale": "en_US",
+    "_storefront": "USA"
+  },
+  "subscriptionGroups": [
+    {
+      "id": "22365436",
+      "localizations": [],
+      "name": "Offzone Pro",
+      "subscriptions": [
+        {
+          "adHocOffers": [],
+          "codeOffers": [],
+          "displayPrice": "4.99",
+          "familyShareable": false,
+          "groupNumber": 1,
+          "internalID": "68190727",
+          "introductoryOffer": null,
+          "localizations": [
+            {
+              "description": "Personal planning and reflection",
+              "displayName": "Offzone Pro Monthly",
+              "locale": "en_US"
+            }
+          ],
+          "productID": "com.exchip.roomdns.pro.monthly",
+          "recurringSubscriptionPeriod": "P1M",
+          "referenceName": "Offzone Pro Monthly",
+          "subscriptionGroupID": "22365436",
+          "type": "RecurringSubscription"
+        },
+        {
+          "adHocOffers": [],
+          "codeOffers": [],
+          "displayPrice": "29.99",
+          "familyShareable": false,
+          "groupNumber": 1,
+          "internalID": "68190728",
+          "introductoryOffer": null,
+          "localizations": [
+            {
+              "description": "Personal planning and reflection",
+              "displayName": "Offzone Pro Annual",
+              "locale": "en_US"
+            }
+          ],
+          "productID": "com.exchip.roomdns.pro.annual",
+          "recurringSubscriptionPeriod": "P1Y",
+          "referenceName": "Offzone Pro Annual",
+          "subscriptionGroupID": "22365436",
+          "type": "RecurringSubscription"
+        }
+      ]
+    }
+  ],
+  "version": {
+    "major": 3,
+    "minor": 0
+  }
+}

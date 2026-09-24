@@ -1,0 +1,127 @@
+{
+  "kind": "static preview assets, alpha attenuation only; not release-approved",
+  "portraits": {
+    "welcome": {
+      "source": ".growth-design/mascots/2026-09-24-rue-statebook/assets/portraits/welcome.png",
+      "sourceSha256": "d1f5f2c22486aa281b72079cad2dfcab1b60efc2a6ae2f06b440291ca19a5358",
+      "path": "RoomDNS/Assets.xcassets/OffzoneRue-portraits-welcome.imageset/art.png",
+      "sha256": "701b66a5d6b88169cb4d77a31982c9fe3ff64eef8502051e397a8b8e9e73f3ea",
+      "size": [
+        341,
+        512
+      ]
+    },
+    "ready": {
+      "source": ".growth-design/mascots/2026-09-24-rue-statebook/assets/portraits/ready.png",
+      "sourceSha256": "2b73b0b3f9f1a0e1cd26384e7dc8b098ccb2cbef58f4fc344cb6bd5cc1a29881",
+      "path": "RoomDNS/Assets.xcassets/OffzoneRue-portraits-ready.imageset/art.png",
+      "sha256": "258e053e27e88813b9faca8cb886cc0b3a93d50840f0e41d2fa3ee9c9ea111de",
+      "size": [
+        325,
+        512
+      ]
+    },
+    "focused": {
+      "source": ".growth-design/mascots/2026-09-24-rue-statebook/assets/portraits/focused.png",
+      "sourceSha256": "61514885220a21a0d6ad9b2541e2063058175705a94187049ec495e330c97f73",
+      "path": "RoomDNS/Assets.xcassets/OffzoneRue-portraits-focused.imageset/art.png",
+      "sha256": "9aed3e5b22557e1f074594d8b528f81fdf88c668706fd9d721ba411d7781cac3",
+      "size": [
+        341,
+        512
+      ]
+    },
+    "reflection": {
+      "source": ".growth-design/mascots/2026-09-24-rue-statebook/assets/portraits/reflection.png",
+      "sourceSha256": "df1eb5ab497076de79232272a40a64ba1a029fb70c0b8c3ab8ed5a7357f4d0a8",
+      "path": "RoomDNS/Assets.xcassets/OffzoneRue-portraits-reflection.imageset/art.png",
+      "sha256": "7498d03b4757fcebfa0dc84f50415f53ab6c9ca4c1cb2feb68eed9e89f94db4d",
+      "size": [
+        325,
+        512
+      ]
+    },
+    "finished": {
+      "source": ".growth-design/mascots/2026-09-24-rue-statebook/assets/portraits/finished.png",
+      "sourceSha256": "61b27e6304702a6ba4e194e0a8c359280283067f24429f2586b2471f3ccf3c3b",
+      "path": "RoomDNS/Assets.xcassets/OffzoneRue-portraits-finished.imageset/art.png",
+      "sha256": "004401c1b4ec758608f5c25cfb4f5e0ff191ac8203987ff0bd897c42c7d0c8c3",
+      "size": [
+        384,
+        384
+      ]
+    },
+    "recovered": {
+      "source": ".growth-design/mascots/2026-09-24-rue-statebook/assets/portraits/recovered.png",
+      "sourceSha256": "9610a9664a357d6dd4f081ad8bf518ff3afcb16c0bc0c9c8361a57c4e4488dc2",
+      "path": "RoomDNS/Assets.xcassets/OffzoneRue-portraits-recovered.imageset/art.png",
+      "sha256": "94995a52de230dfc4d1f5340e7d3176288f34e9ff1dd4c8aa9d12b88eb8dad1c",
+      "size": [
+        384,
+        384
+      ]
+    },
+    "needs-action": {
+      "source": ".growth-design/mascots/2026-09-24-rue-statebook/assets/portraits/needs-action.png",
+      "sourceSha256": "c2270bf32fd04e512cd3165a8a4bfe028d6d61b317f6819c5e92c7279438f8ec",
+      "path": "RoomDNS/Assets.xcassets/OffzoneRue-portraits-needs-action.imageset/art.png",
+      "sha256": "1f27b04a86cc100f735be89cb2699266c5257bcd8694a1b01241b62dc20112b5",
+      "size": [
+        384,
+        384
+      ]
+    },
+    "failed": {
+      "source": ".growth-design/mascots/2026-09-24-rue-statebook/assets/portraits/failed.png",
+      "sourceSha256": "e6a6ef0c9424e607c26a4d77915189dd986d4023a17ab25c22b3a1cdf439326c",
+      "path": "RoomDNS/Assets.xcassets/OffzoneRue-portraits-failed.imageset/art.png",
+      "sha256": "98d5326297afd0a1bbff767e27b7ce2ff301b01e548a08a7066d4c9e466fcc85",
+      "size": [
+        384,
+        384
+      ]
+    }
+  },
+  "fullbody": {
+    "welcome": {
+      "source": ".growth-design/mascots/2026-09-24-rue-short-skirt/assets/anchor.png",
+      "sourceSha256": "f86e78d67a288e1912ced276d1d279112b8509f1b8b596515933978a0fe2310d",
+      "path": "RoomDNS/Assets.xcassets/OffzoneRue-fullbody-welcome.imageset/art.png",
+      "sha256": "d201ab832a114a5be21c02b1e8bc159d852248429c5d8fc6189e867b4a2b39ff",
+      "size": [
+        512,
+        768
+      ]
+    },
+    "ready": {
+      "source": ".growth-design/mascots/2026-09-24-rue-statebook/assets/fullbody/ready.png",
+      "sourceSha256": "4e1249fe6d8dc9da4564122c14852911d490802854e32a995ff90f49cd057ee9",
+      "path": "RoomDNS/Assets.xcassets/OffzoneRue-fullbody-ready.imageset/art.png",
+      "sha256": "9aa94483f2f34325db7252cfe704a00c40d1db4bd45f20df6c7560e9f869734c",
+      "size": [
+        512,
+        768
+      ]
+    },
+    "focused": {
+      "source": ".growth-design/mascots/2026-09-24-rue-statebook/assets/fullbody/focused.png",
+      "sourceSha256": "54746604e88416771e4614f838e88fb70f01db2fbb91c7ef733f358e40f32a0d",
+      "path": "RoomDNS/Assets.xcassets/OffzoneRue-fullbody-focused.imageset/art.png",
+      "sha256": "ce40f34787698b37d543365c5dca0e2d29bf4f14c843a3f6c95804c54717df41",
+      "size": [
+        512,
+        768
+      ]
+    },
+    "recovered": {
+      "source": ".growth-design/mascots/2026-09-24-rue-statebook/assets/fullbody/recovered.png",
+      "sourceSha256": "b0cec8866e5769634456e54dca5ce22411c3482bae672c198bee95a95c0384c3",
+      "path": "RoomDNS/Assets.xcassets/OffzoneRue-fullbody-recovered.imageset/art.png",
+      "sha256": "fded92f773a6420668a15fea37013d33f6ff70399e454cb0e61e29f74c90a90b",
+      "size": [
+        512,
+        768
+      ]
+    }
+  }
+}

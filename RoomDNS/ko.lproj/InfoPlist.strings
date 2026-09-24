@@ -1,0 +1,4 @@
+"CFBundleDisplayName" = "오프존";
+"NSLocationWhenInUseUsageDescription" = "현재 위치를 규칙의 장소로 저장할 때 사용합니다.";
+"NSLocationAlwaysAndWhenInUseUsageDescription" = "앱이 열려 있지 않아도 선택한 장소에 들어오거나 나가는 때를 감지할 때 사용합니다.";
+"CFBundleName" = "오프존";

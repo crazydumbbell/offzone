@@ -1,0 +1,4 @@
+"CFBundleDisplayName" = "Offzone";
+"NSLocationWhenInUseUsageDescription" = "Offzone uses your current location to save a place for your rule.";
+"NSLocationAlwaysAndWhenInUseUsageDescription" = "Offzone detects when you enter or leave your chosen place, even when the app is not open.";
+"CFBundleName" = "Offzone";

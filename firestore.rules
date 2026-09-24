@@ -1,0 +1,18 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    match /users/{uid} {
+      function owner() { return request.auth != null && request.auth.uid == uid; }
+      function verifiedIdentity() {
+        return request.auth.token.get('email_verified', false)
+          || request.auth.token.firebase.identities.keys().hasAny(['apple.com', 'google.com']);
+      }
+      allow read, delete: if owner();
+      allow create, update: if owner() && verifiedIdentity()
+        && request.resource.data.keys().hasAll(['goal', 'updatedAt'])
+        && request.resource.data.keys().hasOnly(['goal', 'updatedAt'])
+        && request.resource.data.goal in ['work', 'rest', 'presence', 'personal']
+        && request.resource.data.updatedAt == request.time;
+    }
+  }
+}
