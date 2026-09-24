@@ -18,6 +18,7 @@ xcuserdata/
 !/README.md
 /APP_GRAPH.json
 /APP_METADATA.json
+/tools/check_product_alignment.py
 
 # Keep only the source art used by the current Rue assets and outfit study
 /.growth-design/*
