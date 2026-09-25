@@ -524,10 +524,15 @@
 "In the morning" = "In the morning";
 "In the afternoon" = "In the afternoon";
 "In the evening" = "In the evening";
+"Another time" = "Another time";
+"Start time" = "Start time";
+"Not sure yet" = "Not sure yet";
+"Suggested: %@. You can change it next." = "Suggested: %@. You can change it next.";
+"Saved rule unavailable. Go to home and choose a rule." = "Saved rule unavailable. Go to home and choose a rule.";
 "What would you like more room for?" = "What would you like more room for?";
 "Start with one thing that matters to you." = "Start with one thing that matters to you.";
 "When does your phone get in the way?" = "When does your phone get in the way?";
-"We’ll suggest an hour to start. You can change it next." = "We’ll suggest an hour to start. You can change it next.";
+"Choose a time or use a suggestion. You can change it next." = "Choose a time or use a suggestion. You can change it next.";
 "Build my first rule" = "Build my first rule";
 "A little room, ready for you." = "A little room, ready for you.";
 "Saved on this iPhone. Restrictions haven’t started." = "Saved on this iPhone. Restrictions haven’t started.";

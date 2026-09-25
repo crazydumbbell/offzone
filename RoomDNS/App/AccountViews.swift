@@ -273,16 +273,29 @@ struct RoomPaywallView: View {
         NavigationStack {
             ScrollView {
                 VStack(alignment: .leading, spacing: 24) {
-                    HStack {
-                        Text("OFFZONE PRO").font(.suit(.caption, weight: .bold)).tracking(1.4)
-                        Spacer()
-                        RoomSpirit(state: .welcome).frame(width: 96, height: 88)
-                    }
-                    Text(roomString(goal.headline)).font(.suit(.largeTitle, weight: .bold))
-                    if account.canShowOffer && !account.isPro {
-                        ForEach(account.proBenefits, id: \.self) { benefit in
-                            Label(roomString(benefit), systemImage: "checkmark").fixedSize(horizontal: false, vertical: true)
+                    Text("OFFZONE PRO")
+                        .font(.suit(.caption, weight: .bold)).tracking(1.4)
+                    RoomSpirit(state: .welcome)
+                        .frame(height: 184).frame(maxWidth: .infinity)
+                        .accessibilityHidden(true)
+                    Text(roomString(goal.headline))
+                        .font(.suit(.largeTitle, weight: .bold))
+                        .fixedSize(horizontal: false, vertical: true)
+                        .accessibilityAddTraits(.isHeader)
+                    if !account.proBenefits.isEmpty {
+                        VStack(alignment: .leading, spacing: 0) {
+                            ForEach(Array(account.proBenefits.enumerated()), id: \.offset) { index, benefit in
+                                Label(roomString(benefit), systemImage: "checkmark.circle.fill")
+                                    .fixedSize(horizontal: false, vertical: true)
+                                    .frame(maxWidth: .infinity, minHeight: 58, alignment: .leading)
+                                if index < account.proBenefits.count - 1 { Divider() }
+                            }
                         }
+                        .padding(.horizontal, 20).padding(.vertical, 8)
+                        .background(Color.roomPaper)
+                        .clipShape(RoundedRectangle(cornerRadius: 22))
+                    }
+                    if account.canShowOffer && !account.isPro {
                         Text("Stored only on this iPhone, excluded from backup. Export before changing phones or deleting Offzone.")
                             .font(.suit(.footnote)).foregroundStyle(Color.roomInkSecondary)
                         VStack(spacing: 12) {
@@ -305,7 +318,10 @@ struct RoomPaywallView: View {
                         }
                     } else {
                         Text(account.isPro ? roomString("Your Pro subscription is active.") : roomString("Plans aren’t available right now. Your free rules are ready to use."))
-                        if !account.isPro {
+                            .font(.suit(.subheadline))
+                            .padding(18).frame(maxWidth: .infinity, alignment: .leading)
+                            .background(Color.roomMint).clipShape(RoundedRectangle(cornerRadius: 16))
+                        if account.offersEnabled && !account.isPro {
                             Button("Try again") { Task { await account.loadOfferings() } }.frame(minHeight: 44)
                         }
                     }
@@ -330,8 +346,13 @@ struct RoomPaywallView: View {
                         Button(terms.action) { Task { await account.purchase(selected) } }
                             .roomPrimaryAction().disabled(account.isBusy)
                     }
-                    Button("Continue with free") { dismiss() }
-                        .font(.suit(.body, weight: .semibold)).frame(minHeight: 44)
+                    if account.canShowOffer && !account.isPro {
+                        Button("Continue with free") { dismiss() }
+                            .font(.suit(.body, weight: .semibold)).frame(minHeight: 44)
+                    } else {
+                        Button("Continue with free") { dismiss() }
+                            .roomPrimaryAction()
+                    }
                 }.padding(.horizontal, 24).padding(.top, 12).padding(.bottom, 8).background(Color.roomCanvas)
             }
         }

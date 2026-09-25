@@ -80,6 +80,11 @@ struct ContentView: View {
     @State private var roomieReaction: RoomSpiritState?
     @State private var accountPresented = false
     @State private var paywallPresented = false
+    @State private var customStartTime = FocusWindow.morning.date(minutes: 12 * 60)
+    @State private var readyActivationError: String?
+#if DEBUG
+    @State private var didPresentPreviewPaywall = false
+#endif
     @AppStorage(OnboardingProfile.completedKey) private var onboardingCompleted = false
     @AppStorage(OnboardingProfile.goalKey) private var goalRaw = FocusGoal.work.rawValue
     @AppStorage(OnboardingProfile.windowKey) private var windowRaw = FocusWindow.morning.rawValue
@@ -227,8 +232,17 @@ struct ContentView: View {
             recordVisit()
             if !model.rules.isEmpty { onboardingCompleted = true }
             if model.isFocused { firstFocus = true }
+#if DEBUG
+            if !didPresentPreviewPaywall && ProcessInfo.processInfo.arguments.contains("-offzonePreviewPaywall") {
+                didPresentPreviewPaywall = true
+                paywallPresented = true
+            }
+#endif
         }
-        .onChange(of: screen) { _, value in if value != .home { roomieReaction = nil } }
+        .onChange(of: screen) { _, value in
+            if value != .home { roomieReaction = nil }
+            if value != .ready { readyActivationError = nil }
+        }
         .onChange(of: model.isFocused) { wasFocused, focused in
             if focused { firstFocus = true }
             if wasFocused && !focused && SharedState.ruleEnabled && !SharedState.scheduleActive
@@ -288,6 +302,16 @@ struct ContentView: View {
     private var goal: FocusGoal { FocusGoal(rawValue: goalRaw) ?? .work }
     private var window: FocusWindow { FocusWindow(rawValue: windowRaw) ?? goal.suggestedWindow }
 
+    private func rhythmTimeRange(_ item: FocusWindow) -> String {
+        "\(item.date(minutes: item.startMinutes).formatted(date: .omitted, time: .shortened))–\(item.date(minutes: item.endMinutes).formatted(date: .omitted, time: .shortened))"
+    }
+
+    private var customTimeRange: String {
+        let endMinutes = (minutes(from: customStartTime) + 60) % (24 * 60)
+        let end = FocusWindow.morning.date(minutes: endMinutes)
+        return "\(customStartTime.formatted(date: .omitted, time: .shortened))–\(end.formatted(date: .omitted, time: .shortened))"
+    }
+
     private var goalScreen: some View {
         setupScreen(title: roomString("What matters most?"),
                     detail: roomString("Start with one thing that matters to you."),
@@ -305,25 +329,77 @@ struct ContentView: View {
     }
 
     private var rhythmScreen: some View {
-        setupScreen(title: roomString("When does your phone get in the way?"),
-                    detail: roomString("We’ll suggest an hour to start. You can change it next."),
+        let optionLayout = dynamicTypeSize.isAccessibilitySize
+            ? AnyLayout(VStackLayout(spacing: 10))
+            : AnyLayout(HStackLayout(spacing: 10))
+        return setupScreen(title: roomString("When does your phone get in the way?"),
+                    detail: roomString("Choose a time or use a suggestion. You can change it next."),
                     actionTitle: roomString("Build my first rule"), action: {
                         model.beginNewRuleDraft()
                         model.ruleName = roomString(goal.ruleName)
-                        model.startTime = window.date(minutes: window.startMinutes)
-                        model.endTime = window.date(minutes: window.endMinutes)
+                        let draft = OnboardingProfile.draftMinutes(
+                            windowRaw: windowRaw, goal: goal,
+                            customStartMinutes: minutes(from: customStartTime))
+                        model.startTime = window.date(minutes: draft.start)
+                        model.endTime = window.date(minutes: draft.end)
                         placeMode = .gps
                         permissionDestination = .targets
                         screen = model.screenTimeAuthorized ? .targets : .permission
                     }) {
             VStack(spacing: 12) {
+                optionLayout {
+                    rhythmQuickChoice(title: roomString("Another time"), symbol: "clock.arrow.circlepath",
+                                      selected: windowRaw == "custom") { windowRaw = "custom" }
+                    rhythmQuickChoice(title: roomString("Not sure yet"), symbol: "sparkles",
+                                      selected: windowRaw == "unsure") { windowRaw = "unsure" }
+                }
+                if windowRaw == "custom" {
+                    VStack(alignment: .leading, spacing: 6) {
+                        DatePicker(roomString("Start time"), selection: $customStartTime, displayedComponents: .hourAndMinute)
+                            .datePickerStyle(.compact)
+                        Text(customTimeRange)
+                            .font(.suit(.subheadline))
+                            .foregroundStyle(Color.roomInkSecondary)
+                    }
+                    .font(.suit(.body, weight: .semibold))
+                    .padding(16)
+                    .editorialPanel(Color.roomBlue)
+                } else if windowRaw == "unsure" {
+                    Text(roomString("Suggested: %@. You can change it next.", rhythmTimeRange(goal.suggestedWindow)))
+                        .font(.suit(.subheadline))
+                        .foregroundStyle(Color.roomInkSecondary)
+                        .frame(maxWidth: .infinity, alignment: .leading)
+                        .padding(16)
+                        .editorialPanel(Color.roomBlue)
+                }
                 ForEach(FocusWindow.allCases) { item in
                     choiceRow(title: roomString(item.title),
-                              detail: "\(item.date(minutes: item.startMinutes).formatted(date: .omitted, time: .shortened))–\(item.date(minutes: item.endMinutes).formatted(date: .omitted, time: .shortened))",
-                              symbol: "clock", selected: window == item) { windowRaw = item.rawValue }
+                              detail: rhythmTimeRange(item),
+                              symbol: "clock", selected: windowRaw == item.rawValue) { windowRaw = item.rawValue }
                 }
             }
         }
+    }
+
+    private func rhythmQuickChoice(title: String, symbol: String, selected: Bool,
+                                   action: @escaping () -> Void) -> some View {
+        Button(action: action) {
+            HStack(spacing: 7) {
+                Image(systemName: symbol).accessibilityHidden(true)
+                Text(title).fixedSize(horizontal: false, vertical: true)
+                Spacer(minLength: 0)
+                if selected { Image(systemName: "checkmark.circle.fill").accessibilityHidden(true) }
+            }
+            .font(.suit(.subheadline, weight: .semibold))
+            .foregroundStyle(Color.roomInk)
+            .padding(.horizontal, 12)
+            .frame(maxWidth: .infinity, minHeight: 52)
+            .background(selected ? Color.roomMint : Color.roomPaper)
+            .clipShape(RoundedRectangle(cornerRadius: 14))
+            .overlay { RoundedRectangle(cornerRadius: 14).stroke(selected ? Color.roomAction : Color.roomSeparator) }
+        }
+        .buttonStyle(.plain)
+        .accessibilityAddTraits(selected ? .isSelected : [])
     }
 
     private func choiceRow(title: String, detail: String, symbol: String, selected: Bool,
@@ -370,6 +446,7 @@ struct ContentView: View {
                 }
                 Label("You can always restore access for free.", systemImage: "arrow.counterclockwise")
                     .font(.suit(.subheadline))
+                actionFeedback
                 if account.isConfigured && !account.isSignedIn {
                     Button("Save my goal to an account") { accountPresented = true }
                         .font(.suit(.body, weight: .semibold)).frame(minHeight: 44)
@@ -380,10 +457,14 @@ struct ContentView: View {
         .safeAreaInset(edge: .bottom) {
             VStack(spacing: 4) {
                 primaryButton(roomString("Activate my rule")) {
-                    if let rule = model.rules.first(where: { $0.id == model.editingRuleID }) {
-                        activate(rule)
+                    guard let rule = model.rules.first(where: { $0.id == model.editingRuleID }) else {
+                        readyActivationError = roomString("Saved rule unavailable. Go to home and choose a rule.")
+                        return
                     }
+                    readyActivationError = nil
+                    guard activate(rule) else { return }
                     screen = .home
+                    paywallPresented = true
                 }
                 Button("Go to home") { screen = .home }
                     .font(.suit(.body, weight: .medium)).frame(minHeight: 44)
@@ -879,13 +960,16 @@ struct ContentView: View {
         return .roomInk
     }
 
-    private func activate(_ rule: FocusRule) {
-        guard rule.placeMode == .gps else { editRule(rule); return }
-        guard !model.isFocused else { unlockPassPresented = true; return }
-        if model.activateRule(rule.id) {
+    @discardableResult
+    private func activate(_ rule: FocusRule) -> Bool {
+        guard rule.placeMode == .gps else { editRule(rule); return false }
+        guard !model.isFocused else { unlockPassPresented = true; return false }
+        let activated = model.activateRule(rule.id)
+        if activated {
             placeMode = .gps
             roomieReaction = .confirmed
         }
+        return activated
     }
 
     private func recordVisit() {
@@ -898,7 +982,7 @@ struct ContentView: View {
 
     @ViewBuilder
     private var actionFeedback: some View {
-        if let error = model.errorMessage {
+        if let error = readyActivationError ?? model.errorMessage {
             Text(error)
                 .font(.suit(.subheadline, weight: .semibold))
                 .foregroundStyle(Color.roomInk)

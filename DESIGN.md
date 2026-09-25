@@ -1,5 +1,9 @@
 # Offzone Design System
 
+## 첫 설정 시간·Pro 진입 — 2026-09-25 (D-45)
+
+시간 카드의 기본 아침/오후/저녁 외에 **Another time**을 두고 네이티브 시간 선택기를 펼친다. **Not sure yet**은 선택 목표의 추천 1시간을 명시해 선택 부담을 줄인다. 선택 카드와 시간 텍스트는 영어 원문·한국어 보조 현지화를 따른다. 첫 규칙 저장 뒤 준비 화면에서 `Activate my rule` 성공 시 Nook Cat이 있는 기존 `RoomPaywallView`를 바로 표시하고, `Continue with free`/닫기와 무료 `Restore access`를 유지한다. 판매 준비가 꺼져 있으면 실제 가격·7일 체험 주장이나 구매 버튼 없이 무료 사용 안내를 보여준다. 첨부 영상은 시각 참고다. iOS 시뮬레이터에서 영어·한국어 시간 선택과 Pro 화면 렌더링을 확인했으며 전체 활성화 흐름·실기기·Android 동등 흐름은 별도 확인한다.
+
 ## Nook Cat 네이티브 배치 — 2026-09-25 (현재 로컬 구현)
 
 사용자가 [보드 F](.growth-design/mascots/2026-09-25-cute-10x10/index.html#candidate-F)를 선택했다. 원본의 버터색 장면 배경을 앱에 넣지 않고 새 RGBA 표정8·전신4를 [Nook 앱 팩](.growth-design/mascots/2026-09-25-nook-native/MASCOTS.md)으로 제작했다. iOS의 13개 `RoomSpiritState`는 작은 슬롯에서 얼굴 표정, 넓은 슬롯에서 니트 조끼가 보이는 전신을 선택한다. Android 온보딩은 첫 화면 전신과 다음 두 단계의 표정을, 홈은 준비/집중 전신을 사용한다. SUIT, 버터/차콜 화면, 공식 `off` 아이콘과 무료 복구·명시적 집중 시작을 유지한다. 알파 채널이 있다고 윤곽이 완전히 깨끗하다는 뜻은 아니므로 실제 합성 화면과 실기기·접근성 검수를 별도로 기록한다. 아래 Rue·Kiwi 절은 당시 기록이다.

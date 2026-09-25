@@ -69,6 +69,21 @@ final class RestrictionPolicyTests: XCTestCase {
         XCTAssertEqual(calendar.component(.day, from: end), 28)
     }
 
+    func testOnboardingDraftWindowChoices() {
+        XCTAssertEqual(FocusWindow.allCases.count, 3)
+        let custom = OnboardingProfile.draftMinutes(windowRaw: "custom", goal: .work, customStartMinutes: 23 * 60 + 45)
+        XCTAssertEqual(custom.start, 23 * 60 + 45)
+        XCTAssertEqual(custom.end, 45)
+
+        let unsureWork = OnboardingProfile.draftMinutes(windowRaw: "unsure", goal: .work, customStartMinutes: 0)
+        XCTAssertEqual(unsureWork.start, FocusWindow.morning.startMinutes)
+        XCTAssertEqual(unsureWork.end, FocusWindow.morning.endMinutes)
+
+        let unsureRest = OnboardingProfile.draftMinutes(windowRaw: "unsure", goal: .rest, customStartMinutes: 0)
+        XCTAssertEqual(unsureRest.start, FocusWindow.evening.startMinutes)
+        XCTAssertEqual(unsureRest.end, FocusWindow.evening.endMinutes)
+    }
+
     private var originalDefaults: [String: Any] = [:]
     private var originalRuntime: Data?
 

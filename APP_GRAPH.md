@@ -1,5 +1,9 @@
 # Offzone 앱 구성 및 전략 연결 그래프
 
+## D-45 첫 규칙 시간·Pro 진입 · 2026-09-25
+
+**iOS 소스 확인:** `ContentView.rhythmScreen`은 아침/오후/저녁과 `Another time` 네이티브 시작 시각 선택, `Not sure yet` 목표별 추천 1시간을 제공한다. 첫 규칙의 Save 성공 → Ready → `Activate my rule` 성공 → 홈 위 `RoomPaywallView` sheet로 연결된다. 실패 시 Ready에 머물고 `Go to home`으로 구매 없이 이동할 수 있다. Pro 화면에는 `Continue with free`/닫기와 상품 복원이 있으며 앱의 무료 `Restore access` 경로는 유지된다. `RoomProOfferReady=false`인 현재 빌드에는 체험·가격·구매 주장이 없다. Android 동등 흐름과 실제 기기·구매 검증은 남아 있다. 첨부 영상은 시각 참고다.
+
 ## D-44 Nook Cat 현재 연결 · 2026-09-25
 
 **확인된 소스 관계:** [디자인보드 F](.growth-design/mascots/2026-09-25-cute-10x10/index.html#candidate-F) → 내장 image_gen 새 RGBA 12컷 [manifest](.growth-design/mascots/2026-09-25-nook-native/manifest.json) → iOS `OffzoneNook-*` 12 imageset / Android `nook_*` 12 drawable. iOS `RoomSpiritState` 13개는 `OffzoneNookExpression` 표정8과 큰 슬롯의 `OffzoneNookFullBody` 전신4로 매핑된다. Android `OnboardingScreen`은 `NookCatView` 전신 환영·준비/집중 표정, `MainActivity` 홈은 준비/집중 전신에 연결한다. Android의 나머지 번들 상태는 아직 화면에 연결되지 않았다. 영어·한국어 마스코트 설명만 교체하고 명시적 **Start focus**와 무료 **Restore access**의 정책 경로는 그대로 둔다. iOS 대상 XCTest 1/1(최종 여백 수정 전)·최종 증분 빌드와 한국어 첫 화면/영어 네 화면, Android 에뮬레이터 2/2와 네 화면 캡처는 네이티브 배치 증거이며 실기기 동작·출시·완전한 clean alpha 보장은 아니다. 공식 `off` 아이콘/스토어 초안은 이번 마스코트 적용 범위가 아니다.
@@ -45,12 +49,19 @@ Strategy revision: **G1** · 구현 기준: **R1 핵심 변경 / 진행 중** ·
 flowchart TD
   Entry[App launch] --> Check{No saved rules and no rules storage error?}
   Check -->|Yes| Welcome[Welcome / English first]
-  Welcome --> Permission[Screen Time permission]
+  Welcome --> Goal[Choose a goal]
+  Goal --> Rhythm[Choose a time / Another time / Not sure yet]
+  Rhythm --> Permission[Screen Time permission]
   Permission --> Targets[Choose apps and websites]
   Targets --> Place[Search a place / adjust pin / current location]
   Place --> Schedule[Daily schedule]
   Schedule --> Review[Review / Save rule]
-  Review --> Home[Home / applied status and saved rules]
+  Review --> Save{First saved rule?}
+  Save -->|Yes| Ready[Ready / saved rule]
+  Save -->|No| Home[Home / applied status and saved rules]
+  Ready -->|Activate my rule succeeds| Paywall[Dismissible Pro screen]
+  Ready -->|Go to home| Home
+  Paywall -->|Continue with free / Close| Home
   Check -->|No| Home
   Home --> Edit[New or edit saved rule]
   Edit --> Targets

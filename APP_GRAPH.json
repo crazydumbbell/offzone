@@ -23,6 +23,7 @@
     "visual_direction": "butter_ink_nook_cat_suit_native",
     "presentation_revision": "nook-cat-native-2026-09-25",
     "presentation_change_scope": "Selected design-board F Nook Cat. New RGBA static portraits (8) and full-body poses (4) replace Rue on iOS and Android; iOS 13 states and Android onboarding/home are mapped. Original scene background is not bundled. English-first copy, explicit Start focus, free Restore access and official off icon remain. iOS targeted simulator test 1/1 before the final layout-only change, final incremental build, Korean welcome and four English screen renders, Android emulator 2/2 and four screens observed. Device, full accessibility, edge and rights review pending; no Nook wardrobe or store release.",
+    "onboarding_offer_sequence": "iOS goal -> morning/afternoon/evening or Another time native picker or Not sure yet suggested hour -> first saved rule -> successful Activate my rule -> dismissible RoomPaywallView over Home. Continue with free, Close and free Restore access remain. RoomProOfferReady=false; no trial/price/purchase claim in the unavailable state. Android parity and device/purchase validation pending.",
     "account_purchase_configuration": "Firebase Apple auth/Firestore/Functions configured; Blaze and both purchase functions deployed ACTIVE; RC catalog configured; client product/balance/spend/retry and locked same-session release implemented behind a false readiness gate; device validation and stale-session compensation pending",
     "place_activation": "MapKit place selection; uncertainty-aware location confirmation; explicit Start focus per schedule occurrence; NFC removed with decode-only compatibility"
   },
@@ -32,24 +33,24 @@
     "Extensions/ShieldConfiguration/ShieldConfigurationExtension.swift": "83fcfb61ed392e4758460626a617fcb85ac30cb891e284bf9f45506239cf9b1c",
     "RoomDNS.xcodeproj/project.pbxproj": "3ede71919b34951bad45a79d0abf2aad904be44e63533beb47058336ab251c7d",
     "RoomDNS/App/AppModel.swift": "9720c3d421fcd4e0f36240ed9dd8a51f31fd564cfd39a4436c39dd793b1bbb16",
-    "RoomDNS/App/ContentView.swift": "719a519e4626929cf556e8543e380e43b45d4c1325f0bcd7f7c8cb4ca307aefa",
+    "RoomDNS/App/ContentView.swift": "480d26caf712b1840aff5f5ea4983f47ca9fdcb9e55d16a0ced980a0874c7ce8",
     "RoomDNS/App/RoomDNSApp.swift": "f099842ed6a2d79f20a0935e47d162a92476516dedf9979df4df634a2cb8fc81",
     "RoomDNS/Info.plist": "de99afee4ae322712f463ad775e30937d41f45cb4112be577b02cde9f433a4cd",
     "RoomDNS/RoomDNS.entitlements": "d5c730b7e8e0113d24d4f13c2b1a699432113e477147e005ef4482dd1c6f8d1d",
     "RoomDNS/Shared/RestrictionState.swift": "97a73c753a00f09ec49cc390fc37434bcc1895524e4d1f03d228cc3473c0278e",
     "RoomDNS/en.lproj/InfoPlist.strings": "4ee6daa3694201a05c0b62bb3c1152367c7178c89f6f4aba0af48c39fded507a",
-    "RoomDNS/en.lproj/Localizable.strings": "c988a89ad3cb3878d565b257c83c823819440391565f5eb3785f9c821fcd794c",
+    "RoomDNS/en.lproj/Localizable.strings": "4f9fc18f276d1eaf481ce3137efe6738286c546c15d788b1cc73d219fd9446c8",
     "RoomDNS/ko.lproj/InfoPlist.strings": "9e2ee1529bca999ad7051e381ba7e48121aadabbc15653abdee708a00e56ccce",
-    "RoomDNS/ko.lproj/Localizable.strings": "1d22cbed1be7712dec4141ceddf0082bfd64022215918377fc6db7effd4ca84c",
-    "RoomDNSTests/RestrictionPolicyTests.swift": "d126da3bfd8c80d1ae2da98169f7c22dcd97cef8611f94d6078ec1535a01fcec",
+    "RoomDNS/ko.lproj/Localizable.strings": "8dcfafedf362a41fa31de9f15f0f8cf5af8efa61fd8252a898de3b31df62b519",
+    "RoomDNSTests/RestrictionPolicyTests.swift": "503041e669f842ac61a834eb997c8f0651a913b201fbf22d74acffa5172b91c2",
     "RoomDNS/App/AccountStore.swift": "f7feb0a6c21fb42b2ec77c37964728c864d2e57906bfc244e3b78b46c5d6a2c9",
-    "RoomDNS/App/AccountViews.swift": "6a3b45dda62e360be352e10caa61b204967a8420c9efbbbc6e88a899fa7b81f6",
+    "RoomDNS/App/AccountViews.swift": "3b8a4c4545375362252b57e37cdd4438b2ac20c8c8735a5e17fcc8d68bccef1e",
     "assets/brand/offzone-logo-master.png": "30835461ba8d82d35c824cfc5b8277170ce50cffddcd11cf37977bc50a29a62b",
     "assets/brand/offzone-logo-source-lime.png": "0e0261fc1b5984ae2c342f7ed2fcf8690d8470d5ba47487f174384c1768f87a8",
     "RoomDNS/Assets.xcassets/Contents.json": "0fd49ba3c3585c709678e0046a821c3c60685ec7063720d30d3a3448be3a208b",
     "RoomDNS/Assets.xcassets/AppIcon.appiconset/Contents.json": "9cf2928dad89427abd581b6852db081352417f400afb65e60c479228cdc4f4da",
     "RoomDNS/Assets.xcassets/AppIcon.appiconset/AppIcon-1024.png": "0513607ed65639189983f7cd9a399e0d9cd671c56f9f16493bc88cef1d0e4156",
-    "RoomDNS/App/OnboardingProfile.swift": "733721bcdf0597d1f0dd9e3e7ff7aa42c36026c7103092ca391d921f3f869843",
+    "RoomDNS/App/OnboardingProfile.swift": "42be461942c2a1dbf464ca55ed3c14e3087af4047f56006edbd48ad55e57a084",
     "RoomDNSTests/AccountStoreTests.swift": "c12511b8ac10825c052c2a5f237ce4a3e9f0023353eb588c07c0467fc8e95a62",
     "RoomDNS/PrivacyInfo.xcprivacy": "d592cbd93d84b0d169f9d5a1b19b0bbd0c49e9daa9fa0c51c1145ef2a78137bb",
     "firestore.rules": "50654221afe66d7fe8f325acd1ed5663f1477b4ee632173c954befa4228ce73f",
@@ -3529,6 +3530,20 @@
         },
         {
           "path": "RoomDNS/App/ContentView.swift"
+        }
+      ]
+    },
+    {
+      "source": "feature.personalized_onboarding",
+      "target": "feature.subscription_offer",
+      "relation": "first saved rule activation success presents optional RoomPaywallView",
+      "confidence": "EXTRACTED",
+      "source_refs": [
+        {
+          "path": "RoomDNS/App/ContentView.swift"
+        },
+        {
+          "path": "RoomDNS/App/AccountViews.swift"
         }
       ]
     },

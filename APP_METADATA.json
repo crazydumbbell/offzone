@@ -148,7 +148,7 @@
     "english_first_runtime_migration_status": "implemented_build_checked_device_pending",
     "account_backend_status": "Offzone Firebase iOS app configured; Apple provider and revocation key enabled and verified via Identity Toolkit; live Firestore rules match local. Signed-device login/deletion pending.",
     "account_provider": "Sign in with Apple; Google not implemented",
-    "subscription_status": "RevenueCat key validation passed and Apple sandbox TEST delivered. Three draft products, offzone_pro offering/entitlement and PASS currency configured. Prices/trial/Pro benefits/legal pages and real purchases pending; offers disabled.",
+    "subscription_status": "RevenueCat key validation passed and Apple sandbox TEST delivered. Three draft products, offzone_pro offering/entitlement and PASS currency configured. Monthly/annual prices saved in ASC; trial approval and real purchase validation pending. Offers disabled.",
     "service_configuration": {
       "firebase_project_id": "roomdns-exchip",
       "firebase_ios_app_id": "1:842668693484:ios:563c1ca176f723d5f212c9",
@@ -409,7 +409,7 @@
           "path": "RoomDNS/App/ContentView.swift"
         }
       ],
-      "limitation": "Simulator UI verified; physical permission/blocking validation separate."
+      "limitation": "iOS source includes morning/afternoon/evening, Another time native start-time picker (one-hour window), and Not sure yet goal-based suggested hour. After first saved rule, successful Activate my rule presents the dismissible RoomPaywallView; failure stays on the ready screen. Rhythm and disabled-offer paywall rendered on simulator; full activation, physical device, and Android parity pending."
     },
     {
       "id": "apple_account",
@@ -437,7 +437,7 @@
           "path": "RoomDNS/App/AccountViews.swift"
         }
       ],
-      "limitation": "Pro weekly planning/reflection and current-identity/verified-expiry gate implemented. Monthly USD4.99/KRW7700, annual USD29.99/KRW49000 and 175-territory prices saved/reloaded in ASC. Paywall discloses device-only storage and backup exclusion. Real StoreKit/RevenueCat purchase, restore, refund and product review remain pending; offers disabled."
+      "limitation": "Pro weekly planning/reflection and current-identity/verified-expiry gate implemented. Monthly USD4.99/KRW7700, annual USD29.99/KRW49000 and 175-territory prices saved/reloaded in ASC. First-rule activation opens an optional iOS Pro screen with Continue with free; offer-ready is false, so it makes no trial or price claim and shows no purchase action. Paywall discloses device-only storage and backup exclusion when offers are available. Real StoreKit/RevenueCat purchase, restore, refund and product review remain pending; offers disabled."
     },
     {
       "id": "zone_notifications",

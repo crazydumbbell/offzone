@@ -1,5 +1,9 @@
 # Product
 
+## 2026-09-25 첫 규칙 시간 선택과 Pro 진입 (D-45)
+
+첫 설정의 시간 선택에는 아침·오후·저녁 1시간 제안 외에 **Another time**(직접 시작 시각 선택, 1시간 구간)과 **Not sure yet**(목표에 따른 추천 1시간 구간)을 둔다. 저장한 첫 규칙의 `Activate my rule`이 성공하면 닫을 수 있는 Pro 화면을 즉시 보여준다. `Continue with free` 또는 닫기로 홈에 남을 수 있고 무료 `Restore access`는 유지된다. 활성화 실패 때는 Pro 화면으로 이동하지 않는다. 참고 영상의 7일 체험이나 가격은 실제 자격·StoreKit 상품 확인 없이 약속하지 않으며 현재 판매 플래그는 꺼져 있다. 이 흐름은 iOS 코드에 반영됐고 Android 동등 흐름과 실기기/구매 검증은 남아 있다. 아래 예전 첫 사용·통행권 시퀀스보다 이 결정과 2026-09-16의 명시적 Start focus 흐름이 우선한다.
+
 ## 2026-09-25 Nook Cat 최종 선택·앱 적용 (D-44)
 
 사용자가 [귀요미 10종 디자인보드의 F, Nook Cat](.growth-design/mascots/2026-09-25-cute-10x10/index.html#candidate-F)을 최종 마스코트로 골랐다. 크림색 털·짙은 녹색 눈·니트 조끼의 정체성을 유지한 새 표정8/전신4 정적 PNG를 iOS/Android 앱 상태에 연결한다. 기준 시안의 장면 배경은 앱 자산이 아니며 [Nook 앱 팩](.growth-design/mascots/2026-09-25-nook-native/MASCOTS.md)에 출처·해시·품질 한계를 기록한다. 영어 우선·한국어 보조, 명시적 Start focus, 항상 무료 Restore access, 공식 `off` 아이콘을 유지한다. Rue 의상3종과 아래 D-43은 당시 기록이며 Nook 옷장·획득·판매를 뜻하지 않는다. 시뮬레이터/에뮬레이터 화면 확인과 실기기·접근성·출시 검증을 구분한다.

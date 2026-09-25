@@ -74,6 +74,14 @@ enum OnboardingProfile {
     static let goalKey = "onboarding.goal"
     static let windowKey = "onboarding.window"
 
+    static func draftMinutes(windowRaw: String, goal: FocusGoal, customStartMinutes: Int) -> (start: Int, end: Int) {
+        if windowRaw == "custom" {
+            return (customStartMinutes, (customStartMinutes + 60) % (24 * 60))
+        }
+        let window = FocusWindow(rawValue: windowRaw) ?? goal.suggestedWindow
+        return (window.startMinutes, window.endMinutes)
+    }
+
     static func shouldShowWelcome(hasRules: Bool, storageError: Bool, completed: Bool) -> Bool {
         !hasRules && !storageError && !completed
     }

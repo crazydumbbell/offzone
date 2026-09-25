@@ -1,6 +1,10 @@
 <!-- growth-desk-design-board -->
 # Offzone 디자인보드
 
+## iOS 시간 선택·Pro 화면 · 2026-09-25
+
+영어 시뮬레이터에서 [시간 선택](.growth-design/mascots/2026-09-25-nook-native/screenshots/ios-rhythm-choice-en.png), [직접 시간 지정](.growth-design/mascots/2026-09-25-nook-native/screenshots/ios-rhythm-custom-en.png), [Pro 화면](.growth-design/mascots/2026-09-25-nook-native/screenshots/ios-paywall-offer-disabled-en.png)을 캡처했다. `Another time`은 1시간 구간을 고르고 `Not sure yet`은 목표에 맞는 시간을 제안한다. 참고 영상의 레이아웃을 반영하되, 현재 판매 플래그가 꺼져 있어 Pro 화면에는 가격·체험·구매 버튼 대신 무료 계속하기가 표시된다. 실제 결제·실기기 검증은 별도다.
+
 ## 최종 선택 · Nook Cat F 상태북과 네이티브 배치 · 2026-09-25
 
 사용자가 귀요미 A–J 보드의 **F Nook Cat**을 최종 마스코트로 선택했다. [새 Nook Cat 디자인보드](.growth-design/mascots/2026-09-25-nook-native/index.html)에 원본 F, 새 표정 8종·전신 4종, 96px 미리보기와 버터·민트·블루·잉크 배경 점검을 모았다. [생성 지시 요약](.growth-design/mascots/2026-09-25-nook-native/PROMPTS.md)과 [원본/앱 자산 SHA](.growth-design/mascots/2026-09-25-nook-native/manifest.json)를 보존한다. 원본의 노란 장면 배경은 네이티브 에셋에 넣지 않았고 투명 PNG 12개를 iOS·Android에 동일하게 연결했다.
