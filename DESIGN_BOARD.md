@@ -1,6 +1,99 @@
 <!-- growth-desk-design-board -->
 # Offzone 디자인보드
 
+생성: 2026-09-25T04-29-35-964Z-abaa4ff7
+프로젝트 ID: offzone
+
+## 새 세션에서 사용
+
+이 파일과 [보드 JSON](.growth-design/2026-09-25T04-29-35-964Z-abaa4ff7/board.json)을 읽고 기존 화면·색상·문구를 기준으로 작업하세요. 실제 앱 화면과 홍보용 합성 이미지를 구분하세요.
+
+## 디자인 방향
+
+Current Android Nook Cat review board. Actual English emulator captures from signed Offzone 0.1.0 (versionCode 1) release APK on 2026-09-25 at 1080×1920, density 420: output/play-nook-candidates/*.png. App foreground and package com.exchip.roomdns verified. Home shows app blocking setup needed; Pro has sales offers disabled and a free exit. Account and home setup card use matching SoftButter #EFE5AB. Goal/rhythm were tested with scroll to final option but their initial 9:16 viewport clips lower options, so omitted from store candidates. Android emulator evidence only; physical device, live billing and permissions not verified. Historical Kiwi/Rue boards remain in earlier exports.
+
+- 배경: #F7F0C7
+- 본문: #191B19
+- 강조: #24473D
+- 글꼴: 시스템 sans-serif (macOS Apple SD Gothic Neo)
+
+[디자인보드 보기](.growth-design/2026-09-25T04-29-35-964Z-abaa4ff7/index.html)
+
+### Welcome to your space
+
+Choose when and where to make room for what matters.
+
+![실제 화면](.growth-design/2026-09-25T04-29-35-964Z-abaa4ff7/08c27c69-2cc0-4d3a-90b6-7d93ef8c7010.png)
+
+### Choose apps to put aside
+
+Keep essential apps available.
+
+![실제 화면](.growth-design/2026-09-25T04-29-35-964Z-abaa4ff7/d36445b6-3aa9-47e7-bb9a-4cb6780b11ee.png)
+
+### Choose where to start
+
+Pick a place for your saved rule.
+
+![실제 화면](.growth-design/2026-09-25T04-29-35-964Z-abaa4ff7/5509981b-d198-4731-880a-1031e8e6d6d0.png)
+
+### Set a daily window
+
+Choose the hour that works for you.
+
+![실제 화면](.growth-design/2026-09-25T04-29-35-964Z-abaa4ff7/724d1f39-790a-4eb9-b173-fc3b61fb3ec0.png)
+
+### Your rule is ready
+
+Save it now. Activate when you choose.
+
+![실제 화면](.growth-design/2026-09-25T04-29-35-964Z-abaa4ff7/f483bc16-1590-4a32-a9bb-d8cdb9d3a8de.png)
+
+### See your space
+
+Your rule stays visible, even before setup is complete.
+
+![실제 화면](.growth-design/2026-09-25T04-29-35-964Z-abaa4ff7/e30ae7f7-2661-4d07-9ab0-8e7e86d45e46.png)
+
+### Explore Pro
+
+See the offer and continue with free.
+
+![실제 화면](.growth-design/2026-09-25T04-29-35-964Z-abaa4ff7/31fae9da-149d-4bec-aa01-862fea020ae4.png)
+
+### Your free space
+
+Local rules and free recovery stay available.
+
+![실제 화면](.growth-design/2026-09-25T04-29-35-964Z-abaa4ff7/a581345d-c6ef-463a-b298-b8d7a9953fae.png)
+
+## 스토어 출력
+
+- [play 1080×1920](.growth-design/2026-09-25T04-29-35-964Z-abaa4ff7/d7d4439e-fd2b-4f23-a63b-5e3ef72eb958.jpg)
+- [play 1080×1920](.growth-design/2026-09-25T04-29-35-964Z-abaa4ff7/b2c52499-c3f4-4ee7-bd6f-2151a82a575f.jpg)
+- [play 1080×1920](.growth-design/2026-09-25T04-29-35-964Z-abaa4ff7/4c7b2c5c-a42b-482d-9a70-0c495bcb74bc.jpg)
+- [play 1080×1920](.growth-design/2026-09-25T04-29-35-964Z-abaa4ff7/c27d1e77-d93c-4205-972a-0b4a75257c4a.jpg)
+- [play 1080×1920](.growth-design/2026-09-25T04-29-35-964Z-abaa4ff7/fa8826e8-eca9-4654-b83e-d63a77927b76.jpg)
+- [play 1080×1920](.growth-design/2026-09-25T04-29-35-964Z-abaa4ff7/7d7c0742-b26d-4f01-8679-f9588616af04.jpg)
+- [play 1080×1920](.growth-design/2026-09-25T04-29-35-964Z-abaa4ff7/6ebc275c-a24f-4e5d-8cc0-60ecdda7db98.jpg)
+- [play 1080×1920](.growth-design/2026-09-25T04-29-35-964Z-abaa4ff7/cfd011dd-88f6-44e7-b74c-414ee29ef521.jpg)
+
+## 검토 필요
+
+출시 버전과의 일치·개인정보·문구 정확성을 확인하세요. 규격 일치가 스토어 심사 통과를 뜻하지 않습니다. Google Play 휴대폰 스크린샷은 최소 2장, 권장 4장 이상이며 최대 8장입니다. iPad는 실제 iPad 화면을 사용하세요. 자동 게시/스토어 업로드는 하지 않습니다.
+
+규격 확인: 2026-09-16
+https://developer.apple.com/help/app-store-connect/reference/app-information/screenshot-specifications
+https://support.google.com/googleplay/android-developer/answer/9866151?hl=en-GB
+
+## 선택된 Nook Cat과 과거 기록
+
+[Nook Cat 상태북](.growth-design/mascots/2026-09-25-nook-native/index.html) · [과거 디자인보드 기록](#과거-디자인보드-기록) · [실제 Android Play 업로드 후보](.growth-design/mascots/2026-09-25-nook-native/play/)
+
+## 과거 디자인보드 기록
+
+아래 기록의 “현재 앱” 문구는 해당 기록을 작성한 시점의 상태입니다. 최신 Android/Nook 상태는 위 보드와 상태북을 기준으로 보세요.
+
 ## iOS 예약 상태 카드 · 2026-09-25
 
 [수정된 실제 홈 화면](.growth-design/mascots/2026-09-25-nook-native/screenshots/ios-home-scheduled-warm-ko.png): 예약 상태에 따뜻한 아이보리 카드와 짙은 글씨를 사용하고, 일정 시작 전에는 비활성 `집중 시작` 버튼 대신 시작 시각·위치 안내를 보여준다. 차콜 카드는 실제 집중 중에만 사용한다.

@@ -6,7 +6,7 @@
   <meta name="color-scheme" content="light">
   <title>Nook Cat · Offzone mascot statebook</title>
   <style>
-    :root { --paper:#faf9f2; --butter:#fff2c8; --mint:#d9eee3; --blue:#dfeaf5; --ink:#21392f; --pine:#24473d; --line:#d6d9cb; --muted:#5b6b61; --rose:#bd826c; --stage-bg:var(--butter); }
+    :root { --paper:#faf9f2; --butter:#f7f0c7; --soft-butter:#efe5ab; --mint:#e8eedd; --blue:#dfeaf5; --ink:#191b19; --pine:#24473d; --line:#d6d9cb; --muted:#5b6b61; --rose:#bd826c; --stage-bg:var(--butter); }
     * { box-sizing:border-box; }
     html { scroll-behavior:smooth; }
     :target { scroll-margin-top:95px; }
@@ -65,6 +65,11 @@
     .screen strong { font-size:15px; }
     .screen span { color:var(--muted); font-size:12px; }
     .evidenceNote { margin:16px 0 0; color:var(--muted); font-size:13px; }
+    .featureArt { margin:0; border:1px solid var(--line); background:var(--soft-butter); }
+    .featureArt img { display:block; width:100%; height:auto; }
+    .featureArt figcaption { padding:13px 16px; color:var(--muted); font-size:13px; background:#fffef9; }
+    .playLinks { display:flex; flex-wrap:wrap; gap:9px; margin-top:15px; }
+    .playLinks a { padding:9px 13px; border:1px solid var(--line); border-radius:999px; background:#fffef9; font-size:13px; font-weight:700; }
     .guidance { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:16px; margin-top:60px; }
     .guide { padding:26px; background:#e9f1e9; border-radius:16px; }
     .guide:nth-child(2) { background:#e8eef3; }
@@ -113,13 +118,13 @@
           <p class="mark">선택 완료 · F / Nook Cat</p>
           <h1>Nook Cat</h1>
           <p class="lead">크림색 고양이, 솔잎색 니트. 집중을 시작할 때도 돌아올 때도 조용히 곁에 있는 Offzone의 친구입니다.</p>
-          <p class="heroMeta">한 캐릭터의 표정 8개와 전신 4개를 앱 상태에 맞춰 다시 그렸습니다. 아래에서 실제 배경을 바꿔 보며 작은 크기와 가장자리를 확인할 수 있습니다.</p>
+          <p class="heroMeta">한 캐릭터의 표정 8개와 전신 4개를 앱 상태에 맞춰 다시 그렸습니다. 최신 Android의 Butter·SoftButter 색과 실제 영어 화면을 아래에서 함께 확인할 수 있습니다.</p>
         </div>
         <figure class="heroArt"><img src="assets/fullbody/welcome.png" width="1254" height="1254" alt="솔잎색 니트를 입고 한 손을 흔드는 Nook Cat 전신" fetchpriority="high"><figcaption>새 앱 자산 · welcome</figcaption></figure>
       </div>
     </div>
   </header>
-  <div class="sticky"><div class="wrap stickyIn"><p>합성 확인용 배경</p><div class="switch" role="group" aria-label="마스코트 미리보기 배경"><button type="button" data-bg="butter" aria-pressed="true">버터</button><button type="button" data-bg="mint" aria-pressed="false">민트</button><button type="button" data-bg="blue" aria-pressed="false">블루</button><button type="button" data-bg="ink" aria-pressed="false">잉크</button></div></div></div>
+  <div class="sticky"><div class="wrap stickyIn"><p>합성 확인용 배경</p><div class="switch" role="group" aria-label="마스코트 미리보기 배경"><button type="button" data-bg="butter" aria-pressed="true">버터</button><button type="button" data-bg="soft-butter" aria-pressed="false">소프트 버터</button><button type="button" data-bg="mint" aria-pressed="false">민트</button><button type="button" data-bg="blue" aria-pressed="false">블루</button><button type="button" data-bg="ink" aria-pressed="false">잉크</button></div></div></div>
   <main class="wrap" id="main">
     <section class="source" aria-labelledby="source-title">
       <figure><img src="selected-f-original.png" width="1024" height="1536" alt="최종 선택된 F 시안: 버터색 배경 앞에 앉은 Nook Cat" loading="lazy"></figure>
@@ -127,7 +132,25 @@
     </section>
     <section aria-labelledby="portrait-title"><div class="sectionTitle"><h2 id="portrait-title">표정으로 읽는 상태</h2><p>작은 공간에서는 얼굴을 먼저 봅니다. 오른쪽 96 px 미리보기는 실제 축소 시 인상을 확인하는 자리입니다.</p></div><div class="gallery" id="portraits"></div></section>
     <section aria-labelledby="fullbody-title"><div class="sectionTitle"><h2 id="fullbody-title">몸짓으로 읽는 순간</h2><p>넓은 공간에서는 니트와 자세를 함께 보여 줍니다. 같은 얼굴, 다른 행동이라는 기준으로 봐 주세요.</p></div><div class="gallery fullbody" id="fullbody"></div></section>
-    <section aria-labelledby="screens-title"><div class="sectionTitle"><h2 id="screens-title">앱에서 확인한 모습</h2><p>위는 생성한 원본 자산입니다. 아래 6장은 네이티브 앱을 실행해 캡처한 화면입니다. 이미지를 누르면 원본 크기로 볼 수 있습니다.</p></div>
+    <section aria-labelledby="screens-title"><div class="sectionTitle"><h2 id="screens-title">앱에서 확인한 모습</h2><p>아래 8장은 서명된 Android 0.1.0 (versionCode 1) release APK의 실제 영어 에뮬레이터 화면입니다. 이미지를 누르면 원본 크기로 볼 수 있습니다.</p></div>
+      <div class="screensGrid">
+        <figure class="screen"><a href="screenshots/android-release-welcome.png"><img src="screenshots/android-release-welcome.png" width="1080" height="1920" alt="Android 실제 환영 화면, Nook Cat과 Get started 버튼" loading="lazy"></a><figcaption><strong>Android · Welcome</strong><span>release emulator · 첫 화면</span></figcaption></figure>
+        <figure class="screen"><a href="screenshots/android-release-place.png"><img src="screenshots/android-release-place.png" width="1080" height="1920" alt="Android 실제 장소 선택 화면" loading="lazy"></a><figcaption><strong>Android · Place</strong><span>release emulator · 첫 규칙의 장소 선택</span></figcaption></figure>
+        <figure class="screen"><a href="screenshots/android-release-schedule.png"><img src="screenshots/android-release-schedule.png" width="1080" height="1920" alt="Android 실제 시간 선택 화면" loading="lazy"></a><figcaption><strong>Android · Schedule</strong><span>release emulator · 시간 선택</span></figcaption></figure>
+        <figure class="screen"><a href="screenshots/android-release-ready.png"><img src="screenshots/android-release-ready.png" width="1080" height="1920" alt="Android 실제 규칙 준비 화면과 Nook Cat" loading="lazy"></a><figcaption><strong>Android · Ready</strong><span>release emulator · 저장된 규칙, 활성화 전</span></figcaption></figure>
+        <figure class="screen"><a href="screenshots/android-release-home.png"><img src="screenshots/android-release-home.png" width="1080" height="1920" alt="Android 실제 홈 화면, 앱 차단 설정 안내" loading="lazy"></a><figcaption><strong>Android · Home</strong><span>release emulator · 설정 필요 상태</span></figcaption></figure>
+        <figure class="screen"><a href="screenshots/android-release-account.png"><img src="screenshots/android-release-account.png" width="1080" height="1920" alt="Android 실제 계정 화면, SoftButter 바탕의 Nook Cat" loading="lazy"></a><figcaption><strong>Android · Account</strong><span>release emulator · SoftButter #EFE5AB</span></figcaption></figure>
+        <figure class="screen"><a href="screenshots/android-release-journal.png"><img src="screenshots/android-release-journal.png" width="1080" height="1920" alt="Android 실제 저널 화면" loading="lazy"></a><figcaption><strong>Android · Journal</strong><span>release emulator · 기록 화면</span></figcaption></figure>
+        <figure class="screen"><a href="screenshots/android-release-pro.png"><img src="screenshots/android-release-pro.png" width="1080" height="1920" alt="Android 실제 Pro 화면, 구매 제안 비활성 상태" loading="lazy"></a><figcaption><strong>Android · Pro</strong><span>release emulator · 판매 제안 비활성, 무료 계속하기</span></figcaption></figure>
+      </div>
+      <p class="evidenceNote">실제 캡처 1080×1920 · 밀도 420 · 2026-09-25. 계정·홈 설정 카드의 SoftButter #EFE5AB를 비교할 수 있습니다. Goal/Rhythm의 아래 옵션은 스크롤로 접근 가능했지만 첫 9:16 화면에서 일부 잘려 스토어 후보에서 제외했습니다. 권한 승인·결제·실기기 동작은 검증하지 않았습니다.</p>
+    </section>
+    <section aria-labelledby="play-title"><div class="sectionTitle"><h2 id="play-title">Play 등록 이미지 후보</h2><p>스크린샷 4장은 위 실제 Android 캡처를 RGB PNG로 저장한 파일입니다. 아래 피처 그래픽은 동일한 투명 Nook 원본으로 만든 홍보용 합성 이미지입니다.</p></div>
+      <figure class="featureArt"><a href="play/feature-graphic.png"><img src="play/feature-graphic.png" width="1024" height="500" alt="SoftButter 바탕에 Make room for what matters 문구와 Nook Cat이 있는 Offzone Play 피처 그래픽" loading="lazy"></a><figcaption>피처 그래픽 · 1024×500 · PNG24 · 홍보용 합성</figcaption></figure>
+      <div class="playLinks"><a href="play/01-welcome.png">01 Welcome · 실제 화면 ↗</a><a href="play/02-place.png">02 Place · 실제 화면 ↗</a><a href="play/03-schedule.png">03 Schedule · 실제 화면 ↗</a><a href="play/04-ready.png">04 Ready · 실제 화면 ↗</a></div>
+      <p class="evidenceNote">각 스크린샷은 1080×1920·알파 없는 RGB PNG입니다. 출시 AAB는 코드 2로 별도 빌드됐으며 스크린샷의 캡처 출처는 코드 1입니다.</p>
+    </section>
+    <section aria-labelledby="legacy-screens-title"><div class="sectionTitle"><h2 id="legacy-screens-title">초기 적용 기록</h2><p>다음 6장은 Nook를 처음 앱에 연결했을 때의 iOS/Android 캡처입니다. 현재 Android 스토어 제출 후보와 구분해 보존합니다.</p></div>
       <div class="screensGrid">
         <figure class="screen"><a href="screenshots/ios-welcome-en.png"><img src="screenshots/ios-welcome-en.png" width="1206" height="2622" alt="iOS Simulator 첫 화면의 Nook Cat과 Get started 버튼" loading="lazy"></a><figcaption><strong>iOS · 첫 화면</strong><span>Simulator · 환영 전신과 무료 Restore access</span></figcaption></figure>
         <figure class="screen"><a href="screenshots/ios-setup-en.png"><img src="screenshots/ios-setup-en.png" width="1206" height="2622" alt="iOS Simulator Screen Time 연결 단계의 작은 Nook Cat" loading="lazy"></a><figcaption><strong>iOS · 연결 단계</strong><span>Simulator · 별도 스티커 배경 제거 후</span></figcaption></figure>
@@ -136,11 +159,11 @@
         <figure class="screen"><a href="screenshots/android-welcome.png"><img src="screenshots/android-welcome.png" width="1080" height="2400" alt="Android emulator 온보딩 첫 화면의 Nook Cat 전신과 Get started 버튼" loading="lazy"></a><figcaption><strong>Android · 첫 화면</strong><span>Emulator · 전신 인사와 시작 행동</span></figcaption></figure>
         <figure class="screen"><a href="screenshots/android-home.png"><img src="screenshots/android-home.png" width="1080" height="2400" alt="Android emulator 홈의 작은 Nook Cat과 앱 차단 설정 안내" loading="lazy"></a><figcaption><strong>Android · 홈</strong><span>Emulator · 작은 전신과 설정 행동</span></figcaption></figure>
       </div>
-      <p class="evidenceNote">관찰한 6개 화면에서는 원본의 사각 장면 배경이나 빨강·노랑 가장자리 번짐이 보이지 않았습니다. 이는 시뮬레이터·에뮬레이터 캡처에 한정됩니다. <a href="SCREEN_REVIEW.md">화면 검수 기록 보기</a></p>
+      <p class="evidenceNote">초기 6개 화면에서는 원본의 사각 장면 배경이나 빨강·노랑 가장자리 번짐이 보이지 않았습니다. 이는 시뮬레이터·에뮬레이터 캡처에 한정됩니다. <a href="SCREEN_REVIEW.md">화면 검수 기록 보기</a></p>
     </section>
     <section class="guidance" aria-label="앱 배치 가이드">
       <div class="guide"><h2>iOS 배치</h2><p>기존 RoomSpirit 상태 매핑을 Nook Cat 자산에 연결했습니다.</p><ul><li>160 × 132 pt 이상의 넓은 자리에서는 가능한 전신 4종을 사용합니다.</li><li>작은 자리와 작업·완료·주의·실패 상태에서는 표정 8종을 사용합니다.</li><li>움직임 줄이기 설정과 인사 접근성 동작은 계속 확인합니다.</li></ul></div>
-      <div class="guide"><h2>Android 배치</h2><p>온보딩과 홈의 실제 노출 크기를 기준으로 고릅니다.</p><ul><li>첫 온보딩은 190 dp 전신, 다음 단계는 132 dp 표정 이미지를 사용합니다.</li><li>홈은 132 × 140 dp 전신으로 준비·집중 상태를 보여 줍니다.</li><li>자산 12개는 모두 묶였지만 현재 화면이 전 상태를 표시하는 것은 아닙니다.</li></ul></div>
+      <div class="guide"><h2>Android 배치</h2><p>온보딩·Ready·Home·Account·Pro의 실제 영어 캡처에서 크기와 색을 확인합니다.</p><ul><li>첫 온보딩은 넓은 전신, 단계 안내는 작은 표정으로 읽힙니다.</li><li>Home과 Account의 SoftButter #EFE5AB, 전체 Butter #F7F0C7, 어두운 CTA의 대비를 함께 봅니다.</li><li>Pro 판매 제안은 이 캡처에서 비활성입니다. 자산 12개가 모두 묶여 있어도 모든 상태가 실제 화면에 노출된 것은 아닙니다.</li></ul></div>
     </section>
     <aside class="note" aria-label="품질 확인 메모"><h2>현재 확인할 점</h2><p>원본의 장면 배경은 앱 자산에 사용하지 않았습니다. 위 실제 캡처에서는 빨강·노랑 가장자리 번짐이 보이지 않았지만, 아직 관찰하지 않은 상태·배경·실기기까지 확인한 것은 아닙니다. 단독 투명 뷰어의 색 프린지와 앱 합성 결과를 구분해 판단합니다.</p></aside>
   </main>
@@ -167,7 +190,7 @@
     for (const [kind, items] of Object.entries(sets)) {
       document.getElementById(kind).innerHTML = items.map(([id,title,use]) => `<article class="asset"><div class="assetHead"><h3>${title}</h3><span>${id}</span></div><figure class="stage"><img src="assets/${kind}/${id}.png" width="1254" height="1254" alt="Nook Cat ${title} ${kind === 'portraits' ? '표정' : '전신'}" loading="lazy"></figure><div class="assetBody"><p>${use}</p><div class="mini"><span>96 px</span><div class="miniBox"><img src="assets/${kind}/${id}.png" width="96" height="96" alt="" loading="lazy"></div></div></div></article>`).join('');
     }
-    const colors = {butter:'#fff2c8',mint:'#d9eee3',blue:'#dfeaf5',ink:'#21392f'};
+    const colors = {butter:'#f7f0c7','soft-butter':'#efe5ab',mint:'#e8eedd',blue:'#dfeaf5',ink:'#191b19'};
     document.querySelector('.switch').addEventListener('click', event => {
       const button = event.target.closest('button[data-bg]');
       if (!button) return;
