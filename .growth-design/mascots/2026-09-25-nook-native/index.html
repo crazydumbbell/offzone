@@ -1,0 +1,179 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="color-scheme" content="light">
+  <title>Nook Cat · Offzone mascot statebook</title>
+  <style>
+    :root { --paper:#faf9f2; --butter:#fff2c8; --mint:#d9eee3; --blue:#dfeaf5; --ink:#21392f; --pine:#24473d; --line:#d6d9cb; --muted:#5b6b61; --rose:#bd826c; --stage-bg:var(--butter); }
+    * { box-sizing:border-box; }
+    html { scroll-behavior:smooth; }
+    :target { scroll-margin-top:95px; }
+    body { margin:0; color:var(--ink); background:var(--paper); font-family:SUIT,"Apple SD Gothic Neo",Inter,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif; line-height:1.5; }
+    a { color:inherit; text-underline-offset:3px; }
+    :is(a,button):focus-visible { outline:3px solid var(--rose); outline-offset:3px; }
+    button { font:inherit; }
+    .skip { position:absolute; top:-100px; left:12px; z-index:30; background:white; padding:8px 12px; }
+    .skip:focus { top:12px; }
+    .wrap { width:min(100% - 48px,1160px); margin-inline:auto; }
+    .top { display:flex; align-items:center; justify-content:space-between; gap:20px; padding:22px 0; border-bottom:1px solid rgba(33,57,47,.25); }
+    .brand { font-size:23px; font-weight:850; letter-spacing:-.08em; text-decoration:none; }
+    .back { font-size:13px; font-weight:750; }
+    .hero { background:var(--butter); }
+    .heroGrid { display:grid; grid-template-columns:minmax(0,.95fr) minmax(310px,1.05fr); gap:4vw; align-items:center; min-height:525px; padding:50px 0 64px; }
+    .mark { margin:0 0 19px; color:var(--pine); font-size:13px; font-weight:800; }
+    h1 { margin:0; font-size:clamp(60px,8vw,120px); line-height:.94; letter-spacing:-.09em; font-weight:850; }
+    .lead { max-width:500px; margin:24px 0 0; font-size:clamp(18px,2vw,23px); line-height:1.5; letter-spacing:-.035em; }
+    .heroMeta { max-width:505px; margin:24px 0 0; padding-top:18px; border-top:1px solid rgba(33,57,47,.28); color:var(--muted); font-size:14px; }
+    .heroArt { position:relative; display:grid; place-items:center; align-self:stretch; min-height:390px; margin:0; border:1px solid rgba(33,57,47,.28); border-radius:210px 210px 24px 24px; background:var(--stage-bg); overflow:hidden; }
+    .heroArt img { display:block; width:min(86%,460px); height:430px; object-fit:contain; }
+    .heroArt figcaption { position:absolute; left:15px; bottom:14px; padding:5px 8px; background:rgba(250,249,242,.9); font-size:12px; font-weight:750; border-radius:3px; }
+    .sticky { position:sticky; top:0; z-index:10; background:rgba(250,249,242,.96); border-bottom:1px solid var(--line); backdrop-filter:blur(10px); }
+    .stickyIn { display:flex; align-items:center; justify-content:space-between; gap:20px; min-height:72px; padding:10px 0; }
+    .sticky p { margin:0; font-size:13px; font-weight:700; }
+    .switch { display:flex; flex-wrap:wrap; gap:6px; }
+    .switch button { min-height:38px; padding:6px 12px; border:1px solid var(--line); border-radius:999px; color:var(--ink); background:transparent; cursor:pointer; font-size:12px; font-weight:800; }
+    .switch button[aria-pressed="true"] { color:white; border-color:var(--pine); background:var(--pine); }
+    main { padding:50px 0 95px; }
+    .source { display:grid; grid-template-columns:180px minmax(0,1fr); gap:28px; align-items:center; padding:19px 0 43px; border-bottom:1px solid var(--line); }
+    .source figure { margin:0; background:var(--butter); border:1px solid var(--line); }
+    .source img { display:block; width:100%; height:214px; object-fit:contain; }
+    .source h2, .sectionTitle h2 { margin:0 0 9px; font-size:clamp(30px,4vw,48px); line-height:1.1; letter-spacing:-.065em; }
+    .source p { max-width:660px; margin:0 0 12px; color:var(--muted); font-size:15px; }
+    .source a { font-size:13px; font-weight:800; }
+    .sectionTitle { display:flex; align-items:end; justify-content:space-between; gap:28px; margin:56px 0 17px; }
+    .sectionTitle p { max-width:430px; margin:0 0 4px; color:var(--muted); font-size:14px; }
+    .gallery { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:16px; }
+    .asset { min-width:0; border:1px solid var(--line); background:#fffef9; }
+    .assetHead { display:flex; align-items:baseline; justify-content:space-between; gap:12px; padding:17px 19px 13px; }
+    .assetHead h3 { margin:0; font-size:21px; letter-spacing:-.04em; }
+    .assetHead span { color:var(--muted); font-size:12px; }
+    .stage { --stage-h:282px; display:grid; place-items:center; height:var(--stage-h); margin:0 10px; background:var(--stage-bg); border-radius:9px; overflow:hidden; }
+    .stage img { display:block; width:100%; height:var(--stage-h); object-fit:contain; }
+    .assetBody { display:flex; align-items:center; justify-content:space-between; gap:18px; padding:13px 19px 16px; }
+    .assetBody p { margin:0; color:var(--muted); font-size:13px; }
+    .mini { display:flex; align-items:center; gap:10px; flex:none; color:var(--muted); font-size:11px; font-weight:750; }
+    .miniBox { display:grid; place-items:center; width:96px; height:96px; background:var(--stage-bg); border:1px solid rgba(33,57,47,.16); border-radius:7px; overflow:hidden; }
+    .miniBox img { display:block; width:96px; height:96px; object-fit:contain; }
+    .fullbody .stage { --stage-h:330px; }
+    .screensGrid { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:16px; }
+    .screen { min-width:0; margin:0; border:1px solid var(--line); background:#fffef9; }
+    .screen a { display:block; }
+    .screen img { display:block; width:100%; height:auto; }
+    .screen figcaption { display:grid; gap:3px; padding:13px 15px 15px; }
+    .screen strong { font-size:15px; }
+    .screen span { color:var(--muted); font-size:12px; }
+    .evidenceNote { margin:16px 0 0; color:var(--muted); font-size:13px; }
+    .guidance { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:16px; margin-top:60px; }
+    .guide { padding:26px; background:#e9f1e9; border-radius:16px; }
+    .guide:nth-child(2) { background:#e8eef3; }
+    .guide h2 { margin:0 0 13px; font-size:25px; letter-spacing:-.05em; }
+    .guide p, .guide li { color:var(--ink); font-size:14px; }
+    .guide ul { margin:12px 0 0; padding-left:19px; }
+    .guide li + li { margin-top:7px; }
+    .note { margin-top:16px; padding:22px 25px; border-left:4px solid var(--rose); background:#f4efe4; }
+    .note h2 { margin:0 0 7px; font-size:20px; }
+    .note p { max-width:890px; margin:0; color:#47564e; font-size:14px; }
+    footer { padding:25px 0 40px; border-top:1px solid var(--line); color:var(--muted); font-size:12px; }
+    footer .wrap { display:flex; flex-wrap:wrap; justify-content:space-between; gap:12px; }
+    @media (max-width:760px) {
+      .heroGrid { grid-template-columns:1fr; gap:30px; padding:44px 0 50px; }
+      .heroArt { min-height:340px; }
+      .heroArt img { height:340px; }
+      .stickyIn { align-items:flex-start; flex-direction:column; gap:9px; }
+      .source { grid-template-columns:120px 1fr; gap:16px; }
+      .source img { height:155px; }
+      .sectionTitle { align-items:flex-start; flex-direction:column; gap:0; }
+      .gallery,.guidance { grid-template-columns:1fr; }
+      .screensGrid { grid-template-columns:repeat(2,minmax(0,1fr)); }
+    }
+    @media (max-width:600px) { .screensGrid { grid-template-columns:1fr; } }
+    @media (max-width:430px) {
+      .wrap { width:min(100% - 28px,1160px); }
+      .top { padding:15px 0; }
+      .back { max-width:150px; text-align:right; }
+      .heroArt { min-height:290px; }
+      .heroArt img { height:290px; }
+      .source { grid-template-columns:90px 1fr; }
+      .source img { height:125px; }
+      .stage { --stage-h:235px; }
+      .fullbody .stage { --stage-h:270px; }
+      .mini { flex-direction:column-reverse; gap:2px; }
+    }
+  </style>
+</head>
+<body>
+  <a class="skip" href="#main">본문으로 건너뛰기</a>
+  <header class="hero">
+    <div class="wrap">
+      <nav class="top" aria-label="보드 이동"><a class="brand" href="#top">offzone.</a><a class="back" href="selected-f-original.png">선택한 F 원본 크게 보기 ↗</a></nav>
+      <div class="heroGrid" id="top">
+        <div>
+          <p class="mark">선택 완료 · F / Nook Cat</p>
+          <h1>Nook Cat</h1>
+          <p class="lead">크림색 고양이, 솔잎색 니트. 집중을 시작할 때도 돌아올 때도 조용히 곁에 있는 Offzone의 친구입니다.</p>
+          <p class="heroMeta">한 캐릭터의 표정 8개와 전신 4개를 앱 상태에 맞춰 다시 그렸습니다. 아래에서 실제 배경을 바꿔 보며 작은 크기와 가장자리를 확인할 수 있습니다.</p>
+        </div>
+        <figure class="heroArt"><img src="assets/fullbody/welcome.png" width="1254" height="1254" alt="솔잎색 니트를 입고 한 손을 흔드는 Nook Cat 전신" fetchpriority="high"><figcaption>새 앱 자산 · welcome</figcaption></figure>
+      </div>
+    </div>
+  </header>
+  <div class="sticky"><div class="wrap stickyIn"><p>합성 확인용 배경</p><div class="switch" role="group" aria-label="마스코트 미리보기 배경"><button type="button" data-bg="butter" aria-pressed="true">버터</button><button type="button" data-bg="mint" aria-pressed="false">민트</button><button type="button" data-bg="blue" aria-pressed="false">블루</button><button type="button" data-bg="ink" aria-pressed="false">잉크</button></div></div></div>
+  <main class="wrap" id="main">
+    <section class="source" aria-labelledby="source-title">
+      <figure><img src="selected-f-original.png" width="1024" height="1536" alt="최종 선택된 F 시안: 버터색 배경 앞에 앉은 Nook Cat" loading="lazy"></figure>
+      <div><h2 id="source-title">같은 친구인가?</h2><p>왼쪽은 사용자가 고른 F 원본입니다. 이 그림에는 버터색 장면 배경이 들어 있습니다. 새 12개 자산은 얼굴·눈·니트의 정체성을 이어 받아 투명 배경으로 생성했습니다.</p><a href="selected-f-original.png">원본 F 파일 보기 ↗</a></div>
+    </section>
+    <section aria-labelledby="portrait-title"><div class="sectionTitle"><h2 id="portrait-title">표정으로 읽는 상태</h2><p>작은 공간에서는 얼굴을 먼저 봅니다. 오른쪽 96 px 미리보기는 실제 축소 시 인상을 확인하는 자리입니다.</p></div><div class="gallery" id="portraits"></div></section>
+    <section aria-labelledby="fullbody-title"><div class="sectionTitle"><h2 id="fullbody-title">몸짓으로 읽는 순간</h2><p>넓은 공간에서는 니트와 자세를 함께 보여 줍니다. 같은 얼굴, 다른 행동이라는 기준으로 봐 주세요.</p></div><div class="gallery fullbody" id="fullbody"></div></section>
+    <section aria-labelledby="screens-title"><div class="sectionTitle"><h2 id="screens-title">앱에서 확인한 모습</h2><p>위는 생성한 원본 자산입니다. 아래 6장은 네이티브 앱을 실행해 캡처한 화면입니다. 이미지를 누르면 원본 크기로 볼 수 있습니다.</p></div>
+      <div class="screensGrid">
+        <figure class="screen"><a href="screenshots/ios-welcome-en.png"><img src="screenshots/ios-welcome-en.png" width="1206" height="2622" alt="iOS Simulator 첫 화면의 Nook Cat과 Get started 버튼" loading="lazy"></a><figcaption><strong>iOS · 첫 화면</strong><span>Simulator · 환영 전신과 무료 Restore access</span></figcaption></figure>
+        <figure class="screen"><a href="screenshots/ios-setup-en.png"><img src="screenshots/ios-setup-en.png" width="1206" height="2622" alt="iOS Simulator Screen Time 연결 단계의 작은 Nook Cat" loading="lazy"></a><figcaption><strong>iOS · 연결 단계</strong><span>Simulator · 별도 스티커 배경 제거 후</span></figcaption></figure>
+        <figure class="screen"><a href="screenshots/ios-recovery-en.png"><img src="screenshots/ios-recovery-en.png" width="1206" height="2622" alt="iOS Simulator 무료 접근 복구 화면의 Nook Cat" loading="lazy"></a><figcaption><strong>iOS · 접근 복구</strong><span>Simulator · 복구 행동과 마스코트 분리</span></figcaption></figure>
+        <figure class="screen"><a href="screenshots/ios-home-en.png"><img src="screenshots/ios-home-en.png" width="1206" height="2622" alt="iOS Simulator 홈의 작은 Nook Cat과 Screen Time 안내" loading="lazy"></a><figcaption><strong>iOS · 홈</strong><span>Simulator · 권한 미연결 상태의 작은 표정</span></figcaption></figure>
+        <figure class="screen"><a href="screenshots/android-welcome.png"><img src="screenshots/android-welcome.png" width="1080" height="2400" alt="Android emulator 온보딩 첫 화면의 Nook Cat 전신과 Get started 버튼" loading="lazy"></a><figcaption><strong>Android · 첫 화면</strong><span>Emulator · 전신 인사와 시작 행동</span></figcaption></figure>
+        <figure class="screen"><a href="screenshots/android-home.png"><img src="screenshots/android-home.png" width="1080" height="2400" alt="Android emulator 홈의 작은 Nook Cat과 앱 차단 설정 안내" loading="lazy"></a><figcaption><strong>Android · 홈</strong><span>Emulator · 작은 전신과 설정 행동</span></figcaption></figure>
+      </div>
+      <p class="evidenceNote">관찰한 6개 화면에서는 원본의 사각 장면 배경이나 빨강·노랑 가장자리 번짐이 보이지 않았습니다. 이는 시뮬레이터·에뮬레이터 캡처에 한정됩니다. <a href="SCREEN_REVIEW.md">화면 검수 기록 보기</a></p>
+    </section>
+    <section class="guidance" aria-label="앱 배치 가이드">
+      <div class="guide"><h2>iOS 배치</h2><p>기존 RoomSpirit 상태 매핑을 Nook Cat 자산에 연결했습니다.</p><ul><li>160 × 132 pt 이상의 넓은 자리에서는 가능한 전신 4종을 사용합니다.</li><li>작은 자리와 작업·완료·주의·실패 상태에서는 표정 8종을 사용합니다.</li><li>움직임 줄이기 설정과 인사 접근성 동작은 계속 확인합니다.</li></ul></div>
+      <div class="guide"><h2>Android 배치</h2><p>온보딩과 홈의 실제 노출 크기를 기준으로 고릅니다.</p><ul><li>첫 온보딩은 190 dp 전신, 다음 단계는 132 dp 표정 이미지를 사용합니다.</li><li>홈은 132 × 140 dp 전신으로 준비·집중 상태를 보여 줍니다.</li><li>자산 12개는 모두 묶였지만 현재 화면이 전 상태를 표시하는 것은 아닙니다.</li></ul></div>
+    </section>
+    <aside class="note" aria-label="품질 확인 메모"><h2>현재 확인할 점</h2><p>원본의 장면 배경은 앱 자산에 사용하지 않았습니다. 위 실제 캡처에서는 빨강·노랑 가장자리 번짐이 보이지 않았지만, 아직 관찰하지 않은 상태·배경·실기기까지 확인한 것은 아닙니다. 단독 투명 뷰어의 색 프린지와 앱 합성 결과를 구분해 판단합니다.</p></aside>
+  </main>
+  <footer><div class="wrap"><span>Offzone · Nook Cat statebook · 2026.09.25</span><span><a href="MASCOTS.md">출처·사용 기록</a> · <a href="PROMPTS.md">생성 지시 요약</a> · <a href="manifest.json">자산 목록</a></span></div></footer>
+  <script>
+    const sets = {
+      portraits: [
+        ['welcome','첫 인사','온보딩·돌아오기'],
+        ['ready','준비','기본·확인·축하'],
+        ['focused','집중','집중 유지'],
+        ['reflection','돌아보기','작업 중 잠깐의 확인'],
+        ['finished','완료','마무리'],
+        ['recovered','복구','안전한 복구 후'],
+        ['needs-action','조치 필요','사용자 행동 안내'],
+        ['failed','문제 발생','실패·오류']
+      ],
+      fullbody: [
+        ['welcome','첫 인사','넓은 첫 화면'],
+        ['ready','준비','넓은 준비 화면'],
+        ['focused','집중','넓은 집중 화면'],
+        ['recovered','복구','넓은 복구 화면']
+      ]
+    };
+    for (const [kind, items] of Object.entries(sets)) {
+      document.getElementById(kind).innerHTML = items.map(([id,title,use]) => `<article class="asset"><div class="assetHead"><h3>${title}</h3><span>${id}</span></div><figure class="stage"><img src="assets/${kind}/${id}.png" width="1254" height="1254" alt="Nook Cat ${title} ${kind === 'portraits' ? '표정' : '전신'}" loading="lazy"></figure><div class="assetBody"><p>${use}</p><div class="mini"><span>96 px</span><div class="miniBox"><img src="assets/${kind}/${id}.png" width="96" height="96" alt="" loading="lazy"></div></div></div></article>`).join('');
+    }
+    const colors = {butter:'#fff2c8',mint:'#d9eee3',blue:'#dfeaf5',ink:'#21392f'};
+    document.querySelector('.switch').addEventListener('click', event => {
+      const button = event.target.closest('button[data-bg]');
+      if (!button) return;
+      document.documentElement.style.setProperty('--stage-bg', colors[button.dataset.bg]);
+      document.querySelectorAll('.switch button').forEach(item => item.setAttribute('aria-pressed', String(item === button)));
+    });
+  </script>
+</body>
+</html>

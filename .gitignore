@@ -20,13 +20,14 @@ xcuserdata/
 /APP_METADATA.json
 /tools/check_product_alignment.py
 
-# Keep only the source art used by the current Rue assets and outfit study
+# Keep source art used by the current mascot and historical Rue studies
 /.growth-design/*
 !/.growth-design/mascots/
 /.growth-design/mascots/*
 !/.growth-design/mascots/2026-09-24-rue-statebook/
 !/.growth-design/mascots/2026-09-24-rue-native/
 !/.growth-design/mascots/2026-09-24-rue-wardrobe/
+!/.growth-design/mascots/2026-09-25-nook-native/
 
 # Local dependencies, build products, and signing material
 **/node_modules/

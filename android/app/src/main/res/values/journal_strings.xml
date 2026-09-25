@@ -54,5 +54,5 @@
     <string name="window_morning">In the morning · 09:00–10:00</string>
     <string name="window_afternoon">In the afternoon · 14:00–15:00</string>
     <string name="window_evening">In the evening · 20:00–21:00</string>
-    <string name="rue_description">Rue, your focus companion</string>
+    <string name="nook_description">Nook Cat, your focus companion</string>
 </resources>

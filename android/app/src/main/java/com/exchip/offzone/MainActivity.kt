@@ -127,11 +127,16 @@ class MainActivity : ComponentActivity() {
                             Text("offzone", style = MaterialTheme.typography.headlineSmall, modifier = Modifier.weight(1f))
                             TextButton(onClick = { route = "account" }) { Text(stringResource(R.string.m_account)) }
                         } }
-                        item {
-                            RueView(expression = if (state.session != null) RueExpression.FOCUSED else RueExpression.READY, modifier = Modifier.fillMaxWidth().height(125.dp))
-                            Text(stringResource(if (state.session != null) R.string.focus_title else R.string.ready_title), style = MaterialTheme.typography.headlineLarge)
-                            Text(stringResource(goalLabel(OnboardingProfile.goal(this@MainActivity))), style = MaterialTheme.typography.bodyLarge)
-                        }
+                        item { Row(Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) {
+                            Column(Modifier.weight(1f), verticalArrangement = Arrangement.spacedBy(6.dp)) {
+                                Text(stringResource(if (state.session != null) R.string.focus_title else R.string.ready_title), style = MaterialTheme.typography.headlineLarge)
+                                Text(stringResource(goalLabel(OnboardingProfile.goal(this@MainActivity))), style = MaterialTheme.typography.bodyLarge)
+                            }
+                            NookCatView(
+                                expression = if (state.session != null) NookExpression.FOCUSED_FULL else NookExpression.READY_FULL,
+                                modifier = Modifier.size(width = 132.dp, height = 140.dp)
+                            )
+                        } }
                         item { Surface(color = Ink, contentColor = Butter, shape = RoundedCornerShape(24.dp)) {
                             Column(Modifier.fillMaxWidth().padding(22.dp), verticalArrangement = Arrangement.spacedBy(12.dp)) {
                                 Text(state.appliedRule?.name ?: stringResource(R.string.m_no_rule), style = MaterialTheme.typography.titleLarge)

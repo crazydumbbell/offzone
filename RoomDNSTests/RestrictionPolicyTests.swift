@@ -8,16 +8,16 @@ import RevenueCat
 
 final class RestrictionPolicyTests: XCTestCase {
     @MainActor
-    func testRueAssetsAndStateMapping() throws {
-        XCTAssertEqual(OffzoneRueExpression.allCases.count, 8)
-        XCTAssertEqual(OffzoneRueFullBody.allCases.count, 4)
-        for expression in OffzoneRueExpression.allCases {
+    func testNookAssetsAndStateMapping() throws {
+        XCTAssertEqual(OffzoneNookExpression.allCases.count, 8)
+        XCTAssertEqual(OffzoneNookFullBody.allCases.count, 4)
+        for expression in OffzoneNookExpression.allCases {
             XCTAssertNotNil(UIImage(named: expression.assetName), expression.assetName)
         }
-        for expression in OffzoneRueFullBody.allCases {
+        for expression in OffzoneNookFullBody.allCases {
             XCTAssertNotNil(UIImage(named: expression.assetName), expression.assetName)
         }
-        let mapping: [(RoomSpiritState, OffzoneRueExpression)] = [
+        let mapping: [(RoomSpiritState, OffzoneNookExpression)] = [
             (.welcome, .welcome), (.idle, .ready), (.attentive, .ready),
             (.guiding, .welcome), (.working, .reflection), (.confirmed, .ready),
             (.focused, .focused), (.needsAction, .needsAction), (.failed, .failed),
@@ -26,10 +26,10 @@ final class RestrictionPolicyTests: XCTestCase {
         ]
         XCTAssertEqual(mapping.count, 13)
         for (state, portrait) in mapping {
-            XCTAssertEqual(OffzoneRueExpression.expression(for: state), portrait)
+            XCTAssertEqual(OffzoneNookExpression.expression(for: state), portrait)
         }
-        XCTAssertEqual(OffzoneRueFullBody.expression(for: .welcome), .welcome)
-        XCTAssertNil(OffzoneRueFullBody.expression(for: .failed))
+        XCTAssertEqual(OffzoneNookFullBody.expression(for: .welcome), .welcome)
+        XCTAssertNil(OffzoneNookFullBody.expression(for: .failed))
         XCTAssertEqual(RoomSpiritMotion.sample(at: 0.7).breath, 1, accuracy: 0.001)
         XCTAssertEqual(RoomSpiritReaction.sample(state: .welcome, elapsed: 0.9), .init())
     }

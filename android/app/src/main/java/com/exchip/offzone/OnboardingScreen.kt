@@ -39,7 +39,14 @@ internal fun goalLabel(goal: String) = when(goal) { "work" -> R.string.goal_work
     Surface(Modifier.fillMaxSize()) {
         Column(Modifier.safeDrawingPadding().verticalScroll(rememberScrollState()).padding(24.dp), verticalArrangement = Arrangement.spacedBy(20.dp)) {
             if (step > 0) TextButton(onClick = { step-- }) { Text(stringResource(R.string.journal_back)) }
-            RueView(modifier = Modifier.fillMaxWidth().height(170.dp))
+            NookCatView(
+                expression = when (step) {
+                    0 -> NookExpression.WELCOME_FULL
+                    1 -> NookExpression.READY
+                    else -> NookExpression.FOCUSED
+                },
+                modifier = Modifier.fillMaxWidth().height(if (step == 0) 190.dp else 132.dp)
+            )
             Text(stringResource(when(step) { 0 -> R.string.onboarding_title; 1 -> R.string.onboarding_goal; else -> R.string.onboarding_rhythm }), style = MaterialTheme.typography.headlineLarge)
             if (step == 0) { Text(stringResource(R.string.onboarding_detail)); Text(stringResource(R.string.onboarding_safe)) }
             if (step == 1) JournalStore.contexts.forEach { item ->

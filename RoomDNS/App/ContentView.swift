@@ -1008,8 +1008,6 @@ struct ContentView: View {
                             Spacer()
                             RoomSpirit(state: setupSpiritState)
                                 .frame(width: 104, height: 94)
-                                .background(Color.roomBlue)
-                                .clipShape(UnevenRoundedRectangle(topLeadingRadius: 18, bottomLeadingRadius: 18, bottomTrailingRadius: 42, topTrailingRadius: 18))
                         }
                         Text(title)
                             .font(.suit(dynamicTypeSize.isAccessibilitySize ? .title : .largeTitle, weight: .bold))
@@ -1508,9 +1506,9 @@ private struct ZoneNotificationSettingsView: View {
     }
 }
 
-enum OffzoneRueExpression: String, CaseIterable {
+enum OffzoneNookExpression: String, CaseIterable {
     case welcome, ready, focused, reflection, finished, recovered, needsAction = "needs-action", failed
-    var assetName: String { "OffzoneRue-portraits-" + rawValue }
+    var assetName: String { "OffzoneNook-portraits-" + rawValue }
 
     static func expression(for state: RoomSpiritState) -> Self {
         switch state {
@@ -1526,10 +1524,10 @@ enum OffzoneRueExpression: String, CaseIterable {
     }
 }
 
-// Larger slots can show the chosen v6 outfit; compact slots prioritize readable faces.
-enum OffzoneRueFullBody: String, CaseIterable {
+// Wide banners show Nook's vest; compact slots keep the face readable.
+enum OffzoneNookFullBody: String, CaseIterable {
     case welcome, ready, focused, recovered
-    var assetName: String { "OffzoneRue-fullbody-" + rawValue }
+    var assetName: String { "OffzoneNook-fullbody-" + rawValue }
 
     static func expression(for state: RoomSpiritState) -> Self? {
         switch state {
@@ -1608,7 +1606,7 @@ struct RoomSpirit: View {
                 if interactive {
                     Button(action: sayHello) { Color.clear.contentShape(Rectangle()) }
                         .buttonStyle(.plain)
-                        .accessibilityLabel("Say hello to Rue")
+                        .accessibilityLabel("Say hello to Nook Cat")
                         .accessibilityHint("A small greeting. Your rule stays the same.")
                 }
             }
@@ -1646,7 +1644,7 @@ struct RoomSpirit: View {
         guard helloStart == nil, now.timeIntervalSince(lastHello) >= 0.92 else { return }
         lastHello = now
         let quiet = state == .focused || state == .working || state == .needsAction || state == .failed || state == .recovered
-        UIAccessibility.post(notification: .announcement, argument: roomString(quiet ? "Rue gives you a quiet hello." : "Rue says hello."))
+        UIAccessibility.post(notification: .announcement, argument: roomString(quiet ? "Nook Cat gives you a quiet hello." : "Nook Cat says hello."))
         if !quiet && !reduceMotion { helloStart = .now }
     }
 
@@ -1662,10 +1660,10 @@ struct RoomSpirit: View {
     }
 
     private func assetName(for size: CGSize) -> String {
-        if size.width >= 160, size.height >= 170, let body = OffzoneRueFullBody.expression(for: state) {
+        if size.width >= 160, size.height >= 132, let body = OffzoneNookFullBody.expression(for: state) {
             return body.assetName
         }
-        return OffzoneRueExpression.expression(for: state).assetName
+        return OffzoneNookExpression.expression(for: state).assetName
     }
 }
 

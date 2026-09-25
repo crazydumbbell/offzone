@@ -1,0 +1,133 @@
+{
+  "name": "Nook Cat F app asset pack",
+  "selectedConcept": ".growth-design/mascots/2026-09-25-nook-native/selected-f-original.png",
+  "selectedConceptSha256": "ca0a282cd9209ce7b63a4d989231cb932c7f9cdab575a3162eba516e95fbe07d",
+  "method": "OpenAI built-in image_gen with selected concept and generated cutout as identity references; one call per state; generated RGBA PNG copied byte-for-byte",
+  "assets": {
+    "portraits": {
+      "welcome": {
+        "source": ".growth-design/mascots/2026-09-25-nook-native/assets/portraits/welcome.png",
+        "ios": "RoomDNS/Assets.xcassets/OffzoneNook-portraits-welcome.imageset/art.png",
+        "android": "android/app/src/main/res/drawable-nodpi/nook_portraits_welcome.png",
+        "sha256": "189ae7b1da9269882f71a4e5bde8c0c8e6c6fe430df32d5a33fea961ff9637fa",
+        "size": [
+          1254,
+          1254
+        ]
+      },
+      "ready": {
+        "source": ".growth-design/mascots/2026-09-25-nook-native/assets/portraits/ready.png",
+        "ios": "RoomDNS/Assets.xcassets/OffzoneNook-portraits-ready.imageset/art.png",
+        "android": "android/app/src/main/res/drawable-nodpi/nook_portraits_ready.png",
+        "sha256": "58d17d8968290e554306739b9c7cb2f2cd2aa980d2a254e822e779ad0c5ec39b",
+        "size": [
+          1254,
+          1254
+        ]
+      },
+      "focused": {
+        "source": ".growth-design/mascots/2026-09-25-nook-native/assets/portraits/focused.png",
+        "ios": "RoomDNS/Assets.xcassets/OffzoneNook-portraits-focused.imageset/art.png",
+        "android": "android/app/src/main/res/drawable-nodpi/nook_portraits_focused.png",
+        "sha256": "0d02846cc57c6cfffa33a8170e796b8af0a4fbc8791594d897fb6ec5b4d2e2fb",
+        "size": [
+          1254,
+          1254
+        ]
+      },
+      "reflection": {
+        "source": ".growth-design/mascots/2026-09-25-nook-native/assets/portraits/reflection.png",
+        "ios": "RoomDNS/Assets.xcassets/OffzoneNook-portraits-reflection.imageset/art.png",
+        "android": "android/app/src/main/res/drawable-nodpi/nook_portraits_reflection.png",
+        "sha256": "1eecad4222e4bc50bc25901a4b9e97a1326588c63d779764cde8e453d3f52ae2",
+        "size": [
+          1254,
+          1254
+        ]
+      },
+      "finished": {
+        "source": ".growth-design/mascots/2026-09-25-nook-native/assets/portraits/finished.png",
+        "ios": "RoomDNS/Assets.xcassets/OffzoneNook-portraits-finished.imageset/art.png",
+        "android": "android/app/src/main/res/drawable-nodpi/nook_portraits_finished.png",
+        "sha256": "1a40be48bc36ccd5f5d4157dcc5d86a74b56f12ab7234e2403205af60dbfefb0",
+        "size": [
+          1254,
+          1254
+        ]
+      },
+      "recovered": {
+        "source": ".growth-design/mascots/2026-09-25-nook-native/assets/portraits/recovered.png",
+        "ios": "RoomDNS/Assets.xcassets/OffzoneNook-portraits-recovered.imageset/art.png",
+        "android": "android/app/src/main/res/drawable-nodpi/nook_portraits_recovered.png",
+        "sha256": "1211b41379f5012f45975e4ffb680fd0b14a64f632a2707b63b99be410f647c4",
+        "size": [
+          1254,
+          1254
+        ]
+      },
+      "needs-action": {
+        "source": ".growth-design/mascots/2026-09-25-nook-native/assets/portraits/needs-action.png",
+        "ios": "RoomDNS/Assets.xcassets/OffzoneNook-portraits-needs-action.imageset/art.png",
+        "android": "android/app/src/main/res/drawable-nodpi/nook_portraits_needs_action.png",
+        "sha256": "ecbf7d32da067290eff12bef5bd3eb9ac234cfe51c7af4f4a52a51824c57dbe5",
+        "size": [
+          1254,
+          1254
+        ]
+      },
+      "failed": {
+        "source": ".growth-design/mascots/2026-09-25-nook-native/assets/portraits/failed.png",
+        "ios": "RoomDNS/Assets.xcassets/OffzoneNook-portraits-failed.imageset/art.png",
+        "android": "android/app/src/main/res/drawable-nodpi/nook_portraits_failed.png",
+        "sha256": "65dc44e298e53dd11526e44a779c33a3168c794ead3539e252439d88c460557c",
+        "size": [
+          1254,
+          1254
+        ]
+      }
+    },
+    "fullbody": {
+      "welcome": {
+        "source": ".growth-design/mascots/2026-09-25-nook-native/assets/fullbody/welcome.png",
+        "ios": "RoomDNS/Assets.xcassets/OffzoneNook-fullbody-welcome.imageset/art.png",
+        "android": "android/app/src/main/res/drawable-nodpi/nook_fullbody_welcome.png",
+        "sha256": "c2080975412ee904ac5620a5115eff07013ff654a23bbee1e6783e3ef1622d51",
+        "size": [
+          1254,
+          1254
+        ]
+      },
+      "ready": {
+        "source": ".growth-design/mascots/2026-09-25-nook-native/assets/fullbody/ready.png",
+        "ios": "RoomDNS/Assets.xcassets/OffzoneNook-fullbody-ready.imageset/art.png",
+        "android": "android/app/src/main/res/drawable-nodpi/nook_fullbody_ready.png",
+        "sha256": "5a9b5c68b245939764cfa08ec8eafc246474c849a7a3e9ba30bd59f728bbd92c",
+        "size": [
+          1254,
+          1254
+        ]
+      },
+      "focused": {
+        "source": ".growth-design/mascots/2026-09-25-nook-native/assets/fullbody/focused.png",
+        "ios": "RoomDNS/Assets.xcassets/OffzoneNook-fullbody-focused.imageset/art.png",
+        "android": "android/app/src/main/res/drawable-nodpi/nook_fullbody_focused.png",
+        "sha256": "e4af0355f2ab19888575811a4f6d5cf05c987ead6350763fd414ecfe309aefc4",
+        "size": [
+          1254,
+          1254
+        ]
+      },
+      "recovered": {
+        "source": ".growth-design/mascots/2026-09-25-nook-native/assets/fullbody/recovered.png",
+        "ios": "RoomDNS/Assets.xcassets/OffzoneNook-fullbody-recovered.imageset/art.png",
+        "android": "android/app/src/main/res/drawable-nodpi/nook_fullbody_recovered.png",
+        "sha256": "000a3b50d2c964ca916d580bdf4545343da4a51f2eb6981f1609949f0e47e27a",
+        "size": [
+          1254,
+          1254
+        ]
+      }
+    }
+  },
+  "selectedConceptOriginalBoardPath": ".growth-design/mascots/2026-09-25-cute-10x10/assets/f.png"
+}
