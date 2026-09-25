@@ -1,0 +1,4406 @@
+{
+  "schema_version": "1.1",
+  "strategy_revision": "G1",
+  "generated_at": "2026-09-25",
+  "scope": {
+    "type": "curated_product_and_runtime_graph",
+    "customer_language_primary": "en",
+    "secondary_localizations": [
+      "ko"
+    ],
+    "audience": "global adults seeking digital self-management",
+    "contexts": [
+      "Work",
+      "Rest",
+      "Time with people",
+      "Personal time"
+    ],
+    "runtime_changed": true,
+    "graph_update_changed_runtime": true,
+    "release_status": "not_ready",
+    "manual_test_implemented": false,
+    "essential_exclusions_implemented": false,
+    "visual_direction": "butter_ink_nook_cat_suit_native",
+    "presentation_revision": "nook-cat-native-2026-09-25",
+    "presentation_change_scope": "Selected design-board F Nook Cat. New RGBA static portraits (8) and full-body poses (4) replace Rue on iOS and Android; iOS 13 states and Android onboarding/home are mapped. Original scene background is not bundled. English-first copy, explicit Start focus, free Restore access and official off icon remain. iOS targeted simulator test 1/1 before the final layout-only change, final incremental build, Korean welcome and four English screen renders, Android emulator 2/2 and four screens observed. Device, full accessibility, edge and rights review pending; no Nook wardrobe or store release.",
+    "account_purchase_configuration": "Firebase Apple auth/Firestore/Functions configured; Blaze and both purchase functions deployed ACTIVE; RC catalog configured; client product/balance/spend/retry and locked same-session release implemented behind a false readiness gate; device validation and stale-session compensation pending",
+    "place_activation": "MapKit place selection; uncertainty-aware location confirmation; explicit Start focus per schedule occurrence; NFC removed with decode-only compatibility"
+  },
+  "source_fingerprints": {
+    "Extensions/DeviceActivityMonitor/DeviceActivityMonitorExtension.swift": "ade9023a67f6d56de952b07aba28d5e0ca3956fb218fcef1d7f937119dbec3ad",
+    "Extensions/ShieldAction/ShieldActionExtension.swift": "e6ba9eee1d13a23aa871128876dc631911f517baf23a4a710341461ec9251fa7",
+    "Extensions/ShieldConfiguration/ShieldConfigurationExtension.swift": "83fcfb61ed392e4758460626a617fcb85ac30cb891e284bf9f45506239cf9b1c",
+    "RoomDNS.xcodeproj/project.pbxproj": "3ede71919b34951bad45a79d0abf2aad904be44e63533beb47058336ab251c7d",
+    "RoomDNS/App/AppModel.swift": "9720c3d421fcd4e0f36240ed9dd8a51f31fd564cfd39a4436c39dd793b1bbb16",
+    "RoomDNS/App/ContentView.swift": "719a519e4626929cf556e8543e380e43b45d4c1325f0bcd7f7c8cb4ca307aefa",
+    "RoomDNS/App/RoomDNSApp.swift": "f099842ed6a2d79f20a0935e47d162a92476516dedf9979df4df634a2cb8fc81",
+    "RoomDNS/Info.plist": "de99afee4ae322712f463ad775e30937d41f45cb4112be577b02cde9f433a4cd",
+    "RoomDNS/RoomDNS.entitlements": "d5c730b7e8e0113d24d4f13c2b1a699432113e477147e005ef4482dd1c6f8d1d",
+    "RoomDNS/Shared/RestrictionState.swift": "97a73c753a00f09ec49cc390fc37434bcc1895524e4d1f03d228cc3473c0278e",
+    "RoomDNS/en.lproj/InfoPlist.strings": "4ee6daa3694201a05c0b62bb3c1152367c7178c89f6f4aba0af48c39fded507a",
+    "RoomDNS/en.lproj/Localizable.strings": "c988a89ad3cb3878d565b257c83c823819440391565f5eb3785f9c821fcd794c",
+    "RoomDNS/ko.lproj/InfoPlist.strings": "9e2ee1529bca999ad7051e381ba7e48121aadabbc15653abdee708a00e56ccce",
+    "RoomDNS/ko.lproj/Localizable.strings": "1d22cbed1be7712dec4141ceddf0082bfd64022215918377fc6db7effd4ca84c",
+    "RoomDNSTests/RestrictionPolicyTests.swift": "d126da3bfd8c80d1ae2da98169f7c22dcd97cef8611f94d6078ec1535a01fcec",
+    "RoomDNS/App/AccountStore.swift": "f7feb0a6c21fb42b2ec77c37964728c864d2e57906bfc244e3b78b46c5d6a2c9",
+    "RoomDNS/App/AccountViews.swift": "6a3b45dda62e360be352e10caa61b204967a8420c9efbbbc6e88a899fa7b81f6",
+    "assets/brand/offzone-logo-master.png": "30835461ba8d82d35c824cfc5b8277170ce50cffddcd11cf37977bc50a29a62b",
+    "assets/brand/offzone-logo-source-lime.png": "0e0261fc1b5984ae2c342f7ed2fcf8690d8470d5ba47487f174384c1768f87a8",
+    "RoomDNS/Assets.xcassets/Contents.json": "0fd49ba3c3585c709678e0046a821c3c60685ec7063720d30d3a3448be3a208b",
+    "RoomDNS/Assets.xcassets/AppIcon.appiconset/Contents.json": "9cf2928dad89427abd581b6852db081352417f400afb65e60c479228cdc4f4da",
+    "RoomDNS/Assets.xcassets/AppIcon.appiconset/AppIcon-1024.png": "0513607ed65639189983f7cd9a399e0d9cd671c56f9f16493bc88cef1d0e4156",
+    "RoomDNS/App/OnboardingProfile.swift": "733721bcdf0597d1f0dd9e3e7ff7aa42c36026c7103092ca391d921f3f869843",
+    "RoomDNSTests/AccountStoreTests.swift": "c12511b8ac10825c052c2a5f237ce4a3e9f0023353eb588c07c0467fc8e95a62",
+    "RoomDNS/PrivacyInfo.xcprivacy": "d592cbd93d84b0d169f9d5a1b19b0bbd0c49e9daa9fa0c51c1145ef2a78137bb",
+    "firestore.rules": "50654221afe66d7fe8f325acd1ed5663f1477b4ee632173c954befa4228ce73f",
+    "RoomDNSTests/RestrictionNotificationTests.swift": "9437b1e82b5ef0e31f1f481975be042d46f2231e7b3e9555eb0788d7047536c2",
+    "functions/index.js": "f128ee626da46383757619e8197b8fb765e668654cb68c5a111d755d1c94fea0",
+    "functions/purchases.js": "f7cd36c5beb673acd8ef9987b4e81bd44874a8e568e7ace90c88ed2a131c0d13",
+    "firebase.json": "b8d29b4167d1f6b17a0faaec36b80189152ea5edc90305fca87985e898709b16",
+    "RoomDNS/App/ProJournal.swift": "1b9801b4537e2b38602864c7c14cb80d9588d47325efbc76864fa648b94f35c4",
+    "RoomDNS/App/ProJournalView.swift": "9a5a7070f0de2c16ecbd193982c55fc57b5d686520a5485bc061bf8eaadba042",
+    "android/app/src/main/java/com/exchip/offzone/MainActivity.kt": "3ca7e21b6a18da5600e84d2f87ec281274733be58ea9f392f0903a8db3674abc",
+    "android/app/src/main/java/com/exchip/offzone/AppSelection.kt": "add708d248d89d521d88cfca0bf4606c98310076aef31e0f2201e354789e3c8a",
+    "android/app/src/main/java/com/exchip/offzone/FocusController.kt": "e3020f697d763783dd8a746b1879969b71b603d0564c1192ae607777c2589492",
+    "android/app/src/main/java/com/exchip/offzone/FocusSession.kt": "cbcea2c410f7103e595eef6a2db213bdb8d1ec9ad0ff974f1fc8122496d6f268",
+    "android/app/src/main/java/com/exchip/offzone/FocusAccessibilityService.kt": "042e88ff98ca9dd2f8823446c82bd31321585cb75a04945d527fe13dc2e06371",
+    "android/app/src/main/java/com/exchip/offzone/RuleStore.kt": "ff7bf8fbad7f72f1a8b9eef3f20848ccb1a8c1b506221fc70020ccd5b7373b91",
+    "android/app/src/main/java/com/exchip/offzone/RulePolicy.kt": "bc2cd8843409731f27117354e522010268fdc2ea112a14d456b39f4c5d639d37",
+    "android/app/src/main/java/com/exchip/offzone/PlaceMonitor.kt": "9e7a3e94ded8060624e4967925e9518afc6f5c4915c6a7b70da633251fecfd39",
+    "android/app/src/main/java/com/exchip/offzone/AccountStore.kt": "1cf4188a0a2c868271f1f85bb82db6ddb443be633be57b00198bc56393e6a424",
+    "android/app/src/main/java/com/exchip/offzone/JournalStore.kt": "1d1881778934af62c088f5c32d45210eddc1e2180a325fe60445a934848e3f8e",
+    "android/app/src/main/java/com/exchip/offzone/JournalScreen.kt": "275cfc86ce2e0395646575f73c33e39afaf3f552fe2b6fcb049117b007c6167d",
+    "android/app/src/main/java/com/exchip/offzone/OnboardingScreen.kt": "aa74940cded77f94a8455e8d83a3e6b4a2e3cd441b0d774f05cfeca9384ab125",
+    "android/app/src/main/java/com/exchip/offzone/PlacePickerScreen.kt": "b2e5b8bfb7d0755e8a2c87a73b5225caa8ca0ca7ffd4803c18bacdc8461bed4a",
+    "android/app/src/main/java/com/exchip/offzone/RuleEditorScreen.kt": "47c9dc1884717000e141454e58e3175f03f1ed045a08ac07e771cb3c65774d16",
+    "android/app/src/main/java/com/exchip/offzone/NookCatView.kt": "53c49527af190e1590ebc0a789b84e23b8cf688e50d6a28888cc2e36fb364d67"
+  },
+  "nodes": [
+    {
+      "id": "orchestrator",
+      "label": "Product orchestrator",
+      "kind": "document",
+      "status": "documented",
+      "confidence": "EXTRACTED",
+      "source_refs": [
+        {
+          "path": "ORCHESTRATOR.md"
+        }
+      ]
+    },
+    {
+      "id": "sales",
+      "label": "Sales strategy",
+      "kind": "document",
+      "status": "documented",
+      "confidence": "EXTRACTED",
+      "source_refs": [
+        {
+          "path": "SALES_STRATEGY_REPORT.ko.md"
+        }
+      ]
+    },
+    {
+      "id": "ux",
+      "label": "UX strategy",
+      "kind": "document",
+      "status": "documented",
+      "confidence": "EXTRACTED",
+      "source_refs": [
+        {
+          "path": "UX_STRATEGY_REPORT.ko.md"
+        }
+      ]
+    },
+    {
+      "id": "architecture",
+      "label": "App architecture",
+      "kind": "document",
+      "status": "documented",
+      "confidence": "EXTRACTED",
+      "source_refs": [
+        {
+          "path": "APP_GRAPH.md"
+        }
+      ]
+    },
+    {
+      "id": "product",
+      "label": "Product contract",
+      "kind": "document",
+      "status": "documented",
+      "confidence": "EXTRACTED",
+      "source_refs": [
+        {
+          "path": "PRODUCT.md"
+        }
+      ]
+    },
+    {
+      "id": "metadata",
+      "label": "Implementation metadata",
+      "kind": "document",
+      "status": "documented",
+      "confidence": "EXTRACTED",
+      "source_refs": [
+        {
+          "path": "APP_METADATA.json"
+        }
+      ]
+    },
+    {
+      "id": "app",
+      "label": "RoomDNSApp",
+      "kind": "component",
+      "status": "implemented_unverified",
+      "confidence": "EXTRACTED",
+      "source_refs": [
+        {
+          "path": "RoomDNS/App/RoomDNSApp.swift",
+          "line": 5,
+          "symbol_or_anchor": "struct RoomDNSApp"
+        }
+      ]
+    },
+    {
+      "id": "ui",
+      "label": "ContentView",
+      "kind": "component",
+      "status": "implemented_unverified",
+      "confidence": "EXTRACTED",
+      "source_refs": [
+        {
+          "path": "RoomDNS/App/ContentView.swift",
+          "line": 59,
+          "symbol_or_anchor": "struct ContentView"
+        }
+      ]
+    },
+    {
+      "id": "model",
+      "label": "AppModel",
+      "kind": "component",
+      "status": "implemented_unverified",
+      "confidence": "EXTRACTED",
+      "source_refs": [
+        {
+          "path": "RoomDNS/App/AppModel.swift",
+          "line": 18,
+          "symbol_or_anchor": "final class AppModel"
+        }
+      ]
+    },
+    {
+      "id": "rules",
+      "label": "FocusRule definition",
+      "kind": "component",
+      "status": "implemented_unverified",
+      "confidence": "EXTRACTED",
+      "source_refs": [
+        {
+          "path": "RoomDNS/Shared/RestrictionState.swift",
+          "line": 22,
+          "symbol_or_anchor": "struct FocusRule"
+        }
+      ]
+    },
+    {
+      "id": "shared",
+      "label": "SharedState / runtime coordination",
+      "kind": "component",
+      "status": "implemented_unverified",
+      "confidence": "EXTRACTED",
+      "source_refs": [
+        {
+          "path": "RoomDNS/Shared/RestrictionState.swift",
+          "line": 247,
+          "symbol_or_anchor": "enum SharedState"
+        }
+      ]
+    },
+    {
+      "id": "policy",
+      "label": "RestrictionPolicy",
+      "kind": "component",
+      "status": "implemented_unverified",
+      "confidence": "EXTRACTED",
+      "source_refs": [
+        {
+          "path": "RoomDNS/Shared/RestrictionState.swift",
+          "line": 37,
+          "symbol_or_anchor": "enum RestrictionPolicy"
+        }
+      ]
+    },
+    {
+      "id": "reconcile",
+      "label": "reconcileRestrictions / apply",
+      "kind": "component",
+      "status": "implemented_unverified",
+      "confidence": "EXTRACTED",
+      "source_refs": [
+        {
+          "path": "RoomDNS/Shared/RestrictionState.swift",
+          "line": 514,
+          "symbol_or_anchor": "static func reconcileRestrictions"
+        }
+      ]
+    },
+    {
+      "id": "monitor",
+      "label": "DeviceActivityMonitor extension",
+      "kind": "component",
+      "status": "implemented_unverified",
+      "confidence": "EXTRACTED",
+      "source_refs": [
+        {
+          "path": "Extensions/DeviceActivityMonitor/DeviceActivityMonitorExtension.swift",
+          "line": 4,
+          "symbol_or_anchor": "final class RoomDNSMonitor"
+        }
+      ]
+    },
+    {
+      "id": "shield_config",
+      "label": "ShieldConfiguration extension",
+      "kind": "component",
+      "status": "implemented_unverified",
+      "confidence": "EXTRACTED",
+      "source_refs": [
+        {
+          "path": "Extensions/ShieldConfiguration/ShieldConfigurationExtension.swift",
+          "line": 5,
+          "symbol_or_anchor": "final class RoomDNSShieldConfiguration"
+        }
+      ]
+    },
+    {
+      "id": "shield_action",
+      "label": "ShieldAction extension",
+      "kind": "component",
+      "status": "implemented_unverified",
+      "confidence": "EXTRACTED",
+      "source_refs": [
+        {
+          "path": "Extensions/ShieldAction/ShieldActionExtension.swift",
+          "line": 3,
+          "symbol_or_anchor": "final class RoomDNSShieldAction"
+        }
+      ]
+    },
+    {
+      "id": "localization",
+      "label": "English source / English and Korean resources",
+      "kind": "component",
+      "status": "implemented_unverified",
+      "confidence": "EXTRACTED",
+      "source_refs": [
+        {
+          "path": "RoomDNS/en.lproj/Localizable.strings"
+        }
+      ]
+    },
+    {
+      "id": "build_config",
+      "label": "Xcode English development region",
+      "kind": "component",
+      "status": "implemented_unverified",
+      "confidence": "EXTRACTED",
+      "source_refs": [
+        {
+          "path": "RoomDNS.xcodeproj/project.pbxproj",
+          "line": 436,
+          "symbol_or_anchor": "developmentRegion = en"
+        }
+      ]
+    },
+    {
+      "id": "family_controls",
+      "label": "FamilyControls",
+      "kind": "platform_dependency",
+      "status": "integrated_unverified",
+      "confidence": "EXTRACTED",
+      "source_refs": [
+        {
+          "path": "RoomDNS/App/AppModel.swift",
+          "line": 248,
+          "symbol_or_anchor": "func requestScreenTimeAuthorization"
+        },
+        {
+          "path": "RoomDNS/App/ContentView.swift",
+          "line": 169,
+          "symbol_or_anchor": ".familyActivityPicker("
+        }
+      ]
+    },
+    {
+      "id": "managed_settings",
+      "label": "ManagedSettings / system shield",
+      "kind": "platform_dependency",
+      "status": "integrated_unverified",
+      "confidence": "EXTRACTED",
+      "source_refs": [
+        {
+          "path": "RoomDNS/Shared/RestrictionState.swift",
+          "line": 534,
+          "symbol_or_anchor": "private static func apply"
+        }
+      ]
+    },
+    {
+      "id": "device_activity",
+      "label": "DeviceActivityCenter",
+      "kind": "platform_dependency",
+      "status": "integrated_unverified",
+      "confidence": "EXTRACTED",
+      "source_refs": [
+        {
+          "path": "RoomDNS/App/AppModel.swift",
+          "line": 501,
+          "symbol_or_anchor": "private func registerSchedule"
+        }
+      ]
+    },
+    {
+      "id": "core_location",
+      "label": "CoreLocation / CLMonitor",
+      "kind": "platform_dependency",
+      "status": "integrated_unverified",
+      "confidence": "EXTRACTED",
+      "source_refs": [
+        {
+          "path": "RoomDNS/App/AppModel.swift",
+          "line": 785,
+          "symbol_or_anchor": "private func configurePlaceMonitor"
+        }
+      ]
+    },
+    {
+      "id": "core_nfc",
+      "label": "CoreNFC removed; legacy data only",
+      "kind": "platform_dependency",
+      "status": "removed",
+      "confidence": "EXTRACTED",
+      "source_refs": [
+        {
+          "path": "RoomDNS/Shared/RestrictionState.swift",
+          "line": 19,
+          "symbol_or_anchor": "case nfc"
+        },
+        {
+          "path": "RoomDNS/Shared/RestrictionState.swift",
+          "line": 309,
+          "symbol_or_anchor": "if state.rule?.placeMode == .nfc"
+        }
+      ]
+    },
+    {
+      "id": "mapkit",
+      "label": "MapKit",
+      "kind": "platform_dependency",
+      "status": "integrated_unverified",
+      "confidence": "EXTRACTED",
+      "source_refs": [
+        {
+          "path": "RoomDNS/App/ContentView.swift",
+          "line": 495,
+          "symbol_or_anchor": "private var placeMapPicker"
+        }
+      ]
+    },
+    {
+      "id": "restore_access",
+      "label": "Always available immediate Restore access",
+      "kind": "implemented_capability",
+      "status": "implemented_unverified",
+      "confidence": "EXTRACTED",
+      "source_refs": [
+        {
+          "path": "RoomDNS/App/ContentView.swift",
+          "line": 155,
+          "symbol_or_anchor": "safetyReleasePresented = true"
+        },
+        {
+          "path": "RoomDNS/App/AppModel.swift",
+          "line": 648,
+          "symbol_or_anchor": "func safetyRelease"
+        },
+        {
+          "path": "RoomDNS/Shared/RestrictionState.swift",
+          "line": 444,
+          "symbol_or_anchor": "static func restoreAccess"
+        }
+      ]
+    },
+    {
+      "id": "manual_test",
+      "label": "Guided protection test",
+      "kind": "proposed_capability",
+      "status": "proposed",
+      "confidence": "INFERRED",
+      "source_refs": [
+        {
+          "path": "APP_GRAPH.md",
+          "section": "5. 공통 작업과 구현 의존성"
+        }
+      ]
+    },
+    {
+      "id": "save_activate",
+      "label": "Separate Save and Activate",
+      "kind": "implemented_capability",
+      "status": "implemented_unverified",
+      "confidence": "EXTRACTED",
+      "source_refs": [
+        {
+          "path": "RoomDNS/App/AppModel.swift",
+          "line": 352,
+          "symbol_or_anchor": "func saveRule"
+        },
+        {
+          "path": "RoomDNS/App/AppModel.swift",
+          "line": 449,
+          "symbol_or_anchor": "func activateRule"
+        }
+      ]
+    },
+    {
+      "id": "qualified_history",
+      "label": "Qualified intervals and reflection",
+      "kind": "proposed_capability",
+      "status": "proposed",
+      "confidence": "INFERRED",
+      "source_refs": [
+        {
+          "path": "APP_GRAPH.md",
+          "section": "5. 공통 작업과 구현 의존성"
+        }
+      ]
+    },
+    {
+      "id": "planned_break",
+      "label": "Planned break and return",
+      "kind": "proposed_capability",
+      "status": "proposed",
+      "confidence": "INFERRED",
+      "source_refs": [
+        {
+          "path": "APP_GRAPH.md",
+          "section": "5. 공통 작업과 구현 의존성"
+        }
+      ]
+    },
+    {
+      "id": "pro_offer",
+      "label": "Pro automation, management and history",
+      "kind": "proposed_capability",
+      "status": "proposed",
+      "confidence": "INFERRED",
+      "source_refs": [
+        {
+          "path": "APP_GRAPH.md",
+          "section": "5. 공통 작업과 구현 의존성"
+        }
+      ]
+    },
+    {
+      "id": "device_verification",
+      "label": "Signed real-device evidence",
+      "kind": "verification_gate",
+      "status": "pending",
+      "confidence": "AMBIGUOUS",
+      "source_refs": [
+        {
+          "path": "SPIKE_CHECKLIST.md"
+        }
+      ]
+    },
+    {
+      "id": "ALIGN-01",
+      "label": "English-first alignment",
+      "kind": "work_item",
+      "status": "implemented_build_checked_device_pending",
+      "confidence": "EXTRACTED",
+      "source_refs": [
+        {
+          "path": "ORCHESTRATOR.md",
+          "section": "공통 작업 ID"
+        }
+      ]
+    },
+    {
+      "id": "CORE-01",
+      "label": "Blocking and release reliability",
+      "kind": "work_item",
+      "status": "verification_required",
+      "confidence": "EXTRACTED",
+      "source_refs": [
+        {
+          "path": "ORCHESTRATOR.md",
+          "section": "공통 작업 ID"
+        }
+      ]
+    },
+    {
+      "id": "SAFE-01",
+      "label": "Always available recovery",
+      "kind": "work_item",
+      "status": "partially_implemented_device_pending",
+      "confidence": "EXTRACTED",
+      "source_refs": [
+        {
+          "path": "ORCHESTRATOR.md",
+          "section": "공통 작업 ID"
+        }
+      ]
+    },
+    {
+      "id": "ACT-01",
+      "label": "First working experience",
+      "kind": "work_item",
+      "status": "proposed",
+      "confidence": "EXTRACTED",
+      "source_refs": [
+        {
+          "path": "ORCHESTRATOR.md",
+          "section": "공통 작업 ID"
+        }
+      ]
+    },
+    {
+      "id": "RULE-01",
+      "label": "Rule management",
+      "kind": "work_item",
+      "status": "partially_implemented_device_pending",
+      "confidence": "EXTRACTED",
+      "source_refs": [
+        {
+          "path": "ORCHESTRATOR.md",
+          "section": "공통 작업 ID"
+        }
+      ]
+    },
+    {
+      "id": "INSIGHT-01",
+      "label": "Honest intervals and reflection",
+      "kind": "work_item",
+      "status": "proposed",
+      "confidence": "EXTRACTED",
+      "source_refs": [
+        {
+          "path": "ORCHESTRATOR.md",
+          "section": "공통 작업 ID"
+        }
+      ]
+    },
+    {
+      "id": "BREAK-01",
+      "label": "Planned break and return",
+      "kind": "work_item",
+      "status": "proposed",
+      "confidence": "EXTRACTED",
+      "source_refs": [
+        {
+          "path": "ORCHESTRATOR.md",
+          "section": "공통 작업 ID"
+        }
+      ]
+    },
+    {
+      "id": "OFFER-01",
+      "label": "Pro offer validation",
+      "kind": "work_item",
+      "status": "unresolved",
+      "confidence": "EXTRACTED",
+      "source_refs": [
+        {
+          "path": "ORCHESTRATOR.md",
+          "section": "공통 작업 ID"
+        }
+      ]
+    },
+    {
+      "id": "feature.screen_time_permission",
+      "label": "개인 Screen Time 권한 및 대상 선택",
+      "kind": "feature",
+      "status": "implemented_unverified",
+      "confidence": "EXTRACTED",
+      "source_refs": [
+        {
+          "path": "RoomDNS/App/AppModel.swift",
+          "line": 230
+        },
+        {
+          "path": "RoomDNS/App/ContentView.swift",
+          "line": 169,
+          "symbol_or_anchor": ".familyActivityPicker("
+        }
+      ]
+    },
+    {
+      "id": "feature.gps_place",
+      "label": "장소 검색·핀 조정·위치 확인 후 명시적 집중 시작",
+      "kind": "feature",
+      "status": "implemented_unverified",
+      "confidence": "EXTRACTED",
+      "source_refs": [
+        {
+          "path": "RoomDNS/App/AppModel.swift",
+          "line": 615,
+          "symbol_or_anchor": "private func updatePlaceArrival"
+        },
+        {
+          "path": "RoomDNS/Shared/RestrictionState.swift",
+          "line": 55,
+          "symbol_or_anchor": "static func placePresence"
+        },
+        {
+          "path": "RoomDNS/Shared/RestrictionState.swift",
+          "line": 503,
+          "symbol_or_anchor": "static func startPlaceFocus"
+        }
+      ]
+    },
+    {
+      "id": "feature.nfc_focus",
+      "label": "NFC removed; saved rules decode only",
+      "kind": "feature",
+      "status": "removed",
+      "confidence": "EXTRACTED",
+      "source_refs": [
+        {
+          "path": "RoomDNS/Shared/RestrictionState.swift",
+          "line": 19,
+          "symbol_or_anchor": "case nfc"
+        },
+        {
+          "path": "RoomDNS/Shared/RestrictionState.swift",
+          "line": 309,
+          "symbol_or_anchor": "if state.rule?.placeMode == .nfc"
+        }
+      ]
+    },
+    {
+      "id": "feature.daily_schedule",
+      "label": "매일 반복 일정과 자정 경계",
+      "kind": "feature",
+      "status": "implemented_unverified",
+      "confidence": "EXTRACTED",
+      "source_refs": [
+        {
+          "path": "RoomDNS/App/AppModel.swift",
+          "line": 441
+        },
+        {
+          "path": "RoomDNS/Shared/RestrictionState.swift",
+          "line": 51
+        }
+      ]
+    },
+    {
+      "id": "feature.rule_presets",
+      "label": "규칙 저장·편집·명시적 활성화·삭제",
+      "kind": "feature",
+      "status": "partial",
+      "confidence": "EXTRACTED",
+      "source_refs": [
+        {
+          "path": "RoomDNS/App/AppModel.swift",
+          "line": 303
+        },
+        {
+          "path": "RoomDNS/App/AppModel.swift",
+          "line": 402
+        },
+        {
+          "path": "RoomDNS/App/AppModel.swift",
+          "line": 348
+        }
+      ]
+    },
+    {
+      "id": "feature.shield",
+      "label": "앱·카테고리·웹 도메인 가림막",
+      "kind": "feature",
+      "status": "implemented_unverified",
+      "confidence": "EXTRACTED",
+      "source_refs": [
+        {
+          "path": "RoomDNS/Shared/RestrictionState.swift",
+          "line": 345
+        }
+      ]
+    },
+    {
+      "id": "feature.safety_release",
+      "label": "상시 무료 접근 복구와 규칙 일시중지",
+      "kind": "feature",
+      "status": "implemented_unverified",
+      "confidence": "EXTRACTED",
+      "source_refs": [
+        {
+          "path": "RoomDNS/App/ContentView.swift",
+          "line": 155,
+          "symbol_or_anchor": "safetyReleasePresented = true"
+        },
+        {
+          "path": "RoomDNS/App/ContentView.swift",
+          "line": 1286,
+          "symbol_or_anchor": "private struct SafetyReleaseView"
+        },
+        {
+          "path": "RoomDNS/App/AppModel.swift",
+          "line": 526
+        },
+        {
+          "path": "RoomDNS/Shared/RestrictionState.swift",
+          "line": 287
+        }
+      ]
+    },
+    {
+      "id": "feature.mascot_accessibility",
+      "label": "Nook Cat 상태 표현·접근성 기본 대응·한영 번역",
+      "kind": "feature",
+      "status": "partial",
+      "confidence": "EXTRACTED",
+      "source_refs": [
+        {
+          "path": "RoomDNS/App/ContentView.swift",
+          "line": 1583,
+          "symbol_or_anchor": "struct RoomSpirit: View"
+        },
+        {
+          "path": "RoomDNS/en.lproj/Localizable.strings",
+          "line": 803
+        },
+        {
+          "path": "RoomDNS/Assets.xcassets/OffzoneNook-portraits-welcome.imageset/art.png"
+        },
+        {
+          "path": "android/app/src/main/java/com/exchip/offzone/NookCatView.kt",
+          "line": 12,
+          "symbol_or_anchor": "enum class NookExpression"
+        }
+      ]
+    },
+    {
+      "id": "feature.break_pass",
+      "label": "조기 종료 해제권 안내 화면",
+      "kind": "feature",
+      "status": "partial",
+      "confidence": "INFERRED",
+      "source_refs": [
+        {
+          "path": "RoomDNS/App/ContentView.swift",
+          "section": "UnlockPassView"
+        },
+        {
+          "path": "RoomDNS/App/AccountStore.swift",
+          "symbol_or_anchor": "spendUnlockPass(sessionID:)"
+        },
+        {
+          "path": "RoomDNS/Shared/RestrictionState.swift",
+          "symbol_or_anchor": "restoreAccess(usingUnlockPass:at:calendar:)"
+        },
+        {
+          "path": "functions/index.js",
+          "symbol_or_anchor": "spendUnlockPass",
+          "line": 14
+        },
+        {
+          "path": "RoomDNS/App/AccountStore.swift",
+          "symbol_or_anchor": "reconcilePreviousUnlockPass()",
+          "line": 524
+        },
+        {
+          "path": "functions/index.js",
+          "symbol_or_anchor": "reconcileUnlockPass",
+          "line": 59
+        }
+      ]
+    },
+    {
+      "id": "feature.protected_time_history",
+      "label": "집중 세션 기록·최근 7일 보호 시간",
+      "kind": "feature",
+      "status": "planned_not_implemented",
+      "confidence": "INFERRED",
+      "source_refs": [
+        {
+          "path": "PRODUCT.md",
+          "section": "MVP Scope"
+        }
+      ]
+    },
+    {
+      "id": "feature.working_test",
+      "label": "60초 작동 확인",
+      "kind": "feature",
+      "status": "planned_not_implemented",
+      "confidence": "INFERRED",
+      "source_refs": [
+        {
+          "path": "PRODUCT.md",
+          "section": "MVP Scope"
+        }
+      ]
+    },
+    {
+      "id": "feature.essential_app_exclusions",
+      "label": "필수 앱 기본 차단 제외",
+      "kind": "feature",
+      "status": "planned_not_implemented",
+      "confidence": "INFERRED",
+      "source_refs": [
+        {
+          "path": "PRODUCT.md",
+          "section": "Product Snapshot"
+        },
+        {
+          "path": "RoomDNS/Shared/RestrictionState.swift",
+          "line": 345
+        }
+      ]
+    },
+    {
+      "id": "runtime_state",
+      "label": "Applied RuntimeState snapshot",
+      "kind": "component",
+      "status": "implemented_unverified",
+      "confidence": "EXTRACTED",
+      "source_refs": [
+        {
+          "path": "RoomDNS/Shared/RestrictionState.swift",
+          "line": 204,
+          "symbol_or_anchor": "struct RuntimeState"
+        }
+      ]
+    },
+    {
+      "id": "runtime_store",
+      "label": "Versioned atomic runtime-v1.json",
+      "kind": "component",
+      "status": "implemented_unverified",
+      "confidence": "EXTRACTED",
+      "source_refs": [
+        {
+          "path": "RoomDNS/Shared/RestrictionState.swift",
+          "line": 280,
+          "symbol_or_anchor": "private static func accessRuntime"
+        }
+      ]
+    },
+    {
+      "id": "runtime_lock",
+      "label": "Bounded flock / separate runtime.lock",
+      "kind": "component",
+      "status": "implemented_unverified",
+      "confidence": "EXTRACTED",
+      "source_refs": [
+        {
+          "path": "RoomDNS/Shared/RestrictionState.swift",
+          "line": 282,
+          "symbol_or_anchor": "let lockURL ="
+        }
+      ]
+    },
+    {
+      "id": "rules_store",
+      "label": "UserDefaults definitions / original backup",
+      "kind": "component",
+      "status": "implemented_unverified",
+      "confidence": "EXTRACTED",
+      "source_refs": [
+        {
+          "path": "RoomDNS/Shared/RestrictionState.swift",
+          "line": 356,
+          "symbol_or_anchor": "static func saveRules"
+        }
+      ]
+    },
+    {
+      "id": "rule_delete",
+      "label": "Delete with active-state shutdown",
+      "kind": "implemented_capability",
+      "status": "implemented_unverified",
+      "confidence": "EXTRACTED",
+      "source_refs": [
+        {
+          "path": "RoomDNS/App/AppModel.swift",
+          "line": 394,
+          "symbol_or_anchor": "func deleteRule"
+        },
+        {
+          "path": "RoomDNS/App/ContentView.swift",
+          "line": 200,
+          "symbol_or_anchor": "\"Delete rule?\""
+        }
+      ]
+    },
+    {
+      "id": "roomie_presentation",
+      "label": "Nook Cat state, result reactions and accessible greeting",
+      "kind": "component",
+      "status": "implemented_unverified",
+      "confidence": "EXTRACTED",
+      "source_refs": [
+        {
+          "path": "RoomDNS/App/ContentView.swift",
+          "line": 32,
+          "symbol_or_anchor": "enum RoomSpiritState"
+        },
+        {
+          "path": "RoomDNS/App/ContentView.swift",
+          "line": 1555,
+          "symbol_or_anchor": "struct RoomSpiritReaction"
+        },
+        {
+          "path": "RoomDNS/App/ContentView.swift",
+          "line": 1583,
+          "symbol_or_anchor": "struct RoomSpirit: View"
+        },
+        {
+          "path": "RoomDNS/App/ContentView.swift",
+          "line": 891,
+          "symbol_or_anchor": "private func recordVisit"
+        }
+      ]
+    },
+    {
+      "id": "feature.personalized_onboarding",
+      "label": "목표·시간 선택 기반 첫 규칙 온보딩",
+      "kind": "feature",
+      "status": "implemented_unverified",
+      "confidence": "EXTRACTED",
+      "source_refs": [
+        {
+          "path": "RoomDNS/App/OnboardingProfile.swift"
+        },
+        {
+          "path": "RoomDNS/App/ContentView.swift"
+        }
+      ]
+    },
+    {
+      "id": "feature.apple_account",
+      "label": "Apple·Google·이메일 로그인과 계정 연결/삭제",
+      "kind": "feature",
+      "status": "partial",
+      "confidence": "EXTRACTED",
+      "source_refs": [
+        {
+          "path": "RoomDNS/App/AccountStore.swift"
+        },
+        {
+          "path": "RoomDNS/App/AccountViews.swift"
+        }
+      ]
+    },
+    {
+      "id": "feature.subscription_offer",
+      "label": "RevenueCat 월간/연간 구독 화면·구매 복원",
+      "kind": "feature",
+      "status": "partial",
+      "confidence": "EXTRACTED",
+      "source_refs": [
+        {
+          "path": "RoomDNS/App/AccountStore.swift"
+        },
+        {
+          "path": "RoomDNS/App/AccountViews.swift"
+        }
+      ]
+    },
+    {
+      "id": "feature.zone_notifications",
+      "label": "활성 GPS 구역 진입·이탈과 차단 시작·종료 로컬 알림",
+      "kind": "feature",
+      "status": "implemented_unverified",
+      "confidence": "EXTRACTED",
+      "source_refs": [
+        {
+          "path": "RoomDNS/Shared/RestrictionState.swift"
+        },
+        {
+          "path": "RoomDNS/App/AppModel.swift"
+        },
+        {
+          "path": "RoomDNS/App/ContentView.swift"
+        },
+        {
+          "path": "RoomDNSTests/RestrictionNotificationTests.swift"
+        }
+      ]
+    },
+    {
+      "id": "feature.app_deletion_protection",
+      "label": "차단 중 선택형 앱 삭제 제한",
+      "kind": "feature",
+      "status": "implemented_unverified",
+      "confidence": "EXTRACTED",
+      "source_refs": [
+        {
+          "path": "RoomDNS/Shared/RestrictionState.swift"
+        },
+        {
+          "path": "RoomDNS/App/AppModel.swift"
+        },
+        {
+          "path": "RoomDNS/App/ContentView.swift"
+        },
+        {
+          "path": "RoomDNSTests/RestrictionPolicyTests.swift"
+        }
+      ]
+    },
+    {
+      "id": "feature.pro_planning_journal",
+      "label": "Pro 주간 목표 계획·개인 회고·주간 요약",
+      "kind": "feature",
+      "status": "partial",
+      "confidence": "EXTRACTED",
+      "source_refs": [
+        {
+          "path": "RoomDNS/App/ProJournal.swift"
+        },
+        {
+          "path": "RoomDNS/App/ProJournalView.swift"
+        },
+        {
+          "path": "RoomDNS/App/AccountStore.swift"
+        },
+        {
+          "path": "tools/check_pro_journal.swift"
+        }
+      ]
+    },
+    {
+      "id": "android.main_activity",
+      "label": "MainActivity (Android)",
+      "kind": "component",
+      "status": "implemented_unverified",
+      "confidence": "EXTRACTED",
+      "source_refs": [
+        {
+          "path": "android/app/src/main/java/com/exchip/offzone/MainActivity.kt",
+          "symbol_or_anchor": "MainActivity"
+        }
+      ]
+    },
+    {
+      "id": "android.app_selection",
+      "label": "AppSelection (Android)",
+      "kind": "component",
+      "status": "implemented_unverified",
+      "confidence": "EXTRACTED",
+      "source_refs": [
+        {
+          "path": "android/app/src/main/java/com/exchip/offzone/AppSelection.kt",
+          "symbol_or_anchor": "AppSelection"
+        }
+      ]
+    },
+    {
+      "id": "android.focus_controller",
+      "label": "FocusController (Android)",
+      "kind": "component",
+      "status": "implemented_unverified",
+      "confidence": "EXTRACTED",
+      "source_refs": [
+        {
+          "path": "android/app/src/main/java/com/exchip/offzone/FocusController.kt",
+          "symbol_or_anchor": "FocusController"
+        }
+      ]
+    },
+    {
+      "id": "android.focus_session",
+      "label": "FocusSession (Android)",
+      "kind": "component",
+      "status": "implemented_unverified",
+      "confidence": "EXTRACTED",
+      "source_refs": [
+        {
+          "path": "android/app/src/main/java/com/exchip/offzone/FocusSession.kt",
+          "symbol_or_anchor": "FocusSession"
+        }
+      ]
+    },
+    {
+      "id": "android.accessibility_service",
+      "label": "FocusAccessibilityService (Android)",
+      "kind": "component",
+      "status": "implemented_unverified",
+      "confidence": "EXTRACTED",
+      "source_refs": [
+        {
+          "path": "android/app/src/main/java/com/exchip/offzone/FocusAccessibilityService.kt",
+          "symbol_or_anchor": "FocusAccessibilityService"
+        }
+      ]
+    },
+    {
+      "id": "android.rule_store",
+      "label": "RuleStore (Android)",
+      "kind": "component",
+      "status": "implemented_validation_in_progress",
+      "confidence": "EXTRACTED",
+      "source_refs": [
+        {
+          "path": "android/app/src/main/java/com/exchip/offzone/RuleStore.kt",
+          "symbol_or_anchor": "RuleStore"
+        }
+      ]
+    },
+    {
+      "id": "android.rule_policy",
+      "label": "RulePolicy (Android)",
+      "kind": "component",
+      "status": "implemented_validation_in_progress",
+      "confidence": "EXTRACTED",
+      "source_refs": [
+        {
+          "path": "android/app/src/main/java/com/exchip/offzone/RulePolicy.kt",
+          "symbol_or_anchor": "RulePolicy"
+        }
+      ]
+    },
+    {
+      "id": "android.place_monitor",
+      "label": "PlaceMonitor (Android)",
+      "kind": "component",
+      "status": "implemented_validation_in_progress",
+      "confidence": "EXTRACTED",
+      "source_refs": [
+        {
+          "path": "android/app/src/main/java/com/exchip/offzone/PlaceMonitor.kt",
+          "symbol_or_anchor": "PlaceMonitor"
+        }
+      ]
+    },
+    {
+      "id": "android.account_store",
+      "label": "AccountStore (Android)",
+      "kind": "component",
+      "status": "implemented_validation_in_progress",
+      "confidence": "EXTRACTED",
+      "source_refs": [
+        {
+          "path": "android/app/src/main/java/com/exchip/offzone/AccountStore.kt",
+          "symbol_or_anchor": "AccountStore"
+        }
+      ]
+    },
+    {
+      "id": "android.journal_store",
+      "label": "JournalStore (Android)",
+      "kind": "component",
+      "status": "implemented_validation_in_progress",
+      "confidence": "EXTRACTED",
+      "source_refs": [
+        {
+          "path": "android/app/src/main/java/com/exchip/offzone/JournalStore.kt",
+          "symbol_or_anchor": "JournalStore"
+        }
+      ]
+    },
+    {
+      "id": "android.journal_screen",
+      "label": "JournalScreen (Android)",
+      "kind": "component",
+      "status": "implemented_validation_in_progress",
+      "confidence": "EXTRACTED",
+      "source_refs": [
+        {
+          "path": "android/app/src/main/java/com/exchip/offzone/JournalScreen.kt",
+          "symbol_or_anchor": "JournalScreen"
+        }
+      ]
+    },
+    {
+      "id": "android.onboarding",
+      "label": "OnboardingScreen (Android)",
+      "kind": "component",
+      "status": "implemented_validation_in_progress",
+      "confidence": "EXTRACTED",
+      "source_refs": [
+        {
+          "path": "android/app/src/main/java/com/exchip/offzone/OnboardingScreen.kt",
+          "symbol_or_anchor": "OnboardingScreen"
+        }
+      ]
+    },
+    {
+      "id": "android.place_picker",
+      "label": "PlacePickerScreen (Android)",
+      "kind": "component",
+      "status": "implemented_validation_in_progress",
+      "confidence": "EXTRACTED",
+      "source_refs": [
+        {
+          "path": "android/app/src/main/java/com/exchip/offzone/PlacePickerScreen.kt",
+          "symbol_or_anchor": "PlacePickerScreen"
+        }
+      ]
+    },
+    {
+      "id": "android.rule_editor",
+      "label": "RuleEditorScreen (Android)",
+      "kind": "component",
+      "status": "implemented_validation_in_progress",
+      "confidence": "EXTRACTED",
+      "source_refs": [
+        {
+          "path": "android/app/src/main/java/com/exchip/offzone/RuleEditorScreen.kt",
+          "symbol_or_anchor": "RuleEditorScreen"
+        }
+      ]
+    },
+    {
+      "id": "android.nook",
+      "label": "NookCatView (Android)",
+      "kind": "component",
+      "status": "implemented_validation_in_progress",
+      "confidence": "EXTRACTED",
+      "source_refs": [
+        {
+          "path": "android/app/src/main/java/com/exchip/offzone/NookCatView.kt",
+          "symbol_or_anchor": "NookCatView",
+          "line": 22
+        }
+      ]
+    }
+  ],
+  "edges": [
+    {
+      "source": "app",
+      "target": "model",
+      "relation": "owns",
+      "confidence": "EXTRACTED",
+      "source_refs": [
+        {
+          "path": "RoomDNS/App/RoomDNSApp.swift",
+          "line": 6,
+          "symbol_or_anchor": "@StateObject"
+        }
+      ]
+    },
+    {
+      "source": "app",
+      "target": "ui",
+      "relation": "presents",
+      "confidence": "EXTRACTED",
+      "source_refs": [
+        {
+          "path": "RoomDNS/App/RoomDNSApp.swift",
+          "line": 11,
+          "symbol_or_anchor": "ContentView(model:"
+        }
+      ]
+    },
+    {
+      "source": "ui",
+      "target": "model",
+      "relation": "invokes user actions",
+      "confidence": "EXTRACTED",
+      "source_refs": [
+        {
+          "path": "RoomDNS/App/ContentView.swift",
+          "line": 1231,
+          "symbol_or_anchor": "private func saveAndFinish"
+        }
+      ]
+    },
+    {
+      "source": "model",
+      "target": "ui",
+      "relation": "publishes state",
+      "confidence": "EXTRACTED",
+      "source_refs": [
+        {
+          "path": "RoomDNS/App/AppModel.swift",
+          "line": 19,
+          "symbol_or_anchor": "@Published var selection"
+        }
+      ]
+    },
+    {
+      "source": "ui",
+      "target": "family_controls",
+      "relation": "presents selection",
+      "confidence": "EXTRACTED",
+      "source_refs": [
+        {
+          "path": "RoomDNS/App/ContentView.swift",
+          "line": 169,
+          "symbol_or_anchor": ".familyActivityPicker("
+        }
+      ]
+    },
+    {
+      "source": "ui",
+      "target": "mapkit",
+      "relation": "presents map",
+      "confidence": "EXTRACTED",
+      "source_refs": [
+        {
+          "path": "RoomDNS/App/ContentView.swift",
+          "line": 495,
+          "symbol_or_anchor": "private var placeMapPicker"
+        }
+      ]
+    },
+    {
+      "source": "model",
+      "target": "family_controls",
+      "relation": "requests authorization",
+      "confidence": "EXTRACTED",
+      "source_refs": [
+        {
+          "path": "RoomDNS/App/AppModel.swift",
+          "line": 248,
+          "symbol_or_anchor": "func requestScreenTimeAuthorization"
+        }
+      ]
+    },
+    {
+      "source": "model",
+      "target": "core_location",
+      "relation": "monitors place",
+      "confidence": "EXTRACTED",
+      "source_refs": [
+        {
+          "path": "RoomDNS/App/AppModel.swift",
+          "line": 785,
+          "symbol_or_anchor": "private func configurePlaceMonitor"
+        }
+      ]
+    },
+    {
+      "source": "core_location",
+      "target": "model",
+      "relation": "delivers generation-scoped event",
+      "confidence": "EXTRACTED",
+      "source_refs": [
+        {
+          "path": "RoomDNS/App/AppModel.swift",
+          "line": 846,
+          "symbol_or_anchor": "private func handlePlaceEvent"
+        }
+      ]
+    },
+    {
+      "source": "model",
+      "target": "device_activity",
+      "relation": "registers schedule before activation",
+      "confidence": "EXTRACTED",
+      "source_refs": [
+        {
+          "path": "RoomDNS/App/AppModel.swift",
+          "line": 501,
+          "symbol_or_anchor": "private func registerSchedule"
+        }
+      ]
+    },
+    {
+      "source": "device_activity",
+      "target": "monitor",
+      "relation": "has interval callback handlers",
+      "confidence": "EXTRACTED",
+      "source_refs": [
+        {
+          "path": "Extensions/DeviceActivityMonitor/DeviceActivityMonitorExtension.swift",
+          "line": 5,
+          "symbol_or_anchor": "override func intervalDidStart"
+        }
+      ]
+    },
+    {
+      "source": "model",
+      "target": "rules_store",
+      "relation": "saves definitions only",
+      "confidence": "EXTRACTED",
+      "source_refs": [
+        {
+          "path": "RoomDNS/App/AppModel.swift",
+          "line": 352,
+          "symbol_or_anchor": "func saveRule"
+        }
+      ]
+    },
+    {
+      "source": "rules_store",
+      "target": "rules",
+      "relation": "encodes definitions",
+      "confidence": "EXTRACTED",
+      "source_refs": [
+        {
+          "path": "RoomDNS/Shared/RestrictionState.swift",
+          "line": 356,
+          "symbol_or_anchor": "static func saveRules"
+        }
+      ]
+    },
+    {
+      "source": "model",
+      "target": "shared",
+      "relation": "publishes applied configuration",
+      "confidence": "EXTRACTED",
+      "source_refs": [
+        {
+          "path": "RoomDNS/App/AppModel.swift",
+          "line": 474,
+          "symbol_or_anchor": "try SharedState.activate(rule)"
+        }
+      ]
+    },
+    {
+      "source": "shared",
+      "target": "runtime_lock",
+      "relation": "locks fixed inode",
+      "confidence": "EXTRACTED",
+      "source_refs": [
+        {
+          "path": "RoomDNS/Shared/RestrictionState.swift",
+          "line": 282,
+          "symbol_or_anchor": "let lockURL ="
+        }
+      ]
+    },
+    {
+      "source": "runtime_lock",
+      "target": "runtime_store",
+      "relation": "bounds read-update-write",
+      "confidence": "EXTRACTED",
+      "source_refs": [
+        {
+          "path": "RoomDNS/Shared/RestrictionState.swift",
+          "line": 280,
+          "symbol_or_anchor": "private static func accessRuntime"
+        }
+      ]
+    },
+    {
+      "source": "runtime_store",
+      "target": "runtime_state",
+      "relation": "stores versioned snapshot",
+      "confidence": "EXTRACTED",
+      "source_refs": [
+        {
+          "path": "RoomDNS/Shared/RestrictionState.swift",
+          "line": 329,
+          "symbol_or_anchor": "JSONEncoder().encode(state).write"
+        }
+      ]
+    },
+    {
+      "source": "runtime_state",
+      "target": "policy",
+      "relation": "evaluates current time and recovery",
+      "confidence": "EXTRACTED",
+      "source_refs": [
+        {
+          "path": "RoomDNS/Shared/RestrictionState.swift",
+          "line": 232,
+          "symbol_or_anchor": "func shouldShield(at date:"
+        }
+      ]
+    },
+    {
+      "source": "shared",
+      "target": "reconcile",
+      "relation": "centralizes application",
+      "confidence": "EXTRACTED",
+      "source_refs": [
+        {
+          "path": "RoomDNS/Shared/RestrictionState.swift",
+          "line": 514,
+          "symbol_or_anchor": "static func reconcileRestrictions"
+        }
+      ]
+    },
+    {
+      "source": "reconcile",
+      "target": "runtime_state",
+      "relation": "uses current snapshot",
+      "confidence": "EXTRACTED",
+      "source_refs": [
+        {
+          "path": "RoomDNS/Shared/RestrictionState.swift",
+          "line": 534,
+          "symbol_or_anchor": "private static func apply"
+        }
+      ]
+    },
+    {
+      "source": "reconcile",
+      "target": "managed_settings",
+      "relation": "sets or clears shields",
+      "confidence": "EXTRACTED",
+      "source_refs": [
+        {
+          "path": "RoomDNS/Shared/RestrictionState.swift",
+          "line": 534,
+          "symbol_or_anchor": "private static func apply"
+        }
+      ]
+    },
+    {
+      "source": "monitor",
+      "target": "shared",
+      "relation": "reconciles with permission",
+      "confidence": "EXTRACTED",
+      "source_refs": [
+        {
+          "path": "Extensions/DeviceActivityMonitor/DeviceActivityMonitorExtension.swift",
+          "line": 19,
+          "symbol_or_anchor": "SharedState.reconcileRestrictions"
+        }
+      ]
+    },
+    {
+      "source": "managed_settings",
+      "target": "shield_config",
+      "relation": "has shield appearance handler",
+      "confidence": "EXTRACTED",
+      "source_refs": [
+        {
+          "path": "Extensions/ShieldConfiguration/ShieldConfigurationExtension.swift",
+          "line": 34,
+          "symbol_or_anchor": "override func configuration(shielding application:"
+        }
+      ]
+    },
+    {
+      "source": "managed_settings",
+      "target": "shield_action",
+      "relation": "has shield action handler",
+      "confidence": "EXTRACTED",
+      "source_refs": [
+        {
+          "path": "Extensions/ShieldAction/ShieldActionExtension.swift",
+          "line": 19,
+          "symbol_or_anchor": "override func handle("
+        }
+      ]
+    },
+    {
+      "source": "model",
+      "target": "localization",
+      "relation": "localizes English source messages",
+      "confidence": "EXTRACTED",
+      "source_refs": [
+        {
+          "path": "RoomDNS/App/AppModel.swift",
+          "line": 12,
+          "symbol_or_anchor": "func roomString"
+        }
+      ]
+    },
+    {
+      "source": "shield_config",
+      "target": "localization",
+      "relation": "localizes shield copy",
+      "confidence": "EXTRACTED",
+      "source_refs": [
+        {
+          "path": "Extensions/ShieldConfiguration/ShieldConfigurationExtension.swift",
+          "line": 6,
+          "symbol_or_anchor": "private func localized"
+        }
+      ]
+    },
+    {
+      "source": "build_config",
+      "target": "localization",
+      "relation": "sets English development region",
+      "confidence": "EXTRACTED",
+      "source_refs": [
+        {
+          "path": "RoomDNS.xcodeproj/project.pbxproj",
+          "line": 436,
+          "symbol_or_anchor": "developmentRegion = en"
+        }
+      ]
+    },
+    {
+      "source": "ui",
+      "target": "restore_access",
+      "relation": "exposes on every app screen",
+      "confidence": "EXTRACTED",
+      "source_refs": [
+        {
+          "path": "RoomDNS/App/ContentView.swift",
+          "line": 155,
+          "symbol_or_anchor": "safetyReleasePresented = true"
+        }
+      ]
+    },
+    {
+      "source": "restore_access",
+      "target": "shared",
+      "relation": "changes generation and recovery state",
+      "confidence": "EXTRACTED",
+      "source_refs": [
+        {
+          "path": "RoomDNS/Shared/RestrictionState.swift",
+          "line": 444,
+          "symbol_or_anchor": "static func restoreAccess"
+        }
+      ]
+    },
+    {
+      "source": "save_activate",
+      "target": "rules_store",
+      "relation": "save leaves runtime unchanged",
+      "confidence": "EXTRACTED",
+      "source_refs": [
+        {
+          "path": "RoomDNS/App/AppModel.swift",
+          "line": 352,
+          "symbol_or_anchor": "func saveRule"
+        }
+      ]
+    },
+    {
+      "source": "save_activate",
+      "target": "runtime_state",
+      "relation": "activate publishes full snapshot",
+      "confidence": "EXTRACTED",
+      "source_refs": [
+        {
+          "path": "RoomDNS/App/AppModel.swift",
+          "line": 449,
+          "symbol_or_anchor": "func activateRule"
+        }
+      ]
+    },
+    {
+      "source": "rule_delete",
+      "target": "shared",
+      "relation": "deactivates before active deletion",
+      "confidence": "EXTRACTED",
+      "source_refs": [
+        {
+          "path": "RoomDNS/App/AppModel.swift",
+          "line": 394,
+          "symbol_or_anchor": "func deleteRule"
+        }
+      ]
+    },
+    {
+      "source": "orchestrator",
+      "target": "sales",
+      "relation": "coordinates",
+      "confidence": "EXTRACTED",
+      "source_refs": [
+        {
+          "path": "ORCHESTRATOR.md",
+          "section": "운영 원칙"
+        }
+      ]
+    },
+    {
+      "source": "orchestrator",
+      "target": "ux",
+      "relation": "coordinates",
+      "confidence": "EXTRACTED",
+      "source_refs": [
+        {
+          "path": "ORCHESTRATOR.md",
+          "section": "운영 원칙"
+        }
+      ]
+    },
+    {
+      "source": "orchestrator",
+      "target": "architecture",
+      "relation": "coordinates",
+      "confidence": "EXTRACTED",
+      "source_refs": [
+        {
+          "path": "ORCHESTRATOR.md",
+          "section": "운영 원칙"
+        }
+      ]
+    },
+    {
+      "source": "orchestrator",
+      "target": "product",
+      "relation": "owns shared decisions",
+      "confidence": "EXTRACTED",
+      "source_refs": [
+        {
+          "path": "ORCHESTRATOR.md",
+          "section": "운영 원칙"
+        }
+      ]
+    },
+    {
+      "source": "orchestrator",
+      "target": "metadata",
+      "relation": "owns implementation status",
+      "confidence": "EXTRACTED",
+      "source_refs": [
+        {
+          "path": "ORCHESTRATOR.md",
+          "section": "운영 원칙"
+        }
+      ]
+    },
+    {
+      "source": "sales",
+      "target": "ux",
+      "relation": "checks promise against user action",
+      "confidence": "EXTRACTED",
+      "source_refs": [
+        {
+          "path": "ORCHESTRATOR.md",
+          "section": "운영 원칙"
+        }
+      ]
+    },
+    {
+      "source": "ux",
+      "target": "architecture",
+      "relation": "checks entry exit error feasibility",
+      "confidence": "EXTRACTED",
+      "source_refs": [
+        {
+          "path": "ORCHESTRATOR.md",
+          "section": "운영 원칙"
+        }
+      ]
+    },
+    {
+      "source": "architecture",
+      "target": "sales",
+      "relation": "returns claim limits",
+      "confidence": "EXTRACTED",
+      "source_refs": [
+        {
+          "path": "ORCHESTRATOR.md",
+          "section": "운영 원칙"
+        }
+      ]
+    },
+    {
+      "source": "architecture",
+      "target": "ux",
+      "relation": "returns state dependencies",
+      "confidence": "EXTRACTED",
+      "source_refs": [
+        {
+          "path": "ORCHESTRATOR.md",
+          "section": "운영 원칙"
+        }
+      ]
+    },
+    {
+      "source": "orchestrator",
+      "target": "ALIGN-01",
+      "relation": "owns priority and decision",
+      "confidence": "EXTRACTED",
+      "source_refs": [
+        {
+          "path": "ORCHESTRATOR.md",
+          "section": "공통 작업 ID"
+        }
+      ]
+    },
+    {
+      "source": "ALIGN-01",
+      "target": "localization",
+      "relation": "requires review or change",
+      "confidence": "INFERRED",
+      "source_refs": [
+        {
+          "path": "APP_GRAPH.md",
+          "section": "5. 공통 작업과 구현 의존성"
+        }
+      ]
+    },
+    {
+      "source": "ALIGN-01",
+      "target": "build_config",
+      "relation": "requires review or change",
+      "confidence": "INFERRED",
+      "source_refs": [
+        {
+          "path": "APP_GRAPH.md",
+          "section": "5. 공통 작업과 구현 의존성"
+        }
+      ]
+    },
+    {
+      "source": "ALIGN-01",
+      "target": "ui",
+      "relation": "requires review or change",
+      "confidence": "INFERRED",
+      "source_refs": [
+        {
+          "path": "APP_GRAPH.md",
+          "section": "5. 공통 작업과 구현 의존성"
+        }
+      ]
+    },
+    {
+      "source": "ALIGN-01",
+      "target": "model",
+      "relation": "requires review or change",
+      "confidence": "INFERRED",
+      "source_refs": [
+        {
+          "path": "APP_GRAPH.md",
+          "section": "5. 공통 작업과 구현 의존성"
+        }
+      ]
+    },
+    {
+      "source": "ALIGN-01",
+      "target": "shield_config",
+      "relation": "requires review or change",
+      "confidence": "INFERRED",
+      "source_refs": [
+        {
+          "path": "APP_GRAPH.md",
+          "section": "5. 공통 작업과 구현 의존성"
+        }
+      ]
+    },
+    {
+      "source": "orchestrator",
+      "target": "CORE-01",
+      "relation": "owns priority and decision",
+      "confidence": "EXTRACTED",
+      "source_refs": [
+        {
+          "path": "ORCHESTRATOR.md",
+          "section": "공통 작업 ID"
+        }
+      ]
+    },
+    {
+      "source": "CORE-01",
+      "target": "model",
+      "relation": "requires review or change",
+      "confidence": "INFERRED",
+      "source_refs": [
+        {
+          "path": "APP_GRAPH.md",
+          "section": "5. 공통 작업과 구현 의존성"
+        }
+      ]
+    },
+    {
+      "source": "CORE-01",
+      "target": "shared",
+      "relation": "requires review or change",
+      "confidence": "INFERRED",
+      "source_refs": [
+        {
+          "path": "APP_GRAPH.md",
+          "section": "5. 공통 작업과 구현 의존성"
+        }
+      ]
+    },
+    {
+      "source": "CORE-01",
+      "target": "runtime_state",
+      "relation": "requires review or change",
+      "confidence": "INFERRED",
+      "source_refs": [
+        {
+          "path": "APP_GRAPH.md",
+          "section": "5. 공통 작업과 구현 의존성"
+        }
+      ]
+    },
+    {
+      "source": "CORE-01",
+      "target": "runtime_store",
+      "relation": "requires review or change",
+      "confidence": "INFERRED",
+      "source_refs": [
+        {
+          "path": "APP_GRAPH.md",
+          "section": "5. 공통 작업과 구현 의존성"
+        }
+      ]
+    },
+    {
+      "source": "CORE-01",
+      "target": "runtime_lock",
+      "relation": "requires review or change",
+      "confidence": "INFERRED",
+      "source_refs": [
+        {
+          "path": "APP_GRAPH.md",
+          "section": "5. 공통 작업과 구현 의존성"
+        }
+      ]
+    },
+    {
+      "source": "CORE-01",
+      "target": "policy",
+      "relation": "requires review or change",
+      "confidence": "INFERRED",
+      "source_refs": [
+        {
+          "path": "APP_GRAPH.md",
+          "section": "5. 공통 작업과 구현 의존성"
+        }
+      ]
+    },
+    {
+      "source": "CORE-01",
+      "target": "reconcile",
+      "relation": "requires review or change",
+      "confidence": "INFERRED",
+      "source_refs": [
+        {
+          "path": "APP_GRAPH.md",
+          "section": "5. 공통 작업과 구현 의존성"
+        }
+      ]
+    },
+    {
+      "source": "CORE-01",
+      "target": "monitor",
+      "relation": "requires review or change",
+      "confidence": "INFERRED",
+      "source_refs": [
+        {
+          "path": "APP_GRAPH.md",
+          "section": "5. 공통 작업과 구현 의존성"
+        }
+      ]
+    },
+    {
+      "source": "CORE-01",
+      "target": "shield_action",
+      "relation": "requires review or change",
+      "confidence": "INFERRED",
+      "source_refs": [
+        {
+          "path": "APP_GRAPH.md",
+          "section": "5. 공통 작업과 구현 의존성"
+        }
+      ]
+    },
+    {
+      "source": "CORE-01",
+      "target": "device_verification",
+      "relation": "requires review or change",
+      "confidence": "INFERRED",
+      "source_refs": [
+        {
+          "path": "APP_GRAPH.md",
+          "section": "5. 공통 작업과 구현 의존성"
+        }
+      ]
+    },
+    {
+      "source": "orchestrator",
+      "target": "SAFE-01",
+      "relation": "owns priority and decision",
+      "confidence": "EXTRACTED",
+      "source_refs": [
+        {
+          "path": "ORCHESTRATOR.md",
+          "section": "공통 작업 ID"
+        }
+      ]
+    },
+    {
+      "source": "SAFE-01",
+      "target": "restore_access",
+      "relation": "requires review or change",
+      "confidence": "INFERRED",
+      "source_refs": [
+        {
+          "path": "APP_GRAPH.md",
+          "section": "5. 공통 작업과 구현 의존성"
+        }
+      ]
+    },
+    {
+      "source": "SAFE-01",
+      "target": "ui",
+      "relation": "requires review or change",
+      "confidence": "INFERRED",
+      "source_refs": [
+        {
+          "path": "APP_GRAPH.md",
+          "section": "5. 공통 작업과 구현 의존성"
+        }
+      ]
+    },
+    {
+      "source": "SAFE-01",
+      "target": "model",
+      "relation": "requires review or change",
+      "confidence": "INFERRED",
+      "source_refs": [
+        {
+          "path": "APP_GRAPH.md",
+          "section": "5. 공통 작업과 구현 의존성"
+        }
+      ]
+    },
+    {
+      "source": "SAFE-01",
+      "target": "runtime_state",
+      "relation": "requires review or change",
+      "confidence": "INFERRED",
+      "source_refs": [
+        {
+          "path": "APP_GRAPH.md",
+          "section": "5. 공통 작업과 구현 의존성"
+        }
+      ]
+    },
+    {
+      "source": "SAFE-01",
+      "target": "runtime_store",
+      "relation": "requires review or change",
+      "confidence": "INFERRED",
+      "source_refs": [
+        {
+          "path": "APP_GRAPH.md",
+          "section": "5. 공통 작업과 구현 의존성"
+        }
+      ]
+    },
+    {
+      "source": "SAFE-01",
+      "target": "policy",
+      "relation": "requires review or change",
+      "confidence": "INFERRED",
+      "source_refs": [
+        {
+          "path": "APP_GRAPH.md",
+          "section": "5. 공통 작업과 구현 의존성"
+        }
+      ]
+    },
+    {
+      "source": "SAFE-01",
+      "target": "reconcile",
+      "relation": "requires review or change",
+      "confidence": "INFERRED",
+      "source_refs": [
+        {
+          "path": "APP_GRAPH.md",
+          "section": "5. 공통 작업과 구현 의존성"
+        }
+      ]
+    },
+    {
+      "source": "orchestrator",
+      "target": "ACT-01",
+      "relation": "owns priority and decision",
+      "confidence": "EXTRACTED",
+      "source_refs": [
+        {
+          "path": "ORCHESTRATOR.md",
+          "section": "공통 작업 ID"
+        }
+      ]
+    },
+    {
+      "source": "ACT-01",
+      "target": "manual_test",
+      "relation": "requires review or change",
+      "confidence": "INFERRED",
+      "source_refs": [
+        {
+          "path": "APP_GRAPH.md",
+          "section": "5. 공통 작업과 구현 의존성"
+        }
+      ]
+    },
+    {
+      "source": "ACT-01",
+      "target": "ui",
+      "relation": "requires review or change",
+      "confidence": "INFERRED",
+      "source_refs": [
+        {
+          "path": "APP_GRAPH.md",
+          "section": "5. 공통 작업과 구현 의존성"
+        }
+      ]
+    },
+    {
+      "source": "ACT-01",
+      "target": "family_controls",
+      "relation": "requires review or change",
+      "confidence": "INFERRED",
+      "source_refs": [
+        {
+          "path": "APP_GRAPH.md",
+          "section": "5. 공통 작업과 구현 의존성"
+        }
+      ]
+    },
+    {
+      "source": "ACT-01",
+      "target": "model",
+      "relation": "requires review or change",
+      "confidence": "INFERRED",
+      "source_refs": [
+        {
+          "path": "APP_GRAPH.md",
+          "section": "5. 공통 작업과 구현 의존성"
+        }
+      ]
+    },
+    {
+      "source": "ACT-01",
+      "target": "shared",
+      "relation": "requires review or change",
+      "confidence": "INFERRED",
+      "source_refs": [
+        {
+          "path": "APP_GRAPH.md",
+          "section": "5. 공통 작업과 구현 의존성"
+        }
+      ]
+    },
+    {
+      "source": "orchestrator",
+      "target": "RULE-01",
+      "relation": "owns priority and decision",
+      "confidence": "EXTRACTED",
+      "source_refs": [
+        {
+          "path": "ORCHESTRATOR.md",
+          "section": "공통 작업 ID"
+        }
+      ]
+    },
+    {
+      "source": "RULE-01",
+      "target": "save_activate",
+      "relation": "requires review or change",
+      "confidence": "INFERRED",
+      "source_refs": [
+        {
+          "path": "APP_GRAPH.md",
+          "section": "5. 공통 작업과 구현 의존성"
+        }
+      ]
+    },
+    {
+      "source": "RULE-01",
+      "target": "rule_delete",
+      "relation": "requires review or change",
+      "confidence": "INFERRED",
+      "source_refs": [
+        {
+          "path": "APP_GRAPH.md",
+          "section": "5. 공통 작업과 구현 의존성"
+        }
+      ]
+    },
+    {
+      "source": "RULE-01",
+      "target": "rules",
+      "relation": "requires review or change",
+      "confidence": "INFERRED",
+      "source_refs": [
+        {
+          "path": "APP_GRAPH.md",
+          "section": "5. 공통 작업과 구현 의존성"
+        }
+      ]
+    },
+    {
+      "source": "RULE-01",
+      "target": "rules_store",
+      "relation": "requires review or change",
+      "confidence": "INFERRED",
+      "source_refs": [
+        {
+          "path": "APP_GRAPH.md",
+          "section": "5. 공통 작업과 구현 의존성"
+        }
+      ]
+    },
+    {
+      "source": "RULE-01",
+      "target": "runtime_state",
+      "relation": "requires review or change",
+      "confidence": "INFERRED",
+      "source_refs": [
+        {
+          "path": "APP_GRAPH.md",
+          "section": "5. 공통 작업과 구현 의존성"
+        }
+      ]
+    },
+    {
+      "source": "RULE-01",
+      "target": "model",
+      "relation": "requires review or change",
+      "confidence": "INFERRED",
+      "source_refs": [
+        {
+          "path": "APP_GRAPH.md",
+          "section": "5. 공통 작업과 구현 의존성"
+        }
+      ]
+    },
+    {
+      "source": "RULE-01",
+      "target": "device_activity",
+      "relation": "requires review or change",
+      "confidence": "INFERRED",
+      "source_refs": [
+        {
+          "path": "APP_GRAPH.md",
+          "section": "5. 공통 작업과 구현 의존성"
+        }
+      ]
+    },
+    {
+      "source": "orchestrator",
+      "target": "INSIGHT-01",
+      "relation": "owns priority and decision",
+      "confidence": "EXTRACTED",
+      "source_refs": [
+        {
+          "path": "ORCHESTRATOR.md",
+          "section": "공통 작업 ID"
+        }
+      ]
+    },
+    {
+      "source": "INSIGHT-01",
+      "target": "qualified_history",
+      "relation": "requires review or change",
+      "confidence": "INFERRED",
+      "source_refs": [
+        {
+          "path": "APP_GRAPH.md",
+          "section": "5. 공통 작업과 구현 의존성"
+        }
+      ]
+    },
+    {
+      "source": "INSIGHT-01",
+      "target": "runtime_state",
+      "relation": "requires review or change",
+      "confidence": "INFERRED",
+      "source_refs": [
+        {
+          "path": "APP_GRAPH.md",
+          "section": "5. 공통 작업과 구현 의존성"
+        }
+      ]
+    },
+    {
+      "source": "INSIGHT-01",
+      "target": "reconcile",
+      "relation": "requires review or change",
+      "confidence": "INFERRED",
+      "source_refs": [
+        {
+          "path": "APP_GRAPH.md",
+          "section": "5. 공통 작업과 구현 의존성"
+        }
+      ]
+    },
+    {
+      "source": "INSIGHT-01",
+      "target": "ui",
+      "relation": "requires review or change",
+      "confidence": "INFERRED",
+      "source_refs": [
+        {
+          "path": "APP_GRAPH.md",
+          "section": "5. 공통 작업과 구현 의존성"
+        }
+      ]
+    },
+    {
+      "source": "orchestrator",
+      "target": "BREAK-01",
+      "relation": "owns priority and decision",
+      "confidence": "EXTRACTED",
+      "source_refs": [
+        {
+          "path": "ORCHESTRATOR.md",
+          "section": "공통 작업 ID"
+        }
+      ]
+    },
+    {
+      "source": "BREAK-01",
+      "target": "planned_break",
+      "relation": "requires review or change",
+      "confidence": "INFERRED",
+      "source_refs": [
+        {
+          "path": "APP_GRAPH.md",
+          "section": "5. 공통 작업과 구현 의존성"
+        }
+      ]
+    },
+    {
+      "source": "BREAK-01",
+      "target": "runtime_state",
+      "relation": "requires review or change",
+      "confidence": "INFERRED",
+      "source_refs": [
+        {
+          "path": "APP_GRAPH.md",
+          "section": "5. 공통 작업과 구현 의존성"
+        }
+      ]
+    },
+    {
+      "source": "BREAK-01",
+      "target": "policy",
+      "relation": "requires review or change",
+      "confidence": "INFERRED",
+      "source_refs": [
+        {
+          "path": "APP_GRAPH.md",
+          "section": "5. 공통 작업과 구현 의존성"
+        }
+      ]
+    },
+    {
+      "source": "BREAK-01",
+      "target": "device_activity",
+      "relation": "requires review or change",
+      "confidence": "INFERRED",
+      "source_refs": [
+        {
+          "path": "APP_GRAPH.md",
+          "section": "5. 공통 작업과 구현 의존성"
+        }
+      ]
+    },
+    {
+      "source": "BREAK-01",
+      "target": "monitor",
+      "relation": "requires review or change",
+      "confidence": "INFERRED",
+      "source_refs": [
+        {
+          "path": "APP_GRAPH.md",
+          "section": "5. 공통 작업과 구현 의존성"
+        }
+      ]
+    },
+    {
+      "source": "orchestrator",
+      "target": "OFFER-01",
+      "relation": "owns priority and decision",
+      "confidence": "EXTRACTED",
+      "source_refs": [
+        {
+          "path": "ORCHESTRATOR.md",
+          "section": "공통 작업 ID"
+        }
+      ]
+    },
+    {
+      "source": "OFFER-01",
+      "target": "pro_offer",
+      "relation": "requires review or change",
+      "confidence": "INFERRED",
+      "source_refs": [
+        {
+          "path": "APP_GRAPH.md",
+          "section": "5. 공통 작업과 구현 의존성"
+        }
+      ]
+    },
+    {
+      "source": "OFFER-01",
+      "target": "sales",
+      "relation": "requires review or change",
+      "confidence": "INFERRED",
+      "source_refs": [
+        {
+          "path": "APP_GRAPH.md",
+          "section": "5. 공통 작업과 구현 의존성"
+        }
+      ]
+    },
+    {
+      "source": "OFFER-01",
+      "target": "ux",
+      "relation": "requires review or change",
+      "confidence": "INFERRED",
+      "source_refs": [
+        {
+          "path": "APP_GRAPH.md",
+          "section": "5. 공통 작업과 구현 의존성"
+        }
+      ]
+    },
+    {
+      "source": "OFFER-01",
+      "target": "product",
+      "relation": "requires review or change",
+      "confidence": "INFERRED",
+      "source_refs": [
+        {
+          "path": "APP_GRAPH.md",
+          "section": "5. 공통 작업과 구현 의존성"
+        }
+      ]
+    },
+    {
+      "source": "feature.screen_time_permission",
+      "target": "model",
+      "relation": "implemented by",
+      "confidence": "EXTRACTED",
+      "source_refs": [
+        {
+          "path": "RoomDNS/App/AppModel.swift",
+          "line": 230
+        },
+        {
+          "path": "RoomDNS/App/ContentView.swift",
+          "line": 169,
+          "symbol_or_anchor": ".familyActivityPicker("
+        }
+      ]
+    },
+    {
+      "source": "feature.screen_time_permission",
+      "target": "family_controls",
+      "relation": "implemented by",
+      "confidence": "EXTRACTED",
+      "source_refs": [
+        {
+          "path": "RoomDNS/App/AppModel.swift",
+          "line": 230
+        },
+        {
+          "path": "RoomDNS/App/ContentView.swift",
+          "line": 169,
+          "symbol_or_anchor": ".familyActivityPicker("
+        }
+      ]
+    },
+    {
+      "source": "feature.screen_time_permission",
+      "target": "ui",
+      "relation": "implemented by",
+      "confidence": "EXTRACTED",
+      "source_refs": [
+        {
+          "path": "RoomDNS/App/AppModel.swift",
+          "line": 230
+        },
+        {
+          "path": "RoomDNS/App/ContentView.swift",
+          "line": 169,
+          "symbol_or_anchor": ".familyActivityPicker("
+        }
+      ]
+    },
+    {
+      "source": "CORE-01",
+      "target": "feature.screen_time_permission",
+      "relation": "reviews feature",
+      "confidence": "INFERRED",
+      "source_refs": [
+        {
+          "path": "ORCHESTRATOR.md",
+          "section": "공통 작업 ID"
+        }
+      ]
+    },
+    {
+      "source": "ACT-01",
+      "target": "feature.screen_time_permission",
+      "relation": "reviews feature",
+      "confidence": "INFERRED",
+      "source_refs": [
+        {
+          "path": "ORCHESTRATOR.md",
+          "section": "공통 작업 ID"
+        }
+      ]
+    },
+    {
+      "source": "feature.gps_place",
+      "target": "model",
+      "relation": "implemented by",
+      "confidence": "EXTRACTED",
+      "source_refs": [
+        {
+          "path": "RoomDNS/App/AppModel.swift",
+          "line": 615,
+          "symbol_or_anchor": "private func updatePlaceArrival"
+        },
+        {
+          "path": "RoomDNS/Shared/RestrictionState.swift",
+          "line": 55,
+          "symbol_or_anchor": "static func placePresence"
+        },
+        {
+          "path": "RoomDNS/Shared/RestrictionState.swift",
+          "line": 503,
+          "symbol_or_anchor": "static func startPlaceFocus"
+        }
+      ]
+    },
+    {
+      "source": "feature.gps_place",
+      "target": "core_location",
+      "relation": "implemented by",
+      "confidence": "EXTRACTED",
+      "source_refs": [
+        {
+          "path": "RoomDNS/App/AppModel.swift",
+          "line": 615,
+          "symbol_or_anchor": "private func updatePlaceArrival"
+        },
+        {
+          "path": "RoomDNS/Shared/RestrictionState.swift",
+          "line": 55,
+          "symbol_or_anchor": "static func placePresence"
+        },
+        {
+          "path": "RoomDNS/Shared/RestrictionState.swift",
+          "line": 503,
+          "symbol_or_anchor": "static func startPlaceFocus"
+        }
+      ]
+    },
+    {
+      "source": "feature.gps_place",
+      "target": "runtime_state",
+      "relation": "implemented by",
+      "confidence": "EXTRACTED",
+      "source_refs": [
+        {
+          "path": "RoomDNS/App/AppModel.swift",
+          "line": 615,
+          "symbol_or_anchor": "private func updatePlaceArrival"
+        },
+        {
+          "path": "RoomDNS/Shared/RestrictionState.swift",
+          "line": 55,
+          "symbol_or_anchor": "static func placePresence"
+        },
+        {
+          "path": "RoomDNS/Shared/RestrictionState.swift",
+          "line": 503,
+          "symbol_or_anchor": "static func startPlaceFocus"
+        }
+      ]
+    },
+    {
+      "source": "CORE-01",
+      "target": "feature.gps_place",
+      "relation": "reviews feature",
+      "confidence": "INFERRED",
+      "source_refs": [
+        {
+          "path": "ORCHESTRATOR.md",
+          "section": "공통 작업 ID"
+        }
+      ]
+    },
+    {
+      "source": "CORE-01",
+      "target": "feature.nfc_focus",
+      "relation": "reviews feature",
+      "confidence": "INFERRED",
+      "source_refs": [
+        {
+          "path": "ORCHESTRATOR.md",
+          "section": "공통 작업 ID"
+        }
+      ]
+    },
+    {
+      "source": "RULE-01",
+      "target": "feature.nfc_focus",
+      "relation": "reviews feature",
+      "confidence": "INFERRED",
+      "source_refs": [
+        {
+          "path": "ORCHESTRATOR.md",
+          "section": "공통 작업 ID"
+        }
+      ]
+    },
+    {
+      "source": "feature.daily_schedule",
+      "target": "model",
+      "relation": "implemented by",
+      "confidence": "EXTRACTED",
+      "source_refs": [
+        {
+          "path": "RoomDNS/App/AppModel.swift",
+          "line": 441
+        },
+        {
+          "path": "RoomDNS/Shared/RestrictionState.swift",
+          "line": 51
+        }
+      ]
+    },
+    {
+      "source": "feature.daily_schedule",
+      "target": "device_activity",
+      "relation": "implemented by",
+      "confidence": "EXTRACTED",
+      "source_refs": [
+        {
+          "path": "RoomDNS/App/AppModel.swift",
+          "line": 441
+        },
+        {
+          "path": "RoomDNS/Shared/RestrictionState.swift",
+          "line": 51
+        }
+      ]
+    },
+    {
+      "source": "feature.daily_schedule",
+      "target": "monitor",
+      "relation": "implemented by",
+      "confidence": "EXTRACTED",
+      "source_refs": [
+        {
+          "path": "RoomDNS/App/AppModel.swift",
+          "line": 441
+        },
+        {
+          "path": "RoomDNS/Shared/RestrictionState.swift",
+          "line": 51
+        }
+      ]
+    },
+    {
+      "source": "feature.daily_schedule",
+      "target": "policy",
+      "relation": "implemented by",
+      "confidence": "EXTRACTED",
+      "source_refs": [
+        {
+          "path": "RoomDNS/App/AppModel.swift",
+          "line": 441
+        },
+        {
+          "path": "RoomDNS/Shared/RestrictionState.swift",
+          "line": 51
+        }
+      ]
+    },
+    {
+      "source": "CORE-01",
+      "target": "feature.daily_schedule",
+      "relation": "reviews feature",
+      "confidence": "INFERRED",
+      "source_refs": [
+        {
+          "path": "ORCHESTRATOR.md",
+          "section": "공통 작업 ID"
+        }
+      ]
+    },
+    {
+      "source": "RULE-01",
+      "target": "feature.daily_schedule",
+      "relation": "reviews feature",
+      "confidence": "INFERRED",
+      "source_refs": [
+        {
+          "path": "ORCHESTRATOR.md",
+          "section": "공통 작업 ID"
+        }
+      ]
+    },
+    {
+      "source": "feature.rule_presets",
+      "target": "rules",
+      "relation": "implemented by",
+      "confidence": "EXTRACTED",
+      "source_refs": [
+        {
+          "path": "RoomDNS/App/AppModel.swift",
+          "line": 303
+        },
+        {
+          "path": "RoomDNS/App/AppModel.swift",
+          "line": 402
+        },
+        {
+          "path": "RoomDNS/App/AppModel.swift",
+          "line": 348
+        }
+      ]
+    },
+    {
+      "source": "feature.rule_presets",
+      "target": "rules_store",
+      "relation": "implemented by",
+      "confidence": "EXTRACTED",
+      "source_refs": [
+        {
+          "path": "RoomDNS/App/AppModel.swift",
+          "line": 303
+        },
+        {
+          "path": "RoomDNS/App/AppModel.swift",
+          "line": 402
+        },
+        {
+          "path": "RoomDNS/App/AppModel.swift",
+          "line": 348
+        }
+      ]
+    },
+    {
+      "source": "feature.rule_presets",
+      "target": "save_activate",
+      "relation": "implemented by",
+      "confidence": "EXTRACTED",
+      "source_refs": [
+        {
+          "path": "RoomDNS/App/AppModel.swift",
+          "line": 303
+        },
+        {
+          "path": "RoomDNS/App/AppModel.swift",
+          "line": 402
+        },
+        {
+          "path": "RoomDNS/App/AppModel.swift",
+          "line": 348
+        }
+      ]
+    },
+    {
+      "source": "feature.rule_presets",
+      "target": "rule_delete",
+      "relation": "implemented by",
+      "confidence": "EXTRACTED",
+      "source_refs": [
+        {
+          "path": "RoomDNS/App/AppModel.swift",
+          "line": 303
+        },
+        {
+          "path": "RoomDNS/App/AppModel.swift",
+          "line": 402
+        },
+        {
+          "path": "RoomDNS/App/AppModel.swift",
+          "line": 348
+        }
+      ]
+    },
+    {
+      "source": "feature.rule_presets",
+      "target": "runtime_state",
+      "relation": "implemented by",
+      "confidence": "EXTRACTED",
+      "source_refs": [
+        {
+          "path": "RoomDNS/App/AppModel.swift",
+          "line": 303
+        },
+        {
+          "path": "RoomDNS/App/AppModel.swift",
+          "line": 402
+        },
+        {
+          "path": "RoomDNS/App/AppModel.swift",
+          "line": 348
+        }
+      ]
+    },
+    {
+      "source": "feature.rule_presets",
+      "target": "ui",
+      "relation": "implemented by",
+      "confidence": "EXTRACTED",
+      "source_refs": [
+        {
+          "path": "RoomDNS/App/AppModel.swift",
+          "line": 303
+        },
+        {
+          "path": "RoomDNS/App/AppModel.swift",
+          "line": 402
+        },
+        {
+          "path": "RoomDNS/App/AppModel.swift",
+          "line": 348
+        }
+      ]
+    },
+    {
+      "source": "RULE-01",
+      "target": "feature.rule_presets",
+      "relation": "reviews feature",
+      "confidence": "INFERRED",
+      "source_refs": [
+        {
+          "path": "ORCHESTRATOR.md",
+          "section": "공통 작업 ID"
+        }
+      ]
+    },
+    {
+      "source": "OFFER-01",
+      "target": "feature.rule_presets",
+      "relation": "reviews feature",
+      "confidence": "INFERRED",
+      "source_refs": [
+        {
+          "path": "ORCHESTRATOR.md",
+          "section": "공통 작업 ID"
+        }
+      ]
+    },
+    {
+      "source": "feature.shield",
+      "target": "reconcile",
+      "relation": "implemented by",
+      "confidence": "EXTRACTED",
+      "source_refs": [
+        {
+          "path": "RoomDNS/Shared/RestrictionState.swift",
+          "line": 345
+        }
+      ]
+    },
+    {
+      "source": "feature.shield",
+      "target": "managed_settings",
+      "relation": "implemented by",
+      "confidence": "EXTRACTED",
+      "source_refs": [
+        {
+          "path": "RoomDNS/Shared/RestrictionState.swift",
+          "line": 345
+        }
+      ]
+    },
+    {
+      "source": "feature.shield",
+      "target": "shield_config",
+      "relation": "implemented by",
+      "confidence": "EXTRACTED",
+      "source_refs": [
+        {
+          "path": "RoomDNS/Shared/RestrictionState.swift",
+          "line": 345
+        }
+      ]
+    },
+    {
+      "source": "feature.shield",
+      "target": "shield_action",
+      "relation": "implemented by",
+      "confidence": "EXTRACTED",
+      "source_refs": [
+        {
+          "path": "RoomDNS/Shared/RestrictionState.swift",
+          "line": 345
+        }
+      ]
+    },
+    {
+      "source": "CORE-01",
+      "target": "feature.shield",
+      "relation": "reviews feature",
+      "confidence": "INFERRED",
+      "source_refs": [
+        {
+          "path": "ORCHESTRATOR.md",
+          "section": "공통 작업 ID"
+        }
+      ]
+    },
+    {
+      "source": "feature.safety_release",
+      "target": "restore_access",
+      "relation": "implemented by",
+      "confidence": "EXTRACTED",
+      "source_refs": [
+        {
+          "path": "RoomDNS/App/ContentView.swift",
+          "line": 155,
+          "symbol_or_anchor": "safetyReleasePresented = true"
+        },
+        {
+          "path": "RoomDNS/App/ContentView.swift",
+          "line": 1286,
+          "symbol_or_anchor": "private struct SafetyReleaseView"
+        },
+        {
+          "path": "RoomDNS/App/AppModel.swift",
+          "line": 526
+        },
+        {
+          "path": "RoomDNS/Shared/RestrictionState.swift",
+          "line": 287
+        }
+      ]
+    },
+    {
+      "source": "feature.safety_release",
+      "target": "ui",
+      "relation": "implemented by",
+      "confidence": "EXTRACTED",
+      "source_refs": [
+        {
+          "path": "RoomDNS/App/ContentView.swift",
+          "line": 155,
+          "symbol_or_anchor": "safetyReleasePresented = true"
+        },
+        {
+          "path": "RoomDNS/App/ContentView.swift",
+          "line": 1286,
+          "symbol_or_anchor": "private struct SafetyReleaseView"
+        },
+        {
+          "path": "RoomDNS/App/AppModel.swift",
+          "line": 526
+        },
+        {
+          "path": "RoomDNS/Shared/RestrictionState.swift",
+          "line": 287
+        }
+      ]
+    },
+    {
+      "source": "feature.safety_release",
+      "target": "model",
+      "relation": "implemented by",
+      "confidence": "EXTRACTED",
+      "source_refs": [
+        {
+          "path": "RoomDNS/App/ContentView.swift",
+          "line": 155,
+          "symbol_or_anchor": "safetyReleasePresented = true"
+        },
+        {
+          "path": "RoomDNS/App/ContentView.swift",
+          "line": 1286,
+          "symbol_or_anchor": "private struct SafetyReleaseView"
+        },
+        {
+          "path": "RoomDNS/App/AppModel.swift",
+          "line": 526
+        },
+        {
+          "path": "RoomDNS/Shared/RestrictionState.swift",
+          "line": 287
+        }
+      ]
+    },
+    {
+      "source": "feature.safety_release",
+      "target": "runtime_state",
+      "relation": "implemented by",
+      "confidence": "EXTRACTED",
+      "source_refs": [
+        {
+          "path": "RoomDNS/App/ContentView.swift",
+          "line": 155,
+          "symbol_or_anchor": "safetyReleasePresented = true"
+        },
+        {
+          "path": "RoomDNS/App/ContentView.swift",
+          "line": 1286,
+          "symbol_or_anchor": "private struct SafetyReleaseView"
+        },
+        {
+          "path": "RoomDNS/App/AppModel.swift",
+          "line": 526
+        },
+        {
+          "path": "RoomDNS/Shared/RestrictionState.swift",
+          "line": 287
+        }
+      ]
+    },
+    {
+      "source": "feature.safety_release",
+      "target": "runtime_lock",
+      "relation": "implemented by",
+      "confidence": "EXTRACTED",
+      "source_refs": [
+        {
+          "path": "RoomDNS/App/ContentView.swift",
+          "line": 155,
+          "symbol_or_anchor": "safetyReleasePresented = true"
+        },
+        {
+          "path": "RoomDNS/App/ContentView.swift",
+          "line": 1286,
+          "symbol_or_anchor": "private struct SafetyReleaseView"
+        },
+        {
+          "path": "RoomDNS/App/AppModel.swift",
+          "line": 526
+        },
+        {
+          "path": "RoomDNS/Shared/RestrictionState.swift",
+          "line": 287
+        }
+      ]
+    },
+    {
+      "source": "feature.safety_release",
+      "target": "policy",
+      "relation": "implemented by",
+      "confidence": "EXTRACTED",
+      "source_refs": [
+        {
+          "path": "RoomDNS/App/ContentView.swift",
+          "line": 155,
+          "symbol_or_anchor": "safetyReleasePresented = true"
+        },
+        {
+          "path": "RoomDNS/App/ContentView.swift",
+          "line": 1286,
+          "symbol_or_anchor": "private struct SafetyReleaseView"
+        },
+        {
+          "path": "RoomDNS/App/AppModel.swift",
+          "line": 526
+        },
+        {
+          "path": "RoomDNS/Shared/RestrictionState.swift",
+          "line": 287
+        }
+      ]
+    },
+    {
+      "source": "CORE-01",
+      "target": "feature.safety_release",
+      "relation": "reviews feature",
+      "confidence": "INFERRED",
+      "source_refs": [
+        {
+          "path": "ORCHESTRATOR.md",
+          "section": "공통 작업 ID"
+        }
+      ]
+    },
+    {
+      "source": "SAFE-01",
+      "target": "feature.safety_release",
+      "relation": "reviews feature",
+      "confidence": "INFERRED",
+      "source_refs": [
+        {
+          "path": "ORCHESTRATOR.md",
+          "section": "공통 작업 ID"
+        }
+      ]
+    },
+    {
+      "source": "BREAK-01",
+      "target": "feature.safety_release",
+      "relation": "reviews feature",
+      "confidence": "INFERRED",
+      "source_refs": [
+        {
+          "path": "ORCHESTRATOR.md",
+          "section": "공통 작업 ID"
+        }
+      ]
+    },
+    {
+      "source": "feature.mascot_accessibility",
+      "target": "ui",
+      "relation": "implemented by",
+      "confidence": "EXTRACTED",
+      "source_refs": [
+        {
+          "path": "RoomDNS/App/ContentView.swift",
+          "line": 1583,
+          "symbol_or_anchor": "struct RoomSpirit: View"
+        },
+        {
+          "path": "RoomDNS/en.lproj/Localizable.strings",
+          "line": 803
+        }
+      ]
+    },
+    {
+      "source": "feature.mascot_accessibility",
+      "target": "localization",
+      "relation": "implemented by",
+      "confidence": "EXTRACTED",
+      "source_refs": [
+        {
+          "path": "RoomDNS/App/ContentView.swift",
+          "line": 1583,
+          "symbol_or_anchor": "struct RoomSpirit: View"
+        },
+        {
+          "path": "RoomDNS/en.lproj/Localizable.strings",
+          "line": 803
+        }
+      ]
+    },
+    {
+      "source": "ALIGN-01",
+      "target": "feature.mascot_accessibility",
+      "relation": "reviews feature",
+      "confidence": "INFERRED",
+      "source_refs": [
+        {
+          "path": "ORCHESTRATOR.md",
+          "section": "공통 작업 ID"
+        }
+      ]
+    },
+    {
+      "source": "feature.break_pass",
+      "target": "planned_break",
+      "relation": "would require",
+      "confidence": "INFERRED",
+      "source_refs": [
+        {
+          "path": "PRODUCT.md",
+          "section": "RevenueCat Specification"
+        }
+      ]
+    },
+    {
+      "source": "feature.break_pass",
+      "target": "pro_offer",
+      "relation": "would require",
+      "confidence": "INFERRED",
+      "source_refs": [
+        {
+          "path": "PRODUCT.md",
+          "section": "RevenueCat Specification"
+        }
+      ]
+    },
+    {
+      "source": "BREAK-01",
+      "target": "feature.break_pass",
+      "relation": "reviews feature",
+      "confidence": "INFERRED",
+      "source_refs": [
+        {
+          "path": "ORCHESTRATOR.md",
+          "section": "공통 작업 ID"
+        }
+      ]
+    },
+    {
+      "source": "OFFER-01",
+      "target": "feature.break_pass",
+      "relation": "reviews feature",
+      "confidence": "INFERRED",
+      "source_refs": [
+        {
+          "path": "ORCHESTRATOR.md",
+          "section": "공통 작업 ID"
+        }
+      ]
+    },
+    {
+      "source": "feature.protected_time_history",
+      "target": "qualified_history",
+      "relation": "would require",
+      "confidence": "INFERRED",
+      "source_refs": [
+        {
+          "path": "PRODUCT.md",
+          "section": "MVP Scope"
+        }
+      ]
+    },
+    {
+      "source": "INSIGHT-01",
+      "target": "feature.protected_time_history",
+      "relation": "reviews feature",
+      "confidence": "INFERRED",
+      "source_refs": [
+        {
+          "path": "ORCHESTRATOR.md",
+          "section": "공통 작업 ID"
+        }
+      ]
+    },
+    {
+      "source": "OFFER-01",
+      "target": "feature.protected_time_history",
+      "relation": "reviews feature",
+      "confidence": "INFERRED",
+      "source_refs": [
+        {
+          "path": "ORCHESTRATOR.md",
+          "section": "공통 작업 ID"
+        }
+      ]
+    },
+    {
+      "source": "feature.working_test",
+      "target": "manual_test",
+      "relation": "would require",
+      "confidence": "INFERRED",
+      "source_refs": [
+        {
+          "path": "PRODUCT.md",
+          "section": "MVP Scope"
+        }
+      ]
+    },
+    {
+      "source": "ACT-01",
+      "target": "feature.working_test",
+      "relation": "reviews feature",
+      "confidence": "INFERRED",
+      "source_refs": [
+        {
+          "path": "ORCHESTRATOR.md",
+          "section": "공통 작업 ID"
+        }
+      ]
+    },
+    {
+      "source": "feature.essential_app_exclusions",
+      "target": "reconcile",
+      "relation": "would require",
+      "confidence": "INFERRED",
+      "source_refs": [
+        {
+          "path": "PRODUCT.md",
+          "section": "Product Snapshot"
+        },
+        {
+          "path": "RoomDNS/Shared/RestrictionState.swift",
+          "line": 345
+        }
+      ]
+    },
+    {
+      "source": "feature.essential_app_exclusions",
+      "target": "family_controls",
+      "relation": "would require",
+      "confidence": "INFERRED",
+      "source_refs": [
+        {
+          "path": "PRODUCT.md",
+          "section": "Product Snapshot"
+        },
+        {
+          "path": "RoomDNS/Shared/RestrictionState.swift",
+          "line": 345
+        }
+      ]
+    },
+    {
+      "source": "SAFE-01",
+      "target": "feature.essential_app_exclusions",
+      "relation": "reviews feature",
+      "confidence": "INFERRED",
+      "source_refs": [
+        {
+          "path": "ORCHESTRATOR.md",
+          "section": "공통 작업 ID"
+        }
+      ]
+    },
+    {
+      "source": "ACT-01",
+      "target": "CORE-01",
+      "relation": "depends on relevant design or validation",
+      "confidence": "INFERRED",
+      "source_refs": [
+        {
+          "path": "APP_GRAPH.md",
+          "section": "6. 세일즈·UX·아키텍처 협동 그래프"
+        }
+      ]
+    },
+    {
+      "source": "ACT-01",
+      "target": "SAFE-01",
+      "relation": "depends on relevant design or validation",
+      "confidence": "INFERRED",
+      "source_refs": [
+        {
+          "path": "APP_GRAPH.md",
+          "section": "6. 세일즈·UX·아키텍처 협동 그래프"
+        }
+      ]
+    },
+    {
+      "source": "RULE-01",
+      "target": "CORE-01",
+      "relation": "depends on relevant design or validation",
+      "confidence": "INFERRED",
+      "source_refs": [
+        {
+          "path": "APP_GRAPH.md",
+          "section": "6. 세일즈·UX·아키텍처 협동 그래프"
+        }
+      ]
+    },
+    {
+      "source": "RULE-01",
+      "target": "SAFE-01",
+      "relation": "depends on relevant design or validation",
+      "confidence": "INFERRED",
+      "source_refs": [
+        {
+          "path": "APP_GRAPH.md",
+          "section": "6. 세일즈·UX·아키텍처 협동 그래프"
+        }
+      ]
+    },
+    {
+      "source": "BREAK-01",
+      "target": "CORE-01",
+      "relation": "depends on relevant design or validation",
+      "confidence": "INFERRED",
+      "source_refs": [
+        {
+          "path": "APP_GRAPH.md",
+          "section": "6. 세일즈·UX·아키텍처 협동 그래프"
+        }
+      ]
+    },
+    {
+      "source": "BREAK-01",
+      "target": "SAFE-01",
+      "relation": "depends on relevant design or validation",
+      "confidence": "INFERRED",
+      "source_refs": [
+        {
+          "path": "APP_GRAPH.md",
+          "section": "6. 세일즈·UX·아키텍처 협동 그래프"
+        }
+      ]
+    },
+    {
+      "source": "INSIGHT-01",
+      "target": "CORE-01",
+      "relation": "depends on relevant design or validation",
+      "confidence": "INFERRED",
+      "source_refs": [
+        {
+          "path": "APP_GRAPH.md",
+          "section": "6. 세일즈·UX·아키텍처 협동 그래프"
+        }
+      ]
+    },
+    {
+      "source": "INSIGHT-01",
+      "target": "BREAK-01",
+      "relation": "depends on relevant design or validation",
+      "confidence": "INFERRED",
+      "source_refs": [
+        {
+          "path": "APP_GRAPH.md",
+          "section": "6. 세일즈·UX·아키텍처 협동 그래프"
+        }
+      ]
+    },
+    {
+      "source": "OFFER-01",
+      "target": "RULE-01",
+      "relation": "depends on relevant design or validation",
+      "confidence": "INFERRED",
+      "source_refs": [
+        {
+          "path": "APP_GRAPH.md",
+          "section": "6. 세일즈·UX·아키텍처 협동 그래프"
+        }
+      ]
+    },
+    {
+      "source": "OFFER-01",
+      "target": "INSIGHT-01",
+      "relation": "depends on relevant design or validation",
+      "confidence": "INFERRED",
+      "source_refs": [
+        {
+          "path": "APP_GRAPH.md",
+          "section": "6. 세일즈·UX·아키텍처 협동 그래프"
+        }
+      ]
+    },
+    {
+      "source": "OFFER-01",
+      "target": "SAFE-01",
+      "relation": "depends on relevant design or validation",
+      "confidence": "INFERRED",
+      "source_refs": [
+        {
+          "path": "APP_GRAPH.md",
+          "section": "6. 세일즈·UX·아키텍처 협동 그래프"
+        }
+      ]
+    },
+    {
+      "source": "ui",
+      "target": "roomie_presentation",
+      "relation": "renders state-prioritized Nook Cat with result-gated reactions",
+      "confidence": "EXTRACTED",
+      "source_refs": [
+        {
+          "path": "RoomDNS/App/ContentView.swift",
+          "line": 869,
+          "symbol_or_anchor": "private var homeSpiritState"
+        },
+        {
+          "path": "RoomDNS/App/ContentView.swift",
+          "line": 882,
+          "symbol_or_anchor": "private func activate("
+        },
+        {
+          "path": "RoomDNS/App/ContentView.swift",
+          "line": 1231,
+          "symbol_or_anchor": "private func saveAndFinish"
+        }
+      ]
+    },
+    {
+      "source": "roomie_presentation",
+      "target": "model",
+      "relation": "reads existing published focus and error state without changing restriction policy",
+      "confidence": "EXTRACTED",
+      "source_refs": [
+        {
+          "path": "RoomDNS/App/ContentView.swift",
+          "line": 869,
+          "symbol_or_anchor": "private var homeSpiritState"
+        },
+        {
+          "path": "RoomDNS/App/ContentView.swift",
+          "line": 1205,
+          "symbol_or_anchor": "private var homeNeedsAction"
+        }
+      ]
+    },
+    {
+      "source": "feature.mascot_accessibility",
+      "target": "roomie_presentation",
+      "relation": "implemented by",
+      "confidence": "EXTRACTED",
+      "source_refs": [
+        {
+          "path": "RoomDNS/App/ContentView.swift",
+          "line": 1583,
+          "symbol_or_anchor": "struct RoomSpirit: View"
+        }
+      ]
+    },
+    {
+      "source": "roomie_presentation",
+      "target": "localization",
+      "relation": "uses localized greeting and accessibility descriptions",
+      "confidence": "EXTRACTED",
+      "source_refs": [
+        {
+          "path": "RoomDNS/App/ContentView.swift",
+          "line": 1642,
+          "symbol_or_anchor": "private func sayHello"
+        }
+      ]
+    },
+    {
+      "source": "ui",
+      "target": "feature.personalized_onboarding",
+      "relation": "presents",
+      "confidence": "EXTRACTED",
+      "source_refs": [
+        {
+          "path": "RoomDNS/App/OnboardingProfile.swift"
+        },
+        {
+          "path": "RoomDNS/App/ContentView.swift"
+        }
+      ]
+    },
+    {
+      "source": "ui",
+      "target": "feature.apple_account",
+      "relation": "presents",
+      "confidence": "EXTRACTED",
+      "source_refs": [
+        {
+          "path": "RoomDNS/App/AccountStore.swift"
+        },
+        {
+          "path": "RoomDNS/App/AccountViews.swift"
+        }
+      ]
+    },
+    {
+      "source": "ui",
+      "target": "feature.subscription_offer",
+      "relation": "presents",
+      "confidence": "EXTRACTED",
+      "source_refs": [
+        {
+          "path": "RoomDNS/App/AccountStore.swift"
+        },
+        {
+          "path": "RoomDNS/App/AccountViews.swift"
+        }
+      ]
+    },
+    {
+      "source": "feature.nfc_focus",
+      "target": "runtime_state",
+      "relation": "legacy values decode but cannot activate or shield",
+      "confidence": "EXTRACTED",
+      "source_refs": [
+        {
+          "path": "RoomDNS/Shared/RestrictionState.swift",
+          "line": 19,
+          "symbol_or_anchor": "case nfc"
+        },
+        {
+          "path": "RoomDNS/Shared/RestrictionState.swift",
+          "line": 309,
+          "symbol_or_anchor": "if state.rule?.placeMode == .nfc"
+        }
+      ]
+    },
+    {
+      "source": "android.main_activity",
+      "target": "android.app_selection",
+      "relation": "loads eligible apps and persists local selection",
+      "confidence": "EXTRACTED",
+      "source_refs": [
+        {
+          "path": "android/app/src/main/java/com/exchip/offzone/MainActivity.kt"
+        }
+      ]
+    },
+    {
+      "source": "android.main_activity",
+      "target": "android.focus_controller",
+      "relation": "starts generation-checked manual sessions and requests free restore",
+      "confidence": "EXTRACTED",
+      "source_refs": [
+        {
+          "path": "android/app/src/main/java/com/exchip/offzone/MainActivity.kt"
+        }
+      ]
+    },
+    {
+      "source": "android.focus_controller",
+      "target": "android.focus_session",
+      "relation": "owns process-local monotonic deadline and expiry",
+      "confidence": "EXTRACTED",
+      "source_refs": [
+        {
+          "path": "android/app/src/main/java/com/exchip/offzone/FocusController.kt"
+        }
+      ]
+    },
+    {
+      "source": "android.accessibility_service",
+      "target": "android.focus_controller",
+      "relation": "connects, expires and clears sessions on service teardown",
+      "confidence": "EXTRACTED",
+      "source_refs": [
+        {
+          "path": "android/app/src/main/java/com/exchip/offzone/FocusAccessibilityService.kt"
+        }
+      ]
+    },
+    {
+      "source": "android.accessibility_service",
+      "target": "android.app_selection",
+      "relation": "rechecks protected home, input method, dialer and settings packages",
+      "confidence": "EXTRACTED",
+      "source_refs": [
+        {
+          "path": "android/app/src/main/java/com/exchip/offzone/FocusAccessibilityService.kt"
+        }
+      ]
+    },
+    {
+      "source": "android.accessibility_service",
+      "target": "android.focus_session",
+      "relation": "checks selected package and deadline before showing a scrollable accessibility overlay",
+      "confidence": "EXTRACTED",
+      "source_refs": [
+        {
+          "path": "android/app/src/main/java/com/exchip/offzone/FocusAccessibilityService.kt"
+        }
+      ]
+    },
+    {
+      "source": "android.main_activity",
+      "target": "android.rule_store",
+      "relation": "integrates native Android flow",
+      "confidence": "EXTRACTED",
+      "source_refs": [
+        {
+          "path": "android/app/src/main/java/com/exchip/offzone/MainActivity.kt"
+        }
+      ]
+    },
+    {
+      "source": "android.main_activity",
+      "target": "android.account_store",
+      "relation": "integrates native Android flow",
+      "confidence": "EXTRACTED",
+      "source_refs": [
+        {
+          "path": "android/app/src/main/java/com/exchip/offzone/MainActivity.kt"
+        }
+      ]
+    },
+    {
+      "source": "android.main_activity",
+      "target": "android.journal_screen",
+      "relation": "integrates native Android flow",
+      "confidence": "EXTRACTED",
+      "source_refs": [
+        {
+          "path": "android/app/src/main/java/com/exchip/offzone/MainActivity.kt"
+        }
+      ]
+    },
+    {
+      "source": "android.main_activity",
+      "target": "android.onboarding",
+      "relation": "integrates native Android flow",
+      "confidence": "EXTRACTED",
+      "source_refs": [
+        {
+          "path": "android/app/src/main/java/com/exchip/offzone/MainActivity.kt"
+        }
+      ]
+    },
+    {
+      "source": "android.main_activity",
+      "target": "android.rule_editor",
+      "relation": "integrates native Android flow",
+      "confidence": "EXTRACTED",
+      "source_refs": [
+        {
+          "path": "android/app/src/main/java/com/exchip/offzone/MainActivity.kt"
+        }
+      ]
+    },
+    {
+      "source": "android.main_activity",
+      "target": "android.nook",
+      "relation": "integrates native Android flow",
+      "confidence": "EXTRACTED",
+      "source_refs": [
+        {
+          "path": "android/app/src/main/java/com/exchip/offzone/MainActivity.kt"
+        }
+      ]
+    },
+    {
+      "source": "android.focus_controller",
+      "target": "android.rule_store",
+      "relation": "uses runtime dependency",
+      "confidence": "EXTRACTED",
+      "source_refs": [
+        {
+          "path": "android/app/src/main/java/com/exchip/offzone/FocusController.kt"
+        }
+      ]
+    },
+    {
+      "source": "android.focus_controller",
+      "target": "android.rule_policy",
+      "relation": "uses runtime dependency",
+      "confidence": "EXTRACTED",
+      "source_refs": [
+        {
+          "path": "android/app/src/main/java/com/exchip/offzone/FocusController.kt"
+        }
+      ]
+    },
+    {
+      "source": "android.focus_controller",
+      "target": "android.place_monitor",
+      "relation": "uses runtime dependency",
+      "confidence": "EXTRACTED",
+      "source_refs": [
+        {
+          "path": "android/app/src/main/java/com/exchip/offzone/FocusController.kt"
+        }
+      ]
+    },
+    {
+      "source": "android.rule_editor",
+      "target": "android.place_picker",
+      "relation": "uses runtime dependency",
+      "confidence": "EXTRACTED",
+      "source_refs": [
+        {
+          "path": "android/app/src/main/java/com/exchip/offzone/RuleEditorScreen.kt"
+        }
+      ]
+    },
+    {
+      "source": "android.journal_screen",
+      "target": "android.journal_store",
+      "relation": "uses runtime dependency",
+      "confidence": "EXTRACTED",
+      "source_refs": [
+        {
+          "path": "android/app/src/main/java/com/exchip/offzone/JournalScreen.kt"
+        }
+      ]
+    },
+    {
+      "source": "android.onboarding",
+      "target": "android.nook",
+      "relation": "renders Nook Cat in three onboarding steps",
+      "confidence": "EXTRACTED",
+      "source_refs": [
+        {
+          "path": "android/app/src/main/java/com/exchip/offzone/OnboardingScreen.kt",
+          "line": 42,
+          "symbol_or_anchor": "NookCatView"
+        }
+      ]
+    }
+  ],
+  "features": [
+    {
+      "id": "screen_time_permission",
+      "status": "implemented_unverified",
+      "node_id": "feature.screen_time_permission",
+      "work_ids": [
+        "CORE-01",
+        "ACT-01"
+      ],
+      "source_refs": [
+        {
+          "path": "RoomDNS/App/AppModel.swift",
+          "line": 230
+        },
+        {
+          "path": "RoomDNS/App/ContentView.swift",
+          "line": 169,
+          "symbol_or_anchor": ".familyActivityPicker("
+        }
+      ]
+    },
+    {
+      "id": "gps_place",
+      "status": "implemented_unverified",
+      "node_id": "feature.gps_place",
+      "work_ids": [
+        "CORE-01"
+      ],
+      "source_refs": [
+        {
+          "path": "RoomDNS/App/AppModel.swift",
+          "line": 615,
+          "symbol_or_anchor": "private func updatePlaceArrival"
+        },
+        {
+          "path": "RoomDNS/Shared/RestrictionState.swift",
+          "line": 55,
+          "symbol_or_anchor": "static func placePresence"
+        },
+        {
+          "path": "RoomDNS/Shared/RestrictionState.swift",
+          "line": 503,
+          "symbol_or_anchor": "static func startPlaceFocus"
+        }
+      ]
+    },
+    {
+      "id": "nfc_focus",
+      "status": "removed",
+      "node_id": "feature.nfc_focus",
+      "work_ids": [
+        "CORE-01",
+        "RULE-01"
+      ],
+      "source_refs": [
+        {
+          "path": "RoomDNS/Shared/RestrictionState.swift",
+          "line": 19,
+          "symbol_or_anchor": "case nfc"
+        },
+        {
+          "path": "RoomDNS/Shared/RestrictionState.swift",
+          "line": 309,
+          "symbol_or_anchor": "if state.rule?.placeMode == .nfc"
+        }
+      ]
+    },
+    {
+      "id": "daily_schedule",
+      "status": "implemented_unverified",
+      "node_id": "feature.daily_schedule",
+      "work_ids": [
+        "CORE-01",
+        "RULE-01"
+      ],
+      "source_refs": [
+        {
+          "path": "RoomDNS/App/AppModel.swift",
+          "line": 441
+        },
+        {
+          "path": "RoomDNS/Shared/RestrictionState.swift",
+          "line": 51
+        }
+      ]
+    },
+    {
+      "id": "rule_presets",
+      "status": "partial",
+      "node_id": "feature.rule_presets",
+      "work_ids": [
+        "RULE-01",
+        "OFFER-01"
+      ],
+      "source_refs": [
+        {
+          "path": "RoomDNS/App/AppModel.swift",
+          "line": 303
+        },
+        {
+          "path": "RoomDNS/App/AppModel.swift",
+          "line": 402
+        },
+        {
+          "path": "RoomDNS/App/AppModel.swift",
+          "line": 348
+        }
+      ]
+    },
+    {
+      "id": "shield",
+      "status": "implemented_unverified",
+      "node_id": "feature.shield",
+      "work_ids": [
+        "CORE-01"
+      ],
+      "source_refs": [
+        {
+          "path": "RoomDNS/Shared/RestrictionState.swift",
+          "line": 345
+        }
+      ]
+    },
+    {
+      "id": "safety_release",
+      "status": "implemented_unverified",
+      "node_id": "feature.safety_release",
+      "work_ids": [
+        "CORE-01",
+        "SAFE-01",
+        "BREAK-01"
+      ],
+      "source_refs": [
+        {
+          "path": "RoomDNS/App/ContentView.swift",
+          "line": 155,
+          "symbol_or_anchor": "safetyReleasePresented = true"
+        },
+        {
+          "path": "RoomDNS/App/ContentView.swift",
+          "line": 1286,
+          "symbol_or_anchor": "private struct SafetyReleaseView"
+        },
+        {
+          "path": "RoomDNS/App/AppModel.swift",
+          "line": 526
+        },
+        {
+          "path": "RoomDNS/Shared/RestrictionState.swift",
+          "line": 287
+        }
+      ]
+    },
+    {
+      "id": "mascot_accessibility",
+      "status": "partial",
+      "node_id": "feature.mascot_accessibility",
+      "work_ids": [
+        "ALIGN-01"
+      ],
+      "source_refs": [
+        {
+          "path": "RoomDNS/App/ContentView.swift",
+          "line": 1583,
+          "symbol_or_anchor": "struct RoomSpirit: View"
+        },
+        {
+          "path": "RoomDNS/en.lproj/Localizable.strings",
+          "line": 803
+        },
+        {
+          "path": "RoomDNS/App/ContentView.swift",
+          "line": 1651,
+          "symbol_or_anchor": "private func drawing(in size: CGSize, motion: RoomSpiritMotion, reaction: RoomSpiritReaction) -> some View"
+        },
+        {
+          "path": "RoomDNS/Assets.xcassets/OffzoneNook-fullbody-welcome.imageset/art.png"
+        },
+        {
+          "path": "android/app/src/main/java/com/exchip/offzone/NookCatView.kt",
+          "line": 22,
+          "symbol_or_anchor": "fun NookCatView"
+        }
+      ]
+    },
+    {
+      "id": "break_pass",
+      "status": "partial",
+      "node_id": "feature.break_pass",
+      "work_ids": [
+        "BREAK-01",
+        "OFFER-01"
+      ],
+      "source_refs": [
+        {
+          "path": "RoomDNS/App/ContentView.swift",
+          "section": "UnlockPassView"
+        },
+        {
+          "path": "RoomDNS/App/AccountStore.swift",
+          "symbol_or_anchor": "spendUnlockPass(sessionID:)"
+        },
+        {
+          "path": "RoomDNS/Shared/RestrictionState.swift",
+          "symbol_or_anchor": "restoreAccess(usingUnlockPass:at:calendar:)"
+        },
+        {
+          "path": "functions/index.js",
+          "symbol_or_anchor": "spendUnlockPass",
+          "line": 14
+        }
+      ]
+    },
+    {
+      "id": "protected_time_history",
+      "status": "planned_not_implemented",
+      "node_id": "feature.protected_time_history",
+      "work_ids": [
+        "INSIGHT-01",
+        "OFFER-01"
+      ],
+      "source_refs": [
+        {
+          "path": "PRODUCT.md",
+          "section": "MVP Scope"
+        }
+      ]
+    },
+    {
+      "id": "working_test",
+      "status": "planned_not_implemented",
+      "node_id": "feature.working_test",
+      "work_ids": [
+        "ACT-01"
+      ],
+      "source_refs": [
+        {
+          "path": "PRODUCT.md",
+          "section": "MVP Scope"
+        }
+      ]
+    },
+    {
+      "id": "essential_app_exclusions",
+      "status": "planned_not_implemented",
+      "node_id": "feature.essential_app_exclusions",
+      "work_ids": [
+        "SAFE-01"
+      ],
+      "source_refs": [
+        {
+          "path": "PRODUCT.md",
+          "section": "Product Snapshot"
+        },
+        {
+          "path": "RoomDNS/Shared/RestrictionState.swift",
+          "line": 345
+        }
+      ]
+    },
+    {
+      "id": "personalized_onboarding",
+      "status": "implemented_unverified",
+      "node_id": "feature.personalized_onboarding",
+      "work_ids": [
+        "ACT-01"
+      ],
+      "source_refs": [
+        {
+          "path": "RoomDNS/App/OnboardingProfile.swift"
+        },
+        {
+          "path": "RoomDNS/App/ContentView.swift"
+        }
+      ]
+    },
+    {
+      "id": "apple_account",
+      "status": "partial",
+      "node_id": "feature.apple_account",
+      "work_ids": [
+        "ACT-01",
+        "OFFER-01"
+      ],
+      "source_refs": [
+        {
+          "path": "RoomDNS/App/AccountStore.swift"
+        },
+        {
+          "path": "RoomDNS/App/AccountViews.swift"
+        }
+      ]
+    },
+    {
+      "id": "subscription_offer",
+      "status": "partial",
+      "node_id": "feature.subscription_offer",
+      "work_ids": [
+        "OFFER-01"
+      ],
+      "source_refs": [
+        {
+          "path": "RoomDNS/App/AccountStore.swift"
+        },
+        {
+          "path": "RoomDNS/App/AccountViews.swift"
+        }
+      ]
+    },
+    {
+      "id": "zone_notifications",
+      "status": "implemented_unverified",
+      "node_id": "feature.zone_notifications",
+      "work_ids": [
+        "CORE-01",
+        "RULE-01"
+      ],
+      "source_refs": [
+        {
+          "path": "RoomDNS/Shared/RestrictionState.swift"
+        },
+        {
+          "path": "RoomDNS/App/AppModel.swift"
+        },
+        {
+          "path": "RoomDNS/App/ContentView.swift"
+        },
+        {
+          "path": "RoomDNSTests/RestrictionNotificationTests.swift"
+        }
+      ]
+    },
+    {
+      "id": "app_deletion_protection",
+      "status": "implemented_unverified",
+      "node_id": "feature.app_deletion_protection",
+      "work_ids": [
+        "CORE-01",
+        "RULE-01",
+        "SAFE-01"
+      ],
+      "source_refs": [
+        {
+          "path": "RoomDNS/Shared/RestrictionState.swift"
+        },
+        {
+          "path": "RoomDNS/App/AppModel.swift"
+        },
+        {
+          "path": "RoomDNS/App/ContentView.swift"
+        },
+        {
+          "path": "RoomDNSTests/RestrictionPolicyTests.swift"
+        }
+      ]
+    },
+    {
+      "id": "pro_planning_journal",
+      "node_id": "feature.pro_planning_journal",
+      "status": "partial",
+      "work_ids": [
+        "OFFER-01",
+        "INSIGHT-01"
+      ],
+      "source_refs": [
+        {
+          "path": "RoomDNS/App/ProJournal.swift"
+        },
+        {
+          "path": "RoomDNS/App/ProJournalView.swift"
+        },
+        {
+          "path": "RoomDNS/App/AccountStore.swift"
+        },
+        {
+          "path": "tools/check_pro_journal.swift"
+        }
+      ]
+    }
+  ],
+  "work_items": [
+    {
+      "id": "ALIGN-01",
+      "feature_ids": [
+        "mascot_accessibility"
+      ],
+      "dependency_nodes": [
+        "localization",
+        "build_config",
+        "ui",
+        "model",
+        "shield_config"
+      ],
+      "status": "implemented_build_checked_device_pending"
+    },
+    {
+      "id": "CORE-01",
+      "feature_ids": [
+        "screen_time_permission",
+        "gps_place",
+        "nfc_focus",
+        "daily_schedule",
+        "shield",
+        "safety_release",
+        "zone_notifications",
+        "app_deletion_protection"
+      ],
+      "dependency_nodes": [
+        "model",
+        "shared",
+        "runtime_state",
+        "runtime_store",
+        "runtime_lock",
+        "policy",
+        "reconcile",
+        "monitor",
+        "shield_action",
+        "device_verification"
+      ],
+      "status": "verification_required"
+    },
+    {
+      "id": "SAFE-01",
+      "feature_ids": [
+        "safety_release",
+        "essential_app_exclusions",
+        "app_deletion_protection"
+      ],
+      "dependency_nodes": [
+        "restore_access",
+        "ui",
+        "model",
+        "runtime_state",
+        "runtime_store",
+        "policy",
+        "reconcile"
+      ],
+      "status": "partially_implemented_device_pending"
+    },
+    {
+      "id": "ACT-01",
+      "feature_ids": [
+        "working_test",
+        "screen_time_permission",
+        "personalized_onboarding",
+        "apple_account"
+      ],
+      "dependency_nodes": [
+        "manual_test",
+        "ui",
+        "family_controls",
+        "model",
+        "shared"
+      ],
+      "status": "proposed"
+    },
+    {
+      "id": "RULE-01",
+      "feature_ids": [
+        "rule_presets",
+        "nfc_focus",
+        "daily_schedule",
+        "zone_notifications",
+        "app_deletion_protection"
+      ],
+      "dependency_nodes": [
+        "save_activate",
+        "rule_delete",
+        "rules",
+        "rules_store",
+        "runtime_state",
+        "model",
+        "core_nfc",
+        "device_activity"
+      ],
+      "status": "partially_implemented_device_pending"
+    },
+    {
+      "id": "INSIGHT-01",
+      "feature_ids": [
+        "protected_time_history",
+        "pro_planning_journal"
+      ],
+      "dependency_nodes": [
+        "qualified_history",
+        "runtime_state",
+        "reconcile",
+        "ui"
+      ],
+      "status": "proposed"
+    },
+    {
+      "id": "BREAK-01",
+      "feature_ids": [
+        "break_pass",
+        "safety_release"
+      ],
+      "dependency_nodes": [
+        "planned_break",
+        "runtime_state",
+        "policy",
+        "device_activity",
+        "monitor"
+      ],
+      "status": "proposed"
+    },
+    {
+      "id": "OFFER-01",
+      "feature_ids": [
+        "break_pass",
+        "rule_presets",
+        "protected_time_history",
+        "apple_account",
+        "subscription_offer",
+        "pro_planning_journal"
+      ],
+      "dependency_nodes": [
+        "pro_offer",
+        "sales",
+        "ux",
+        "product"
+      ],
+      "status": "unresolved"
+    }
+  ],
+  "limitations": [
+    "EXTRACTED means observed in source or specified document, not real-device verification.",
+    "INFERRED proposal dependencies do not claim implementation.",
+    "isFocused is policy-derived, not OS shielding evidence.",
+    "R1 remains incomplete: manual test, essential-app exclusions and signed-device/user validation remain open.",
+    "Saved definitions use UserDefaults; applied runtime uses a versioned atomic JSON snapshot and bounded flock. This does not prove atomic OS enforcement.",
+    "break_pass preserves a historical paid-pass specification; free planned breaks and Pro remain separate proposals.",
+    "No backend, payment, analytics or protected-time history implementation exists in the inspected Swift corpus.",
+    "Source hashes cover code/configuration; mutable strategy documents use revision G1 and references.",
+    "English Swift source and developmentRegion=en are implemented; complete device localization and accessibility checks remain open.",
+    "Native Roomie reactions use existing model state/results; activation success does not establish actual OS shielding.",
+    "roomie.lastVisit stores a local greeting timestamp only; no streak, protected-time record or analytics is implemented.",
+    "Automatic graphify AST files remain the historical R1 snapshot; this curated presentation update does not assert full AST freshness.",
+    "Presentation source hashes identify reviewed file revisions, not rendered quality, test success, accessibility completion or real-device enforcement.",
+    "2026-09-16: NFC removed; old values are decode-only. GPS fixes need <=100m accuracy and <=30s age; entry distance+accuracy<=150m, exit distance-accuracy>200m. Region callbacks only request a fix; explicit Start focus is required each occurrence. Signed-device validation remains pending.",
+    "Android 2026-09-22 supplement is source-reviewed only; existing iOS statuses and historical evidence remain unchanged. Build and device results belong to coordinator verification, not this structural review.",
+    "Android active sessions are process-local and end on service teardown/process death/reboot. Selection and disclosure only are persisted. No boot restart or automatic session restoration.",
+    "Android listens only to window-state package events with canRetrieveWindowContent=false; after screen-on/user-present clears foreground, an already-visible selected app may remain uncovered until a new window event. Unlock, split-screen, OEM behavior and permission-revocation checks remain open.",
+    "Android app picker excludes system apps plus protected home, keyboard, dialer, settings and Offzone packages; enforcement rechecks protected packages. This is an Android first-slice design and does not close the existing iOS essential-exclusion gate."
+  ],
+  "metadata_version": "1.3.1",
+  "implementation_revision": "R1-core-in-progress",
+  "verification": {
+    "simulator_tests": {
+      "count": 10,
+      "failures": 0,
+      "evidence_path": "/tmp/roomdns-r1-tests-verified.log",
+      "executed_by": "orchestrator",
+      "scope": "Swift state/policy/storage tests in simulator; no actual shielding proof"
+    },
+    "signed_device": "not_run",
+    "r1_complete": false,
+    "r2_started": false,
+    "r3_started": false,
+    "native_presentation": {
+      "review": "source_reviewed",
+      "source_refs": [
+        {
+          "path": "RoomDNS/App/ContentView.swift",
+          "line": 875,
+          "symbol_or_anchor": "private var homeSpiritState"
+        },
+        {
+          "path": "RoomDNS/App/ContentView.swift",
+          "line": 1609,
+          "symbol_or_anchor": "private var animationPaused"
+        }
+      ],
+      "build_and_tests": "passed_12_tests_0_failures",
+      "signed_device": "not_run",
+      "retention_effect": "not_measured",
+      "ast_graph": "historical_R1_snapshot_not_rebuilt",
+      "test_evidence": "_workspace/native-design-tests.log",
+      "simulator": "iPhone 17 Pro / iOS 26.5; installed and launched",
+      "visual_review": [
+        "home",
+        "place setup"
+      ],
+      "status_report": "NATIVE_DESIGN_STATUS.md"
+    },
+    "report_upgrade": {
+      "simulator_tests": 14,
+      "failures": 0,
+      "test_evidence": "_workspace/paywall-upgrade-tests.log",
+      "visual_review": [
+        "new-user goal/rhythm/setup/save/ready/free-home",
+        "account unconfigured state"
+      ],
+      "signed_device": "not_run",
+      "firebase_auth": "not_configured",
+      "real_purchase": "not_configured",
+      "offer_enabled": false,
+      "status_report": "PAYWALL_UPGRADE_STATUS.md"
+    },
+    "place_focus_revision": {
+      "date": "2026-09-16",
+      "review": "source_reviewed",
+      "signed_device": "not_run",
+      "build_and_tests": "Simulator XCTest: 23 executed, 22 passed, 1 StoreKit skipped, 0 failures. Unsigned device Release build succeeded. Binary NFC checks passed. Physical-device validation pending.",
+      "ast_graph": "historical_R1_snapshot_not_rebuilt"
+    },
+    "android_first_slice": {
+      "review_date": "2026-09-22",
+      "review": "source_reviewed",
+      "build_and_tests": "Debug APK, unit test and lint passed; Android 16 emulator integration test passed. Physical devices unverified.",
+      "physical_device": "not_verified",
+      "ast_graph": "historical_snapshot_not_rebuilt",
+      "work_items": [
+        "CORE-01",
+        "SAFE-01",
+        "ACT-01"
+      ],
+      "scope": "Manual selected-app focus, elapsedRealtime expiry and free restore; Kotlin/Compose UI, no login, billing or place automation.",
+      "reviewed_fixes": [
+        "Restore/disconnect/connect invalidate pending asynchronous starts using controller generation.",
+        "Shield content is scrollable so free restore can remain reachable at large font sizes."
+      ]
+    }
+  }
+}

@@ -1,0 +1,927 @@
+{
+  "metadata_version": "1.3.3",
+  "updated_at": "2026-09-25",
+  "languages": [
+    "en-US",
+    "ko-KR"
+  ],
+  "purpose": "현재 구현, 제품 설계, 판매용 문안, 후속 제안을 구분하는 제품 메타데이터. App Store Connect 자동 업로드 형식은 아니다.",
+  "report_path": "SALES_STRATEGY_REPORT.ko.md",
+  "evidence_policy": {
+    "implemented_unverified": "코드 경로가 존재하나 이번 작업에서 실기기 동작을 검증하지 않음",
+    "partial": "일부 구현되어 있으나 설계 약속을 모두 충족하지 않음",
+    "planned_not_implemented": "기존 제품 문서에 있으나 현재 코드에서 구현을 찾지 못함",
+    "proposed": "이번 보고서의 제안이며 확정된 제품 결정이나 구현이 아님",
+    "external_observed": "조사일에 공개 페이지에서 관찰한 정보이며 변경될 수 있음",
+    "priority_note": "최신 사용자 결정은 ORCHESTRATOR.md에서 조율하고 PRODUCT.md에 반영한다. 실제 구현은 코드·검증 결과, APP_METADATA.json은 그 목록이며 세일즈·UX 보고서는 제안을 담는다."
+  },
+  "product": {
+    "working_name": "Offzone",
+    "version": "0.1.0",
+    "build": "1",
+    "stage": "R1_initial_implementation_device_validation_pending",
+    "app_store_release_verified": false,
+    "category_proposed": "Productivity",
+    "platform": "iPhone",
+    "minimum_ios": "18.0",
+    "locales": [
+      "en",
+      "ko"
+    ],
+    "bundle_id": "com.exchip.roomdns",
+    "app_group": "group.com.exchip.roomdns",
+    "identifiers_ownership_verified": false,
+    "value_proposition": "장소와 시간에 맞춰 산만한 앱을 가리고, 사용자가 정한 집중 약속을 돕는다.",
+    "tagline": "장소가 집중을 기억해요.",
+    "primary_customer": "자신의 디지털 습관과 시간을 관리하고 싶은 글로벌 성인 고객 전체. 학생 신분이나 특정 직업으로 한정하지 않는다.",
+    "first_market_hypothesis": "글로벌 영어 사용자 안에서 업무·휴식·함께하는 시간·개인 목표의 상황별 수요를 비교한다. 특정 국가·학생을 우선 고객으로 확정하지 않는다.",
+    "secondary_market_hypothesis": "한국어는 보조 현지화이며 국가별 출시 순서는 수요·지원 여건을 확인해 별도 결정한다.",
+    "excluded_customers": [
+      "원격 자녀 감시",
+      "직원 강제 통제",
+      "의료·중독 치료 목적"
+    ],
+    "positioning_proposed": "A place-aware companion for intentional digital habits across work, rest, time with people, and personal time.",
+    "differentiation_caveat": "장소 자동화와 물리적 집중 장치는 경쟁 제품에도 존재한다. 명확한 영어 설정, 여러 생활 맥락, 신뢰성·비처벌적 복구 경험의 조합을 검증한다.",
+    "primary_language": "en-US",
+    "value_proposition_en": "Protect the time you choose with place and schedule rules for distracting apps.",
+    "tagline_en": "Make room for what matters.",
+    "name_en": "Offzone",
+    "name_ko": "오프존"
+  },
+  "brand": {
+    "mascot": {
+      "name_ko": "누크",
+      "name_en": "Nook Cat",
+      "form": "디자인보드 F의 크림색 고양이·짙은 녹색 눈·니트 조끼. 원본 장면 배경 없이 새 RGBA 정지 표정8종+전신4종을 iOS/Android에 연결."
+    },
+    "voice": [
+      "고요함",
+      "짧고 구체적",
+      "단호하지만 비난하지 않음",
+      "사용자의 통제권 존중"
+    ],
+    "implemented_appearance": "SUIT 한영/버터·크림·차콜 UI에 Nook Cat 정지 자산을 iOS 13 상태/Android 온보딩·홈에 매핑. Rue 앱 자산 제거, 공식 off 아이콘 유지. iOS 대상 XCTest 1/1(최종 여백 수정 전), 최종 증분 빌드 및 한국어 첫 화면/영어 네 화면, Android debug/emulator 2/2와 네 화면을 확인. 실기기·전 여정 접근성·윤곽 프린지/원본성·출시 검증은 별도. Rue 의상3종은 과거 시안이며 Nook 옷장/판매 기능은 없다.",
+    "app_icon": {
+      "direction": "official_off_wordmark",
+      "source": "assets/brand/offzone-logo-master.png",
+      "colors": [
+        "#FAF9F3",
+        "#223E38"
+      ],
+      "status": "selected_and_implemented",
+      "asset_in_project": true
+    },
+    "references": [
+      "PRODUCT.md",
+      "DESIGN.md",
+      "MOTION.md"
+    ],
+    "assets": [
+      "assets/quiet-threshold-style-frame.png",
+      "assets/brand/offzone-logo-master.png",
+      "assets/brand/offzone-logo-source-lime.png",
+      "RoomDNS/Assets.xcassets/OffzoneNook-portraits-welcome.imageset/art.png",
+      "RoomDNS/Assets.xcassets/OffzoneNook-fullbody-welcome.imageset/art.png",
+      "android/app/src/main/res/drawable-nodpi/nook_fullbody_welcome.png"
+    ]
+  },
+  "implementation": {
+    "stack": [
+      "Swift",
+      "SwiftUI",
+      "FamilyControls",
+      "ManagedSettings",
+      "ManagedSettingsUI",
+      "DeviceActivity",
+      "CoreLocation",
+      "CoreNFC",
+      "MapKit"
+    ],
+    "extensions": [
+      "DeviceActivityMonitor",
+      "ShieldAction",
+      "ShieldConfiguration"
+    ],
+    "restriction_flow": "MapKit place selection + fresh GPS confirmation + explicit Start focus during the scheduled occurrence → locked RuntimeState snapshot → RestrictionPolicy → ManagedSettings shield",
+    "persistence": "Saved rule definitions: App Group UserDefaults/Codable with original backup. Applied runtime: versioned App Group JSON snapshot, atomic write and bounded native file lock. Unsigned simulator uses a separate local sandbox.",
+    "third_party_payment_sdk_present": true,
+    "account_backend_present": true,
+    "analytics_backend_present": false,
+    "active_rule_limit": 1,
+    "gps_radius_meters": 150,
+    "minimum_schedule_minutes": 15,
+    "schedule_repeats": "매일, 자정 경계 지원, 요일 선택 없음",
+    "nfc_expected_url_pattern": "Legacy decoded rule URL only: https://roomdns.app/focus/<tag-id>; no current NFC execution",
+    "nfc_trigger": "Removed from current runtime; legacy rule decoding only",
+    "nfc_tag_rule_binding_present": false,
+    "nfc_tag_write_flow_present": false,
+    "shield_open_app_behavior": "코드상 iOS 26.5 이상은 openParentalControlsApp, 이전 버전은 close; 실기기 검증 필요",
+    "evidence": [
+      {
+        "path": "RoomDNS/Shared/RestrictionState.swift",
+        "line": 89
+      },
+      {
+        "path": "RoomDNS/Shared/RestrictionState.swift",
+        "line": 146
+      },
+      {
+        "path": "RoomDNS/Shared/RestrictionState.swift",
+        "line": 344
+      },
+      {
+        "path": "RoomDNS/App/AppModel.swift",
+        "line": 412
+      },
+      {
+        "path": "RoomDNS/App/AppModel.swift",
+        "line": 907
+      },
+      {
+        "path": "RoomDNS.xcodeproj/project.pbxproj",
+        "line": 386
+      }
+    ],
+    "development_region": "en",
+    "localization_source_keys": "English customer-facing Swift keys; en/ko resources retain legacy aliases.",
+    "english_first_runtime_migration_status": "implemented_build_checked_device_pending",
+    "account_backend_status": "Offzone Firebase iOS app configured; Apple provider and revocation key enabled and verified via Identity Toolkit; live Firestore rules match local. Signed-device login/deletion pending.",
+    "account_provider": "Sign in with Apple; Google not implemented",
+    "subscription_status": "RevenueCat key validation passed and Apple sandbox TEST delivered. Three draft products, offzone_pro offering/entitlement and PASS currency configured. Prices/trial/Pro benefits/legal pages and real purchases pending; offers disabled.",
+    "service_configuration": {
+      "firebase_project_id": "roomdns-exchip",
+      "firebase_ios_app_id": "1:842668693484:ios:563c1ca176f723d5f212c9",
+      "apple_team_id": "GS2FF7X539",
+      "apple_auth_service_id": "com.exchip.offzone.auth",
+      "app_store_id": "6809377856",
+      "revenuecat_project_id": "projb8a02e7b",
+      "revenuecat_app_id": "appfffadcc625",
+      "entitlement_id": "offzone_pro",
+      "purchase_key_validation": "revenuecat_valid_sandbox_notification_success_production_http_401",
+      "evidence": "ACCOUNT_PURCHASE_SETUP.md",
+      "offering_id": "offzone_pro",
+      "subscription_group_id": "22365436",
+      "currency_code": "PASS",
+      "unlock_pass_ready": false,
+      "apple_extensions_registered": true,
+      "app_group_associated": true,
+      "product_ids": [
+        "com.exchip.roomdns.pro.monthly",
+        "com.exchip.roomdns.pro.annual",
+        "com.exchip.roomdns.unlock.single"
+      ],
+      "firebase_billing_plan": "Blaze",
+      "blaze_upgrade_authorized": true,
+      "billing_blocker": null,
+      "billing_account_id": "01FA86-230529-5132E9",
+      "billing_account_name": "내 결제 계정 2",
+      "revenuecat_secret_version": "1",
+      "billing_budget": {
+        "currency": "KRW",
+        "monthly_amount": 10000,
+        "thresholds": [
+          0.5,
+          0.9,
+          1
+        ],
+        "scope": "new billing account",
+        "automatic_spend_cap": false
+      },
+      "purchase_functions_deployed": true
+    },
+    "unlock_backend_status": "Both Firebase functions are deployed ACTIVE. The disabled client scaffold loads the actual consumable/PASS balance, persists UID-specific spend requests atomically, retries the same session ID and performs a locked same-session release. Signed-device authenticated purchase/grant/spend and stale-session compensation remain pending."
+  },
+  "features": [
+    {
+      "id": "screen_time_permission",
+      "name": "개인 Screen Time 권한 및 대상 선택",
+      "status": "implemented_unverified",
+      "evidence": [
+        {
+          "path": "RoomDNS/App/AppModel.swift",
+          "line": 238
+        },
+        {
+          "path": "RoomDNS/App/ContentView.swift",
+          "line": 109
+        }
+      ]
+    },
+    {
+      "id": "gps_place",
+      "name": "장소 검색·핀 조정·주변 감지와 명시적 집중 시작",
+      "status": "implemented_unverified",
+      "limitation": "Apple Map 장소/주소 검색, 핀 조정. 신선한 위치와 오차를 고려해 150m 진입/200m 이탈 경계로 판정. 각 일정 회차마다 사용자가 집중 시작해야 차단. 방·책상 구분 및 즉시 이탈 감지 보장 불가. 실기기 검증 대기.",
+      "evidence": [
+        {
+          "path": "RoomDNS/App/AppModel.swift"
+        },
+        {
+          "path": "RoomDNS/App/ContentView.swift"
+        },
+        {
+          "path": "RoomDNS/Shared/RestrictionState.swift"
+        }
+      ]
+    },
+    {
+      "id": "nfc_focus",
+      "name": "NFC 기능 제거",
+      "status": "removed",
+      "limitation": "2026-09-16 사용자 지시로 스캔/UI/권한 제거. 과거 저장 규칙 디코딩만 유지하며 실행 불가; 장소 지정 후 다시 저장/활성화 필요.",
+      "evidence": [
+        {
+          "path": "RoomDNS/Shared/RestrictionState.swift"
+        },
+        {
+          "path": "RoomDNS/RoomDNS.entitlements"
+        }
+      ]
+    },
+    {
+      "id": "daily_schedule",
+      "name": "매일 반복 일정과 자정 경계",
+      "status": "implemented_unverified",
+      "evidence": [
+        {
+          "path": "RoomDNS/App/AppModel.swift",
+          "line": 457
+        },
+        {
+          "path": "RoomDNS/Shared/RestrictionState.swift",
+          "line": 51
+        }
+      ]
+    },
+    {
+      "id": "rule_presets",
+      "name": "규칙 저장·편집·명시적 활성화·삭제",
+      "status": "partial",
+      "limitation": "저장과 적용을 분리하고 적용 스냅샷을 유지. 활성 규칙은 하나이며 요일·복제·태그 연결은 미구현. 실기기 검증 대기.",
+      "evidence": [
+        {
+          "path": "RoomDNS/App/AppModel.swift",
+          "line": 312
+        },
+        {
+          "path": "RoomDNS/App/AppModel.swift",
+          "line": 412
+        },
+        {
+          "path": "RoomDNS/App/AppModel.swift",
+          "line": 357
+        }
+      ]
+    },
+    {
+      "id": "shield",
+      "name": "앱·카테고리·웹 도메인 가림막",
+      "status": "implemented_unverified",
+      "limitation": "선택한 시스템 토큰에 적용. 자체 DNS 서버나 VPN 트래픽 필터가 아님.",
+      "evidence": [
+        {
+          "path": "RoomDNS/Shared/RestrictionState.swift",
+          "line": 344
+        }
+      ]
+    },
+    {
+      "id": "safety_release",
+      "name": "상시 무료 접근 복구와 규칙 일시중지",
+      "status": "implemented_unverified",
+      "limitation": "강제 대기 없는 접근 복구 유지. 복구·감지된 이탈·회차 종료 후 명시적 집중 시작 필요. 권한/상태 오류 시 규칙 재활성화 필요. 실기기 검증 대기.",
+      "evidence": [
+        {
+          "path": "RoomDNS/App/ContentView.swift",
+          "line": 97
+        },
+        {
+          "path": "RoomDNS/App/ContentView.swift",
+          "line": 996
+        },
+        {
+          "path": "RoomDNS/App/AppModel.swift",
+          "line": 554
+        },
+        {
+          "path": "RoomDNS/Shared/RestrictionState.swift",
+          "line": 288
+        }
+      ]
+    },
+    {
+      "id": "mascot_accessibility",
+      "name": "Nook Cat 상태 표현·접근성 기본 대응·한영 번역",
+      "status": "partial",
+      "limitation": "iOS 13 상태를 Nook 정적 표정8/전신4에 매핑하고 기존 한 번 반응/동작 줄이기를 유지. Android는 12컷 번들 중 온보딩·홈의 일부 상태를 사용. 전 여정 VoiceOver/실기기 접근성·윤곽 검증은 미완료.",
+      "evidence": [
+        {
+          "path": "RoomDNS/App/ContentView.swift",
+          "line": 1511
+        },
+        {
+          "path": "RoomDNS/App/ContentView.swift",
+          "line": 1585
+        },
+        {
+          "path": "RoomDNS/en.lproj/Localizable.strings",
+          "line": 803
+        },
+        {
+          "path": "android/app/src/main/java/com/exchip/offzone/NookCatView.kt",
+          "line": 12
+        }
+      ]
+    },
+    {
+      "id": "break_pass",
+      "name": "조기 종료 해제권 안내 화면",
+      "status": "partial",
+      "evidence": [
+        {
+          "path": "RoomDNS/App/ContentView.swift",
+          "section": "UnlockPassView"
+        },
+        {
+          "path": "RoomDNS/App/AccountStore.swift"
+        },
+        {
+          "path": "RoomDNS/App/AppModel.swift"
+        },
+        {
+          "path": "RoomDNS/Shared/RestrictionState.swift"
+        },
+        {
+          "path": "functions/index.js"
+        }
+      ],
+      "limitation": "Client product/balance/purchase/spend/retry and atomic same-session release are implemented behind RoomUnlockPassReady=false. Backend fixed -1 and cleanup functions remain ACTIVE. Local tests pass, but price, authenticated signed-device StoreKit/grant/spend, account-switch/refund behavior and non-exploitable stale-session compensation remain pending. Free emergency recovery remains."
+    },
+    {
+      "id": "protected_time_history",
+      "name": "집중 세션 기록·최근 7일 보호 시간",
+      "status": "planned_not_implemented",
+      "evidence": [
+        {
+          "path": "PRODUCT.md",
+          "section": "MVP Scope"
+        }
+      ]
+    },
+    {
+      "id": "working_test",
+      "name": "60초 작동 확인",
+      "status": "planned_not_implemented",
+      "limitation": "60초는 사용자 확인 절차 목표. 백그라운드 60초 자동 해제 보장으로 해석하지 않음.",
+      "evidence": [
+        {
+          "path": "PRODUCT.md",
+          "section": "MVP Scope"
+        }
+      ]
+    },
+    {
+      "id": "essential_app_exclusions",
+      "name": "필수 앱 기본 차단 제외",
+      "status": "planned_not_implemented",
+      "limitation": "정책 문서의 약속이며 현재 shield 적용 코드에는 별도 예외 토큰 처리가 없음.",
+      "evidence": [
+        {
+          "path": "PRODUCT.md",
+          "section": "Product Snapshot"
+        },
+        {
+          "path": "RoomDNS/Shared/RestrictionState.swift",
+          "line": 344
+        }
+      ]
+    },
+    {
+      "id": "personalized_onboarding",
+      "name": "목표·시간 선택 기반 첫 규칙 온보딩",
+      "status": "implemented_unverified",
+      "evidence": [
+        {
+          "path": "RoomDNS/App/OnboardingProfile.swift"
+        },
+        {
+          "path": "RoomDNS/App/ContentView.swift"
+        }
+      ],
+      "limitation": "Simulator UI verified; physical permission/blocking validation separate."
+    },
+    {
+      "id": "apple_account",
+      "name": "Apple·Google·이메일 로그인과 계정 연결/삭제",
+      "status": "partial",
+      "evidence": [
+        {
+          "path": "RoomDNS/App/AccountStore.swift"
+        },
+        {
+          "path": "RoomDNS/App/AccountViews.swift"
+        }
+      ],
+      "limitation": "Apple, Google and email/password implemented; all providers enabled and read back in Firebase. Email verification/reset, explicit same-UID linking, provider reauthentication/deletion implemented. Simulator AccountStore tests4 passed. Auth/Firestore emulator and backend tests3 passed; server goal writes now require verified email or linked Apple/Google identity. Live temporary-account email/password signup/login/deletion and unverified-write403 verified. Actual app Google/Apple OAuth, email delivery/linking/deletion and RevenueCat account restoration remain unverified. Google/email build2 submitted on 2026-09-09 18:26KST; WAITING FOR REVIEW verified on separate submission page. Build1 submission cancelled."
+    },
+    {
+      "id": "subscription_offer",
+      "name": "RevenueCat 월간/연간 구독 화면·구매 복원",
+      "status": "partial",
+      "evidence": [
+        {
+          "path": "RoomDNS/App/AccountStore.swift"
+        },
+        {
+          "path": "RoomDNS/App/AccountViews.swift"
+        }
+      ],
+      "limitation": "Pro weekly planning/reflection and current-identity/verified-expiry gate implemented. Monthly USD4.99/KRW7700, annual USD29.99/KRW49000 and 175-territory prices saved/reloaded in ASC. Paywall discloses device-only storage and backup exclusion. Real StoreKit/RevenueCat purchase, restore, refund and product review remain pending; offers disabled."
+    },
+    {
+      "id": "zone_notifications",
+      "name": "활성 GPS 구역 진입·이탈과 차단 시작·종료 로컬 알림",
+      "status": "implemented_unverified",
+      "limitation": "활성 규칙 하나의 위치 오차를 고려한 주변 진입·이탈 및 차단 상태 알림. OS 전달 지연 가능, 방 단위 정확도 보장 없음. 실기기 미검증.",
+      "evidence": [
+        {
+          "path": "RoomDNS/Shared/RestrictionState.swift"
+        },
+        {
+          "path": "RoomDNS/App/AppModel.swift"
+        },
+        {
+          "path": "RoomDNS/App/ContentView.swift"
+        },
+        {
+          "path": "RoomDNSTests/RestrictionNotificationTests.swift"
+        }
+      ]
+    },
+    {
+      "id": "app_deletion_protection",
+      "name": "차단 중 선택형 앱 삭제 제한",
+      "status": "implemented_unverified",
+      "limitation": "모든 앱 삭제 제한 요청. 개인 Screen Time 권한은 철회 가능하며 전체 기기 잠금/결제만 해제 보장 아님. 기존 규칙 기본 꺼짐. 정상 종료·복구 시 해제, 실기기 검증 대기.",
+      "evidence": [
+        {
+          "path": "RoomDNS/Shared/RestrictionState.swift"
+        },
+        {
+          "path": "RoomDNS/App/AppModel.swift"
+        },
+        {
+          "path": "RoomDNS/App/ContentView.swift"
+        },
+        {
+          "path": "RoomDNSTests/RestrictionPolicyTests.swift"
+        }
+      ]
+    },
+    {
+      "id": "pro_planning_journal",
+      "name": "Pro 주간 목표 계획·개인 회고·주간 요약",
+      "status": "partial",
+      "evidence": [
+        {
+          "path": "RoomDNS/App/ProJournal.swift"
+        },
+        {
+          "path": "RoomDNS/App/ProJournalView.swift"
+        },
+        {
+          "path": "RoomDNS/App/AccountStore.swift"
+        },
+        {
+          "path": "tools/check_pro_journal.swift"
+        }
+      ],
+      "limitation": "Implemented local weekly intentions, daily self-reported reflections, summary/export/delete and entitlement-gated writes. Existing data readable/exportable/deletable after expiry. Simulator XCTest and model checks passed. Not automatic Screen Time/focus history. Real StoreKit purchase validation, review pending; approved subscription prices saved and reload-verified; sales disabled."
+    }
+  ],
+  "privacy": {
+    "raw_location_storage": "기기 App Group",
+    "screen_time_token_storage": "기기 App Group",
+    "privacy_manifest_declares_tracking": false,
+    "privacy_manifest_declares_collected_data": [
+      "NSPrivacyCollectedDataTypeUserID",
+      "NSPrivacyCollectedDataTypePurchaseHistory",
+      "NSPrivacyCollectedDataTypeOtherUserContent",
+      "NSPrivacyCollectedDataTypeEmailAddress",
+      "NSPrivacyCollectedDataTypeName"
+    ],
+    "sdk_privacy_manifest_additions": [
+      "NSPrivacyCollectedDataTypeOtherDiagnosticData (unlinked, analytics)"
+    ],
+    "userdefaults_required_reason": "1C8F.1",
+    "network_traffic_audited": false,
+    "caveat": "Optional Google/email authentication adds email and basic Google profile to Firebase Auth; linked account UID remains purchase identity. Name/email declared for account functionality, no tracking. Public privacy v4 deployed. ASC name/email privacy labels published and reload-verified for build2. Actual auth/network flows remain unverified.",
+    "public_privacy_policy_url": "https://offzone-privacy-support.wogus5357.chatgpt.site/privacy",
+    "support_url": "https://offzone-privacy-support.wogus5357.chatgpt.site/support",
+    "marketing_url": "https://offzone-privacy-support.wogus5357.chatgpt.site/",
+    "domain_ownership_verified": false,
+    "evidence": [
+      {
+        "path": "RoomDNS/PrivacyInfo.xcprivacy",
+        "line": 1
+      }
+    ]
+  },
+  "monetization": {
+    "currently_implemented": "RevenueCat subscription UI plus disabled unlock-pass product/balance/spend client scaffold; both paid offers remain gated pending release validation",
+    "existing_product_spec": {
+      "status": "planned_not_implemented",
+      "model": "즉시 사용형 consumable 15분 통행권",
+      "product_id": "roomdns.break.15m",
+      "offering": "break_pass",
+      "package": "fifteen_minute",
+      "price_hypothesis_krw": 1100,
+      "app_store_connect_product_verified": false
+    },
+    "report_recommendation": {
+      "status": "proposed",
+      "initial_offer": "활성 규칙 1개, 지도 또는 NFC 설정, 무료 안전 해제 중심의 제한 베타. 아직 없는 기초 기록은 구현 이후 제공한다.",
+      "paid_value": "여러 장소·NFC 스팟·규칙, 요일별 자동화, 신뢰 가능한 기록·통계처럼 반복 사용할수록 커지는 가치",
+      "korean_store_benchmarks_observed": [
+        {
+          "app": "one sec",
+          "annual_krw": 15000,
+          "lifetime_krw": 149000
+        },
+        {
+          "app": "Jomo",
+          "annual_krw_range": [
+            43000,
+            44000
+          ],
+          "lifetime_krw_range": [
+            129000,
+            149000
+          ]
+        }
+      ],
+      "lifetime_offer": "초기 출시에서는 보류하고 유지비·갱신 가치·고객 선호가 확인될 때 검토",
+      "price_note": "USD 가격은 G1에서 비교할 실험 가정이며 한국 가격의 환율 변환이 아니다. 국가별 출시·현지 가격·상품 구성은 미확정이다. 기존 한국 스토어 수치는 과거 조사 기록으로만 보존한다.",
+      "pass_recommendation": "유료 해제를 초기 핵심 매출 모델에서 보류하는 것을 권고",
+      "review_gate": "Apple 지침 4.10은 Screen Time API 자체 수익화를 금지한다. 경쟁 앱의 공개 판매 구조는 참고 사례일 뿐 승인 보장이 아니므로, Offzone가 만든 자동화·관리·기록 경험의 범위와 무료 안전 기능을 심사 메모에 명확히 설명하고 실제 심사로 확인한다.",
+      "source_url": "https://developer.apple.com/app-store/review/guidelines/#monetizing-built-in-capabilities",
+      "previous_annual_price_test_krw": [
+        29000,
+        39000
+      ],
+      "annual_price_test_usd": [
+        19.99,
+        29.99
+      ],
+      "price_anchor_currency": "USD",
+      "decision_status": "proposed_pending_OFFER-01"
+    },
+    "offer_ready": false
+  },
+  "store_listing_draft": {
+    "status": "draft_not_ready_for_submission",
+    "category": "Productivity",
+    "age_rating": null,
+    "age_rating_note": "대상 고객이 성인이라는 것과 Apple 연령 등급은 다르다. 제출 시 설문으로 결정.",
+    "prerequisites": [
+      "서명된 실기기 검증",
+      "Family Controls 배포 권한",
+      "기능과 설명 일치",
+      "개인정보처리방침·지원 URL",
+      "아이콘·실제 화면 스크린샷"
+    ],
+    "ko-KR": {
+      "name": "오프존",
+      "subtitle": "중요한 시간을 위한 디지털 습관",
+      "promotional_text": "일할 때, 쉴 때, 함께할 때, 나만의 시간을 보낼 때. 앱과 장소, 일정을 정하고 준비되면 집중을 시작하세요.",
+      "keywords": "스크린타임,앱차단,자기관리,몰입,디지털디톡스,습관,집중,일정,장소",
+      "description": "중요한 시간을 위한 여유를 만드세요.\n\n오프존은 업무·휴식·함께하는 시간·나만의 시간을 위해 산만한 앱 사용에 경계를 정하는 iPhone 디지털 자기관리 도우미입니다.\n\n• Apple의 시스템 선택기에서 가릴 앱과 웹사이트를 직접 선택하세요.\n• 지도에서 장소를 검색하고 핀을 조정하거나 현재 위치를 사용하세요.\n• 일정을 정해 생활에 맞는 규칙을 저장하고 하나씩 활성화하세요.\n• 준비되면 ‘집중 시작’을 누르세요. 주변 감지는 장소 근처인지 확인하는 데 도움을 주며, 도착만으로 차단이 시작되지 않습니다.\n• 세션의 예정 종료를 확인하고, 접근이 필요하면 ‘접근 복구’를 사용하세요.\n\n위치 감지는 대략적인 주변 범위를 사용하며 방이나 책상을 구별하지 않습니다. 시스템과 기기 상태에 따라 감지 시점이 달라질 수 있습니다. 장소 감지에는 위치 권한이, 선택한 앱과 웹사이트 가리기에는 스크린 타임 권한이 필요합니다.\n\niOS 18 이상이 필요합니다. 자신의 디지털 습관을 관리하려는 사용자를 위한 앱입니다."
+    },
+    "en-US": {
+      "name": "Offzone",
+      "subtitle": "Make room for what matters",
+      "promotional_text": "Make room for what matters. Choose your apps, place, and schedule, then start focus when you are ready.",
+      "keywords": "screen time,blocker,distraction,habit,routine,digital detox,self control",
+      "description": "Make room for what matters.\n\nOffzone helps you set boundaries around distracting apps for work, rest, time with people, and time for yourself.\n\n• Choose apps and websites with Apple's system picker.\n• Search for a place on the map, adjust its pin, or use your current location.\n• Set a schedule and save rules for your routines. Activate one rule at a time.\n• When you are ready, tap Start focus. Nearby detection helps identify the surrounding area; arriving alone does not start blocking.\n• See your session's scheduled end and use Restore access when you need to regain access.\n\nLocation detection is approximate. The surrounding area does not identify individual rooms or desks, and detection timing can vary with system and device conditions. Location access is required for place detection, and Screen Time authorization is required to shield your selected apps and websites.\n\nRequires iOS 18 or later. Designed for people managing their own digital habits."
+    },
+    "excluded_claims": [
+      "집중 기록 및 주간 리포트 제공",
+      "15분 유료 통행권 구매 가능",
+      "방을 정확히 자동 감지",
+      "필수 앱을 자동으로 모두 제외",
+      "우회 절대 불가",
+      "화면 사용 시간 감소율 보장",
+      "의료·중독 치료 효과",
+      "세계 최초·유일한 공간 차단 앱"
+    ],
+    "primary_locale": "en-US",
+    "alignment_note": "Build 3 source: place search/pin, uncertainty-aware arrival, explicit Start focus; NFC removed. New binary/device validation/actual screenshots/ASC replacement remain separate release steps."
+  },
+  "priorities_proposed": [
+    {
+      "id": "ALIGN-01",
+      "title": "영어 우선·글로벌 자기관리 방향 동기화",
+      "success_condition": "문서·영어 원본·한영 리소스 일치; 실제 권한·확장·접근성 흐름 검증"
+    },
+    {
+      "id": "CORE-01",
+      "title": "실기기 차단·해제·일정 복구",
+      "success_condition": "주요 기기 상태별 실제 검증 기록"
+    },
+    {
+      "id": "SAFE-01",
+      "title": "상시 무료 복구·필수 앱 예외",
+      "success_condition": "상시 무료 복구 코드 반영; 실기기 실제 해제·재개와 필수 앱 예외 검증 필요"
+    },
+    {
+      "id": "ACT-01",
+      "title": "첫 작동 체험·권한 순서",
+      "success_condition": "첫 사용자가 작동·해제를 이해하고 혼자 완료"
+    },
+    {
+      "id": "RULE-01",
+      "title": "규칙 관리·요일·NFC 연결",
+      "success_condition": "저장/활성화 의미 명확, 태그-규칙 매핑과 삭제 후 상태 검증"
+    },
+    {
+      "id": "INSIGHT-01",
+      "title": "보호 구간과 회고",
+      "success_condition": "불명확 구간·휴식 제외, 중복 집계 없음"
+    },
+    {
+      "id": "BREAK-01",
+      "title": "계획 휴식·복귀",
+      "success_condition": "실기기 예약·복구 검증 뒤 제공"
+    },
+    {
+      "id": "OFFER-01",
+      "title": "Pro 반복 가치·가격·상품 경계 검증",
+      "success_condition": "세일즈 약속·UX·구현·심사·유지율 함께 검토"
+    }
+  ],
+  "success_metrics_proposed": {
+    "current_values": null,
+    "north_star": "주간에 3회 이상 유효 보호 세션을 완료한 사용자 비율. 업무·휴식·함께하는 시간·개인 목표별로 분리 관찰.",
+    "activation": "설치 후 24시간 안에 첫 작동 확인과 첫 15분 이상 유효 보호 세션을 완료한 사용자 비율",
+    "behavioral_d7": "첫 활성화 코호트 중 7~13일차에 1회 이상 유효 보호 세션을 완료한 비율",
+    "business": [
+      "설치 코호트 30일 내 유료 전환",
+      "환불 반영 실제 정산액",
+      "유료 고객 획득 비용"
+    ],
+    "guardrails": [
+      "지속 차단 결함",
+      "무료 해제 성공",
+      "위치 오판 사유",
+      "사용자가 원한 작업 달성",
+      "권한 유지 관찰 범위"
+    ],
+    "measurement_note": "현재 분석 서버와 세션 기록은 없다. 베타에서는 동의받은 로컬 요약 공유·인터뷰로 시작하며 미응답과 중도 이탈을 분리 기록한다."
+  },
+  "release_gates": [
+    {
+      "gate": "Family Controls 배포 권한과 서명",
+      "status": "unverified"
+    },
+    {
+      "gate": "실제 iPhone Shield·GPS·NFC·DeviceActivity 검증",
+      "status": "pending_per_SPIKE_CHECKLIST"
+    },
+    {
+      "gate": "수익 모델 심사 적합성",
+      "status": "unresolved"
+    },
+    {
+      "gate": "개인정보처리방침과 지원 채널",
+      "status": "not_found_in_workspace"
+    },
+    {
+      "gate": "App Store 상품 및 가격",
+      "status": "not_verified"
+    },
+    {
+      "gate": "전체 접근성 흐름",
+      "status": "not_verified_in_this_review"
+    }
+  ],
+  "research": {
+    "observed_at": "2026-09-06",
+    "comparison_apps": [
+      "Opal",
+      "one sec",
+      "Jomo",
+      "Freedom",
+      "Brick",
+      "ScreenZen"
+    ],
+    "adjacent_product": "ScreenZen Halo",
+    "success_definition": "공개 평점·리뷰 규모, 사용자 수에 대한 사업자 공개 주장, 지속 판매 제품 또는 동료심사 효과 연구. 감사된 매출·수익성 검증을 뜻하지 않음.",
+    "sources": [
+      {
+        "id": "S01",
+        "title": "Opal US App Store",
+        "url": "https://apps.apple.com/us/app/opal-screen-time-control/id1497465230"
+      },
+      {
+        "id": "S02",
+        "title": "Opal Pricing",
+        "url": "https://opalapp.com/pricing"
+      },
+      {
+        "id": "S03",
+        "title": "one sec US App Store",
+        "url": "https://apps.apple.com/us/app/one-sec-screen-time-focus/id1532875441"
+      },
+      {
+        "id": "S04",
+        "title": "one sec PNAS field and controlled experiments, 2023",
+        "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC9974409/"
+      },
+      {
+        "id": "S05",
+        "title": "Jomo official site",
+        "url": "https://jomo.so/"
+      },
+      {
+        "id": "S06",
+        "title": "Jomo Pricing",
+        "url": "https://jomo.so/pricing"
+      },
+      {
+        "id": "S07",
+        "title": "Jomo US App Store",
+        "url": "https://apps.apple.com/us/app/jomo-screen-time-blocker/id1609960918"
+      },
+      {
+        "id": "S08",
+        "title": "Freedom official site",
+        "url": "https://freedom.to/"
+      },
+      {
+        "id": "S09",
+        "title": "Freedom Premium",
+        "url": "https://freedom.to/premium"
+      },
+      {
+        "id": "S10",
+        "title": "Brick official product",
+        "url": "https://getbrick.com/products/grey-brick"
+      },
+      {
+        "id": "S11",
+        "title": "ScreenZen official site",
+        "url": "https://screenzen.co/"
+      },
+      {
+        "id": "S12",
+        "title": "ScreenZen Halo",
+        "url": "https://screenzen.co/products/halo"
+      },
+      {
+        "id": "S13",
+        "title": "Apple App Review Guidelines",
+        "url": "https://developer.apple.com/app-store/review/guidelines/"
+      },
+      {
+        "id": "S14",
+        "title": "Apple Family Controls entitlement",
+        "url": "https://developer.apple.com/documentation/familycontrols/requesting-the-family-controls-entitlement"
+      },
+      {
+        "id": "S15",
+        "title": "Apple product page metadata",
+        "url": "https://developer.apple.com/app-store/product-page/"
+      },
+      {
+        "id": "S16",
+        "title": "Apple Small Business Program",
+        "url": "https://developer.apple.com/app-store/small-business-program/"
+      },
+      {
+        "id": "S17",
+        "title": "one sec Korea App Store",
+        "url": "https://apps.apple.com/kr/app/one-sec-screen-time-focus/id1532875441"
+      },
+      {
+        "id": "S18",
+        "title": "Jomo Korea App Store",
+        "url": "https://apps.apple.com/kr/app/jomo-screen-time-blocker/id1609960918"
+      }
+    ]
+  },
+  "maintenance": {
+    "update_when": [
+      "기능 구현 또는 실기기 검증 완료",
+      "수익 모델 확정",
+      "스토어 제출",
+      "개인정보 처리 변경"
+    ],
+    "refresh_external_sources_before": "가격 결정·비교 광고·App Store 제출 직전",
+    "verification_scope": "R1 initial implementation: English-first UI, free recovery, applied runtime snapshot, save/activate/delete. Simulator tests and unsigned builds recorded in R1_IMPLEMENTATION_STATUS.md. No physical iPhone connected; signed-device Screen Time/GPS/NFC, full accessibility, beta and release remain pending."
+  },
+  "strategy_revision": "G1",
+  "primary_language": "en-US",
+  "documentation_language": "ko-KR",
+  "artifacts": {
+    "orchestrator": "ORCHESTRATOR.md",
+    "sales": "SALES_STRATEGY_REPORT.ko.md",
+    "ux": "UX_STRATEGY_REPORT.ko.md",
+    "app_graph": "APP_GRAPH.md",
+    "machine_graph": "APP_GRAPH.json",
+    "upgrade_plan": "APP_UPGRADE_PLAN.ko.md",
+    "implementation_status": "R1_IMPLEMENTATION_STATUS.md",
+    "paywall_upgrade_status": "PAYWALL_UPGRADE_STATUS.md",
+    "account_purchase_setup": "ACCOUNT_PURCHASE_SETUP.md"
+  },
+  "strategy_contract": {
+    "decision_source": "user_2026-09-06",
+    "audience_scope": "global_digital_self_management_adults",
+    "primary_customer_language": "en-US",
+    "secondary_customer_languages": [
+      "ko-KR"
+    ],
+    "geographic_launch_countries": null,
+    "contexts": [
+      {
+        "id": "work",
+        "label_en": "Work",
+        "outcome": "Protect attention for meaningful work."
+      },
+      {
+        "id": "rest",
+        "label_en": "Rest",
+        "outcome": "Keep scrolling out of time chosen for rest."
+      },
+      {
+        "id": "presence",
+        "label_en": "Time with people",
+        "outcome": "Be present during time with others."
+      },
+      {
+        "id": "personal",
+        "label_en": "Personal time",
+        "outcome": "Make room for reading, creating, learning, or a personal goal."
+      }
+    ],
+    "non_goals": [
+      "student_only_positioning",
+      "korea_first_positioning",
+      "remote_surveillance",
+      "clinical_claims",
+      "general_fitness_or_finance_feature_expansion"
+    ],
+    "customer_copy_source": "English; en-US is an authoring locale, not a US-only launch decision.",
+    "implementation_boundary": "R1 initial runtime work authorized by the user and in progress; ACT manual trial, R2 extensions, paid features and release remain gated by validation."
+  },
+  "android": {
+    "language": "Kotlin",
+    "ui": "Jetpack Compose",
+    "path": "android/",
+    "status": "implemented_local_validation_passed",
+    "scope": [
+      "onboarding goals and daily window",
+      "saved/applied place rules and overnight schedules",
+      "precise manual arrival/start and optional foreground monitoring",
+      "app picker and accessibility shield",
+      "free recovery and timed quick focus",
+      "Firebase email/Google/Apple account and verified goal sync",
+      "RevenueCat entitlement/purchase/restore integration with sales disabled",
+      "local plans/reflections/history and iOS JSON import/export/share",
+      "English/Korean SUIT and static Nook Cat mascot; no paid wardrobe implemented"
+    ],
+    "deferred": [
+      "physical device QA (user currently cannot connect a device)",
+      "production OAuth validation",
+      "RevenueCat purchase API validation and real Play purchase/restore testing",
+      "Play product activation after validation",
+      "missing icon/feature graphic and final policy declarations/demo videos",
+      "store review and publication"
+    ],
+    "validation": {
+      "debug_build": "passed",
+      "unit_tests": "3 passed, 0 skipped",
+      "auth_emulator": "1 passed; isolated Firebase Auth+Firestore signup/verify/sync/reset/reauth/delete",
+      "storage_emulator": "Historical JournalStoreTest results retained; OnboardingNookTest 2/2 passed on Offzone_Dev emulator, including 12 Nook RGBA PNG decodes. Physical device still untested.",
+      "lint": "0 errors / 49 warnings; application-context singleton warnings reviewed",
+      "physical_device": "not verified",
+      "play_review": "not submitted",
+      "release_bundle": "Signed final APK/AAB validated; AAB accepted by Play and saved as internal draft version1(0.1.0), target36,16KB support verified; no rollout",
+      "localization": "237 English/Korean keys matched; prior Korean1.5x UI verified",
+      "runtime_emulator": "3 passed, 0 skipped; shield/free restore/expiry/revoke + actual location FGS/monitoring/manual start/exit/reentry/stale fix + rule snapshot/corruption",
+      "ui_emulator": "2 passed; onboarding/picker/map/save/apply/edit/reapply/journal/account + Korean1.5x font; combined UI/storage run5 passed in65.491s",
+      "instrumentation_total": "10 functional tests passed, 0 skipped (auth1 + engine3 + UI/storage5 + location disclosure1); store screenshot fixture additionally passed",
+      "map": "Actual Seoul map center verified, viewport height261.33px,6/6 tiles loaded, attribution visible",
+      "public_privacy": "Android privacy/support v5 deployed; both routes HTTP200 verified",
+      "play_credentials": "Catalog/base-plan checks pass; RTDN test received. Subscription-purchase API still reports No application after AAB upload; propagation vs draft status unconfirmed.",
+      "location_disclosure": "Passed18.065s, 0 skipped: no start before choice, Not now, stale-generation rejection, Agree and continue dispatch",
+      "store_screenshots": "Historical six English emulator PNGs from the pre-Nook listing; current Nook store screenshots not generated. Five were previously recommended plus optional journal.",
+      "store_listing": "en-US draft saved: five actual Android screenshots, accurate manual-start/Accessibility copy; account-deletion URL and email-password+OAuth methods corrected; icon/feature graphic still absent",
+      "play_products": "Monthly P1M USD4.99/KRW7700 and annual P1Y USD29.99/KRW49000 saved DRAFT and API-readback verified; imported into RevenueCat offzone_pro entitlement and existing monthly/annual offering slots; iOS preserved"
+    },
+    "evidence": "output/android-migration/",
+    "release_package": "com.exchip.roomdns",
+    "debug_package": "com.exchip.offzone.debug",
+    "release_evidence": "output/android-release/"
+  }
+}
