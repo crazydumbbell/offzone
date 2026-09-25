@@ -61,7 +61,7 @@
       "단호하지만 비난하지 않음",
       "사용자의 통제권 존중"
     ],
-    "implemented_appearance": "SUIT 한영/버터·크림·차콜 UI에 Nook Cat 정지 자산을 iOS 13 상태/Android 온보딩·홈에 매핑. Rue 앱 자산 제거, 공식 off 아이콘 유지. iOS 대상 XCTest 1/1(최종 여백 수정 전), 최종 증분 빌드 및 한국어 첫 화면/영어 네 화면, Android debug/emulator 2/2와 네 화면을 확인. 실기기·전 여정 접근성·윤곽 프린지/원본성·출시 검증은 별도. Rue 의상3종은 과거 시안이며 Nook 옷장/판매 기능은 없다.",
+    "implemented_appearance": "SUIT 한영/버터·따뜻한 아이보리·차콜 UI에 Nook Cat 정지 자산을 iOS 13 상태와 Android 온보딩·규칙 작성·준비·Pro·계정·저널·홈에 매핑. Rue 앱 자산 제거, 공식 off 아이콘 유지. iOS 시뮬레이터 검증과 Android debug 빌드·에뮬레이터 온보딩 2/2 및 첫 규칙 UI 1/1 확인. 실기기·전 여정 접근성·윤곽 프린지/원본성·출시 검증은 별도. Rue 의상3종은 과거 시안이며 Nook 옷장/판매 기능은 없다.",
     "app_icon": {
       "direction": "official_off_wordmark",
       "source": "assets/brand/offzone-logo-master.png",
@@ -314,7 +314,7 @@
       "id": "mascot_accessibility",
       "name": "Nook Cat 상태 표현·접근성 기본 대응·한영 번역",
       "status": "partial",
-      "limitation": "iOS 13 상태를 Nook 정적 표정8/전신4에 매핑하고 기존 한 번 반응/동작 줄이기를 유지. Android는 12컷 번들 중 온보딩·홈의 일부 상태를 사용. 전 여정 VoiceOver/실기기 접근성·윤곽 검증은 미완료.",
+      "limitation": "iOS 13 상태를 Nook 정적 표정8/전신4에 매핑하고 기존 한 번 반응/동작 줄이기를 유지. Android는 번들 상태를 온보딩·규칙 작성·준비·Pro·계정·저널·홈에 연결했다. 전 여정 VoiceOver/TalkBack·실기기 접근성·윤곽 검증은 미완료.",
       "evidence": [
         {
           "path": "RoomDNS/App/ContentView.swift",
@@ -409,7 +409,7 @@
           "path": "RoomDNS/App/ContentView.swift"
         }
       ],
-      "limitation": "iOS source includes morning/afternoon/evening, Another time native start-time picker (one-hour window), and Not sure yet goal-based suggested hour. After first saved rule, successful Activate my rule presents the dismissible RoomPaywallView; failure stays on the ready screen. Rhythm and disabled-offer paywall rendered on simulator; full activation, physical device, and Android parity pending."
+    "limitation": "iOS and Android offer morning/afternoon/evening, native custom start-time picker (one-hour window), and goal-based Not sure yet suggestion. Android adds staged app/place/schedule/review setup, Ready, and a dismissible Pro screen after connected activation; failed activation stays on Ready. Android emulator onboarding persistence and first-rule UI flow passed. Full activation, physical devices, and purchases remain unverified."
     },
     {
       "id": "apple_account",
@@ -902,14 +902,14 @@
       "debug_build": "passed",
       "unit_tests": "3 passed, 0 skipped",
       "auth_emulator": "1 passed; isolated Firebase Auth+Firestore signup/verify/sync/reset/reauth/delete",
-      "storage_emulator": "Historical JournalStoreTest results retained; OnboardingNookTest 2/2 passed on Offzone_Dev emulator, including 12 Nook RGBA PNG decodes. Physical device still untested.",
+      "storage_emulator": "Historical JournalStoreTest results retained; updated OnboardingNookTest 2/2 passed on Offzone_Dev emulator, including preset/custom/goal-suggested hours and 12 Nook RGBA PNG decodes. Physical device still untested.",
       "lint": "0 errors / 49 warnings; application-context singleton warnings reviewed",
       "physical_device": "not verified",
       "play_review": "not submitted",
       "release_bundle": "Signed final APK/AAB validated; AAB accepted by Play and saved as internal draft version1(0.1.0), target36,16KB support verified; no rollout",
-      "localization": "237 English/Korean keys matched; prior Korean1.5x UI verified",
+      "localization": "313 English/Korean keys matched; Android per-app language list added for English and Korean. Current large-font UI check pending.",
       "runtime_emulator": "3 passed, 0 skipped; shield/free restore/expiry/revoke + actual location FGS/monitoring/manual start/exit/reentry/stale fix + rule snapshot/corruption",
-      "ui_emulator": "2 passed; onboarding/picker/map/save/apply/edit/reapply/journal/account + Korean1.5x font; combined UI/storage run5 passed in65.491s",
+      "ui_emulator": "Historical UI/storage run5 retained; 2026-09-25 staged first-rule onboarding/picker/map/save/apply/edit/reapply/journal/account instrumentation 1/1 passed in228.454s.",
       "instrumentation_total": "10 functional tests passed, 0 skipped (auth1 + engine3 + UI/storage5 + location disclosure1); store screenshot fixture additionally passed",
       "map": "Actual Seoul map center verified, viewport height261.33px,6/6 tiles loaded, attribution visible",
       "public_privacy": "Android privacy/support v5 deployed; both routes HTTP200 verified",

@@ -9,6 +9,7 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
@@ -21,7 +22,7 @@ import com.revenuecat.purchases.models.Period
 import com.revenuecat.purchases.models.RecurrenceMode
 
 @Composable
-fun AccountScreen(store: AccountStore, onBack: () -> Unit, initialGoal: String? = null) {
+fun AccountScreen(store: AccountStore, onBack: () -> Unit, initialGoal: String? = null, onJournal: (() -> Unit)? = null) {
     val state by store.state.collectAsState()
     val context = LocalContext.current
     val activity = context.accountActivity()
@@ -35,9 +36,15 @@ fun AccountScreen(store: AccountStore, onBack: () -> Unit, initialGoal: String? 
     LaunchedEffect(state.uid) { deleting = false; password = ""; confirmation = ""; mode = "signin"; store.refresh() }
     Column(Modifier.fillMaxSize().safeDrawingPadding().imePadding().verticalScroll(rememberScrollState()).padding(24.dp), verticalArrangement = Arrangement.spacedBy(12.dp)) {
         TextButton(onClick = onBack) { Text(stringResource(R.string.account_done)) }
-        Text(stringResource(R.string.account_title), style = MaterialTheme.typography.headlineLarge)
-        Text(stringResource(if (state.pro) R.string.account_pro_active else R.string.account_free_space), style = MaterialTheme.typography.titleLarge)
+        Text(stringResource(R.string.account_title), style = MaterialTheme.typography.titleMedium)
+        Surface(color = SoftButter, shape = RoundedCornerShape(22.dp)) {
+            Box(Modifier.fillMaxWidth().heightIn(min = 132.dp), contentAlignment = androidx.compose.ui.Alignment.Center) {
+                NookCatView(NookExpression.WELCOME_FULL, Modifier.size(width = 146.dp, height = 126.dp))
+            }
+        }
+        Text(stringResource(if (state.pro) R.string.account_pro_active else R.string.account_free_space), style = MaterialTheme.typography.headlineLarge)
         Text(stringResource(R.string.account_local))
+        if (onJournal != null) TextButton(onClick = onJournal, modifier = Modifier.heightIn(min = 48.dp)) { Text(stringResource(R.string.m_journal)) }
         if (!state.configured) Text(stringResource(R.string.account_unavailable))
         else if (state.uid == null) {
             Text(stringResource(R.string.account_signin_intro))

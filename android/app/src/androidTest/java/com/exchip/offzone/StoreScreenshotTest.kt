@@ -99,13 +99,13 @@ class StoreScreenshotTest {
             context.startActivity(Intent(context,MainActivity::class.java).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK))
             scrollTo(label(R.string.onboarding_start)); screenshot("welcome")
             click(label(R.string.onboarding_start)); click(label(R.string.goal_presence)); click(label(R.string.onboarding_continue))
-            click(label(R.string.window_evening)); screenshot("onboarding"); click(label(R.string.onboarding_done))
+            click(label(R.string.onboarding_evening_title)); screenshot("onboarding"); click(label(R.string.onboarding_done))
             waitFor("Onboarding persisted") { OnboardingProfile.completed(context) }
             assertEquals("presence",OnboardingProfile.goal(context)); assertEquals("evening",OnboardingProfile.window(context))
-            scrollTo(label(R.string.m_new_rule))
-            name("Quiet evenings")
-            click(context.getString(R.string.apps_selected,0))
+            scrollTo(label(R.string.editor_apps_title))
+            click(label(R.string.editor_apps_choose))
             click("Chrome"); click(label(R.string.done))
+            click(label(R.string.editor_next_place))
             click(label(R.string.m_choose_place))
             scrollTo(label(R.string.m_latitude))
             var fields=device.findObjects(By.clazz("android.widget.EditText")).sortedBy { it.visibleBounds.top }
@@ -168,6 +168,9 @@ class StoreScreenshotTest {
             val mapState=org.json.JSONObject(org.json.JSONTokener(diagnostic.get()).nextValue() as String)
             assertTrue("Map container must have visible height",mapState.getJSONObject("map").getDouble("height")>100)
             top(); click(label(R.string.done))
+            click(label(R.string.editor_next_time))
+            click(label(R.string.editor_next_review))
+            name("Quiet evenings")
             screenshot("editor"); click(label(R.string.m_save_rule))
             waitFor("Rule saved") { FocusController.ruleStore.rules.value.size==1 }
             val saved=FocusController.ruleStore.rules.value.single()
@@ -176,6 +179,7 @@ class StoreScreenshotTest {
             assertEquals(1200,saved.startMinutes); assertEquals(1260,saved.endMinutes)
             assertEquals(51.5080,saved.latitude,0.00001); assertEquals(-0.1280,saved.longitude,0.00001)
             assertNull("Saving is not applying",FocusController.state.value.appliedRule)
+            click(label(R.string.ready_go_home))
             focus.edit().putBoolean("disclosure",true).commit()
             device.executeShellCommand("settings put secure enabled_accessibility_services ${(services.split(':').filter { it.isNotBlank() } + service).distinct().joinToString(":")}")
             device.executeShellCommand("settings put secure accessibility_enabled 1")
@@ -183,7 +187,9 @@ class StoreScreenshotTest {
             click(label(R.string.m_apply))
             waitFor("Explicit apply") { FocusController.state.value.appliedRule?.id==saved.id }
             assertNull("Applying is not starting focus",FocusController.state.value.session)
-            click(label(R.string.m_edit)); name("Evening focus"); click(label(R.string.m_save_rule))
+            click(label(R.string.m_edit))
+            click(label(R.string.editor_next_place)); click(label(R.string.editor_next_time)); click(label(R.string.editor_next_review))
+            name("Evening focus"); click(label(R.string.m_save_rule))
             waitFor("Draft persisted separately") { FocusController.ruleStore.hasUnappliedChanges(saved.id) }
             assertEquals("Quiet evenings",FocusController.state.value.appliedRule?.name)
             scrollTo(label(R.string.m_unapplied)); screenshot("unapplied")

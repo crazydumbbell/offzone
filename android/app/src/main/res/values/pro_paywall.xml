@@ -1,0 +1,13 @@
+<resources>
+    <string name="pro_eyebrow">OFFZONE PRO</string>
+    <string name="pro_close">Close</string>
+    <string name="pro_headline_work">Make room for your focus.</string>
+    <string name="pro_headline_rest">Make room for calmer evenings.</string>
+    <string name="pro_headline_presence">Make room for being here.</string>
+    <string name="pro_headline_personal">Make room for yourself.</string>
+    <string name="pro_benefit_plan">Plan your week around what matters.</string>
+    <string name="pro_benefit_journal">Keep a private reflection journal.</string>
+    <string name="pro_benefit_review">Review your weekly intentions and reflections.</string>
+    <string name="pro_view_plans">View plans and account</string>
+    <string name="pro_continue_free">Continue with free</string>
+</resources>

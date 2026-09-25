@@ -1,0 +1,11 @@
+<resources>
+    <string name="onboarding_goal_detail">Start with one thing that matters to you.</string>
+    <string name="onboarding_rhythm_detail">Choose a time or use a suggestion. You can change it next.</string>
+    <string name="onboarding_another_time">Another time</string>
+    <string name="onboarding_not_sure">Not sure yet</string>
+    <string name="onboarding_change_time">Change time</string>
+    <string name="onboarding_suggested_time">Suggested: %1$s. You can change it next.</string>
+    <string name="onboarding_morning_title">In the morning</string>
+    <string name="onboarding_afternoon_title">In the afternoon</string>
+    <string name="onboarding_evening_title">In the evening</string>
+</resources>

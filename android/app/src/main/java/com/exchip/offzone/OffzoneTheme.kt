@@ -37,6 +37,10 @@ import kotlinx.coroutines.withContext
 
 internal val Butter = Color(0xFFF7F0C7)
 internal val Ink = Color(0xFF191B19)
+internal val WarmIvory = Color(0xFFFAF7E8)
+internal val Mint = Color(0xFFE8EEDD)
+internal val SoftButter = Color(0xFFEFE5AB)
+internal val Blush = Color(0xFFEEEFE8)
 internal val Suit = FontFamily(
     Font(R.font.suit_regular), Font(R.font.suit_medium, FontWeight.Medium),
     Font(R.font.suit_semibold, FontWeight.SemiBold), Font(R.font.suit_bold, FontWeight.Bold),
@@ -53,4 +57,3 @@ internal val OffzoneTypography = Typography().let { base ->
         labelLarge = base.labelLarge.copy(fontFamily = Suit, fontSize = 16.sp),
     )
 }
-

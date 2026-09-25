@@ -28,10 +28,20 @@ class OnboardingNookTest {
             assertTrue(OnboardingProfile.completed(reopened))
             assertEquals("presence",OnboardingProfile.goal(reopened))
             assertEquals("evening",OnboardingProfile.window(reopened))
+            assertEquals(20 * 60, OnboardingProfile.startMinutes(reopened))
+            assertEquals(21 * 60, OnboardingProfile.endMinutes(reopened))
+            assertTrue(OnboardingProfile.save(context, "presence", "unsure"))
+            assertEquals(20 * 60, OnboardingProfile.startMinutes(reopened))
+            assertTrue(OnboardingProfile.save(context, "work", "unsure"))
+            assertEquals(9 * 60, OnboardingProfile.startMinutes(reopened))
+            assertTrue(OnboardingProfile.save(context, "work", "custom", 23 * 60 + 45))
+            assertEquals(23 * 60 + 45, OnboardingProfile.startMinutes(reopened))
+            assertEquals(45, OnboardingProfile.endMinutes(reopened))
             assertTrue(runCatching { OnboardingProfile.save(context,"unknown","evening") }.isFailure)
             assertTrue(runCatching { OnboardingProfile.save(context,"work","noon") }.isFailure)
-            assertEquals("presence",OnboardingProfile.goal(context))
-            assertEquals("evening",OnboardingProfile.window(context))
+            assertTrue(runCatching { OnboardingProfile.save(context,"work","custom", 1440) }.isFailure)
+            assertEquals("work",OnboardingProfile.goal(context))
+            assertEquals("custom",OnboardingProfile.window(context))
         } finally { assertTrue(target.deleteSharedPreferences(file)) }
     }
 

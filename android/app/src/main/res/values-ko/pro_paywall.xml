@@ -1,0 +1,13 @@
+<resources>
+    <string name="pro_eyebrow">OFFZONE PRO</string>
+    <string name="pro_close">닫기</string>
+    <string name="pro_headline_work">집중할 시간을 만들어요.</string>
+    <string name="pro_headline_rest">차분한 저녁을 만들어요.</string>
+    <string name="pro_headline_presence">지금 이 순간에 머물러요.</string>
+    <string name="pro_headline_personal">나를 위한 시간을 만들어요.</string>
+    <string name="pro_benefit_plan">중요한 일을 중심으로 한 주를 계획해요.</string>
+    <string name="pro_benefit_journal">나만의 회고를 기록해요.</string>
+    <string name="pro_benefit_review">한 주의 다짐과 회고를 돌아봐요.</string>
+    <string name="pro_view_plans">요금제와 계정 보기</string>
+    <string name="pro_continue_free">무료로 계속하기</string>
+</resources>

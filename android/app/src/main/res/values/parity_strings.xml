@@ -1,0 +1,24 @@
+<resources>
+    <string name="home_your_space">Your space</string>
+    <string name="home_scheduled">Scheduled</string>
+    <string name="home_starts_at">Starts at %1$s</string>
+    <string name="home_in_focus">In focus</string>
+    <string name="home_setup_needed">Setup needed</string>
+    <string name="home_create_first_rule">Create your first rule</string>
+    <string name="home_ready_when_you_are">Ready when you are</string>
+    <string name="home_check_location">Check your location</string>
+    <string name="home_ready">Ready</string>
+    <string name="home_paused">Paused</string>
+    <string name="home_access_restored">Access restored</string>
+    <string name="home_check_rules">Check your rules</string>
+    <string name="home_create_rule">Create a rule</string>
+    <string name="home_saved_count">%1$d saved</string>
+    <string name="home_activate_rule">Activate %1$s</string>
+    <string name="ready_headline">A little room, ready for you.</string>
+    <string name="ready_saved_note">Saved on this Android device. Blocking hasn’t started.</string>
+    <string name="ready_restore_note">You can always restore access for free.</string>
+    <string name="ready_activate">Activate my rule</string>
+    <string name="ready_go_home">Go to home</string>
+    <string name="ready_rule_unavailable">Saved rule unavailable. Go to home and choose a rule.</string>
+    <string name="ready_save_goal">Save my goal to an account</string>
+</resources>

@@ -1,5 +1,9 @@
 # Offzone 앱 구성 및 전략 연결 그래프
 
+## D-46 Android 우선·핵심 화면 동기화 · 2026-09-25
+
+Android `OnboardingScreen`의 목표·시간 선택(기본 3개, 직접 선택, 목표별 추천) → `RuleEditorScreen`의 앱·장소·시간·검토 → `MainActivity`의 저장 후 Ready → 연결된 차단 서비스에서 `Activate my rule` 성공 → `ProPaywallScreen`의 무료 계속하기/닫기 → Home을 연결했다. 홈 카드는 실제 집중 중만 차콜이고 예약·일시중지는 따뜻한 아이보리다. Android 13+ 앱별 언어 목록은 영어·한국어다. 사용자가 Android를 주 개발 기준으로 지정했으며 iOS Screen Time과 Android Accessibility/앱 패키지 선택은 플랫폼별 고유 경로다. 결제 준비 플래그는 여전히 꺼져 있고 AAB 생성과 Play 업로드는 별개다.
+
 ## D-45 첫 규칙 시간·Pro 진입 · 2026-09-25
 
 **iOS 소스 확인:** `ContentView.rhythmScreen`은 아침/오후/저녁과 `Another time` 네이티브 시작 시각 선택, `Not sure yet` 목표별 추천 1시간을 제공한다. 첫 규칙의 Save 성공 → Ready → `Activate my rule` 성공 → 홈 위 `RoomPaywallView` sheet로 연결된다. 실패 시 Ready에 머물고 `Go to home`으로 구매 없이 이동할 수 있다. Pro 화면에는 `Continue with free`/닫기와 상품 복원이 있으며 앱의 무료 `Restore access` 경로는 유지된다. `RoomProOfferReady=false`인 현재 빌드에는 체험·가격·구매 주장이 없다. Android 동등 흐름과 실제 기기·구매 검증은 남아 있다. 첨부 영상은 시각 참고다.

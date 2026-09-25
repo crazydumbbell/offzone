@@ -4,6 +4,7 @@ import android.Manifest
 import android.content.Intent
 import android.os.Build
 import android.os.Bundle
+import android.os.SystemClock
 import android.provider.Settings
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.BackHandler
@@ -13,7 +14,7 @@ import androidx.activity.enableEdgeToEdge
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -52,6 +53,11 @@ class MainActivity : ComponentActivity() {
         val identity by account.state.collectAsState()
         var route by rememberSaveable { mutableStateOf(if (!OnboardingProfile.completed(this) && rules.isEmpty() && !storageError) "welcome" else "home") }
         var editing by rememberSaveable { mutableStateOf<String?>(null) }
+        var editingFromReady by rememberSaveable { mutableStateOf(false) }
+        var readyRuleId by rememberSaveable { mutableStateOf<String?>(null) }
+        var accountReturnRoute by rememberSaveable { mutableStateOf("home") }
+        var journalReturnRoute by rememberSaveable { mutableStateOf("home") }
+        var paywallReturnRoute by rememberSaveable { mutableStateOf("home") }
         var disclosure by rememberSaveable { mutableStateOf(false) }
         var error by remember { mutableStateOf<Int?>(null) }
         val scope = rememberCoroutineScope()
@@ -110,73 +116,121 @@ class MainActivity : ComponentActivity() {
             if (action == 1 || action == 2) locationDisclosure = true
             else continuePlaceRequest()
         }
-        BackHandler(route != "home") { route = "home" }
+        BackHandler(route != "home") { route = when (route) {
+            "ready" -> { editingFromReady = true; "edit" }; "account" -> accountReturnRoute; "journal" -> journalReturnRoute
+            "paywall" -> paywallReturnRoute; else -> "home"
+        } }
         Surface(Modifier.fillMaxSize()) {
             when (route) {
-                "welcome" -> OnboardingScreen { _, _ -> editing = null; route = if (rules.isEmpty()) "edit" else "home" }
-                "edit" -> RuleEditorScreen(rules.firstOrNull { it.id == editing }, when (OnboardingProfile.window(this)) { "afternoon" -> 840; "evening" -> 1200; else -> 540 },
-                    onBack = { route = "home" }, onSaved = { route = "home" })
-                "account" -> AccountScreen(account, onBack = { route = "home" }, initialGoal = OnboardingProfile.goal(this))
-                "journal" -> JournalScreen(hasPro = identity.pro && account.hasProAccess, accessCheck = { account.hasProAccess }, onOffer = { route = "account" }, onBack = { route = "home" })
+                "welcome" -> OnboardingScreen { _, _ -> editing = null; editingFromReady = false; route = if (rules.isEmpty()) "edit" else "home" }
+                "edit" -> RuleEditorScreen(rules.firstOrNull { it.id == editing }, OnboardingProfile.startMinutes(this),
+                    onBack = { editingFromReady = false; route = "home" }, onSaved = { saved ->
+                        val showReady = editing == null || editingFromReady
+                        error = null
+                        editing = saved.id
+                        editingFromReady = false
+                        readyRuleId = saved.id
+                        route = if (showReady) "ready" else "home"
+                    }, defaultEnd = OnboardingProfile.endMinutes(this))
+                "ready" -> ReadyScreen(rules.firstOrNull { it.id == readyRuleId }, onBack = { editingFromReady = true; route = "edit" }, onActivate = { rule ->
+                    if (!state.connected) disclosure = true
+                    else if (FocusController.activateRule(rule.id)) { error = null; paywallReturnRoute = "home"; route = "paywall" }
+                    else error = R.string.save_error
+                }, onHome = { route = "home" }, onAccount = { accountReturnRoute = "ready"; route = "account" },
+                    showAccount = identity.configured && identity.uid == null, error = error)
+                "paywall" -> ProPaywallScreen(account, onContinue = { route = paywallReturnRoute }, onOpenAccount = { accountReturnRoute = "paywall"; route = "account" })
+                "account" -> AccountScreen(account, onBack = { route = accountReturnRoute }, initialGoal = OnboardingProfile.goal(this),
+                    onJournal = { journalReturnRoute = "account"; route = "journal" })
+                "journal" -> JournalScreen(hasPro = identity.pro && account.hasProAccess, accessCheck = { account.hasProAccess },
+                    onOffer = { paywallReturnRoute = "journal"; route = "paywall" }, onBack = { route = journalReturnRoute })
                 "quick" -> QuickFocus(onBack = { route = "home" }, onEnable = { disclosure = true })
                 else -> {
                     var deleting by remember { mutableStateOf<FocusRule?>(null) }
                     val notifications by FocusController.notificationsEnabled.collectAsState()
                     LazyColumn(Modifier.fillMaxSize().safeDrawingPadding(), contentPadding = PaddingValues(24.dp), verticalArrangement = Arrangement.spacedBy(18.dp)) {
                         item { Row(Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) {
-                            Text("offzone", style = MaterialTheme.typography.headlineSmall, modifier = Modifier.weight(1f))
-                            TextButton(onClick = { route = "account" }) { Text(stringResource(R.string.m_account)) }
+                            Text(stringResource(R.string.home_your_space), style = MaterialTheme.typography.headlineSmall, modifier = Modifier.weight(1f))
+                            TextButton(onClick = { accountReturnRoute = "home"; route = "account" }) { Text(stringResource(R.string.m_account)) }
+                            TextButton(onClick = { editing = null; editingFromReady = false; route = "edit" }, enabled = !storageError) { Text(stringResource(R.string.m_add)) }
                         } }
-                        item { Row(Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) {
-                            Column(Modifier.weight(1f), verticalArrangement = Arrangement.spacedBy(6.dp)) {
-                                Text(stringResource(if (state.session != null) R.string.focus_title else R.string.ready_title), style = MaterialTheme.typography.headlineLarge)
-                                Text(stringResource(goalLabel(OnboardingProfile.goal(this@MainActivity))), style = MaterialTheme.typography.bodyLarge)
+                        item {
+                            val active = state.appliedRule
+                            val focused = state.session != null
+                            val needsAction = storageError || !state.connected
+                            val scheduled = state.ruleEnabled && active != null && !RulePolicy.scheduleActive(active)
+                            val recentInside = state.insidePlace && state.observedAt?.let { SystemClock.elapsedRealtime() - it in 0..30_000 } == true
+                            val canStart = active != null && !focused && state.connected && state.ruleEnabled && !scheduled && recentInside &&
+                                !state.checkingPlace && PlaceMonitor.permissionReady(this@MainActivity)
+                            val cardColor = when {
+                                focused -> Ink
+                                needsAction -> SoftButter
+                                state.message == R.string.access_restored -> Mint
+                                else -> WarmIvory
                             }
-                            NookCatView(
-                                expression = if (state.session != null) NookExpression.FOCUSED_FULL else NookExpression.READY_FULL,
-                                modifier = Modifier.size(width = 132.dp, height = 140.dp)
-                            )
-                        } }
-                        item { Surface(color = Ink, contentColor = Butter, shape = RoundedCornerShape(24.dp)) {
-                            Column(Modifier.fillMaxWidth().padding(22.dp), verticalArrangement = Arrangement.spacedBy(12.dp)) {
-                                Text(state.appliedRule?.name ?: stringResource(R.string.m_no_rule), style = MaterialTheme.typography.titleLarge)
-                                if (state.session != null) {
-                                    val seconds = (state.remaining + 999) / 1000
-                                    Text("%d:%02d".format(seconds / 60, seconds % 60), style = MaterialTheme.typography.headlineLarge.copy(fontSize = 44.sp))
-                                    Button(onClick = { FocusController.stop() }, colors = ButtonDefaults.buttonColors(containerColor = Butter, contentColor = Ink), modifier = Modifier.fillMaxWidth().heightIn(min = 52.dp)) { Text(stringResource(R.string.restore)) }
-                                } else if (!state.connected) {
-                                    Text(stringResource(R.string.setup_hint))
-                                    Button(onClick = { disclosure = true }, colors = ButtonDefaults.buttonColors(containerColor = Butter, contentColor = Ink)) { Text(stringResource(R.string.enable)) }
-                                } else if (state.ruleEnabled) {
-                                    Text(stringResource(R.string.m_arrival_note))
-                                    state.appliedRule?.let { Text("${timeLabel(it.startMinutes)} – ${timeLabel(it.endMinutes)}") }
-                                    Button(onClick = {
-                                        requestPlace(1)
-                                    }, enabled = !state.checkingPlace, colors = ButtonDefaults.buttonColors(containerColor = Butter, contentColor = Ink), modifier = Modifier.fillMaxWidth().heightIn(min = 52.dp)) { Text(stringResource(R.string.start_focus)) }
-                                    TextButton(onClick = {
-                                        requestPlace(0)
-                                    }, enabled = !state.checkingPlace, colors = ButtonDefaults.textButtonColors(contentColor = Butter)) { Text(stringResource(R.string.m_check_arrival)) }
-                                } else Text(stringResource(R.string.m_activate_hint))
-                                (error ?: state.message)?.let { Text(stringResource(it)) }
-                                if (state.checkingPlace) LinearProgressIndicator(Modifier.fillMaxWidth())
+                            val foreground = if (focused) WarmIvory else Ink
+                            val title = when {
+                                storageError -> R.string.home_check_rules
+                                focused -> R.string.home_in_focus
+                                state.message == R.string.engine_paused -> R.string.home_paused
+                                state.message == R.string.access_restored -> R.string.home_access_restored
+                                !state.connected -> R.string.home_setup_needed
+                                rules.isEmpty() -> R.string.home_create_first_rule
+                                !state.ruleEnabled -> R.string.home_ready_when_you_are
+                                scheduled -> R.string.home_scheduled
+                                !recentInside -> R.string.home_check_location
+                                else -> R.string.home_ready
+                            }
+                            Surface(color = cardColor, contentColor = foreground, shape = RoundedCornerShape(24.dp)) {
+                                Column(Modifier.fillMaxWidth().padding(22.dp), verticalArrangement = Arrangement.spacedBy(16.dp)) {
+                                    Row(Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) {
+                                        Column(Modifier.weight(1f), verticalArrangement = Arrangement.spacedBy(8.dp)) {
+                                            active?.let { Text(it.name, style = MaterialTheme.typography.bodyLarge) }
+                                            Text(stringResource(title), style = MaterialTheme.typography.headlineLarge)
+                                            if (focused) {
+                                                val seconds = (state.remaining + 999) / 1000
+                                                Text("%d:%02d".format(seconds / 60, seconds % 60), style = MaterialTheme.typography.headlineLarge.copy(fontSize = 44.sp))
+                                            } else if (scheduled) Text(stringResource(R.string.home_starts_at, timeLabel(active.startMinutes)))
+                                        }
+                                        NookCatView(
+                                            expression = if (focused) NookExpression.FOCUSED_FULL else if (needsAction) NookExpression.NEEDS_ACTION else NookExpression.READY_FULL,
+                                            modifier = Modifier.size(width = 100.dp, height = 114.dp)
+                                        )
+                                    }
+                                    when {
+                                        focused -> Button(onClick = { FocusController.stop() }, colors = ButtonDefaults.buttonColors(containerColor = Butter, contentColor = Ink), modifier = Modifier.fillMaxWidth().heightIn(min = 52.dp)) { Text(stringResource(R.string.restore)) }
+                                        !state.connected -> Button(onClick = { disclosure = true }, colors = ButtonDefaults.buttonColors(containerColor = Ink, contentColor = Butter), modifier = Modifier.fillMaxWidth().heightIn(min = 52.dp)) { Text(stringResource(R.string.enable)) }
+                                        rules.isEmpty() -> Button(onClick = { editing = null; editingFromReady = false; route = "edit" }, colors = ButtonDefaults.buttonColors(containerColor = Ink, contentColor = Butter), modifier = Modifier.fillMaxWidth().heightIn(min = 52.dp)) { Text(stringResource(R.string.home_create_rule)) }
+                                        !state.ruleEnabled -> rules.firstOrNull()?.let { rule -> Button(onClick = { if (!FocusController.activateRule(rule.id)) error = R.string.save_error }, colors = ButtonDefaults.buttonColors(containerColor = Ink, contentColor = Butter), modifier = Modifier.fillMaxWidth().heightIn(min = 52.dp)) { Text(stringResource(R.string.home_activate_rule, rule.name)) } }
+                                        canStart -> Button(onClick = { requestPlace(1) }, colors = ButtonDefaults.buttonColors(containerColor = Ink, contentColor = Butter), modifier = Modifier.fillMaxWidth().heightIn(min = 52.dp)) { Text(stringResource(R.string.start_focus)) }
+                                    }
+                                    (error ?: state.message)?.takeUnless { needsAction && it == R.string.engine_rule_ready }
+                                        ?.let { Text(stringResource(it), style = MaterialTheme.typography.bodySmall) }
+                                    if (state.checkingPlace) LinearProgressIndicator(Modifier.fillMaxWidth())
+                                }
+                            }
+                        }
+                        if (state.ruleEnabled && state.appliedRule != null && state.session == null) item {
+                            Column(verticalArrangement = Arrangement.spacedBy(6.dp)) {
+                                Text(stringResource(R.string.m_arrival_note), style = MaterialTheme.typography.bodySmall)
+                                TextButton(onClick = { requestPlace(0) }, enabled = !state.checkingPlace) { Text(stringResource(R.string.m_check_arrival)) }
                                 state.distanceMeters?.let { Text(stringResource(R.string.m_distance, it.toInt(), state.accuracyMeters?.toInt() ?: 0), style = MaterialTheme.typography.bodySmall) }
                             }
-                        } }
+                        }
                         item { Row(Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) {
                             Text(stringResource(R.string.m_rules), style = MaterialTheme.typography.titleLarge, modifier = Modifier.weight(1f))
-                            TextButton(onClick = { editing = null; route = "edit" }, enabled = !storageError) { Text(stringResource(R.string.m_add)) }
+                            Text(stringResource(R.string.home_saved_count, rules.size), style = MaterialTheme.typography.bodySmall)
                         } }
                         if (storageError) item { Text(stringResource(R.string.engine_storage_error)) }
-                        items(rules, key = { it.id }) { rule ->
+                        itemsIndexed(rules, key = { _, rule -> rule.id }) { index, rule ->
                             val applied = state.appliedRule
                             val unapplied = applied?.id == rule.id && applied != rule
-                            OutlinedCard(Modifier.fillMaxWidth()) { Column(Modifier.padding(16.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
+                            Card(Modifier.fillMaxWidth(), colors = CardDefaults.cardColors(containerColor = if (index % 2 == 0) Mint else Blush), shape = RoundedCornerShape(20.dp)) { Column(Modifier.padding(16.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
                                 Text(rule.name, style = MaterialTheme.typography.titleLarge)
                                 Text("${timeLabel(rule.startMinutes)} – ${timeLabel(rule.endMinutes)} · ${rule.placeLabel.ifBlank { "%.4f, %.4f".format(rule.latitude, rule.longitude) }}")
                                 Text(stringResource(R.string.apps_selected, rule.packages.size))
                                 if (unapplied) Text(stringResource(R.string.m_unapplied))
                                 FlowRow(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-                                    TextButton(onClick = { editing = rule.id; route = "edit" }) { Text(stringResource(R.string.m_edit)) }
+                                    TextButton(onClick = { editing = rule.id; editingFromReady = false; route = "edit" }) { Text(stringResource(R.string.m_edit)) }
                                     TextButton(onClick = {
                                         if (state.appliedRule?.id == rule.id && !unapplied) FocusController.pauseRule()
                                         else if (!FocusController.activateRule(rule.id)) error = R.string.save_error
@@ -187,7 +241,7 @@ class MainActivity : ComponentActivity() {
                         }
                         item {
                             OutlinedButton(onClick = { route = "quick" }, modifier = Modifier.fillMaxWidth().heightIn(min = 52.dp)) { Text(stringResource(R.string.m_quick)) }
-                            OutlinedButton(onClick = { route = "journal" }, modifier = Modifier.fillMaxWidth().heightIn(min = 52.dp)) { Text(stringResource(R.string.m_journal)) }
+                            OutlinedButton(onClick = { journalReturnRoute = "home"; route = "journal" }, modifier = Modifier.fillMaxWidth().heightIn(min = 52.dp)) { Text(stringResource(R.string.m_journal)) }
                         }
                         item {
                             if (state.ruleEnabled) OutlinedButton(onClick = {
@@ -228,6 +282,39 @@ class MainActivity : ComponentActivity() {
                 if (!saved) error = R.string.save_error else runCatching { startActivity(Intent(Settings.ACTION_ACCESSIBILITY_SETTINGS)) }.onFailure { error = R.string.setup_error }
             } }) { Text(stringResource(R.string.agree)) }
         }, dismissButton = { TextButton(onClick = { disclosure = false }) { Text(stringResource(R.string.not_now)) } })
+    }
+
+    @Composable private fun ReadyScreen(
+        rule: FocusRule?, onBack: () -> Unit, onActivate: (FocusRule) -> Unit,
+        onHome: () -> Unit, onAccount: () -> Unit, showAccount: Boolean, error: Int?
+    ) {
+        Column(Modifier.fillMaxSize().safeDrawingPadding()) {
+            Column(Modifier.weight(1f).verticalScroll(rememberScrollState()).padding(24.dp), verticalArrangement = Arrangement.spacedBy(24.dp)) {
+                TextButton(onClick = onBack) { Text(stringResource(R.string.m_back)) }
+                Surface(color = Mint, shape = RoundedCornerShape(24.dp)) {
+                    Box(Modifier.fillMaxWidth().heightIn(min = 160.dp), contentAlignment = Alignment.Center) {
+                        NookCatView(NookExpression.READY_FULL, Modifier.size(width = 170.dp, height = 150.dp))
+                    }
+                }
+                Text(stringResource(R.string.ready_headline), style = MaterialTheme.typography.headlineLarge)
+                Surface(color = WarmIvory, shape = RoundedCornerShape(18.dp)) {
+                    Column(Modifier.fillMaxWidth().padding(20.dp), verticalArrangement = Arrangement.spacedBy(10.dp)) {
+                        Text(rule?.name ?: stringResource(R.string.ready_rule_unavailable), style = MaterialTheme.typography.titleLarge)
+                        rule?.let { Text("${timeLabel(it.startMinutes)} – ${timeLabel(it.endMinutes)}", style = MaterialTheme.typography.bodyLarge) }
+                        Text(stringResource(R.string.ready_saved_note), style = MaterialTheme.typography.bodyMedium)
+                    }
+                }
+                Text(stringResource(R.string.ready_restore_note), style = MaterialTheme.typography.bodyLarge)
+                if (showAccount) TextButton(onClick = onAccount) { Text(stringResource(R.string.ready_save_goal)) }
+                error?.let { Text(stringResource(it), color = MaterialTheme.colorScheme.error) }
+            }
+            Column(Modifier.fillMaxWidth().padding(horizontal = 24.dp, vertical = 8.dp), verticalArrangement = Arrangement.spacedBy(4.dp)) {
+                Button(onClick = { rule?.let(onActivate) }, enabled = rule != null,
+                    colors = ButtonDefaults.buttonColors(containerColor = Ink, contentColor = Butter),
+                    modifier = Modifier.fillMaxWidth().heightIn(min = 56.dp)) { Text(stringResource(R.string.ready_activate)) }
+                TextButton(onClick = onHome, modifier = Modifier.fillMaxWidth().heightIn(min = 48.dp)) { Text(stringResource(R.string.ready_go_home)) }
+            }
+        }
     }
 
     @Composable private fun QuickFocus(onBack: () -> Unit, onEnable: () -> Unit) {

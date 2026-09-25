@@ -1,0 +1,11 @@
+<resources>
+    <string name="onboarding_goal_detail">나에게 중요한 한 가지부터 시작하세요.</string>
+    <string name="onboarding_rhythm_detail">시간대를 고르거나 제안을 사용하세요. 다음 화면에서 바꿀 수 있어요.</string>
+    <string name="onboarding_another_time">다른 시간</string>
+    <string name="onboarding_not_sure">아직 모르겠어요</string>
+    <string name="onboarding_change_time">시간 변경</string>
+    <string name="onboarding_suggested_time">추천 시간: %1$s. 다음 화면에서 바꿀 수 있어요.</string>
+    <string name="onboarding_morning_title">오전</string>
+    <string name="onboarding_afternoon_title">오후</string>
+    <string name="onboarding_evening_title">저녁</string>
+</resources>

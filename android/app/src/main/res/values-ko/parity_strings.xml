@@ -1,0 +1,24 @@
+<resources>
+    <string name="home_your_space">나의 공간</string>
+    <string name="home_scheduled">예정됨</string>
+    <string name="home_starts_at">%1$s에 시작</string>
+    <string name="home_in_focus">집중 중</string>
+    <string name="home_setup_needed">설정이 필요해요</string>
+    <string name="home_create_first_rule">첫 규칙을 만들어 보세요</string>
+    <string name="home_ready_when_you_are">준비됐어요</string>
+    <string name="home_check_location">위치를 확인하세요</string>
+    <string name="home_ready">준비됨</string>
+    <string name="home_paused">일시 정지됨</string>
+    <string name="home_access_restored">접근 복구됨</string>
+    <string name="home_check_rules">규칙을 확인하세요</string>
+    <string name="home_create_rule">규칙 만들기</string>
+    <string name="home_saved_count">%1$d개 저장됨</string>
+    <string name="home_activate_rule">%1$s 활성화</string>
+    <string name="ready_headline">나를 위한 작은 공간이 준비됐어요.</string>
+    <string name="ready_saved_note">이 Android 기기에 저장했어요. 차단은 아직 시작되지 않았어요.</string>
+    <string name="ready_restore_note">언제든 무료로 접근을 복구할 수 있어요.</string>
+    <string name="ready_activate">내 규칙 활성화</string>
+    <string name="ready_go_home">홈으로 가기</string>
+    <string name="ready_rule_unavailable">저장한 규칙을 찾지 못했어요. 홈에서 규칙을 선택하세요.</string>
+    <string name="ready_save_goal">내 목표를 계정에 저장하기</string>
+</resources>

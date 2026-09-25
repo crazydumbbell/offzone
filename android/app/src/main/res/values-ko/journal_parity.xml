@@ -1,0 +1,9 @@
+<resources>
+    <string name="journal_weekly_overview">주간 요약</string>
+    <string name="journal_weekly_intention">주간 다짐</string>
+    <string name="journal_daily_reflection">하루 회고</string>
+    <string name="journal_your_data">내 기록</string>
+    <string name="journal_planned_days">계획한 날</string>
+    <string name="journal_reflected_days">회고한 날</string>
+    <string name="journal_kept_days">다짐을 지킨 날</string>
+</resources>

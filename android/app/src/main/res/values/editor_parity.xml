@@ -1,0 +1,29 @@
+<resources>
+    <string name="editor_name_work">Work time</string>
+    <string name="editor_name_rest">Wind-down</string>
+    <string name="editor_name_presence">Time together</string>
+    <string name="editor_name_personal">My time</string>
+    <string name="editor_apps_title">Choose apps to put aside</string>
+    <string name="editor_apps_detail">Keep essentials like calls, maps, banking, and authentication available. Review your selections too.</string>
+    <string name="editor_apps_choose">Choose apps</string>
+    <string name="editor_apps_choose_again">Choose again</string>
+    <string name="editor_apps_empty">Nothing selected yet</string>
+    <string name="editor_place_title">Choose where to start</string>
+    <string name="editor_place_detail">Choose a place, then start focus yourself when you arrive during your schedule.</string>
+    <string name="editor_place_empty">No place selected yet</string>
+    <string name="editor_place_hint">Arrival uses an approximate 150 m area, not room-level accuracy.</string>
+    <string name="editor_schedule_title">Choose your schedule</string>
+    <string name="editor_schedule_detail">Repeats daily.</string>
+    <string name="editor_schedule_warning">Choose a focus window of at least 15 minutes.</string>
+    <string name="editor_schedule_overnight">Ends the next day.</string>
+    <string name="editor_review_title">Review your rule</string>
+    <string name="editor_review_detail">Saving keeps your rule here. You decide when to activate it.</string>
+    <string name="editor_name_placeholder">e.g. Work time or Wind-down</string>
+    <string name="editor_apps">Apps</string>
+    <string name="editor_place">Place</string>
+    <string name="editor_time">Time</string>
+    <string name="editor_save_note">Saving won’t start restrictions.</string>
+    <string name="editor_next_place">Choose a place</string>
+    <string name="editor_next_time">Choose a time</string>
+    <string name="editor_next_review">Review rule</string>
+</resources>
