@@ -903,7 +903,7 @@ struct ContentView: View {
     }
 
     private var homeStatusCard: some View {
-        let dark = !homeNeedsAction && !SharedState.safetyReleased
+        let dark = model.isFocused && !homeNeedsAction && !SharedState.safetyReleased
         let foreground: Color = dark ? .roomPaper : .roomInk
         let layout = dynamicTypeSize.isAccessibilitySize
             ? AnyLayout(VStackLayout(alignment: .leading, spacing: 12))
@@ -933,8 +933,8 @@ struct ContentView: View {
                 primaryButton(roomString("Create a rule"), inverted: dark) { addRule() }
             } else if let rule = suggestedRule, !SharedState.ruleEnabled || SharedState.safetyReleased {
                 primaryButton(rule.placeMode == .gps ? roomString("Activate %@", rule.name) : roomString("Choose a place"), inverted: dark) { activate(rule) }
-            } else if model.activeRule?.placeMode == .gps && !model.isFocused {
-                primaryButton(roomString("Start focus"), enabled: model.canStartPlaceFocus && !model.isCheckingPlace, inverted: dark) {
+            } else if model.activeRule?.placeMode == .gps && !model.isFocused && model.canStartPlaceFocus {
+                primaryButton(roomString("Start focus"), inverted: dark) {
                     model.startPlaceFocus()
                 }
             }
@@ -958,7 +958,7 @@ struct ContentView: View {
         if homeNeedsAction { return .roomButter }
         if SharedState.runtime.recoveryPaused { return .roomBlue }
         if SharedState.safetyReleased { return .roomMint }
-        return .roomInk
+        return model.isFocused ? .roomInk : .roomBlue
     }
 
     @discardableResult

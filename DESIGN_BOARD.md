@@ -1,6 +1,10 @@
 <!-- growth-desk-design-board -->
 # Offzone 디자인보드
 
+## iOS 예약 상태 카드 · 2026-09-25
+
+[수정된 실제 홈 화면](.growth-design/mascots/2026-09-25-nook-native/screenshots/ios-home-scheduled-warm-ko.png): 예약 상태에 따뜻한 아이보리 카드와 짙은 글씨를 사용하고, 일정 시작 전에는 비활성 `집중 시작` 버튼 대신 시작 시각·위치 안내를 보여준다. 차콜 카드는 실제 집중 중에만 사용한다.
+
 ## iOS 시간 선택·Pro 화면 · 2026-09-25
 
 영어 시뮬레이터에서 [시간 선택](.growth-design/mascots/2026-09-25-nook-native/screenshots/ios-rhythm-choice-en.png), [직접 시간 지정](.growth-design/mascots/2026-09-25-nook-native/screenshots/ios-rhythm-custom-en.png), [Pro 화면](.growth-design/mascots/2026-09-25-nook-native/screenshots/ios-paywall-offer-disabled-en.png)을 캡처했다. `Another time`은 1시간 구간을 고르고 `Not sure yet`은 목표에 맞는 시간을 제안한다. 참고 영상의 레이아웃을 반영하되, 현재 판매 플래그가 꺼져 있어 Pro 화면에는 가격·체험·구매 버튼 대신 무료 계속하기가 표시된다. 실제 결제·실기기 검증은 별도다.
