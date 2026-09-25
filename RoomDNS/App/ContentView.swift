@@ -956,6 +956,7 @@ struct ContentView: View {
 
     private var homeStatusTint: Color {
         if homeNeedsAction { return .roomButter }
+        if SharedState.runtime.recoveryPaused { return .roomBlue }
         if SharedState.safetyReleased { return .roomMint }
         return .roomInk
     }
