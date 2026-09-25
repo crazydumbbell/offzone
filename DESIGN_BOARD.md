@@ -1,6 +1,12 @@
 <!-- growth-desk-design-board -->
 # Offzone 디자인보드
 
+## 현재 Android v2 보드 · 2026-09-25
+
+[Growth desk 디자인 작업실](http://127.0.0.1:4318/) 저장 버전 63의 활성 원본 8장은 서명된 Android `0.1.0` (`versionCode 2`) 에뮬레이터에서 촬영한 실제 1080×2400 화면입니다. [Nook 상태북](.growth-design/mascots/2026-09-25-nook-native/index.html)의 **최신 Android v2 실화면**에서 홈·Quick focus·앱 선택·권한 설명·집중/차단·장소 모니터링을 볼 수 있습니다. 아래 자동 내보내기 스냅샷과 Play 등록 이미지 4장은 코드 1 실화면에서 만든 것으로, 코드 2에서 UI 소스는 같지만 다시 촬영한 자료는 아닙니다. 심사 중인 Play 이미지는 변경하지 않았습니다.
+
+---
+
 생성: 2026-09-25T04-29-35-964Z-abaa4ff7
 프로젝트 ID: offzone
 
