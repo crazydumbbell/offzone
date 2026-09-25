@@ -53,8 +53,6 @@ Android 에뮬레이터 [환영](.growth-design/mascots/2026-09-25-nook-native/s
 
 ### 소중한 일에 시간을
 
-키위와 조용히 함께, 조금 더 집중.
-
 ![실제 화면](.growth-design/2026-09-21T15-17-41-040Z-6e367d79/9faeecf3-2a07-4f8e-8514-f0b4123e1b43.png)
 
 ## 스토어 출력

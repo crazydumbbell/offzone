@@ -271,17 +271,11 @@ struct ContentView: View {
                         .font(.suit(.body))
                         .foregroundStyle(Color.roomInkSecondary)
                 }
-                VStack(spacing: 0) {
-                    RoomSpirit(state: .welcome, interactive: true)
-                        .frame(height: dynamicTypeSize.isAccessibilitySize ? 150 : 186)
-                    Text("A little company. A little more focus.")
-                        .font(.suit(.subheadline))
-                        .foregroundStyle(Color.roomInkSecondary)
-                        .padding(.horizontal, 16).padding(.bottom, 22)
-                }
-                .frame(maxWidth: .infinity)
-                .background(Color.roomButter)
-                .clipShape(RoundedRectangle(cornerRadius: 28))
+                RoomSpirit(state: .welcome, interactive: true)
+                    .frame(height: dynamicTypeSize.isAccessibilitySize ? 150 : 186)
+                    .frame(maxWidth: .infinity)
+                    .background(Color.roomButter)
+                    .clipShape(RoundedRectangle(cornerRadius: 28))
                 Label("You choose the boundaries. You can always restore access.", systemImage: "checkmark.shield")
                     .font(.suit(.subheadline))
                     .foregroundStyle(Color.roomInkSecondary)
