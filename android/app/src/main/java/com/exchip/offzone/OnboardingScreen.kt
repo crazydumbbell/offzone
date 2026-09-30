@@ -4,10 +4,13 @@ import android.app.TimePickerDialog
 import android.content.Context
 import android.text.format.DateFormat
 import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.selection.selectable
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.*
@@ -15,10 +18,12 @@ import androidx.compose.runtime.*
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.Role
+import androidx.compose.ui.semantics.clearAndSetSemantics
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import kotlinx.coroutines.Dispatchers
@@ -50,9 +55,6 @@ object OnboardingProfile {
 
 internal fun goalLabel(goal: String) = when (goal) { "work" -> R.string.goal_work; "rest" -> R.string.goal_rest; "presence" -> R.string.goal_presence; else -> R.string.goal_personal }
 
-private val OnboardingMint = Mint
-private val OnboardingPaper = Color(0xFFFDFDF9)
-private val OnboardingBorder = Color(0xFFDDDFD5)
 
 private fun timeRange(context: Context, start: Int): String {
     fun label(minutes: Int): String {
@@ -69,16 +71,20 @@ private fun timeRange(context: Context, start: Int): String {
 private fun OnboardingChoice(title: String, detail: String?, selected: Boolean, onClick: () -> Unit) {
     Surface(
         modifier = Modifier.fillMaxWidth().selectable(selected = selected, role = Role.RadioButton, onClick = onClick),
-        shape = RoundedCornerShape(18.dp),
-        color = if (selected) OnboardingMint else OnboardingPaper,
-        border = BorderStroke(1.dp, if (selected) Ink else OnboardingBorder)
+        shape = RoundedCornerShape(16.dp),
+        color = if (selected) Mint else WarmIvory,
+        border = if (selected) BorderStroke(1.5.dp, Pine) else BorderStroke(1.dp, PineLine)
     ) {
         Row(Modifier.padding(18.dp), verticalAlignment = Alignment.CenterVertically) {
             Column(Modifier.weight(1f), verticalArrangement = Arrangement.spacedBy(4.dp)) {
                 Text(title, style = MaterialTheme.typography.titleMedium, fontWeight = FontWeight.SemiBold, color = Ink)
-                if (detail != null) Text(detail, style = MaterialTheme.typography.bodyMedium, color = Ink.copy(alpha = 0.7f))
+                if (detail != null) Text(detail, style = MaterialTheme.typography.bodyMedium, color = InkMuted)
             }
-            RadioButton(selected = selected, onClick = null)
+            // Purely visual: the row itself carries the radio-button semantics.
+            Box(Modifier.size(24.dp).clip(CircleShape).background(if (selected) Pine else Color.Transparent)
+                .border(1.5.dp, if (selected) Pine else InkMuted, CircleShape).clearAndSetSemantics { }, contentAlignment = Alignment.Center) {
+                if (selected) Text("✓", color = Butter, style = MaterialTheme.typography.labelLarge)
+            }
         }
     }
 }
@@ -104,7 +110,7 @@ fun OnboardingScreen(onComplete: (goal: String, window: String) -> Unit) {
     Scaffold(containerColor = Butter, bottomBar = {
         Column(Modifier.fillMaxWidth().padding(horizontal = 24.dp, vertical = 12.dp).navigationBarsPadding(), verticalArrangement = Arrangement.spacedBy(8.dp)) {
             if (failed) Text(stringResource(R.string.journal_error), color = MaterialTheme.colorScheme.error)
-            Button(
+            PrimaryButton(
                 onClick = {
                     if (step < 2) step++ else {
                         busy = true
@@ -116,9 +122,7 @@ fun OnboardingScreen(onComplete: (goal: String, window: String) -> Unit) {
                     }
                 },
                 enabled = !busy,
-                modifier = Modifier.fillMaxWidth().heightIn(min = 56.dp),
-                colors = ButtonDefaults.buttonColors(containerColor = Ink, contentColor = Color.White),
-                shape = RoundedCornerShape(16.dp)
+                modifier = Modifier.fillMaxWidth(),
             ) {
                 Text(stringResource(when (step) { 0 -> R.string.onboarding_start; 1 -> R.string.onboarding_continue; else -> R.string.onboarding_done }))
             }
@@ -131,12 +135,12 @@ fun OnboardingScreen(onComplete: (goal: String, window: String) -> Unit) {
         ) {
             if (step > 0) {
                 Row(Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) {
-                    TextButton(onClick = { step--; failed = false }) { Text(stringResource(R.string.journal_back), color = Ink) }
+                    TextButton(onClick = { step--; failed = false }) { Text(stringResource(R.string.journal_back)) }
                     Text("OFFZONE", style = MaterialTheme.typography.titleMedium, color = Ink)
                     Spacer(Modifier.weight(1f))
-                    Text(step.toString() + " / 6", style = MaterialTheme.typography.bodyMedium, color = Ink.copy(alpha = 0.65f))
+                    Text(step.toString() + " / 6", style = MaterialTheme.typography.bodyMedium, color = InkMuted)
                 }
-                LinearProgressIndicator(progress = { step / 6f }, modifier = Modifier.fillMaxWidth(), color = Ink, trackColor = OnboardingBorder)
+                StepProgress(step / 6f)
             }
             if (step == 0) {
                 NookCatView(NookExpression.WELCOME_FULL, Modifier.fillMaxWidth().height(190.dp))
@@ -147,14 +151,14 @@ fun OnboardingScreen(onComplete: (goal: String, window: String) -> Unit) {
             }
             Text(
                 stringResource(when (step) { 0 -> R.string.onboarding_title; 1 -> R.string.onboarding_goal; else -> R.string.onboarding_rhythm }),
-                style = MaterialTheme.typography.headlineLarge, color = Ink
+                style = MaterialTheme.typography.headlineMedium, color = Ink
             )
             if (step == 0) {
-                Text(stringResource(R.string.onboarding_detail), style = MaterialTheme.typography.bodyLarge, color = Ink.copy(alpha = 0.7f))
-                Text(stringResource(R.string.onboarding_safe), style = MaterialTheme.typography.bodyMedium, color = Ink.copy(alpha = 0.7f))
+                Text(stringResource(R.string.onboarding_detail), style = MaterialTheme.typography.bodyLarge, color = InkMuted)
+                Text(stringResource(R.string.onboarding_safe), style = MaterialTheme.typography.bodyMedium, color = InkMuted)
             }
             if (step == 1) {
-                Text(stringResource(R.string.onboarding_goal_detail), style = MaterialTheme.typography.bodyLarge, color = Ink.copy(alpha = 0.7f))
+                Text(stringResource(R.string.onboarding_goal_detail), style = MaterialTheme.typography.bodyLarge, color = InkMuted)
                 JournalStore.contexts.forEach { item ->
                     val detail = when (item) { "work" -> R.string.goal_work_detail; "rest" -> R.string.goal_rest_detail; "presence" -> R.string.goal_presence_detail; else -> R.string.goal_personal_detail }
                     OnboardingChoice(stringResource(goalLabel(item)), stringResource(detail), goal == item) {
@@ -164,28 +168,28 @@ fun OnboardingScreen(onComplete: (goal: String, window: String) -> Unit) {
                 }
             }
             if (step == 2) {
-                Text(stringResource(R.string.onboarding_rhythm_detail), style = MaterialTheme.typography.bodyLarge, color = Ink.copy(alpha = 0.7f))
+                Text(stringResource(R.string.onboarding_rhythm_detail), style = MaterialTheme.typography.bodyLarge, color = InkMuted)
                 Row(horizontalArrangement = Arrangement.spacedBy(10.dp)) {
                     listOf("custom" to R.string.onboarding_another_time, "unsure" to R.string.onboarding_not_sure).forEach { (key, label) ->
                         Surface(
                             Modifier.weight(1f).clickable { if (key == "custom") pickTime() else window = key },
-                            shape = RoundedCornerShape(14.dp),
-                            color = if (window == key) OnboardingMint else OnboardingPaper,
-                            border = BorderStroke(1.dp, if (window == key) Ink else OnboardingBorder)
+                            shape = RoundedCornerShape(16.dp),
+                            color = if (window == key) Mint else WarmIvory,
+                            border = if (window == key) BorderStroke(1.5.dp, Pine) else BorderStroke(1.dp, PineLine)
                         ) {
                             Text(stringResource(label), Modifier.padding(14.dp), style = MaterialTheme.typography.bodyMedium, color = Ink)
                         }
                     }
                 }
                 if (window == "custom") {
-                    Surface(color = OnboardingMint, shape = RoundedCornerShape(14.dp)) {
+                    Surface(color = Mint, shape = RoundedCornerShape(16.dp)) {
                         Row(Modifier.fillMaxWidth().padding(14.dp), verticalAlignment = Alignment.CenterVertically) {
                             Text(timeRange(context, customStart), Modifier.weight(1f), color = Ink)
-                            TextButton(onClick = pickTime) { Text(stringResource(R.string.onboarding_change_time), color = Ink) }
+                            TextButton(onClick = pickTime) { Text(stringResource(R.string.onboarding_change_time)) }
                         }
                     }
                 } else if (window == "unsure") {
-                    Surface(color = OnboardingMint, shape = RoundedCornerShape(14.dp)) {
+                    Surface(color = Mint, shape = RoundedCornerShape(16.dp)) {
                         Text(stringResource(R.string.onboarding_suggested_time, timeRange(context, suggestedStart)), Modifier.padding(16.dp), color = Ink)
                     }
                 }

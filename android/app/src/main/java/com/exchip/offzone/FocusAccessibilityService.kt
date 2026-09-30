@@ -6,7 +6,10 @@ import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
+import android.content.res.ColorStateList
 import android.graphics.Color
+import android.graphics.drawable.GradientDrawable
+import android.graphics.drawable.RippleDrawable
 import android.graphics.PixelFormat
 import android.graphics.Typeface
 import android.os.Build
@@ -98,13 +101,13 @@ class FocusAccessibilityService : AccessibilityService() {
             orientation = LinearLayout.VERTICAL
             gravity = Gravity.CENTER
             setPadding(pad, pad, pad, pad)
-            setBackgroundColor(Color.rgb(247, 240, 199))
+            setBackgroundColor(BUTTER)
         }
         fun label(text: String, size: Float) = TextView(this).apply {
             this.text = text
             textSize = size
             gravity = Gravity.CENTER
-            setTextColor(Color.rgb(25, 27, 25))
+            setTextColor(INK)
             typeface = resources.getFont(R.font.suit_regular)
             setPadding(0, pad / 2, 0, pad / 2)
             layout.addView(this, LinearLayout.LayoutParams(-1, -2))
@@ -113,23 +116,33 @@ class FocusAccessibilityService : AccessibilityService() {
         label(getString(R.string.blocked_title), 30f).setTypeface(resources.getFont(R.font.suit_bold), Typeface.NORMAL)
         label(getString(R.string.blocked_body), 17f)
         timeLabel = label("", 22f)
-        fun button(text: Int, action: () -> Unit) {
+        fun button(text: Int, primary: Boolean, action: () -> Unit) {
+            val density = resources.displayMetrics.density
+            val shape = GradientDrawable().apply {
+                cornerRadius = 28 * density
+                setColor(if (primary) PINE else IVORY)
+                if (!primary) setStroke((1 * density).toInt(), PINE_LINE)
+            }
             layout.addView(Button(this).apply {
                 setText(text)
                 isAllCaps = false
                 textSize = 17f
-                minHeight = (52 * resources.displayMetrics.density).toInt()
+                typeface = resources.getFont(R.font.suit_medium)
+                setTextColor(if (primary) BUTTER else INK)
+                stateListAnimator = null
+                background = RippleDrawable(ColorStateList.valueOf(if (primary) Color.argb(60, 247, 240, 199) else Color.argb(40, 61, 91, 63)), shape, null)
+                minHeight = (56 * density).toInt()
                 setOnClickListener { action() }
-            }, LinearLayout.LayoutParams(-1, -2))
+            }, LinearLayout.LayoutParams(-1, -2).apply { topMargin = (12 * density).toInt() })
         }
-        button(R.string.go_home) {
+        button(R.string.go_home, primary = true) {
             // Keep the shield if Android rejects navigation; free restore remains available.
             if (performGlobalAction(GLOBAL_ACTION_HOME)) { foreground = null; hideOverlay() }
         }
-        button(R.string.restore) { FocusController.stop() }
+        button(R.string.restore, primary = false) { FocusController.stop() }
         val scroll = ScrollView(this).apply {
             isFillViewport = true
-            setBackgroundColor(Color.rgb(247, 240, 199))
+            setBackgroundColor(BUTTER)
             addView(layout, android.widget.FrameLayout.LayoutParams(-1, -2))
         }
         try {
@@ -150,6 +163,15 @@ class FocusAccessibilityService : AccessibilityService() {
         overlay?.let { view -> runCatching { windows.removeViewImmediate(view) } }
         overlay = null
         timeLabel = null
+    }
+
+    private companion object {
+        // Same palette as OffzoneTheme.kt; this overlay is plain Views, outside Compose.
+        val BUTTER = Color.rgb(247, 240, 199)
+        val IVORY = Color.rgb(250, 247, 232)
+        val PINE = Color.rgb(61, 91, 63)
+        val PINE_LINE = Color.argb(71, 61, 91, 63)
+        val INK = Color.rgb(31, 42, 34)
     }
 
     override fun onInterrupt() { FocusController.stop(R.string.service_stopped) }

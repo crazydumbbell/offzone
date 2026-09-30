@@ -18,7 +18,7 @@ struct RoomAccountView: View {
             ScrollView {
                 VStack(alignment: .leading, spacing: 24) {
                     RoomSpirit(state: .welcome).frame(height: 132).frame(maxWidth: .infinity)
-                        .background(Color.roomBlue).clipShape(RoundedRectangle(cornerRadius: 22))
+                        .background(Color.roomButter).clipShape(RoundedRectangle(cornerRadius: 24))
                     Text(account.isPro ? roomString("Offzone Pro") : roomString("Your free space"))
                         .font(.suit(.largeTitle, weight: .bold))
                     Text("Your rules and free recovery stay on this iPhone.")
@@ -26,7 +26,7 @@ struct RoomAccountView: View {
                     Button { journalPresented = true } label: {
                         Label("Plan & reflect", systemImage: "book.closed")
                     }.frame(minHeight: 44)
-                    Divider()
+                    Divider().overlay(Color.roomLine)
                     if account.isSignedIn {
                         Label(account.accountName, systemImage: "person.crop.circle.fill")
                             .font(.suit(.headline))
@@ -41,7 +41,7 @@ struct RoomAccountView: View {
                         }.frame(minHeight: 44).disabled(account.isBusy || account.savedGoal == goal.rawValue)
                         if account.isPro {
                             Link("Manage subscription", destination: URL(string: "https://apps.apple.com/account/subscriptions")!)
-                                .frame(minHeight: 44)
+                                .foregroundStyle(Color.roomAccent).frame(minHeight: 44)
                         } else if account.canShowOffer {
                             Button("Explore Pro") { paywallPresented = true }.roomPrimaryAction()
                         }
@@ -94,7 +94,7 @@ struct RoomAccountView: View {
                             Text("Delete your account and saved goal? Your local rules stay here. Deleting an account does not cancel an App Store subscription.")
                                 .font(.suit(.subheadline))
                             Link("Manage subscription", destination: URL(string: "https://apps.apple.com/account/subscriptions")!)
-                                .frame(minHeight: 44)
+                                .foregroundStyle(Color.roomAccent).frame(minHeight: 44)
                             if account.providerIDs.contains("apple.com") {
                                 Text("Confirm with Apple to delete your account.").font(.suit(.headline))
                                 appleButton(deleting: true)
@@ -118,11 +118,10 @@ struct RoomAccountView: View {
                         appleButton(deleting: false)
                         if account.googleSignInConfigured {
                             GoogleSignInButton { Task { await account.signInWithGoogle() } }
-                                .frame(minHeight: 52).disabled(account.isBusy)
+                                .frame(minHeight: 56).disabled(account.isBusy)
                         }
                         Button("Continue with email") { emailFlow = .signIn }
-                            .frame(maxWidth: .infinity, minHeight: 52)
-                            .background(Color.roomPaper).clipShape(RoundedRectangle(cornerRadius: 12))
+                            .roomSecondaryAction()
                             .disabled(account.isBusy)
                     } else {
                         Text("Account sign-in isn’t available yet. You can keep using Offzone for free.")
@@ -131,18 +130,18 @@ struct RoomAccountView: View {
                     if account.isBusy { ProgressView().frame(maxWidth: .infinity).accessibilityLabel("Please wait") }
                     if let message = account.statusMessage { Text(message).font(.suit(.subheadline)).accessibilityAddTraits(.updatesFrequently) }
                     if let error = account.errorMessage { Text(error).foregroundStyle(Color.roomWarning).font(.suit(.subheadline)) }
-                    if let terms = account.termsURL { Link("Terms of use", destination: terms).frame(minHeight: 44) }
-                    if let privacy = account.privacyURL { Link("Privacy policy", destination: privacy).frame(minHeight: 44) }
+                    if let terms = account.termsURL { Link("Terms of use", destination: terms).foregroundStyle(Color.roomAccent).frame(minHeight: 44) }
+                    if let privacy = account.privacyURL { Link("Privacy policy", destination: privacy).foregroundStyle(Color.roomAccent).frame(minHeight: 44) }
                 }
-                .font(.suit(.body)).foregroundStyle(Color.roomInk)
+                .font(.suit(.body)).foregroundStyle(Color.roomInk).roomTextActions()
                 .padding(24).frame(maxWidth: 560).frame(maxWidth: .infinity)
             }
             .background(Color.roomCanvas).navigationTitle("Account & plan").navigationBarTitleDisplayMode(.inline)
             .toolbar { ToolbarItem(placement: .confirmationAction) { Button("Done") { dismiss() } } }
         }
         .tint(Color.roomAction).preferredColorScheme(.light)
-        .sheet(item: $emailFlow) { EmailAccountView(mode: $0) }
-        .sheet(isPresented: $paywallPresented) { RoomPaywallView(goal: goal) }
+        .sheet(item: $emailFlow) { EmailAccountView(mode: $0).presentationCornerRadius(24) }
+        .sheet(isPresented: $paywallPresented) { RoomPaywallView(goal: goal).presentationCornerRadius(24) }
         .sheet(isPresented: $journalPresented) {
             NavigationStack {
                 ProJournalView(goal: goal)
@@ -150,6 +149,7 @@ struct RoomAccountView: View {
                         Button("Done") { journalPresented = false }
                     } }
             }
+            .presentationCornerRadius(24)
         }
         .task { await account.refresh(); await account.loadOfferings() }
         .onChange(of: account.isSignedIn) { _, signedIn in
@@ -164,7 +164,7 @@ struct RoomAccountView: View {
         } onCompletion: { result in
             Task { await account.completeAppleSignIn(result) }
         }
-        .signInWithAppleButtonStyle(.black).frame(height: 52).clipShape(RoundedRectangle(cornerRadius: 12))
+        .signInWithAppleButtonStyle(.whiteOutline).frame(height: 56)
         .disabled(account.isBusy)
     }
 }
@@ -212,13 +212,15 @@ private struct EmailAccountView: View {
                         Text("Use at least 8 characters.").font(.suit(.footnote))
                     }
                 }
+                .listRowBackground(Color.roomCard)
                 if mode == .link {
                     Text("Link another sign-in method to keep this account and its purchases.")
+                        .listRowBackground(Color.roomCard)
                 }
                 if let message = validation ?? account.errorMessage {
-                    Text(message).foregroundStyle(Color.roomWarning)
+                    Text(message).foregroundStyle(Color.roomWarning).listRowBackground(Color.roomCard)
                 }
-                if let message = account.statusMessage { Text(message) }
+                if let message = account.statusMessage { Text(message).listRowBackground(Color.roomCard) }
                 Section {
                     Button(title) {
                         validation = nil
@@ -250,7 +252,9 @@ private struct EmailAccountView: View {
                     }
                     if account.isBusy { ProgressView().accessibilityLabel("Please wait") }
                 }
+                .listRowBackground(Color.roomCard)
             }
+            .scrollContentBackground(.hidden).background(Color.roomCanvas)
             .navigationTitle(title).navigationBarTitleDisplayMode(.inline)
             .toolbar { ToolbarItem(placement: .cancellationAction) {
                 Button("Cancel") { dismiss() }.disabled(account.isBusy)
@@ -285,15 +289,18 @@ struct RoomPaywallView: View {
                     if !account.proBenefits.isEmpty {
                         VStack(alignment: .leading, spacing: 0) {
                             ForEach(Array(account.proBenefits.enumerated()), id: \.offset) { index, benefit in
-                                Label(roomString(benefit), systemImage: "checkmark.circle.fill")
-                                    .fixedSize(horizontal: false, vertical: true)
-                                    .frame(maxWidth: .infinity, minHeight: 58, alignment: .leading)
-                                if index < account.proBenefits.count - 1 { Divider() }
+                                Label {
+                                    Text(roomString(benefit))
+                                } icon: {
+                                    RoomRadio(selected: true, font: .suit(.body))
+                                }
+                                .fixedSize(horizontal: false, vertical: true)
+                                .frame(maxWidth: .infinity, minHeight: 58, alignment: .leading)
+                                if index < account.proBenefits.count - 1 { Divider().overlay(Color.roomLine) }
                             }
                         }
                         .padding(.horizontal, 20).padding(.vertical, 8)
-                        .background(Color.roomPaper)
-                        .clipShape(RoundedRectangle(cornerRadius: 22))
+                        .editorialPanel()
                     }
                     if account.canShowOffer && !account.isPro {
                         Text("Stored only on this iPhone, excluded from backup. Export before changing phones or deleting Offzone.")
@@ -314,13 +321,13 @@ struct RoomPaywallView: View {
                                     .font(.suit(.subheadline)).foregroundStyle(Color.roomInkSecondary)
                             }
                             .padding(18).frame(maxWidth: .infinity, alignment: .leading)
-                            .background(Color.roomBlue).clipShape(RoundedRectangle(cornerRadius: 16))
+                            .editorialPanel()
                         }
                     } else {
                         Text(account.isPro ? roomString("Your Pro subscription is active.") : roomString("Plans aren’t available right now. Your free rules are ready to use."))
                             .font(.suit(.subheadline))
                             .padding(18).frame(maxWidth: .infinity, alignment: .leading)
-                            .background(Color.roomMint).clipShape(RoundedRectangle(cornerRadius: 16))
+                            .editorialPanel(Color.roomMint, outlined: false)
                         if account.offersEnabled && !account.isPro {
                             Button("Try again") { Task { await account.loadOfferings() } }.frame(minHeight: 44)
                         }
@@ -330,10 +337,10 @@ struct RoomPaywallView: View {
                     Button("Restore purchases") {
                         Task { await account.restorePurchases(); restored = account.errorMessage == nil }
                     }.frame(minHeight: 44).disabled(account.isBusy || !account.isSignedIn || !account.purchasesConfigured)
-                    if let terms = account.termsURL { Link("Terms of use", destination: terms).frame(minHeight: 44) }
-                    if let privacy = account.privacyURL { Link("Privacy policy", destination: privacy).frame(minHeight: 44) }
+                    if let terms = account.termsURL { Link("Terms of use", destination: terms).foregroundStyle(Color.roomAccent).frame(minHeight: 44) }
+                    if let privacy = account.privacyURL { Link("Privacy policy", destination: privacy).foregroundStyle(Color.roomAccent).frame(minHeight: 44) }
                 }
-                .font(.suit(.body)).foregroundStyle(Color.roomInk)
+                .font(.suit(.body)).foregroundStyle(Color.roomInk).roomTextActions()
                 .padding(24).frame(maxWidth: 560).frame(maxWidth: .infinity)
             }
             .background(Color.roomCanvas)
@@ -370,11 +377,14 @@ struct RoomPaywallView: View {
                     Text(BillingTerms.renewal(for: package.storeProduct)).font(.suit(.title3, weight: .semibold))
                 }
                 Spacer(minLength: 8)
-                Image(systemName: chosen ? "checkmark.circle.fill" : "circle")
+                RoomRadio(selected: chosen)
             }
             .foregroundStyle(Color.roomInk).multilineTextAlignment(.leading).padding(18).frame(maxWidth: .infinity, minHeight: 82)
-            .background(chosen ? Color.roomMint : Color.roomPaper).clipShape(RoundedRectangle(cornerRadius: 16))
-            .overlay { RoundedRectangle(cornerRadius: 16).stroke(chosen ? Color.roomAction : Color.roomSeparator, lineWidth: 1) }
+            .background(chosen ? Color.roomMint : Color.roomCard).clipShape(RoundedRectangle(cornerRadius: 16))
+            .overlay {
+                RoundedRectangle(cornerRadius: 16)
+                    .strokeBorder(chosen ? Color.roomAccent : Color.roomOutline, lineWidth: chosen ? 1.5 : 1)
+            }
         }.buttonStyle(.plain).disabled(account.isBusy).accessibilityAddTraits(chosen ? .isSelected : [])
     }
 }
@@ -454,14 +464,54 @@ extension View {
     func roomPrimaryAction() -> some View {
         buttonStyle(RoomPrimaryActionStyle())
     }
+
+    func roomSecondaryAction() -> some View {
+        buttonStyle(RoomSecondaryActionStyle())
+    }
+
+    func roomTextActions() -> some View {
+        buttonStyle(RoomTextButtonStyle())
+    }
 }
 
+// Text action: Pine label, system red for destructive. Used where an Ink container would otherwise recolor plain buttons.
+private struct RoomTextButtonStyle: ButtonStyle {
+    @Environment(\.isEnabled) private var isEnabled
+
+    func makeBody(configuration: SwiftUI.ButtonStyleConfiguration) -> some View {
+        configuration.label
+            .foregroundStyle(configuration.role == .destructive ? Color.red : Color.roomAccent)
+            .opacity(!isEnabled ? 0.4 : configuration.isPressed ? 0.6 : 1)
+            .contentShape(Rectangle())
+    }
+}
+
+// Pine pill with Butter text. Disabled: Ink 10% fill, Ink 38% text.
 private struct RoomPrimaryActionStyle: ButtonStyle {
+    @Environment(\.isEnabled) private var isEnabled
+
     func makeBody(configuration: SwiftUI.ButtonStyleConfiguration) -> some View {
         configuration.label.font(.suit(.body, weight: .semibold))
-            .foregroundStyle(Color.white).padding(.horizontal, 16).padding(.vertical, 12)
-            .frame(maxWidth: .infinity, minHeight: 54)
-            .background(Color.roomAction).clipShape(RoundedRectangle(cornerRadius: 14))
-            .contentShape(RoundedRectangle(cornerRadius: 14)).opacity(configuration.isPressed ? 0.8 : 1)
+            .foregroundStyle(isEnabled ? Color.roomCanvas : Color.roomDisabledText)
+            .padding(.horizontal, 24).padding(.vertical, 12)
+            .frame(maxWidth: .infinity, minHeight: 56)
+            .background(isEnabled ? Color.roomAccent : Color.roomDisabledFill, in: Capsule())
+            .contentShape(Capsule()).opacity(configuration.isPressed ? 0.8 : 1)
+    }
+}
+
+// Ivory pill, Pine 28% outline, Ink text. Same disabled colors as the primary.
+struct RoomSecondaryActionStyle: ButtonStyle {
+    var horizontalPadding: CGFloat = 24
+    @Environment(\.isEnabled) private var isEnabled
+
+    func makeBody(configuration: SwiftUI.ButtonStyleConfiguration) -> some View {
+        configuration.label.font(.suit(.body, weight: .medium))
+            .foregroundStyle(isEnabled ? Color.roomInk : Color.roomDisabledText)
+            .padding(.horizontal, horizontalPadding).padding(.vertical, 8)
+            .frame(maxWidth: .infinity, minHeight: 56)
+            .background(isEnabled ? Color.roomCard : Color.roomDisabledFill, in: Capsule())
+            .overlay { if isEnabled { Capsule().strokeBorder(Color.roomOutline, lineWidth: 1) } }
+            .contentShape(Capsule()).opacity(configuration.isPressed ? 0.8 : 1)
     }
 }

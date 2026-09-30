@@ -39,11 +39,13 @@ struct ProJournalView: View {
                     }
                 }
             }
+            .listRowBackground(Color.roomCard)
             if store.loadFailed {
                 Section {
                     Text("Your journal could not be read. It has not been overwritten. Export a copy or delete the local journal to start again.")
                         .foregroundStyle(Color.roomWarning)
                 }
+                .listRowBackground(Color.roomCard)
             } else {
                 Section {
                     HStack {
@@ -62,6 +64,7 @@ struct ProJournalView: View {
                     Text("Your own reflections, not measured focus time. A weekly plan does not schedule app blocking.")
                         .font(.suit(.footnote)).foregroundStyle(Color.roomInkSecondary)
                 } header: { Text("Weekly overview") }
+                .listRowBackground(Color.roomCard)
 
                 Section {
                     TextField("What do you want to make room for?", text: $intention, axis: .vertical)
@@ -77,9 +80,14 @@ struct ProJournalView: View {
                                     if weekdays.contains(day) { weekdays.remove(day) } else { weekdays.insert(day) }
                                 } label: {
                                     Text(ProJournalStore.calendar.shortWeekdaySymbols[day - 1])
-                                        .font(.suit(.caption)).frame(minWidth: 44, minHeight: 44)
-                                        .background(weekdays.contains(day) ? Color.roomMint : Color.roomPaper)
-                                        .clipShape(RoundedRectangle(cornerRadius: 10))
+                                        .font(.suit(.caption)).foregroundStyle(Color.roomInk).frame(minWidth: 44, minHeight: 44)
+                                        .background(weekdays.contains(day) ? Color.roomMint : Color.roomCard)
+                                        .clipShape(RoundedRectangle(cornerRadius: 16))
+                                        .overlay {
+                                            RoundedRectangle(cornerRadius: 16)
+                                                .strokeBorder(weekdays.contains(day) ? Color.roomAccent : Color.roomOutline,
+                                                              lineWidth: weekdays.contains(day) ? 1.5 : 1)
+                                        }
                                 }
                                 .buttonStyle(.borderless)
                                 .accessibilityLabel(ProJournalStore.calendar.weekdaySymbols[day - 1])
@@ -99,6 +107,7 @@ struct ProJournalView: View {
                         }
                     }
                 } header: { Text("Weekly intention") }
+                .listRowBackground(Color.roomCard)
 
                 Section {
                     DatePicker("Reflection date", selection: $reflectionDate, in: ...Date.now, displayedComponents: .date)
@@ -117,6 +126,7 @@ struct ProJournalView: View {
                     }.disabled(!hasAccess || note.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty)
                     Text("One reflection per day. Saving again updates that day’s entry.").font(.suit(.footnote))
                 } header: { Text("Daily reflection") }
+                .listRowBackground(Color.roomCard)
 
                 Section {
                     if weeklyEntries.isEmpty { Text("No reflections this week yet.").foregroundStyle(Color.roomInkSecondary) }
@@ -134,9 +144,10 @@ struct ProJournalView: View {
                         }.padding(.vertical, 4)
                     }
                 } header: { Text("This week’s reflections") }
+                .listRowBackground(Color.roomCard)
             }
-            if let error { Section { Text(error).foregroundStyle(Color.roomWarning) } }
-            if saved { Section { Text("Saved on this iPhone.").foregroundStyle(Color.roomInkSecondary) } }
+            if let error { Section { Text(error).foregroundStyle(Color.roomWarning) }.listRowBackground(Color.roomCard) }
+            if saved { Section { Text("Saved on this iPhone.").foregroundStyle(Color.roomInkSecondary) }.listRowBackground(Color.roomCard) }
             Section {
                 if store.loadFailed {
                     ShareLink(item: store.url) { Label("Share original journal file", systemImage: "square.and.arrow.up") }
@@ -152,11 +163,12 @@ struct ProJournalView: View {
                 }
                 Button("Delete all local journal data", role: .destructive) { confirmDelete = true }
             } header: { Text("Your data") }
+            .listRowBackground(Color.roomCard)
         }
         .listStyle(.insetGrouped).scrollContentBackground(.hidden).background(Color.roomCanvas)
-        .foregroundStyle(Color.roomInk).tint(Color.roomAction)
+        .tint(Color.roomAction)
         .navigationTitle("Plans & reflections").navigationBarTitleDisplayMode(.inline)
-        .sheet(isPresented: $paywall) { RoomPaywallView(goal: goal) }
+        .sheet(isPresented: $paywall) { RoomPaywallView(goal: goal).presentationCornerRadius(24) }
         .confirmationDialog("Delete all plans and reflections from this iPhone? This cannot be undone.", isPresented: $confirmDelete, titleVisibility: .visible) {
             Button("Delete all local journal data", role: .destructive) {
                 perform { try store.deleteAll(); exportText = nil; loadPlan(); loadReflection() }

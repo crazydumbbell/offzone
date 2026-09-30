@@ -12,9 +12,10 @@ import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.itemsIndexed
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -23,7 +24,6 @@ import androidx.compose.runtime.*
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -40,8 +40,7 @@ class MainActivity : ComponentActivity() {
         account = (application as OffzoneApplication).accountStore
         enableEdgeToEdge()
         setContent {
-            MaterialTheme(colorScheme = lightColorScheme(primary = Ink, onPrimary = Butter, background = Butter,
-                surface = Butter, onSurface = Ink, secondaryContainer = Color(0xFFE4DCA9), onSecondaryContainer = Ink), typography = OffzoneTypography) { App() }
+            MaterialTheme(colorScheme = OffzoneColors, typography = OffzoneTypography, shapes = OffzoneShapes) { App() }
         }
     }
     override fun onResume() { super.onResume(); FocusController.tick(); if (::account.isInitialized) account.refresh() }
@@ -162,12 +161,12 @@ class MainActivity : ComponentActivity() {
                             val canStart = active != null && !focused && state.connected && state.ruleEnabled && !scheduled && recentInside &&
                                 !state.checkingPlace && PlaceMonitor.permissionReady(this@MainActivity)
                             val cardColor = when {
-                                focused -> Ink
+                                focused -> Pine
                                 needsAction -> SoftButter
                                 state.message == R.string.access_restored -> Mint
                                 else -> WarmIvory
                             }
-                            val foreground = if (focused) WarmIvory else Ink
+                            val foreground = if (focused) Butter else Ink
                             val title = when {
                                 storageError -> R.string.home_check_rules
                                 focused -> R.string.home_in_focus
@@ -185,7 +184,7 @@ class MainActivity : ComponentActivity() {
                                     Row(Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) {
                                         Column(Modifier.weight(1f), verticalArrangement = Arrangement.spacedBy(8.dp)) {
                                             active?.let { Text(it.name, style = MaterialTheme.typography.bodyLarge) }
-                                            Text(stringResource(title), style = MaterialTheme.typography.headlineLarge)
+                                            Text(stringResource(title), style = MaterialTheme.typography.headlineMedium)
                                             if (focused) {
                                                 val seconds = (state.remaining + 999) / 1000
                                                 Text("%d:%02d".format(seconds / 60, seconds % 60), style = MaterialTheme.typography.headlineLarge.copy(fontSize = 44.sp))
@@ -197,15 +196,15 @@ class MainActivity : ComponentActivity() {
                                         )
                                     }
                                     when {
-                                        focused -> Button(onClick = { FocusController.stop() }, colors = ButtonDefaults.buttonColors(containerColor = Butter, contentColor = Ink), modifier = Modifier.fillMaxWidth().heightIn(min = 52.dp)) { Text(stringResource(R.string.restore)) }
-                                        !state.connected -> Button(onClick = { disclosure = true }, colors = ButtonDefaults.buttonColors(containerColor = Ink, contentColor = Butter), modifier = Modifier.fillMaxWidth().heightIn(min = 52.dp)) { Text(stringResource(R.string.enable)) }
-                                        rules.isEmpty() -> Button(onClick = { editing = null; editingFromReady = false; route = "edit" }, colors = ButtonDefaults.buttonColors(containerColor = Ink, contentColor = Butter), modifier = Modifier.fillMaxWidth().heightIn(min = 52.dp)) { Text(stringResource(R.string.home_create_rule)) }
-                                        !state.ruleEnabled -> rules.firstOrNull()?.let { rule -> Button(onClick = { if (!FocusController.activateRule(rule.id)) error = R.string.save_error }, colors = ButtonDefaults.buttonColors(containerColor = Ink, contentColor = Butter), modifier = Modifier.fillMaxWidth().heightIn(min = 52.dp)) { Text(stringResource(R.string.home_activate_rule, rule.name)) } }
-                                        canStart -> Button(onClick = { requestPlace(1) }, colors = ButtonDefaults.buttonColors(containerColor = Ink, contentColor = Butter), modifier = Modifier.fillMaxWidth().heightIn(min = 52.dp)) { Text(stringResource(R.string.start_focus)) }
+                                        focused -> Button(onClick = { FocusController.stop() }, colors = ButtonDefaults.buttonColors(containerColor = Butter, contentColor = Ink), modifier = Modifier.fillMaxWidth().heightIn(min = 56.dp)) { Text(stringResource(R.string.restore)) }
+                                        !state.connected -> PrimaryButton(onClick = { disclosure = true }, modifier = Modifier.fillMaxWidth()) { Text(stringResource(R.string.enable)) }
+                                        rules.isEmpty() -> PrimaryButton(onClick = { editing = null; editingFromReady = false; route = "edit" }, modifier = Modifier.fillMaxWidth()) { Text(stringResource(R.string.home_create_rule)) }
+                                        !state.ruleEnabled -> rules.firstOrNull()?.let { rule -> PrimaryButton(onClick = { if (!FocusController.activateRule(rule.id)) error = R.string.save_error }, modifier = Modifier.fillMaxWidth()) { Text(stringResource(R.string.home_activate_rule, rule.name)) } }
+                                        canStart -> PrimaryButton(onClick = { requestPlace(1) }, modifier = Modifier.fillMaxWidth()) { Text(stringResource(R.string.start_focus)) }
                                     }
                                     (error ?: state.message)?.takeUnless { needsAction && it == R.string.engine_rule_ready }
                                         ?.let { Text(stringResource(it), style = MaterialTheme.typography.bodySmall) }
-                                    if (state.checkingPlace) LinearProgressIndicator(Modifier.fillMaxWidth())
+                                    if (state.checkingPlace) LinearProgressIndicator(Modifier.fillMaxWidth(), trackColor = PineHairline)
                                 }
                             }
                         }
@@ -221,10 +220,10 @@ class MainActivity : ComponentActivity() {
                             Text(stringResource(R.string.home_saved_count, rules.size), style = MaterialTheme.typography.bodySmall)
                         } }
                         if (storageError) item { Text(stringResource(R.string.engine_storage_error)) }
-                        itemsIndexed(rules, key = { _, rule -> rule.id }) { index, rule ->
+                        items(rules, key = { it.id }) { rule ->
                             val applied = state.appliedRule
                             val unapplied = applied?.id == rule.id && applied != rule
-                            Card(Modifier.fillMaxWidth(), colors = CardDefaults.cardColors(containerColor = if (index % 2 == 0) Mint else Blush), shape = RoundedCornerShape(20.dp)) { Column(Modifier.padding(16.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
+                            Card(Modifier.fillMaxWidth(), colors = CardDefaults.cardColors(containerColor = WarmIvory), shape = RoundedCornerShape(24.dp), border = BorderStroke(1.dp, PineHairline)) { Column(Modifier.padding(16.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
                                 Text(rule.name, style = MaterialTheme.typography.titleLarge)
                                 Text("${timeLabel(rule.startMinutes)} – ${timeLabel(rule.endMinutes)} · ${rule.placeLabel.ifBlank { "%.4f, %.4f".format(rule.latitude, rule.longitude) }}")
                                 Text(stringResource(R.string.apps_selected, rule.packages.size))
@@ -239,20 +238,20 @@ class MainActivity : ComponentActivity() {
                                 }
                             } }
                         }
+                        item { Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
+                            SecondaryButton(onClick = { route = "quick" }, modifier = Modifier.fillMaxWidth()) { Text(stringResource(R.string.m_quick)) }
+                            SecondaryButton(onClick = { journalReturnRoute = "home"; route = "journal" }, modifier = Modifier.fillMaxWidth()) { Text(stringResource(R.string.m_journal)) }
+                        } }
                         item {
-                            OutlinedButton(onClick = { route = "quick" }, modifier = Modifier.fillMaxWidth().heightIn(min = 52.dp)) { Text(stringResource(R.string.m_quick)) }
-                            OutlinedButton(onClick = { journalReturnRoute = "home"; route = "journal" }, modifier = Modifier.fillMaxWidth().heightIn(min = 52.dp)) { Text(stringResource(R.string.m_journal)) }
-                        }
-                        item {
-                            if (state.ruleEnabled) OutlinedButton(onClick = {
+                            if (state.ruleEnabled) SecondaryButton(onClick = {
                                 if (state.monitoringPlace) FocusController.stopPlaceMonitoring()
                                 else requestPlace(2)
-                            }, enabled = state.monitoringPlace || (state.session == null && !state.checkingPlace), modifier = Modifier.fillMaxWidth().heightIn(min = 52.dp)) {
+                            }, enabled = state.monitoringPlace || (state.session == null && !state.checkingPlace), modifier = Modifier.fillMaxWidth()) {
                                 Text(stringResource(if (state.monitoringPlace) R.string.engine_monitor_stop else R.string.engine_monitor_start))
                             }
                             Row(verticalAlignment = Alignment.CenterVertically) {
                                 Text(stringResource(R.string.m_notifications), modifier = Modifier.weight(1f))
-                                Switch(checked = notifications, onCheckedChange = { enabled ->
+                                Switch(checked = notifications, colors = SwitchDefaults.colors(uncheckedThumbColor = InkMuted, uncheckedTrackColor = WarmIvory, uncheckedBorderColor = PineLine), onCheckedChange = { enabled ->
                                     if (enabled && Build.VERSION.SDK_INT >= 33) notificationPermission.launch(Manifest.permission.POST_NOTIFICATIONS)
                                     else FocusController.setNotificationsEnabled(enabled)
                                 })
@@ -297,7 +296,7 @@ class MainActivity : ComponentActivity() {
                     }
                 }
                 Text(stringResource(R.string.ready_headline), style = MaterialTheme.typography.headlineLarge)
-                Surface(color = WarmIvory, shape = RoundedCornerShape(18.dp)) {
+                Surface(color = WarmIvory, shape = RoundedCornerShape(24.dp), border = BorderStroke(1.dp, PineHairline)) {
                     Column(Modifier.fillMaxWidth().padding(20.dp), verticalArrangement = Arrangement.spacedBy(10.dp)) {
                         Text(rule?.name ?: stringResource(R.string.ready_rule_unavailable), style = MaterialTheme.typography.titleLarge)
                         rule?.let { Text("${timeLabel(it.startMinutes)} – ${timeLabel(it.endMinutes)}", style = MaterialTheme.typography.bodyLarge) }
@@ -309,9 +308,8 @@ class MainActivity : ComponentActivity() {
                 error?.let { Text(stringResource(it), color = MaterialTheme.colorScheme.error) }
             }
             Column(Modifier.fillMaxWidth().padding(horizontal = 24.dp, vertical = 8.dp), verticalArrangement = Arrangement.spacedBy(4.dp)) {
-                Button(onClick = { rule?.let(onActivate) }, enabled = rule != null,
-                    colors = ButtonDefaults.buttonColors(containerColor = Ink, contentColor = Butter),
-                    modifier = Modifier.fillMaxWidth().heightIn(min = 56.dp)) { Text(stringResource(R.string.ready_activate)) }
+                PrimaryButton(onClick = { rule?.let(onActivate) }, enabled = rule != null,
+                    modifier = Modifier.fillMaxWidth()) { Text(stringResource(R.string.ready_activate)) }
                 TextButton(onClick = onHome, modifier = Modifier.fillMaxWidth().heightIn(min = 48.dp)) { Text(stringResource(R.string.ready_go_home)) }
             }
         }
@@ -329,10 +327,10 @@ class MainActivity : ComponentActivity() {
             TextButton(onClick = onBack) { Text(stringResource(R.string.m_back)) }
             Text(stringResource(R.string.m_quick), style = MaterialTheme.typography.headlineLarge)
             Text(stringResource(R.string.m_quick_note))
-            if (!state.connected) Button(onClick = onEnable) { Text(stringResource(R.string.enable)) }
-            FlowRow(horizontalArrangement = Arrangement.spacedBy(8.dp)) { FocusSession.durations.forEach { value -> FilterChip(minutes == value, onClick = { minutes = value }, label = { Text(stringResource(R.string.minutes, value)) }) } }
-            OutlinedButton(onClick = { picker = true }, modifier = Modifier.fillMaxWidth()) { Text(stringResource(R.string.choose_apps)); Text(" · ${selected.size}") }
-            Button(onClick = {
+            if (!state.connected) PrimaryButton(onClick = onEnable, modifier = Modifier.fillMaxWidth()) { Text(stringResource(R.string.enable)) }
+            FlowRow(horizontalArrangement = Arrangement.spacedBy(8.dp)) { FocusSession.durations.forEach { value -> OffzoneChip(minutes == value, onClick = { minutes = value }) { Text(stringResource(R.string.minutes, value)) } } }
+            SecondaryButton(onClick = { picker = true }, modifier = Modifier.fillMaxWidth()) { Text(stringResource(R.string.choose_apps)); Text(" · ${selected.size}") }
+            PrimaryButton(onClick = {
                 busy = true; val generation = FocusController.generation
                 scope.launch {
                     try {
@@ -343,7 +341,7 @@ class MainActivity : ComponentActivity() {
                         else onBack()
                     } catch (_: Exception) { error = R.string.load_error } finally { busy = false }
                 }
-            }, enabled = state.connected && selected.isNotEmpty() && state.session == null && !busy, modifier = Modifier.fillMaxWidth().heightIn(min = 56.dp)) { Text(stringResource(R.string.start_focus)) }
+            }, enabled = state.connected && selected.isNotEmpty() && state.session == null && !busy, modifier = Modifier.fillMaxWidth()) { Text(stringResource(R.string.start_focus)) }
             error?.let { Text(stringResource(it)) }
             TextButton(onClick = { FocusController.stop() }) { Text(stringResource(R.string.restore)) }
         }

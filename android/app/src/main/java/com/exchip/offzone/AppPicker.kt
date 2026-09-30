@@ -30,7 +30,10 @@ import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.compose.ui.platform.LocalView
 import androidx.compose.ui.window.Dialog
+import androidx.compose.ui.window.DialogWindowProvider
+import androidx.core.view.WindowCompat
 import androidx.compose.ui.window.DialogProperties
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -49,7 +52,13 @@ import kotlinx.coroutines.withContext
                 draft = draft.intersect(apps!!.map { it.packageName }.toSet())
             } catch (_: Exception) { failed = true }
         }
-        Dialog(onDismissRequest = onClose, properties = DialogProperties(usePlatformDefaultWidth = false)) {
+        Dialog(onDismissRequest = onClose, properties = DialogProperties(usePlatformDefaultWidth = false, decorFitsSystemWindows = false)) {
+            // Edge-to-edge picker: the Butter surface also covers the system bars, so no dim band shows above and below it.
+            (LocalView.current.parent as? DialogWindowProvider)?.window?.let { window ->
+                SideEffect {
+                    WindowCompat.getInsetsController(window, window.decorView).apply { isAppearanceLightStatusBars = true; isAppearanceLightNavigationBars = true }
+                }
+            }
             Surface(Modifier.fillMaxSize()) {
                 Column(Modifier.safeDrawingPadding().imePadding().padding(24.dp)) {
                     Row(Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) {

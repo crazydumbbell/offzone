@@ -1,5 +1,24 @@
 # Offzone Design System
 
+## 색 사용 정리·전면 리디자인 — 2026-09-30 (D-47, Android·iOS 코드 반영)
+
+사용자가 검정 사용이 많고 화면 일관성이 떨어져 보인다고 지적하며 전면 수정을 지시했다. 이 절이 아래 Android 우선 동기화 절의 "집중 중 차콜"과 홈 상태 카드 색 규칙보다 우선한다. Figma "리디자인" 페이지(파일 `7drCIIM7NPfjPlEkiHkWpH`)에 색 변수 36개·텍스트 스타일 11개·컴포넌트 10종으로 새 기준을 그렸고, 사용자가 Pine 방향을 승인하자 Android와 iOS 코드에 옮겼다.
+
+- 검정은 글자에만 쓴다. 버튼·카드·진행 막대·선택 표시에는 쓰지 않는다. 글자색은 초록 기운을 더한 `#1F2A22`, 보조 글자는 `#5E6660`이다.
+- 행동과 활성 상태는 니트 초록 Pine `#3D5B3F`로 통일한다. iOS `roomAccent`와 같은 값이고 버터 글자와의 대비는 계산상 약 6.6:1이다. 집중 중 카드는 차콜 `#191B19` 대신 Pine이고 카드 위 버튼은 버터 바탕에 잉크 글자다.
+- 카드는 아이보리 `#FAF7E8`(기본), 민트 `#E8EEDD`(긍정·선택·복구), 소프트 버터 `#EFE5AB`(주의·설정 필요)만 쓴다. 배경은 버터 `#F7F0C7` 그대로다.
+- 모양은 알약형 버튼 높이 56, 카드·대화상자·시트 반경 24, 행·칩 반경 16이다. 테두리는 컨트롤 Pine 28%, 카드 Pine 14%. 대화상자·스위치·체크박스·차단 화면도 같은 팔레트로 그리고 Material 기본 보라·회색을 남기지 않는다. OS가 그리는 화면(시스템 시간 선택기 등)은 강조색만 Pine으로 맞춘다.
+- 글자 크기는 대표 화면 제목 32, 단계 화면 제목과 홈 상태 카드 제목 28이다.
+- Android 코드: `OffzoneTheme.kt`에 팔레트(`Pine`·`Ink`·`InkMuted`·`PineLine`·`PineHairline`)와 Material 색 스킴(`OffzoneColors`)·모양(`OffzoneShapes`)을 두고, 공통 `PrimaryButton`·`SecondaryButton`·`OffzoneChip`·`StepProgress`를 각 화면이 쓴다. 차단 화면 오버레이(`FocusAccessibilityService`), `styles.xml`의 `colorAccent`·`backgroundDimAmount`, 앱 선택기 전체 화면 대화상자(위아래 어두운 띠 제거)도 같은 기준이다.
+- iOS 코드: `ContentView.swift`의 `roomAction`이 `roomInk` 대신 `roomAccent`(Pine)를 가리키고, 옛 채움(`roomPaper`·`roomBlue`·`roomBlush` 등)은 `roomCard`(아이보리)·`roomOutline`·`roomLine`으로 합쳤다. `AccountViews.swift`·`ProJournalView.swift`의 버튼과 칩, `AccentColor` 자산, Screen Time 차단 화면 확장(`ShieldConfigurationExtension.swift`)도 Pine 기준이다. Apple 로그인 버튼은 검정 대신 흰 바탕 윤곽선 스타일이다.
+- Figma와 다른 점: 입력창·체크박스·라디오 테두리는 비텍스트 대비 3:1을 지키려고 Pine 28% 대신 Muted `#5E6660`을 쓴다. Android 차단 화면은 "Back to home screen"이 주 버튼이고 "Restore access"가 보조 버튼이며 Figma 프레임도 이에 맞췄다. iOS 시트 반경은 24로 통일했고 Figma 프레임의 32도 24로 고쳤다. iOS 화면 안 표제 크기와 행 앞 아이콘은 기존 앱 구성을 유지해 Figma와 조금 다르다.
+- 검증(Android): 디버그·릴리스 컴파일과 단위 테스트 3개가 통과했다. 이 테스트는 UI를 다루지 않는다. 에뮬레이터(Pixel 7 프로필, API 36, 360×800dp)에서 온보딩 3단계, 규칙 편집 4단계, 준비, Pro, 홈 5개 상태, 빠른 집중, 앱 선택, 계정, 저널, 삭제·권한 대화상자, 차단 화면을 캡처해 Figma 프레임과 나란히 비교했다. 영어·한국어와 글자 크기 1.6배에서 홈 화면이 깨지지 않았다. 캡처는 `output/android-pine-2026-09-30/`(git 제외)에 있다.
+- 검증(iOS): 시뮬레이터 빌드가 성공했고 단위 테스트 26개 실행·1개 건너뜀·실패 0이다. 하위 에이전트와 같은 명령을 다시 돌려 확인했다. iPhone 17 Pro(iOS 26.1) 시뮬레이터에서 온보딩 전 단계, 홈, 시트, 접근성 글자 크기 화면을 캡처해 Figma와 비교했다. 캡처는 `output/ios-pine-2026-09-30/`에 있고 집중 중·복구 카드는 강제로 그린 화면이라 파일명에 FORCED를 붙였다.
+- 확인하지 못한 것: 실기기, 서명한 릴리스 빌드, TalkBack·VoiceOver 낭독, 태블릿·가로 화면, iOS 실제 집중 세션과 Screen Time 차단 화면(컴파일만 확인), 결제 플랜 행, 로그인 상태 화면, 스토어 스크린샷·앱 아이콘 갱신. iOS 캡처는 임시 디버그 훅으로 화면을 띄웠고 훅은 제거했다. 훅 없는 최종 바이너리는 첫 실행 화면과 저장된 규칙이 있는 홈 두 장만 확인했다.
+- 알려진 위험: 경고색 `#896839`는 버터 배경에서 대비가 약 4.4:1이라 작은 글자 기준 4.5:1에 조금 못 미친다. 앱 시작 화면(런치 스크린) 배경은 빌드 설정에 있어 이번에 바꾸지 않았다.
+- 마스코트: Pine 카드(`17-home-in-focus.png`)와 민트 카드(`13-ready.png`) 위에서 확대해 알파 가장자리 잔상과 행동 가림이 없음을 확인했다. 니트 조끼가 Pine과 비슷한 초록이라 집중 중 카드에서 몸통 대비가 낮지만 윤곽선으로 구분된다.
+- Figma에는 SUIT가 없어 Outfit으로 그렸고 앱 서체는 SUIT 그대로다. 로컬에 SUIT를 설치했고, Figma 데스크톱을 다시 켠 뒤 `~/Documents/offzone-figma-suit-plugin`을 한 번 실행하면 텍스트 스타일이 SUIT로 바뀐다.
+
 ## Android 우선 동기화 — 2026-09-25 (D-46)
 
 Android가 새 작업의 디자인 기준 플랫폼이다. Nook을 온보딩·규칙 단계·준비·Pro·계정·홈에 배치하고 iOS와 같은 버터 #F7F0C7, 따뜻한 아이보리 #FAF7E8, 집중 중 차콜 #191B19을 사용한다. 실제 집중 중에만 어두운 카드를 쓰고 실행할 수 없는 Start focus는 숨긴다. Android는 실제 목표·시간·앱·장소·일정·검토 6단계를 표시하고 시스템 접근성 권한은 별도 안내한다. 운영체제 고유의 앱 선택기·지도·권한 화면은 각 플랫폼의 네이티브 흐름을 따른다.

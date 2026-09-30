@@ -67,7 +67,7 @@ fun PlacePickerScreen(initialLat: Double?, initialLon: Double?, initialLabel: St
         Text(stringResource(R.string.m_choose_place), style = MaterialTheme.typography.headlineSmall)
         OutlinedTextField(query, { query = it }, label = { Text(stringResource(R.string.m_search_place)) }, singleLine = true, modifier = Modifier.fillMaxWidth())
         Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-            Button(onClick = {
+            PrimaryButton(onClick = {
                 busy = true; error = false
                 scope.launch {
                     try {
@@ -77,19 +77,19 @@ fun PlacePickerScreen(initialLat: Double?, initialLon: Double?, initialLabel: St
                     } catch (_: Exception) { error = true } finally { busy = false }
                 }
             }, enabled = query.isNotBlank() && !busy) { Text(stringResource(R.string.m_search)) }
-            OutlinedButton(onClick = {
+            SecondaryButton(onClick = {
                 if (PlaceMonitor.permissionReady(context)) locate()
                 else permission.launch(arrayOf(Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION))
             }, enabled = !busy) { Text(stringResource(R.string.m_current_place)) }
         }
-        if (busy) LinearProgressIndicator(Modifier.fillMaxWidth())
+        if (busy) LinearProgressIndicator(Modifier.fillMaxWidth(), trackColor = PineHairline)
         if (error) Text(stringResource(R.string.m_place_error), style = MaterialTheme.typography.bodySmall)
         if (results.isNotEmpty()) LazyColumn(Modifier.heightIn(max = 150.dp)) {
             items(results) { address -> TextButton(onClick = { select(address.latitude, address.longitude, address.getAddressLine(0).orEmpty()); results = emptyList() }) { Text(address.getAddressLine(0).orEmpty()) } }
         }
         if (!mapAllowed) {
             Text(stringResource(R.string.m_map_privacy), style = MaterialTheme.typography.bodySmall)
-            OutlinedButton(onClick = { mapAllowed = true }) { Text(stringResource(R.string.m_show_map)) }
+            SecondaryButton(onClick = { mapAllowed = true }) { Text(stringResource(R.string.m_show_map)) }
         } else AndroidView(modifier = Modifier.fillMaxWidth().height(260.dp), factory = {
             WebView(context).apply {
                 layoutParams = android.view.ViewGroup.LayoutParams(android.view.ViewGroup.LayoutParams.MATCH_PARENT, android.view.ViewGroup.LayoutParams.MATCH_PARENT)
