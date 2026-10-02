@@ -56,7 +56,8 @@ final class AccountStore: ObservableObject {
                               entitlementUID: proUID, verifiedActive: isPro,
                               expirationDate: proExpirationDate, now: Date())
     }
-    var canShowOffer: Bool { offersEnabled && purchasesConfigured && isSignedIn && !packages.isEmpty }
+    var canShowOffer: Bool { offersEnabled && purchasesConfigured && !packages.isEmpty }
+    var canMakeStorePurchase: Bool { currentPurchaseUID != nil }
     var canPurchaseUnlockPass: Bool { unlockPassEnabled && purchasesConfigured && isSignedIn && unlockProduct != nil }
     var canUseUnlockPass: Bool { unlockPassEnabled && purchasesConfigured && isSignedIn && (unlockPassBalance ?? 0) > 0 }
     var pendingUnlockSessionID: String? {
@@ -387,15 +388,25 @@ final class AccountStore: ObservableObject {
         }
     }
 
-    func loadOfferings() async {
-        guard !isBusy else { return }
+    func loadOfferings(forPaywall: Bool = false) async {
+        guard offersEnabled, !isBusy else { return }
         isBusy = true
         defer { isBusy = false }
+        // Only an actual paywall opening may configure an anonymous display session.
+        if forPaywall, !purchasesConfigured {
+            if !Purchases.isConfigured {
+                guard sdkKey.hasPrefix("appl_") else { return }
+                Purchases.configure(withAPIKey: sdkKey)
+            }
+            purchasesConfigured = true
+            if isConfigured { identityChanged(Auth.auth().currentUser, retry: true) }
+        }
         await preparePurchaseIdentity()
-        guard offersEnabled, let uid = currentPurchaseUID else { return }
+        guard purchasesConfigured, currentPurchaseUID != nil || Purchases.shared.isAnonymous else { return }
+        let generation = purchaseGeneration
+        let storeID = Purchases.shared.appUserID
+        let authUID = isConfigured ? Auth.auth().currentUser?.uid : nil
         errorMessage = nil
-        packages = []
-        eligibility = [:]
         do {
             let offerings = try await Purchases.shared.offerings()
             guard let offering = offerings.offering(identifier: offeringID) else { throw AccountError.unavailable }
@@ -406,23 +417,35 @@ final class AccountStore: ObservableObject {
             }
             guard !plans.isEmpty else { throw AccountError.unavailable }
             let eligible = await Purchases.shared.checkTrialOrIntroDiscountEligibility(plans.map { $0.storeProduct.productIdentifier })
-            guard currentPurchaseUID == uid else { return }
+            guard purchaseGeneration == generation, Purchases.shared.appUserID == storeID,
+                  (isConfigured ? Auth.auth().currentUser?.uid : nil) == authUID else { return }
             packages = plans
             eligibility = eligible
-        } catch { errorMessage = error.localizedDescription }
+        } catch {
+            if purchaseGeneration == generation, Purchases.shared.appUserID == storeID,
+               (isConfigured ? Auth.auth().currentUser?.uid : nil) == authUID {
+                errorMessage = error.localizedDescription
+            }
+        }
     }
 
-    func purchase(_ package: Package) async {
+    func purchase(_ package: Package) async -> ProPurchaseOutcome? {
         guard !isBusy, !hasProAccess, canShowOffer, packages.contains(where: { $0.identifier == package.identifier && $0.storeProduct.productIdentifier == package.storeProduct.productIdentifier }),
-              let uid = currentPurchaseUID else { return }
+              let uid = currentPurchaseUID else { return nil }
         isBusy = true
         errorMessage = nil
         defer { isBusy = false }
         do {
             let result = try await Purchases.shared.purchase(package: package)
-            guard currentPurchaseUID == uid, !result.userCancelled else { return }
+            guard currentPurchaseUID == uid, !result.userCancelled else { return nil }
             apply(result.customerInfo)
-        } catch { errorMessage = error.localizedDescription }
+            guard hasProAccess,
+                  let entitlement = result.customerInfo.entitlements.activeInCurrentEnvironment[entitlementID],
+                  entitlement.productIdentifier == package.storeProduct.productIdentifier else { return nil }
+            return ProPurchaseOutcome(trialEndsAt: entitlement.periodType == .trial ? entitlement.expirationDate : nil)
+        } catch let error as ErrorCode where error == .purchaseCancelledError {
+            return nil
+        } catch { errorMessage = error.localizedDescription; return nil }
     }
 
     func loadUnlockPass() async {
@@ -646,7 +669,7 @@ final class AccountStore: ObservableObject {
             do {
                 if let uid, let user, self.verifiedIdentity(user) {
                     if !self.purchasesConfigured, self.sdkKey.hasPrefix("appl_") {
-                        Purchases.configure(withAPIKey: self.sdkKey, appUserID: uid)
+                        if !Purchases.isConfigured { Purchases.configure(withAPIKey: self.sdkKey, appUserID: uid) }
                         self.purchasesConfigured = true
                     }
                     if self.purchasesConfigured {
@@ -663,7 +686,7 @@ final class AccountStore: ObservableObject {
                     }
                     let profile = try await Firestore.firestore().collection("users").document(uid).getDocument()
                     if Auth.auth().currentUser?.uid == uid { self.savedGoal = profile.data()?["goal"] as? String }
-                } else if uid == nil, self.purchasesConfigured, !Purchases.shared.isAnonymous {
+                } else if self.purchasesConfigured, !Purchases.shared.isAnonymous {
                     _ = try await Purchases.shared.logOut()
                 }
             } catch {

@@ -276,12 +276,24 @@ final class AppModel: NSObject, ObservableObject {
         notificationStatus = await UNUserNotificationCenter.current().notificationSettings().authorizationStatus
     }
 
+    /// Shared permission request. Trial opt-in must not turn on zone event notifications.
+    static func requestNotificationAuthorization() async throws -> Bool {
+        let center = UNUserNotificationCenter.current()
+        let status = await center.notificationSettings().authorizationStatus
+        switch status {
+        case .authorized, .provisional, .ephemeral: return true
+        case .denied: return false
+        case .notDetermined: return try await center.requestAuthorization(options: [.alert, .sound])
+        @unknown default: return false
+        }
+    }
+
     func setZoneNotificationsEnabled(_ enabled: Bool) async {
         zoneNotificationsEnabled = enabled
         SharedState.defaults.set(enabled, forKey: RestrictionNotifications.enabledKey)
         if enabled {
             do {
-                _ = try await UNUserNotificationCenter.current().requestAuthorization(options: [.alert, .sound])
+                _ = try await Self.requestNotificationAuthorization()
             } catch { reportError(roomString("Couldn't enable notifications: %@", error.localizedDescription)) }
         } else {
             let center = UNUserNotificationCenter.current()

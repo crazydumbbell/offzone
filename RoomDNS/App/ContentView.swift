@@ -228,8 +228,9 @@ struct ContentView: View {
             if phase == .active { model.refresh(); recordVisit() }
             else { roomieReaction = nil }
         }
-        .task(id: scenePhase) {
-            guard scenePhase == .active else { return }
+        .task(id: scenePhase == .active && !paywallPresented) {
+            // The paywall owns its offer session; foregrounding after an OS prompt must not clear its plans.
+            guard scenePhase == .active && !paywallPresented else { return }
             await account.refresh()
             await account.loadOfferings()
         }

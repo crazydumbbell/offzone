@@ -49,6 +49,10 @@
 		A19000000000000000000003 /* Offzone.storekit in Resources */ = {isa = PBXBuildFile; fileRef = A19000000000000000000004 /* Offzone.storekit */; };
 		A11000000000000000000026 /* GoogleSignIn in Frameworks */ = {isa = PBXBuildFile; productRef = A11000000000000000000036 /* GoogleSignIn */; };
 		A11000000000000000000027 /* GoogleSignInSwift in Frameworks */ = {isa = PBXBuildFile; productRef = A11000000000000000000037 /* GoogleSignInSwift */; };
+		5A08AE1C45E58ADE84794D4D /* ProPlans.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1AB4CCFF68722E2114D828F3 /* ProPlans.swift */; };
+		9B32582F9D0EB0FF40627420 /* ProPaywallView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5B28352F05B57F58AD5B2BA1 /* ProPaywallView.swift */; };
+		F913FBA478A584BB0C78409B /* ProPaywallMotion.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5B05868AD2013BD8ADC5CE23 /* ProPaywallMotion.swift */; };
+		69697D3FBDD1BD0448B273C9 /* ProPlansTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 82B1FF037A5148E91694F72E /* ProPlansTests.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -138,6 +142,10 @@
 		F19A00000000000000000012 /* ProJournalView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProJournalView.swift; sourceTree = "<group>"; };
 		A19000000000000000000002 /* StoreKitLocalTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StoreKitLocalTests.swift; sourceTree = "<group>"; };
 		A19000000000000000000004 /* Offzone.storekit */ = {isa = PBXFileReference; lastKnownFileType = text; path = Offzone.storekit; sourceTree = "<group>"; };
+		1AB4CCFF68722E2114D828F3 /* ProPlans.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProPlans.swift; sourceTree = "<group>"; };
+		5B28352F05B57F58AD5B2BA1 /* ProPaywallView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProPaywallView.swift; sourceTree = "<group>"; };
+		5B05868AD2013BD8ADC5CE23 /* ProPaywallMotion.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProPaywallMotion.swift; sourceTree = "<group>"; };
+		82B1FF037A5148E91694F72E /* ProPlansTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProPlansTests.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -232,6 +240,9 @@
 		3B1D292B2F00A27F170ACAAA /* App */ = {
 			isa = PBXGroup;
 			children = (
+				5B05868AD2013BD8ADC5CE23 /* ProPaywallMotion.swift */,
+				5B28352F05B57F58AD5B2BA1 /* ProPaywallView.swift */,
+				1AB4CCFF68722E2114D828F3 /* ProPlans.swift */,
 				73CE663F252B84BB247A6827 /* RoomDNSApp.swift */,
 				F8250C908EA1209E09C7C045 /* AppModel.swift */,
 				9B9CF4E6150C78EB4FDC15E7 /* ContentView.swift */,
@@ -280,6 +291,7 @@
 		829979BA93D7C3325CA10E38 /* RoomDNSTests */ = {
 			isa = PBXGroup;
 			children = (
+				82B1FF037A5148E91694F72E /* ProPlansTests.swift */,
 				6838EE98ED8756EE6BE34903 /* RestrictionPolicyTests.swift */,
 				A11000000000000000000052 /* AccountStoreTests.swift */,
 				A19000000000000000000002 /* StoreKitLocalTests.swift */,
@@ -520,6 +532,9 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				F913FBA478A584BB0C78409B /* ProPaywallMotion.swift in Sources */,
+				9B32582F9D0EB0FF40627420 /* ProPaywallView.swift in Sources */,
+				5A08AE1C45E58ADE84794D4D /* ProPlans.swift in Sources */,
 				EBBC5723EF2F43430BACBEE2 /* RoomDNSApp.swift in Sources */,
 				39B01724D5610B64C9790864 /* AppModel.swift in Sources */,
 				E14573051220E3635645AD1F /* ContentView.swift in Sources */,
@@ -545,6 +560,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				69697D3FBDD1BD0448B273C9 /* ProPlansTests.swift in Sources */,
 				55F7BD6A3E8D35E9EC01DCEC /* RestrictionPolicyTests.swift in Sources */,
 				A11000000000000000000051 /* AccountStoreTests.swift in Sources */,
 				A19000000000000000000001 /* StoreKitLocalTests.swift in Sources */,
