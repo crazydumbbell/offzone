@@ -99,7 +99,7 @@ fun AccountScreen(store: AccountStore, onBack: () -> Unit, initialGoal: String? 
             }
             HorizontalDivider()
             Text(stringResource(R.string.account_plan), style = MaterialTheme.typography.titleMedium)
-            if (store.offersEnabled && state.packages.isNotEmpty() && !state.pro) {
+            if (store.offersEnabled && state.verified && state.purchasesConfigured && state.packages.isNotEmpty() && !state.pro) {
                 Text(stringResource(R.string.account_pro_benefits))
                 Text(stringResource(R.string.account_journal_local))
                 state.packages.forEach { plan ->
@@ -120,7 +120,7 @@ fun AccountScreen(store: AccountStore, onBack: () -> Unit, initialGoal: String? 
                     }
                 }
                 Text(stringResource(R.string.account_renews))
-            } else if (!state.pro) Text(stringResource(R.string.account_plans_unavailable))
+            } else if (!state.pro) Text(stringResource(if (store.offersEnabled && state.packages.isNotEmpty() && !state.verified) R.string.account_plans_after_signin else R.string.account_plans_unavailable))
             TextButton(onClick = store::loadOfferings, enabled = !state.busy && state.verified) { Text(stringResource(R.string.account_refresh_plans)) }
             if (state.purchasesConfigured) TextButton(onClick = store::restorePurchases, enabled = !state.busy) { Text(stringResource(R.string.account_restore)) }
             if (activity != null) TextButton(onClick = { store.manageSubscription(activity) }) { Text(stringResource(R.string.account_manage)) }

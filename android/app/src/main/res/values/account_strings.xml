@@ -74,4 +74,5 @@
     <string name="account_purchase_cancelled">Purchase cancelled. You were not charged.</string>
     <string name="account_purchase_pending">Purchase pending. Your session is still active.</string>
     <string name="account_google_credential_missing">No Google sign-in credential is available. Add or select a Google account on this device, then try again. You can also use another sign-in method already linked to your Offzone account.</string>
+    <string name="account_plans_after_signin">Sign in to subscribe. Your plan stays with your account.</string>
 </resources>

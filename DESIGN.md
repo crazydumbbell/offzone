@@ -1,5 +1,58 @@
 # Offzone Design System
 
+## Pro 결제 유도 퍼널·모션 — 2026-10-02 (D-49, D-50)
+
+사용자가 참고 영상 2개를 주며 첫 설정이 끝날 때 영상처럼 결제를 유도하는 페이월을 모션그래픽과 함께 보여 달라고 지시했고 Figma Motion 사용도 허용했다. 영상 하나는 무료 체험을 4단계로 풀어 가는 퍼널(초대 → 알림 → 체험 진행 → 플랜 선택 → 스토어 결제 시트)이고, 다른 하나는 마스코트가 움직이는 한 장짜리 체험 화면(진행 타임라인 채움, 플랜 선택 반응, 버튼 문구 전환)이다. 이 절이 D-45·D-46의 "닫을 수 있는 Pro 화면 한 장"보다 우선한다. 영상의 카피·색·그림은 가져오지 않고 순서와 모션 종류만 따른다. 색·모양은 위 D-47을 쓴다.
+
+- 시작: 첫 규칙의 `Activate my rule`이 성공한 직후(D-45, Android 접근성 설정을 다녀온 경우 포함 D-48). `Go to home`과 활성화 실패에는 띄우지 않는다. 모든 단계에 닫기(X)와 `Continue with free` 경로를 두고 무료 `Restore access`는 어느 단계에서도 막지 않는다.
+- 체험 있음(기본 플랜에 스토어가 내려 주는 무료 체험이 있을 때) 4단계: 1 초대, 2 알림, 3 체험 진행 설명, 4 플랜 선택. 체험 없음 2단계: 1 소개(목표별 기존 헤드라인, `See plans`), 4 플랜 선택.
+- 판매 준비가 꺼져 있으면 기존 "Plans aren't available right now" 안내만 보여 준다(가격·체험·구매 버튼 없음). 켜져 있으면 로그인 여부와 관계없이 같은 퍼널을 보여 준다(D-50). 가격과 체험 기간은 스토어 값이라 로그아웃 상태에서도 읽는다(Android는 계정 없이 RevenueCat을 구성해 가격만 조회하고, 로그인하면 같은 구성에 `logIn`으로 계정을 붙인다). 로그인은 플랜 단계의 구매 버튼을 누를 때 요구한다. 로그아웃 상태에서 누르면 계정 화면으로 가고, 검증된 계정이 되면 같은 플랜 단계로 돌아와 고른 플랜과 알림 선택이 그대로 남는다. 돌아온 뒤 구매 버튼을 한 번 더 눌러야 스토어 시트가 뜬다(자동 결제 없음). 이메일 가입만 하고 인증하지 않은 계정은 인증을 마쳐야 구매할 수 있다. 플랜 단계의 카드 아래에 로그아웃 안내 한 줄을 둔다.
+- 체험 상품(D-50): Google Play 월간 기본 요금제 `monthly`에 14일 무료 체험 혜택 `free-trial-14d`(신규 고객 대상)를 두고, 체험이 끝나면 같은 월간 구독으로 바로 이어진다. 연간에는 체험이 없다. 플랜 단계는 체험이 있는 월간을 첫 카드로 두고 기본 선택하며(체험이 없으면 연간이 기본), 연간은 둘째 카드에서 BEST VALUE·절약률·월 환산을 보여 준다. 연간을 고르면 버튼은 `Subscribe`, 부제는 가격·주기·언제든 해지로 바뀌고 `Due today` 줄은 숨는다. RevenueCat Offzone Android 앱의 서비스 계정 자격은 유효로 확인했고 `offzone_pro` 권한에 Android 월간·연간 상품(`com.exchip.roomdns.pro.monthly:monthly`, `...annual:annual`)이 연결돼 있다. iOS는 App Store Connect에 월간 14일 무료 소개 혜택을 만들어야 같은 흐름이 되고, 만들기 전에는 체험 없는 2단계가 보인다.
+- 데이터: 가격·결제 주기·무료 체험 기간은 스토어 응답에서만 읽고 코드에 숫자를 넣지 않는다. 연간의 월 환산과 절약률은 두 플랜의 통화가 같을 때 스토어 금액으로 계산하고, 연간이 더 싸지 않으면 BEST VALUE를 숨긴다. 체험은 사용자가 자격이 있을 때만 말한다(iOS 자격 조회, Android 기본 옵션). 구매 확인 시트는 OS 것을 그대로 쓰고 따라 그리지 않는다.
+- 알림: `Remind me`는 알림 권한을 요청하고, 체험 구매가 성공했을 때만 종료 24시간 전 로컬 알림 1개를 예약한다(체험이 24시간 이하면 예약하지 않음). 권한을 거절해도 퍼널은 계속된다.
+- 결제 전 안내(D-23): 플랜 단계의 카드 아래에 "기록은 이 기기에만 저장되고 백업에서 제외된다"는 문구를 두고, Android는 "스토어가 자격·최종 가격·결제일을 확인한다"는 문구도 함께 둔다. 이 문구들은 카드와 함께 스크롤되고 약관·개인정보·복원 링크는 그 아래에 둔다. 알림 시각은 스토어가 확인한 체험 종료 시각의 24시간 전이고, 확인 전에는 광고된 체험 일수로 대신한다(미리보기).
+
+문구(영어 원문 / 한국어, 기간 N은 스토어 값):
+
+| 자리 | English | 한국어 |
+|---|---|---|
+| 1 제목 | Try Offzone Pro free for N days. | N일 동안 Offzone Pro를 무료로 써 보세요. |
+| 1 보조 | No payment due now. | 지금 결제할 금액은 없어요. |
+| 1 CTA | Start free trial | 무료 체험 시작 |
+| 2 제목 | We'll remind you before your trial ends. | 체험이 끝나기 전에 알려 드릴게요. |
+| 2 본문 | One notification the day before. Cancel anytime in Google Play. (iOS: in your App Store subscriptions) | 끝나기 하루 전에 알림을 한 번 보내요. Google Play에서 언제든 해지할 수 있어요. (iOS: App Store 구독에서) |
+| 2 CTA / 보조 | Remind me / Skip | 알림 받기 / 건너뛰기 |
+| 알림 문구 | Your free trial ends tomorrow. Manage or cancel in Google Play. | 무료 체험이 내일 끝나요. Google Play에서 관리하거나 해지할 수 있어요. |
+| 3 제목 | How your free trial works. | 무료 체험은 이렇게 진행돼요. |
+| 3 행 | Today: Pro opens right away. Your free rules stay free. / In N-1 days: We remind you. (알림을 껐으면 Still free.) / In N days: Your plan starts unless you cancel first. | 오늘: Pro가 바로 열려요. 무료 규칙은 계속 무료예요. / N-1일 뒤: 알림으로 알려 드려요. (끄면 계속 무료예요.) / N일 뒤: 그 전에 해지하지 않으면 플랜이 시작돼요. |
+| 3 CTA | Continue | 계속 |
+| 4 제목 | Choose your plan. | 플랜을 골라 주세요. |
+| 4 플랜 | Yearly / Monthly, Best value, Save X% | 연간 / 월간, 가장 알뜰해요, X% 절약 |
+| 4 결제 줄 | Due today: (zero price) · N days free, then (price) | 오늘 결제: (0원) · N일 무료 후 (가격) |
+| 4 CTA | Start free trial (체험 없으면 Subscribe) | 무료 체험 시작 (없으면 구독하기) |
+| 4 CTA 부제 | No charge today · then (price) | 오늘은 결제되지 않아요 · 이후 (가격) |
+| 4 CTA 부제(체험 없음) | (price) / year · cancel anytime | 연 (가격) · 언제든 해지 |
+| 4 로그아웃 안내 | You'll sign in next, so your plan stays with your account. | 다음 화면에서 로그인하면 구독이 내 계정에 연결돼요. |
+| 4 고지 | Cancel anytime in Google Play. Renews automatically until cancelled. | Google Play에서 언제든 해지할 수 있어요. 해지하기 전까지 자동으로 갱신돼요. |
+
+모션(Android Compose·iOS SwiftUI 공통 값, Figma "리디자인" 페이지 `18 Pro funnel`의 Motion 키프레임이 기준):
+
+- 이징: 등장 `cubic-bezier(0.2, 0, 0, 1)`, 상태 변화 `cubic-bezier(0.4, 0, 0.2, 1)`, 튀는 반응은 스프링(감쇠 0.55~0.7).
+- 단계 전환: 나가는 내용은 160ms에 투명해지며 16 이동, 들어오는 내용은 320ms에 24 거리에서 제자리로. 뒤로 가기는 방향을 뒤집는다.
+- 1 초대: Nook이 500ms에 확대·투명도로 등장한 뒤 ±4 위아래로 3.2초 주기로 떠다닌다. 앱 타일 4개는 Nook 뒤에서 시작해 120ms부터 80ms 간격으로 700ms 동안 네 모서리로 밀려나며 자리를 비우고(Offzone의 약속), 이후 ±3 흔들림. 제목·보조·버튼은 300ms부터 70ms 간격으로 16 아래에서 떠오른다.
+- 2 알림: 알림 카드가 위에서 -72 → 0으로 내려오는 스프링(200ms 지연). Nook-시계는 3.4초마다 0.7초 동안 좌우 3~4도 흔들리고 800ms에 배지 "1"이 0 → 1.15 → 1로 튄다.
+- 3 체험 진행: 카드가 24 아래에서 떠오르고 행 3개가 200ms부터 90ms 간격으로 등장. 세로 진행선이 300ms부터 2.4초 동안 0 → 1로 차오르며 노드가 0·0.5·1에서 하나씩 켜지고(Pine 원, 켜질 때 1 → 1.15 → 1) 해당 행 글자가 흐림(투명도 0.55·Medium)에서 선명(1·SemiBold)으로 바뀐다. 한 번만 재생하고 끝 상태로 남는다.
+- 4 플랜: Nook이 24 아래에서 올라오며 엿보고, 플랜 카드는 200ms부터 90ms 간격으로 24 아래에서 떠오른다. 선택이 바뀌면 220ms 동안 테두리 1 → 2·바탕 아이보리 → 민트·1 → 1.03 → 1 스프링, 체크가 0 → 1로 커지고 CTA 부제는 8 이동과 함께 180ms 교차 전환. 연간을 고르면 카드 위쪽에서 24개 입자(Pine·버터·민트·아이보리)가 700ms 동안 터진다. CTA는 입장 2초 뒤부터 5초마다 대각선 빛이 한 번 지나간다.
+- 모션 줄이기: Android 애니메이션 배율 0, iOS Reduce Motion이면 반복·순차 지연·입자를 끄고 100ms 이하 페이드만 쓴다. 시스템 접근성 글자 크기에서 내용이 잘리지 않고 스크롤된다.
+- 미리보기(디버그 전용, 릴리스 빌드에 없음): Android `adb shell am start -n com.exchip.offzone.debug/com.exchip.offzone.MainActivity --es offzone_preview_paywall trial|plain|signedout`, iOS 시작 인자 `-offzonePreviewPaywall`(체험 변형), 선택 인자 `-offzonePaywallVariant plain`. 샘플은 월 USD 4.99(14일 체험)와 연 USD 29.99(체험 없음)이고 화면에 "Preview" 표시가 붙는다. Android `signedout` 변형은 로그아웃 상태로 보고 구매 버튼이 계정 화면으로 간다.
+- 구현·검증 상태(2026-10-02):
+  - Android: `ProPaywallScreen.kt`(퍼널·모션·Reduce Motion·로그아웃 안내·로그인 뒤 복귀), `ProPlans.kt`(스토어 값 계산, 체험 있는 월간 우선), `TrialReminder.kt`(체험 종료 24시간 전 알림 1개, 재부팅 뒤 복구), `AccountStore.kt`(계정 없이 RevenueCat을 구성해 가격만 조회, 로그인하면 `logIn`), 디버그 전용 `ProPreview.kt`(릴리스에는 빈 대체본). 에뮬레이터(Pixel 7 프로필, API 36)에서 미리보기로 체험 4단계와 완료, 체험 없는 2단계, 한국어, 글자 1.6배, 애니메이션 끔, 알림 예약과 수신(D-49)을 확인했고, D-50 변경은 로그아웃 미리보기에서 월간 14일 카드가 첫째로 선택돼 있고 연간(체험 없음)을 고르면 버튼이 `Subscribe`로 바뀌는 것, 구매 버튼이 계정 화면을 열고 뒤로 가면 같은 플랜 단계와 고른 플랜이 남는 것, 한국어 화면을 확인했다. 판매 플래그가 켜진 실제 경로는 Play 결제가 없는 에뮬레이터에서 가격을 읽지 못해 "Plans are not available right now" 안내로 내려가고 비정상 종료가 없는 것까지 확인했다. 단위 테스트 6개(ProPlansTest 3개 포함), 디버그 빌드, 릴리스 번들이 통과했고 릴리스 번들에는 미리보기 문자열이 없다.
+  - Play: versionCode 4(`0.1.0 (4) - Sign-in at purchase`)를 비공개 테스트 Alpha에 올리고 2026-10-02 검토를 위해 제출했다. 검토 결과는 아직 모른다. Play 경고 2개(가독화 매핑 파일 없음, 네이티브 디버그 기호 없음)는 오류가 아닌 권고다.
+  - iOS(Codex 구현): `ProPaywallView.swift`·`ProPaywallMotion.swift`·`ProPlans.swift`와 `AccountStore.swift`. 로그아웃 상태에서도 가격·체험을 보여 주고 구매·복원 버튼에서 로그인 시트를 연다(닫으면 같은 단계와 선택 유지, 자동 구매 없음). 시뮬레이터(iPhone 17 Pro, iOS 26.1)에서 테스트 34개가 통과했고(Codex와 별도로 다시 돌려 확인), 영어·한국어 화면 22장과 Reduce Motion 비교(변경 0픽셀)를 검수했다. 릴리스 바이너리에 미리보기 코드와 샘플 가격이 없음을 확인했다. 릴리스 컴파일은 `-Onone`으로 했으므로 최적화 빌드는 검증하지 않았다. iOS에는 Android의 로그아웃 안내 한 줄이 없다. 기록은 `output/pro-funnel-2026-10-02/ios-v2/VERIFICATION.md`(git 제외).
+  - Figma: 리디자인 페이지 `18 Pro funnel`을 D-50에 맞췄다(월간 14일 첫째·선택, 연간 둘째, 로그아웃 안내, 연간 선택 때 `Subscribe`와 `Due today` 숨김 모션, 14일 타임라인).
+  - 확인하지 못한 것: 실제 기기의 Play 가격 조회·구매·체험 자격·영수증과 RevenueCat 권한 부여, Play 서명 앱의 Google 로그인(Firebase에 Play 앱 서명 SHA-1 등록 필요), 알림이 24시간 뒤에 실제로 발송되는지, TalkBack·VoiceOver 실사용, 최적화된 iOS 릴리스 빌드, iOS 실제 익명 오퍼링 조회와 로그인 뒤 계정 병합. `TERMS_URL`은 Google Play 이용약관 임시 값이라 Offzone 약관 페이지로 바꿔야 한다. iOS는 App Store Connect 월간 14일 소개 혜택을 만든 뒤에 판매 플래그를 켠다.
+  - 결정 현황: D-49 때 대기하던 3가지(로그인 전 가격 노출, 체험 상품, 판매 시점)는 D-50으로 닫혔다. 남은 일은 Offzone 약관 페이지, iOS 소개 혜택 생성, iOS 판매 시점이다.
+
 ## 색 사용 정리·전면 리디자인 — 2026-09-30 (D-47, Android·iOS 코드 반영)
 
 사용자가 검정 사용이 많고 화면 일관성이 떨어져 보인다고 지적하며 전면 수정을 지시했다. 이 절이 아래 Android 우선 동기화 절의 "집중 중 차콜"과 홈 상태 카드 색 규칙보다 우선한다. Figma "리디자인" 페이지(파일 `7drCIIM7NPfjPlEkiHkWpH`)에 색 변수 36개·텍스트 스타일 11개·컴포넌트 10종으로 새 기준을 그렸고, 사용자가 Pine 방향을 승인하자 Android와 iOS 코드에 옮겼다.

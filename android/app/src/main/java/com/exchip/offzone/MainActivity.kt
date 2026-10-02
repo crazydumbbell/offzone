@@ -38,6 +38,7 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         FocusController.initialize(this)
         account = (application as OffzoneApplication).accountStore
+        ProPreview.reminderTest(this, intent)
         enableEdgeToEdge()
         setContent {
             MaterialTheme(colorScheme = OffzoneColors, typography = OffzoneTypography, shapes = OffzoneShapes) { App() }
@@ -50,14 +51,19 @@ class MainActivity : ComponentActivity() {
         val rules by FocusController.ruleStore.rules.collectAsState()
         val storageError by FocusController.ruleStore.error.collectAsState()
         val identity by account.state.collectAsState()
-        var route by rememberSaveable { mutableStateOf(if (!OnboardingProfile.completed(this) && rules.isEmpty() && !storageError) "welcome" else "home") }
+        val previewPaywall = remember { ProPreview.variant(intent) }
+        var route by rememberSaveable { mutableStateOf(if (previewPaywall != null) "paywall" else if (!OnboardingProfile.completed(this) && rules.isEmpty() && !storageError) "welcome" else "home") }
         var editing by rememberSaveable { mutableStateOf<String?>(null) }
         var editingFromReady by rememberSaveable { mutableStateOf(false) }
         var readyRuleId by rememberSaveable { mutableStateOf<String?>(null) }
         var accountReturnRoute by rememberSaveable { mutableStateOf("home") }
         var journalReturnRoute by rememberSaveable { mutableStateOf("home") }
         var paywallReturnRoute by rememberSaveable { mutableStateOf("home") }
+        // D-50: the purchase button sends a signed-out user to the account screen; these bring them back to the same plan.
+        var paywallResumePlan by rememberSaveable { mutableStateOf<String?>(null) }
+        var paywallResumeRemind by rememberSaveable { mutableStateOf(false) }
         var disclosure by rememberSaveable { mutableStateOf(false) }
+        var pendingActivation by rememberSaveable { mutableStateOf<String?>(null) }
         var error by remember { mutableStateOf<Int?>(null) }
         val scope = rememberCoroutineScope()
         var pendingLocationAction by rememberSaveable { mutableIntStateOf(-1) }
@@ -115,6 +121,22 @@ class MainActivity : ComponentActivity() {
             if (action == 1 || action == 2) locationDisclosure = true
             else continuePlaceRequest()
         }
+        fun openPaywall(returnTo: String) { paywallResumePlan = null; paywallResumeRemind = false; paywallReturnRoute = returnTo; route = "paywall" }
+        // Warm the plan prices while the first rule is being activated, so the funnel does not open on a spinner.
+        LaunchedEffect(route) { if (route == "ready" && account.offersEnabled) account.loadOfferings() }
+        LaunchedEffect(identity.verified, route) {
+            if (route == "account" && accountReturnRoute == "paywall" && paywallResumePlan != null && identity.verified) route = "paywall"
+        }
+        // First run: "Activate my rule" sends the user to Android accessibility settings. Finish that activation, and show the Pro screen, once the service connects.
+        LaunchedEffect(state.connected, route) {
+            val id = pendingActivation ?: return@LaunchedEffect
+            if (route != "ready") pendingActivation = null
+            else if (state.connected) {
+                pendingActivation = null
+                if (FocusController.activateRule(id)) { error = null; openPaywall("home") }
+                else error = R.string.save_error
+            }
+        }
         BackHandler(route != "home") { route = when (route) {
             "ready" -> { editingFromReady = true; "edit" }; "account" -> accountReturnRoute; "journal" -> journalReturnRoute
             "paywall" -> paywallReturnRoute; else -> "home"
@@ -132,16 +154,18 @@ class MainActivity : ComponentActivity() {
                         route = if (showReady) "ready" else "home"
                     }, defaultEnd = OnboardingProfile.endMinutes(this))
                 "ready" -> ReadyScreen(rules.firstOrNull { it.id == readyRuleId }, onBack = { editingFromReady = true; route = "edit" }, onActivate = { rule ->
-                    if (!state.connected) disclosure = true
-                    else if (FocusController.activateRule(rule.id)) { error = null; paywallReturnRoute = "home"; route = "paywall" }
+                    if (!state.connected) { pendingActivation = rule.id; disclosure = true }
+                    else if (FocusController.activateRule(rule.id)) { error = null; openPaywall("home") }
                     else error = R.string.save_error
                 }, onHome = { route = "home" }, onAccount = { accountReturnRoute = "ready"; route = "account" },
                     showAccount = identity.configured && identity.uid == null, error = error)
-                "paywall" -> ProPaywallScreen(account, onContinue = { route = paywallReturnRoute }, onOpenAccount = { accountReturnRoute = "paywall"; route = "account" })
+                "paywall" -> ProPaywallScreen(account, onContinue = { route = paywallReturnRoute },
+                    onOpenAccount = { plan, remind -> paywallResumePlan = plan; paywallResumeRemind = remind; accountReturnRoute = "paywall"; route = "account" },
+                    resumePlanId = paywallResumePlan, resumeRemind = paywallResumeRemind, preview = previewPaywall)
                 "account" -> AccountScreen(account, onBack = { route = accountReturnRoute }, initialGoal = OnboardingProfile.goal(this),
                     onJournal = { journalReturnRoute = "account"; route = "journal" })
                 "journal" -> JournalScreen(hasPro = identity.pro && account.hasProAccess, accessCheck = { account.hasProAccess },
-                    onOffer = { paywallReturnRoute = "journal"; route = "paywall" }, onBack = { route = journalReturnRoute })
+                    onOffer = { openPaywall("journal") }, onBack = { route = journalReturnRoute })
                 "quick" -> QuickFocus(onBack = { route = "home" }, onEnable = { disclosure = true })
                 else -> {
                     var deleting by remember { mutableStateOf<FocusRule?>(null) }
@@ -274,13 +298,13 @@ class MainActivity : ComponentActivity() {
             text = { Text(stringResource(R.string.location_disclosure_body), modifier = Modifier.verticalScroll(rememberScrollState())) },
             confirmButton = { TextButton(onClick = { continuePlaceRequest() }) { Text(stringResource(R.string.location_disclosure_agree)) } },
             dismissButton = { TextButton(onClick = { cancelPlaceRequest() }) { Text(stringResource(R.string.not_now)) } })
-        if (disclosure) AlertDialog(onDismissRequest = { disclosure = false }, title = { Text(stringResource(R.string.disclosure_title)) }, text = { Text(stringResource(R.string.disclosure_body), modifier = Modifier.verticalScroll(rememberScrollState())) }, confirmButton = {
+        if (disclosure) AlertDialog(onDismissRequest = { disclosure = false; pendingActivation = null }, title = { Text(stringResource(R.string.disclosure_title)) }, text = { Text(stringResource(R.string.disclosure_body), modifier = Modifier.verticalScroll(rememberScrollState())) }, confirmButton = {
             TextButton(onClick = { scope.launch {
                 val saved = withContext(Dispatchers.IO) { AppSelection.preferences(this@MainActivity).edit().putBoolean("disclosure", true).commit() }
                 disclosure = false
                 if (!saved) error = R.string.save_error else runCatching { startActivity(Intent(Settings.ACTION_ACCESSIBILITY_SETTINGS)) }.onFailure { error = R.string.setup_error }
             } }) { Text(stringResource(R.string.agree)) }
-        }, dismissButton = { TextButton(onClick = { disclosure = false }) { Text(stringResource(R.string.not_now)) } })
+        }, dismissButton = { TextButton(onClick = { disclosure = false; pendingActivation = null }) { Text(stringResource(R.string.not_now)) } })
     }
 
     @Composable private fun ReadyScreen(

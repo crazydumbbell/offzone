@@ -26,7 +26,7 @@ android {
         applicationId = "com.exchip.roomdns"
         minSdk = 26
         targetSdk = 36
-        versionCode = 3
+        versionCode = 4
         versionName = "0.1.0"
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         mapOf(
@@ -39,7 +39,7 @@ android {
             val value = providers.gradleProperty(key).orElse(fallback).get()
             buildConfigField("String", key, "\"${value.replace("\\", "\\\\").replace("\"", "\\\"")}\"")
         }
-        buildConfigField("boolean", "PRO_OFFER_READY", "false")
+        buildConfigField("boolean", "PRO_OFFER_READY", providers.gradleProperty("PRO_OFFER_READY").orElse("false").get())
         buildConfigField("boolean", "UNLOCK_PASS_READY", "false")
     }
     buildFeatures { compose = true; buildConfig = true }
