@@ -862,3 +862,25 @@
 "pro_done_trial" = "Your free trial has started.";
 "pro_done_body" = "Weekly planning, your journal and weekly reviews are open now.";
 "pro_step_of" = "Step %1$d of %2$d";
+// Journal draft protection
+"Discard unsaved journal changes?" = "Discard unsaved journal changes?";
+"Discard changes" = "Discard changes";
+"Continue editing" = "Continue editing";
+"Save your plan or reflection before leaving to keep your changes." = "Save your plan or reflection before leaving to keep your changes.";
+"Tap Start focus. We’ll confirm your location before blocking apps." = "Tap Start focus. We’ll confirm your location before blocking apps.";
+"Pick the days and times it repeats." = "Pick the days and times it repeats.";
+"Days" = "Days";
+"Choose at least one day." = "Choose at least one day.";
+"Weekdays" = "Weekdays";
+"Weekends" = "Weekends";
+"Starts %@ at %@" = "Starts %@ at %@";
+"Quick focus" = "Quick focus";
+"Duration" = "Duration";
+"%d min" = "%d min";
+"Choose a duration and apps. Quick focus works anywhere, without a saved place." = "Choose a duration and apps. Quick focus works anywhere, without a saved place.";
+"You can end it anytime with Restore access. It ends on its own when time is up." = "You can end it anytime with Restore access. It ends on its own when time is up.";
+"Allow Screen Time before starting Quick focus." = "Allow Screen Time before starting Quick focus.";
+"End your current focus before starting Quick focus." = "End your current focus before starting Quick focus.";
+"End Quick focus before starting this rule." = "End Quick focus before starting this rule.";
+"Could not start Quick focus: %@" = "Could not start Quick focus: %@";
+"Quick focus is on until %@." = "Quick focus is on until %@.";

@@ -42,7 +42,7 @@ struct RoomAccountView: View {
                         if account.isPro {
                             Link("Manage subscription", destination: URL(string: "https://apps.apple.com/account/subscriptions")!)
                                 .foregroundStyle(Color.roomAccent).frame(minHeight: 44)
-                        } else if account.canShowOffer {
+                        } else if account.offersEnabled {
                             Button("Explore Pro") { paywallPresented = true }.roomPrimaryAction()
                         }
                         if account.purchasesConfigured {
@@ -145,9 +145,7 @@ struct RoomAccountView: View {
         .sheet(isPresented: $journalPresented) {
             NavigationStack {
                 ProJournalView(goal: goal)
-                    .toolbar { ToolbarItem(placement: .confirmationAction) {
-                        Button("Done") { journalPresented = false }
-                    } }
+
             }
             .presentationCornerRadius(24)
         }

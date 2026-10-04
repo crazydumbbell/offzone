@@ -862,3 +862,25 @@
 "pro_done_trial" = "무료 체험이 시작됐어요.";
 "pro_done_body" = "주간 계획, 회고 저널, 주간 리뷰를 지금 쓸 수 있어요.";
 "pro_step_of" = "%2$d단계 중 %1$d단계";
+// Journal draft protection
+"Discard unsaved journal changes?" = "저장하지 않은 기록 변경사항을 버릴까요?";
+"Discard changes" = "변경사항 버리기";
+"Continue editing" = "계속 작성하기";
+"Save your plan or reflection before leaving to keep your changes." = "변경사항을 유지하려면 이동하기 전에 계획이나 회고를 저장하세요.";
+"Tap Start focus. We’ll confirm your location before blocking apps." = "집중 시작을 누르세요. 앱을 차단하기 전에 위치를 확인할게요.";
+"Pick the days and times it repeats." = "반복할 요일과 시간을 고르세요.";
+"Days" = "요일";
+"Choose at least one day." = "요일을 하루 이상 고르세요.";
+"Weekdays" = "평일";
+"Weekends" = "주말";
+"Starts %@ at %@" = "%@ %@에 시작";
+"Quick focus" = "바로 집중";
+"Duration" = "시간";
+"%d min" = "%d분";
+"Choose a duration and apps. Quick focus works anywhere, without a saved place." = "시간과 앱을 고르세요. 바로 집중은 저장한 장소 없이 어디서나 쓸 수 있어요.";
+"You can end it anytime with Restore access. It ends on its own when time is up." = "언제든 접근 복구로 끝낼 수 있어요. 시간이 다 되면 저절로 끝나요.";
+"Allow Screen Time before starting Quick focus." = "바로 집중을 시작하려면 먼저 스크린 타임을 허용하세요.";
+"End your current focus before starting Quick focus." = "바로 집중을 시작하려면 지금 진행 중인 집중을 먼저 끝내세요.";
+"End Quick focus before starting this rule." = "이 규칙을 시작하려면 바로 집중을 먼저 끝내세요.";
+"Could not start Quick focus: %@" = "바로 집중을 시작하지 못했어요: %@";
+"Quick focus is on until %@." = "바로 집중이 %@까지 켜져 있어요.";

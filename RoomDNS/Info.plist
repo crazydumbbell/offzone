@@ -13,7 +13,7 @@
 		<string>location</string>
 	</array>
 	<key>RoomProOfferReady</key>
-	<false/>
+	<true/>
 	<key>RoomUnlockPassReady</key>
 	<false/>
 	<key>RoomUnlockProductID</key>

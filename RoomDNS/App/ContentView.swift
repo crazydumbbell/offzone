@@ -75,6 +75,7 @@ struct ContentView: View {
     @State private var safetyReleasePresented = false
     @State private var unlockPassPresented = false
     @State private var notificationsPresented = false
+    @State private var quickFocusPresented = false
     @State private var showsSaveError = false
     @State private var ruleToDelete: FocusRule?
     @State private var roomieReaction: RoomSpiritState?
@@ -138,9 +139,9 @@ struct ContentView: View {
         .preferredColorScheme(.light)
         .safeAreaInset(edge: .top, spacing: 0) {
             HStack(spacing: 12) {
-                if screen == .home || screen == .ready {
+                if screen == .ready {
                     Button {
-                        screen = screen == .home ? .welcome : .review
+                        screen = .review
                     } label: {
                         Label("Back", systemImage: "chevron.left")
                     }
@@ -156,10 +157,10 @@ struct ContentView: View {
                 }
                 Spacer(minLength: 0)
                 Button {
-                    if model.isFocused { unlockPassPresented = true }
+                    if model.isFocused && account.unlockPassEnabled { unlockPassPresented = true }
                     else { safetyReleasePresented = true }
                 } label: {
-                    Label(model.isFocused ? roomString("End session") : roomString("Restore access"), systemImage: "arrow.counterclockwise")
+                    Label(model.isFocused && account.unlockPassEnabled ? roomString("End session") : roomString("Restore access"), systemImage: "arrow.counterclockwise")
                 }
                 .font(.suit(.subheadline, weight: .medium))
                 .foregroundStyle(Color.roomInkSecondary)
@@ -198,6 +199,9 @@ struct ContentView: View {
             ZoneNotificationSettingsView(model: model)
                 .presentationCornerRadius(24)
         }
+        .sheet(isPresented: $quickFocusPresented) {
+            QuickFocusView(model: model)
+        }
         .sheet(isPresented: $accountPresented) {
             RoomAccountView(goal: goal)
                 .presentationCornerRadius(24)
@@ -216,7 +220,7 @@ struct ContentView: View {
             presenting: ruleToDelete
         ) { rule in
             Button("Delete rule", role: .destructive) {
-                if model.isFocused && model.activeRuleID == rule.id { unlockPassPresented = true }
+                if model.isFocused && model.activeRuleID == rule.id { presentSessionEnd() }
                 else { model.deleteRule(rule.id) }
                 ruleToDelete = nil
             }
@@ -242,6 +246,13 @@ struct ContentView: View {
             if !didPresentPreviewPaywall && ProcessInfo.processInfo.arguments.contains("-offzonePreviewPaywall") {
                 didPresentPreviewPaywall = true
                 paywallPresented = true
+            }
+            let arguments = ProcessInfo.processInfo.arguments
+            if arguments.contains("-offzonePreviewQuick") { quickFocusPresented = true }
+            if arguments.contains("-offzonePreviewSchedule") {
+                model.beginNewRuleDraft()
+                model.days = RestrictionPolicy.weekdays
+                screen = .schedule
             }
 #endif
         }
@@ -469,7 +480,7 @@ struct ContentView: View {
                     readyActivationError = nil
                     guard activate(rule) else { return }
                     screen = .home
-                    paywallPresented = true
+                    paywallPresented = account.offersEnabled && !account.isPro
                 }
                 Button("Go to home") { screen = .home }
                     .font(.suit(.body, weight: .medium)).frame(minHeight: 44)
@@ -733,7 +744,7 @@ struct ContentView: View {
     private var scheduleScreen: some View {
         setupScreen(
             title: roomString("Choose your schedule"),
-            detail: roomString("Repeats daily."),
+            detail: roomString("Pick the days and times it repeats."),
             actionTitle: roomString("Review rule"),
             actionEnabled: scheduleIsValid,
             action: {
@@ -741,6 +752,7 @@ struct ContentView: View {
                 screen = .review
             }
         ) {
+            dayPicker
             VStack(spacing: 0) {
                 DatePicker("Start", selection: $model.startTime, displayedComponents: .hourAndMinute)
                     .padding(18)
@@ -752,7 +764,11 @@ struct ContentView: View {
             .foregroundStyle(Color.roomInk)
             .editorialPanel()
 
-            if !scheduleIsValid {
+            if model.days == 0 {
+                Label("Choose at least one day.", systemImage: "exclamationmark.circle.fill")
+                    .font(.suit(.subheadline))
+                    .foregroundStyle(Color.roomWarning)
+            } else if !scheduleIsValid {
                 Label("Choose a focus window of at least 15 minutes.", systemImage: "exclamationmark.circle.fill")
                     .font(.suit(.subheadline))
                     .foregroundStyle(Color.roomWarning)
@@ -762,6 +778,45 @@ struct ContentView: View {
                     .font(.suit(.subheadline))
                     .foregroundStyle(Color.roomInkSecondary)
             }
+        }
+    }
+
+    private var dayPicker: some View {
+        let symbols = Calendar.current.shortWeekdaySymbols
+        let columns = [GridItem(.adaptive(minimum: dynamicTypeSize.isAccessibilitySize ? 96 : 40), spacing: 8)]
+        return VStack(alignment: .leading, spacing: 10) {
+            Text("Days").font(.suit(.subheadline, weight: .semibold)).foregroundStyle(Color.roomInkSecondary)
+            LazyVGrid(columns: columns, spacing: 8) {
+                ForEach(Self.mondayFirstWeekdays, id: \.self) { weekday in
+                    let bit = RestrictionPolicy.dayBit(weekday: weekday)
+                    let on = model.days & bit != 0
+                    Button { model.days ^= bit } label: {
+                        Text(symbols[weekday - 1])
+                            .font(.suit(.subheadline, weight: .semibold))
+                            .frame(maxWidth: .infinity, minHeight: 44)
+                            .background(on ? Color.roomAccent : Color.roomCard, in: Capsule())
+                            .overlay { if !on { Capsule().strokeBorder(Color.roomOutline, lineWidth: 1) } }
+                            .foregroundStyle(on ? Color.roomCanvas : Color.roomInk)
+                    }
+                    .buttonStyle(.plain)
+                    .accessibilityLabel(Calendar.current.weekdaySymbols[weekday - 1])
+                    .accessibilityAddTraits(on ? .isSelected : [])
+                }
+            }
+        }
+    }
+
+    private static let mondayFirstWeekdays = [2, 3, 4, 5, 6, 7, 1]
+
+    private func daysSummary(_ days: Int) -> String {
+        switch days {
+        case RestrictionPolicy.everyDay: return roomString("Every day")
+        case RestrictionPolicy.weekdays: return roomString("Weekdays")
+        case RestrictionPolicy.everyDay ^ RestrictionPolicy.weekdays: return roomString("Weekends")
+        default:
+            let symbols = Calendar.current.shortWeekdaySymbols
+            return Self.mondayFirstWeekdays.filter { days & RestrictionPolicy.dayBit(weekday: $0) != 0 }
+                .map { symbols[$0 - 1] }.joined(separator: ", ")
         }
     }
 
@@ -823,26 +878,33 @@ struct ContentView: View {
     }
 
     private var homeScreen: some View {
-        VStack(spacing: 0) {
-            HStack {
+        let toolbarLayout = dynamicTypeSize.isAccessibilitySize
+            ? AnyLayout(VStackLayout(alignment: .leading, spacing: 8))
+            : AnyLayout(HStackLayout())
+        return VStack(spacing: 0) {
+            toolbarLayout {
                 Text("Your space")
                     .font(.suit(.headline, weight: .bold))
                     .foregroundStyle(Color.roomInk)
-                Spacer()
-                Button { notificationsPresented = true } label: { Image(systemName: "bell") }
-                    .font(.suit(.title3)).foregroundStyle(Color.roomInk)
-                    .frame(minWidth: 44, minHeight: 44).accessibilityLabel("Zone notifications")
-                Button { accountPresented = true } label: { Image(systemName: "person.crop.circle") }
-                    .font(.suit(.title3)).foregroundStyle(Color.roomInk)
-                    .frame(minWidth: 44, minHeight: 44).accessibilityLabel("Account & plan")
-                Button { addRule() } label: { Label("New rule", systemImage: "plus") }
-                    .font(.suit(.subheadline, weight: .medium))
-                    .foregroundStyle(Color.roomAction).frame(minHeight: 44)
+                if !dynamicTypeSize.isAccessibilitySize { Spacer() }
+                HStack {
+                    Button { notificationsPresented = true } label: { Image(systemName: "bell") }
+                        .font(.suit(.title3)).foregroundStyle(Color.roomInk)
+                        .frame(minWidth: 44, minHeight: 44).accessibilityLabel("Zone notifications")
+                    Button { accountPresented = true } label: { Image(systemName: "person.crop.circle") }
+                        .font(.suit(.title3)).foregroundStyle(Color.roomInk)
+                        .frame(minWidth: 44, minHeight: 44).accessibilityLabel("Account & plan")
+                    Button { addRule() } label: { Label("New rule", systemImage: "plus").fixedSize(horizontal: !dynamicTypeSize.isAccessibilitySize, vertical: true) }
+                        .font(.suit(.subheadline, weight: .medium))
+                        .foregroundStyle(Color.roomAction).frame(minHeight: 44)
+                }
             }
             .padding(.horizontal, 24).padding(.bottom, 10)
             ScrollView {
                 VStack(spacing: 24) {
                     homeStatusCard
+                    actionFeedback
+                    quickFocusSection
                     if SharedState.ruleEnabled && model.activeRule?.placeMode == .gps && !model.isFocused {
                         VStack(alignment: .leading, spacing: 12) {
                             Text(model.placeArrivalText)
@@ -858,8 +920,7 @@ struct ContentView: View {
                         Link("Open Location Settings", destination: URL(string: UIApplication.openSettingsURLString)!)
                             .font(.suit(.subheadline, weight: .semibold)).foregroundStyle(Color.roomWarning).frame(minHeight: 44)
                     }
-                    actionFeedback
-                    if firstFocus && account.canShowOffer && !account.isPro && !offerDismissed {
+                    if firstFocus && account.offersEnabled && !account.isPro && !offerDismissed {
                         VStack(alignment: .leading, spacing: 10) {
                             Text(roomString(goal.headline))
                                 .font(.suit(.title2, weight: .bold))
@@ -943,6 +1004,29 @@ struct ContentView: View {
         .editorialPanel(homeStatusTint, outlined: homeStatusTint == .roomCard)
     }
 
+    @ViewBuilder private var quickFocusSection: some View {
+        if let end = model.quickEndsAt {
+            VStack(alignment: .leading, spacing: 16) {
+                Text("Quick focus").font(.suit(.subheadline, weight: .medium))
+                Text(roomString("Until %@", end.formatted(date: .omitted, time: .shortened)))
+                    .font(.suit(.title, weight: .semibold)).monospacedDigit()
+                    .fixedSize(horizontal: false, vertical: true).accessibilityAddTraits(.isHeader)
+                primaryButton(roomString("Restore access"), inverted: true) {
+                    model.endQuickFocus()
+                    roomieReaction = model.errorMessage == nil ? .recovered : nil
+                }
+            }
+            .foregroundStyle(Color.roomCanvas).padding(22).frame(maxWidth: .infinity, alignment: .leading)
+            .background(Color.roomAccent).clipShape(RoundedRectangle(cornerRadius: 22))
+        } else if model.screenTimeAuthorized && !model.isFocused {
+            Button { quickFocusPresented = true } label: {
+                Label("Quick focus", systemImage: "timer").frame(maxWidth: .infinity, minHeight: 50)
+            }
+            .font(.suit(.body, weight: .semibold)).foregroundStyle(Color.roomInk)
+            .overlay(RoundedRectangle(cornerRadius: 12).stroke(Color.roomInk.opacity(0.35)))
+        }
+    }
+
     private var suggestedRule: FocusRule? {
         model.rules.first(where: { $0.id == model.activeRuleID }) ?? model.rules.first
     }
@@ -964,13 +1048,18 @@ struct ContentView: View {
     @discardableResult
     private func activate(_ rule: FocusRule) -> Bool {
         guard rule.placeMode == .gps else { editRule(rule); return false }
-        guard !model.isFocused else { unlockPassPresented = true; return false }
+        guard !model.isFocused else { presentSessionEnd(); return false }
         let activated = model.activateRule(rule.id)
         if activated {
             placeMode = .gps
             roomieReaction = .confirmed
         }
         return activated
+    }
+
+    private func presentSessionEnd() {
+        if account.unlockPassEnabled { unlockPassPresented = true }
+        else { safetyReleasePresented = true }
     }
 
     private func recordVisit() {
@@ -1022,11 +1111,11 @@ struct ContentView: View {
                             .fixedSize(horizontal: false, vertical: true)
                         if rule.placeMode != .gps {
                             Text("Choose a place to use this rule")
-                                .font(.suit(.caption)).foregroundStyle(Color.roomWarning)
+                                .font(.suit(.subheadline)).foregroundStyle(Color.roomWarning)
                         }
                         if hasChanges || isActive {
                             Text(hasChanges ? roomString("Unapplied changes") : canResume ? roomString("Paused") : roomString("Active"))
-                                .font(.suit(.caption, weight: .bold))
+                                .font(.suit(.subheadline, weight: .bold))
                                 .foregroundStyle(hasChanges ? Color.roomWarning : Color.roomAccent)
                         }
                         Text(ruleScheduleSummary(rule))
@@ -1063,7 +1152,7 @@ struct ContentView: View {
                 }
                 Spacer(minLength: 0)
                 Button(role: .destructive) {
-                    if isActive && model.isFocused { unlockPassPresented = true }
+                    if isActive && model.isFocused { presentSessionEnd() }
                     else { ruleToDelete = rule }
                 } label: {
                     Image(systemName: "trash")
@@ -1091,10 +1180,10 @@ struct ContentView: View {
             ScrollView {
                 VStack(alignment: .leading, spacing: 28) {
                     VStack(alignment: .leading, spacing: 18) {
-                        HStack {
-                            Spacer()
+                        if screen == .goal || screen == .permission {
                             RoomSpirit(state: setupSpiritState)
-                                .frame(width: 104, height: 94)
+                                .frame(width: 64, height: 58)
+                                .accessibilityHidden(true)
                         }
                         Text(title)
                             .font(.suit(dynamicTypeSize.isAccessibilitySize ? .title2 : .title, weight: .bold))
@@ -1268,11 +1357,11 @@ struct ContentView: View {
         RestrictionPolicy.intervalMinutes(
             start: minutes(from: model.startTime),
             end: minutes(from: model.endTime)
-        ) >= 15
+        ) >= 15 && model.days != 0
     }
 
     private var scheduleSummary: String {
-        "\(model.startTime.formatted(date: .omitted, time: .shortened))–\(model.endTime.formatted(date: .omitted, time: .shortened))"
+        "\(model.startTime.formatted(date: .omitted, time: .shortened))–\(model.endTime.formatted(date: .omitted, time: .shortened)) · \(daysSummary(model.days))"
     }
 
     private var homeNeedsAction: Bool {
@@ -1323,9 +1412,8 @@ struct ContentView: View {
             to: Calendar.current.startOfDay(for: .now)
         ) ?? .now
         let timeRange = "\(start.formatted(date: .omitted, time: .shortened))–\(end.formatted(date: .omitted, time: .shortened))"
-        return rule.endMinutes < rule.startMinutes
-            ? roomString("%@ (+1 day)", timeRange)
-            : timeRange
+        let range = rule.endMinutes < rule.startMinutes ? roomString("%@ (+1 day)", timeRange) : timeRange
+        return "\(range) · \(daysSummary(rule.activeDays))"
     }
 
     private func addRule() {
@@ -1391,7 +1479,7 @@ private struct SafetyReleaseView: View {
                     .foregroundStyle(Color.roomAccent).frame(maxWidth: .infinity, minHeight: 44)
             }.bottomBarStyle()
         }
-        .background(Color.roomCanvas).preferredColorScheme(.light)
+        .background(Color.roomCanvas)
     }
 }
 
@@ -1446,7 +1534,7 @@ private struct UnlockPassView: View {
             .navigationTitle("Unlock pass").navigationBarTitleDisplayMode(.inline)
             .toolbar { ToolbarItem(placement: .cancellationAction) { Button("Close") { dismiss() } } }
         }
-        .tint(Color.roomAction).preferredColorScheme(.light)
+        .tint(Color.roomAction)
         .task { await account.loadUnlockPass() }
         .onChange(of: account.isSignedIn) { _, signedIn in
             if signedIn { Task { await account.loadUnlockPass() } }
@@ -1521,6 +1609,55 @@ private struct UnlockPassView: View {
     }
 }
 
+private struct QuickFocusView: View {
+    @ObservedObject var model: AppModel
+    @Environment(\.dismiss) private var dismiss
+    @State private var minutes = 25
+
+    var body: some View {
+        NavigationStack {
+            Form {
+                Section {
+                    Picker("Duration", selection: $minutes) {
+                        ForEach(QuickFocus.durations, id: \.self) { Text(roomString("%d min", $0)).tag($0) }
+                    }
+                    .pickerStyle(.segmented)
+                    Button { model.requestQuickSelection() } label: {
+                        LabeledContent("Choose apps", value: roomString("%d selected", model.quickSelectionCount))
+                            .frame(minHeight: 44)
+                    }
+                } footer: {
+                    Text("Choose a duration and apps. Quick focus works anywhere, without a saved place.")
+                }
+                Section {
+                    Button {
+                        if model.startQuickFocus(minutes: minutes) { dismiss() }
+                    } label: {
+                        Text("Start focus").font(.suit(.headline, weight: .semibold)).frame(maxWidth: .infinity, minHeight: 44)
+                    }
+                    .disabled(model.quickSelectionCount == 0)
+                    if let error = model.errorMessage {
+                        Text(error).font(.suit(.subheadline)).foregroundStyle(Color.roomWarning)
+                    }
+                } footer: {
+                    Text("You can end it anytime with Restore access. It ends on its own when time is up.")
+                }
+            }
+            .font(.suit(.body))
+            .scrollContentBackground(.hidden).background(Color.roomCanvas)
+            .navigationTitle("Quick focus").navigationBarTitleDisplayMode(.inline)
+            .toolbar { ToolbarItem(placement: .cancellationAction) { Button("Cancel") { dismiss() } } }
+            .familyActivityPicker(
+                headerText: roomString("Choose apps, categories, and websites to put aside."),
+                footerText: roomString("Your selection stays on this iPhone."),
+                isPresented: $model.isQuickPickerPresented,
+                selection: $model.quickSelection
+            )
+        }
+        .tint(Color.roomAction)
+    }
+}
+
 private struct ZoneNotificationSettingsView: View {
     @ObservedObject var model: AppModel
     @Environment(\.dismiss) private var dismiss
@@ -1564,7 +1701,7 @@ private struct ZoneNotificationSettingsView: View {
             .navigationTitle("Zone notifications").navigationBarTitleDisplayMode(.inline)
             .toolbar { ToolbarItem(placement: .confirmationAction) { Button("Done") { dismiss() } } }
         }
-        .tint(Color.roomAction).preferredColorScheme(.light)
+        .tint(Color.roomAction)
         .task { await model.refreshNotificationSettings() }
     }
 }

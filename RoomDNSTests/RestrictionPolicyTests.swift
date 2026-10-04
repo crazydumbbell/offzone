@@ -105,6 +105,79 @@ final class RestrictionPolicyTests: XCTestCase {
         }
     }
 
+    @MainActor
+    func testStartRequestDoesNotRequirePreviousLocationButRetainsSafetyGates() {
+        var state = RuntimeState(rule: sampleRule(), enabled: true)
+        func eligible(checking: Bool = false, focused: Bool = false, authorized: Bool = true,
+                      attention: Bool = false, scheduled: Bool = true) -> Bool {
+            AppModel.canRequestPlaceFocus(state: state, isChecking: checking, isFocused: focused,
+                screenTimeAuthorized: authorized, monitoringNeedsAttention: attention, scheduleActive: scheduled)
+        }
+        XCTAssertNil(state.placeObservedAt)
+        XCTAssertFalse(state.insidePlace)
+        XCTAssertTrue(eligible()) // Request is allowed; fresh validation still happens before blocking.
+        XCTAssertFalse(eligible(checking: true))
+        XCTAssertFalse(eligible(focused: true))
+        XCTAssertFalse(eligible(authorized: false))
+        XCTAssertFalse(eligible(attention: true))
+        XCTAssertFalse(eligible(scheduled: false))
+        state.recoveryPaused = true
+        XCTAssertFalse(eligible())
+        state.recoveryPaused = false
+        state.enabled = false
+        XCTAssertFalse(eligible())
+        state.enabled = true
+        state.rule = sampleRule(mode: .nfc)
+        XCTAssertFalse(eligible())
+        state.rule = nil
+        XCTAssertFalse(eligible())
+    }
+
+    func testWeekdaysBelongToTheStartDayAndOldRulesRunDaily() throws {
+        var calendar = Calendar(identifier: .gregorian)
+        calendar.timeZone = try XCTUnwrap(TimeZone(identifier: "Asia/Seoul"))
+        func at(_ day: Int, _ hour: Int) throws -> Date {
+            try XCTUnwrap(calendar.date(from: DateComponents(year: 2026, month: 9, day: day, hour: hour)))
+        }
+        let friday = try at(25, 23)
+        XCTAssertEqual(calendar.component(.weekday, from: friday), 6)
+        var night = sampleRule()
+        night.startMinutes = 22 * 60
+        night.endMinutes = 2 * 60
+        night.days = RestrictionPolicy.dayBit(weekday: 6)
+        XCTAssertTrue(RestrictionPolicy.isScheduleActive(at: friday, rule: night, calendar: calendar))
+        XCTAssertTrue(RestrictionPolicy.isScheduleActive(at: try at(26, 1), rule: night, calendar: calendar))
+        XCTAssertFalse(RestrictionPolicy.isScheduleActive(at: try at(26, 23), rule: night, calendar: calendar))
+        XCTAssertFalse(RestrictionPolicy.isScheduleActive(at: try at(25, 1), rule: night, calendar: calendar))
+        XCTAssertNil(RestrictionPolicy.scheduleOccurrenceStart(at: try at(26, 23), startMinutes: night.startMinutes,
+                                                               endMinutes: night.endMinutes, days: night.activeDays,
+                                                               calendar: calendar))
+        XCTAssertEqual(RestrictionPolicy.nextScheduleStart(after: friday, rule: night, calendar: calendar),
+                       try at(25, 22).addingTimeInterval(7 * 86_400))
+        XCTAssertEqual(RestrictionPolicy.nextScheduleStart(after: try at(25, 9), rule: night, calendar: calendar),
+                       try at(25, 22))
+
+        var weekdays = sampleRule()
+        weekdays.startMinutes = 9 * 60
+        weekdays.endMinutes = 17 * 60
+        weekdays.days = RestrictionPolicy.weekdays
+        XCTAssertTrue(RestrictionPolicy.isScheduleActive(at: try at(25, 10), rule: weekdays, calendar: calendar))
+        XCTAssertFalse(RestrictionPolicy.isScheduleActive(at: try at(26, 10), rule: weekdays, calendar: calendar))
+        XCTAssertEqual(RestrictionPolicy.nextScheduleStart(after: try at(25, 18), rule: weekdays, calendar: calendar),
+                       try at(28, 9))
+
+        // Rules saved before weekdays existed decode without the key and keep running daily.
+        var old = sampleRule()
+        old.days = nil
+        let data = try JSONEncoder().encode(old)
+        XCTAssertFalse(String(decoding: data, as: UTF8.self).contains("\"days\""))
+        let decoded = try JSONDecoder().decode(FocusRule.self, from: data)
+        XCTAssertEqual(decoded.activeDays, RestrictionPolicy.everyDay)
+        XCTAssertTrue((25...31).allSatisfy { day in
+            (try? at(day, 12)).map { RestrictionPolicy.isScheduleActive(at: $0, rule: decoded, calendar: calendar) } ?? false
+        })
+    }
+
     private func sampleRule(mode: PlaceMode = .gps) -> FocusRule {
         FocusRule(id: UUID(), name: "Evening", selection: .init(), targetCount: 1,
                   startMinutes: 0, endMinutes: 1439, placeMode: mode,
@@ -113,6 +186,29 @@ final class RestrictionPolicyTests: XCTestCase {
     }
 
 #if targetEnvironment(simulator)
+    @MainActor
+    func testQuickFocusIsTimedExclusiveAndFreeToEnd() async throws {
+        let model = AppModel()
+        let granted = await model.requestScreenTimeAuthorization()
+        XCTAssertTrue(granted)
+        XCTAssertFalse(model.startQuickFocus(minutes: 25)) // Nothing selected.
+        model.requestQuickSelection()
+        XCTAssertFalse(model.startQuickFocus(minutes: 1)) // Below the OS schedule minimum.
+        XCTAssertTrue(model.startQuickFocus(minutes: 15))
+        let end = try XCTUnwrap(model.quickEndsAt)
+        XCTAssertEqual(end.timeIntervalSinceNow, 15 * 60, accuracy: 5)
+        XCTAssertFalse(model.startQuickFocus(minutes: 25)) // One session at a time.
+        XCTAssertFalse(model.canStartPlaceFocus)
+        model.endQuickFocus()
+        XCTAssertNil(model.quickEndsAt)
+        XCTAssertNil(QuickFocus.endsAt)
+        // An expired session is cleared by whoever looks first.
+        SharedState.defaults.set(Date.now.addingTimeInterval(-1), forKey: "quickFocus.endsAt")
+        model.refresh()
+        XCTAssertNil(model.quickEndsAt)
+        XCTAssertNil(SharedState.defaults.object(forKey: "quickFocus.endsAt"))
+    }
+
     @MainActor
     func testDeletionProtectionOptInSurvivesEditingWithoutChangingActiveRule() async throws {
         let legacy = sampleRule()
