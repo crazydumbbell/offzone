@@ -1,0 +1,4 @@
+<resources>
+    <string name="engine_reconnected">App blocking is ready. Previous focus sessions are not resumed; start a new session when you are ready.</string>
+    <string name="engine_restart_note">If Android stops Offzone or its blocking service, focus ends. Previous sessions and place monitoring do not restart automatically. Start them again when you are ready.</string>
+</resources>

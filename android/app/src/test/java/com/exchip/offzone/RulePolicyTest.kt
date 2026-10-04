@@ -2,6 +2,7 @@ package com.exchip.offzone
 
 import org.junit.Assert.*
 import org.junit.Test
+import java.time.DayOfWeek
 import java.time.ZoneId
 import java.time.ZonedDateTime
 
@@ -32,5 +33,29 @@ class RulePolicyTest {
         assertEquals(6, RulePolicy.scheduleEnd(rule, now).hour)
         val spring = ZonedDateTime.of(2026, 3, 8, 1, 30, 0, 0, ZoneId.of("America/New_York"))
         assertTrue(RulePolicy.scheduleEnd(rule.copy(endMinutes = 150), spring).isAfter(spring))
+    }
+
+    @Test fun weekdaysBelongToTheStartDayAndOldRulesRunDaily() {
+        val zone = ZoneId.of("Asia/Seoul")
+        val friday = ZonedDateTime.of(2026, 9, 25, 23, 0, 0, 0, zone)
+        assertEquals(DayOfWeek.FRIDAY, friday.dayOfWeek)
+        val night = FocusRule(name = "Night", packages = setOf("example.video"), startMinutes = 22 * 60, endMinutes = 2 * 60,
+            latitude = 37.0, longitude = 127.0, days = 1 shl (DayOfWeek.FRIDAY.value - 1))
+        assertTrue(RulePolicy.scheduleActive(night, friday))
+        assertTrue(RulePolicy.scheduleActive(night, friday.plusHours(2))) // Saturday 01:00 continues Friday.
+        assertFalse(RulePolicy.scheduleActive(night, friday.plusHours(3)))
+        assertFalse(RulePolicy.scheduleActive(night, friday.plusDays(1))) // Saturday 23:00 is not selected.
+        assertFalse(RulePolicy.scheduleActive(night, friday.minusDays(1).minusHours(21))) // Thursday 02:00 continues Wednesday.
+        assertEquals(friday.plusDays(7).withHour(22), RulePolicy.nextStart(night, friday))
+        assertEquals(friday.withHour(22), RulePolicy.nextStart(night, friday.withHour(9)))
+        assertFalse(night.copy(days = 0).valid())
+        assertFalse(night.copy(days = 128).valid())
+        val daily = night.copy(days = RulePolicy.EVERY_DAY)
+        assertEquals(RulePolicy.EVERY_DAY, FocusRule(name = "Old", packages = setOf("a"), startMinutes = 0, endMinutes = 60, latitude = 0.0, longitude = 0.0).days)
+        assertTrue((0L..6L).all { RulePolicy.scheduleActive(daily, friday.plusDays(it)) })
+        val weekdays = daily.copy(startMinutes = 9 * 60, endMinutes = 17 * 60, days = RulePolicy.WEEKDAYS)
+        assertTrue(RulePolicy.scheduleActive(weekdays, friday.withHour(10)))
+        assertFalse(RulePolicy.scheduleActive(weekdays, friday.plusDays(1).withHour(10)))
+        assertEquals(DayOfWeek.MONDAY, RulePolicy.nextStart(weekdays, friday)!!.dayOfWeek)
     }
 }

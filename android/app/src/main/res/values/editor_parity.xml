@@ -13,7 +13,7 @@
     <string name="editor_place_empty">No place selected yet</string>
     <string name="editor_place_hint">Arrival uses an approximate 150 m area, not room-level accuracy.</string>
     <string name="editor_schedule_title">Choose your schedule</string>
-    <string name="editor_schedule_detail">Repeats daily.</string>
+    <string name="editor_schedule_detail">Pick the days and times it repeats.</string>
     <string name="editor_schedule_warning">Choose a focus window of at least 15 minutes.</string>
     <string name="editor_schedule_overnight">Ends the next day.</string>
     <string name="editor_review_title">Review your rule</string>
@@ -26,4 +26,10 @@
     <string name="editor_next_place">Choose a place</string>
     <string name="editor_next_time">Choose a time</string>
     <string name="editor_next_review">Review rule</string>
+    <string name="editor_days">Days</string>
+    <string name="editor_days_warning">Choose at least one day.</string>
+    <string name="days_every">Every day</string>
+    <string name="days_weekdays">Weekdays</string>
+    <string name="days_weekends">Weekends</string>
+    <string name="home_starts_on">Starts %1$s at %2$s</string>
 </resources>

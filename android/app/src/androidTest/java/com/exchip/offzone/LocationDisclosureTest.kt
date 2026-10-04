@@ -1,13 +1,16 @@
 package com.exchip.offzone
 
 import android.Manifest
+import android.app.UiAutomation
 import android.content.Intent
 import android.os.Build
 import android.os.SystemClock
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.platform.app.InstrumentationRegistry
 import androidx.test.uiautomator.By
+import androidx.test.uiautomator.Configurator
 import androidx.test.uiautomator.UiDevice
+import androidx.test.uiautomator.Until
 import java.io.File
 import org.junit.Assert.*
 import org.junit.Assume.assumeTrue
@@ -20,6 +23,7 @@ class LocationDisclosureTest {
         assumeTrue("Isolated emulator only", Build.MODEL.contains("sdk") || Build.FINGERPRINT.contains("generic"))
         val instrumentation = InstrumentationRegistry.getInstrumentation()
         val context = instrumentation.targetContext
+        Configurator.getInstance().setUiAutomationFlags(UiAutomation.FLAG_DONT_SUPPRESS_ACCESSIBILITY_SERVICES)
         val device = UiDevice.getInstance(instrumentation)
         // Runner setup pregrants these on the isolated emulator; keep OS permission dialogs out of this consent test.
         assertEquals(android.content.pm.PackageManager.PERMISSION_GRANTED, context.checkSelfPermission(Manifest.permission.ACCESS_FINE_LOCATION))
@@ -29,7 +33,8 @@ class LocationDisclosureTest {
         val originalRule = FocusController.state.value.appliedRule
         val originalNotifications = FocusController.notificationsEnabled.value
         val rule = FocusRule("location-disclosure-test", "Location consent test", setOf("com.android.settings"), 0, 1439, 37.5665, 126.978)
-        fun clearCache() { if (Build.VERSION.SDK_INT >= 33) instrumentation.uiAutomation.clearCache() }
+        fun clearCache() { if (Build.VERSION.SDK_INT >= 33) instrumentation.getUiAutomation(
+            UiAutomation.FLAG_DONT_SUPPRESS_ACCESSIBILITY_SERVICES).clearCache() }
         fun click(id: Int) {
             val text = context.getString(id)
             repeat(10) {
@@ -37,7 +42,8 @@ class LocationDisclosureTest {
                 val found = device.findObject(By.text(text))
                 if (found != null) {
                     device.waitForIdle(1_000); SystemClock.sleep(500); clearCache()
-                    device.findObject(By.text(text))?.click()
+                    val current = device.findObject(By.text(text)) ?: return@repeat
+                    current.click()
                     device.waitForIdle(1_000); SystemClock.sleep(500); clearCache(); return
                 }
                 device.swipe(device.displayWidth / 2, device.displayHeight * 4 / 5, device.displayWidth / 2, device.displayHeight / 3, 50)
@@ -59,6 +65,7 @@ class LocationDisclosureTest {
                 assertTrue(FocusController.activateRule(rule.id))
             }
             context.startActivity(Intent(context, MainActivity::class.java).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK))
+            click(R.string.audit_settings)
             click(R.string.engine_monitor_start)
             clearCache()
             assertTrue(device.hasObject(By.text(context.getString(R.string.location_disclosure_title))))
@@ -75,6 +82,8 @@ class LocationDisclosureTest {
             val invalidated = FocusController.generation
             click(R.string.location_disclosure_agree)
             assertIdle(invalidated)
+            assertTrue("Stale consent closes without dispatching", device.wait(
+                Until.gone(By.text(context.getString(R.string.location_disclosure_title))), 5_000))
 
             click(R.string.engine_monitor_start)
             assertTrue(device.hasObject(By.text(context.getString(R.string.location_disclosure_title))))

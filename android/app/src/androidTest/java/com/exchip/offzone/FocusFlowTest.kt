@@ -34,8 +34,8 @@ class FocusFlowTest {
         val previousSelection = AppSelection.selected(context)
         val previousDisclosure = preferences.getBoolean("disclosure", false)
         val target = instrumentation.context.packageName
-        fun waitFor(test: () -> Boolean) {
-            val end = SystemClock.elapsedRealtime() + 10_000
+        fun waitFor(timeout: Long = 10_000, test: () -> Boolean) {
+            val end = SystemClock.elapsedRealtime() + timeout
             while (!test() && SystemClock.elapsedRealtime() < end) SystemClock.sleep(100)
             assertTrue(test())
         }
@@ -51,8 +51,13 @@ class FocusFlowTest {
             context.startActivity(Intent().setComponent(ComponentName(target, FocusTestActivity::class.java.name))
                 .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK))
         }
-        fun start() {
-            instrumentation.runOnMainSync { assertTrue(FocusController.start(setOf(target), 1)) }
+        fun start(stage: String) {
+            instrumentation.runOnMainSync {
+                val before = FocusController.state.value
+                assertTrue("$stage rejected: connected=${before.connected}, remaining=${before.session?.remaining(SystemClock.elapsedRealtime())}, " +
+                    "generation=${FocusController.generation}, protected=${target in AppSelection.protectedPackages(context)}",
+                    FocusController.start(setOf(target), 1))
+            }
             launchTarget()
             assertTrue(device.wait(Until.hasObject(By.text(context.getString(R.string.blocked_title))), 5_000))
         }
@@ -87,15 +92,21 @@ class FocusFlowTest {
             device.findObject(By.text(context.getString(R.string.restore))).click()
             waitFor { FocusController.state.value.session == null }
             assertTrue(device.wait(Until.gone(By.text(context.getString(R.string.blocked_title))), 5_000))
-            start()
+            start("expiry check")
             context.startActivity(Intent(Settings.ACTION_SETTINGS).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK))
             assertTrue(device.wait(Until.gone(By.text(context.getString(R.string.blocked_title))), 5_000))
             launchTarget()
             assertTrue(device.wait(Until.hasObject(By.text(context.getString(R.string.blocked_title))), 5_000))
             // Real monotonic expiry while the test app remains foreground.
-            assertTrue(device.wait(Until.gone(By.text(context.getString(R.string.blocked_title))), 65_000))
-            waitFor { FocusController.state.value.session == null }
-            start()
+            val expiresAt = FocusController.state.value.session!!.endsAt
+            // Accessibility can briefly return a null overlay root before expiry; it is not a timer signal.
+            waitFor(65_000) { FocusController.state.value.session == null }
+            assertTrue(SystemClock.elapsedRealtime() >= expiresAt)
+            assertEquals(R.string.session_finished, FocusController.state.value.message)
+            if (Build.VERSION.SDK_INT >= 33) instrumentation.getUiAutomation(
+                UiAutomation.FLAG_DONT_SUPPRESS_ACCESSIBILITY_SERVICES).clearCache()
+            assertTrue(device.wait(Until.gone(By.text(context.getString(R.string.blocked_title))), 5_000))
+            start("permission revocation check")
             device.executeShellCommand(if (previous.isEmpty()) "settings delete secure enabled_accessibility_services" else "settings put secure enabled_accessibility_services $previous")
             waitFor { !FocusController.state.value.connected }
             assertNull(FocusController.state.value.session)

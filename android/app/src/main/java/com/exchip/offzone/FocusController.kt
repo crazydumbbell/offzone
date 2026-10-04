@@ -53,7 +53,18 @@ object FocusController {
         mutableNotifications.value = enabled
         if (!enabled) context?.getSystemService(android.app.NotificationManager::class.java)?.cancel(411)
     }
-    fun connect() { stopInternal(null); mutableState.value = state.value.copy(connected = true) }
+    fun connect() {
+        val current = state.value
+        val notice = when {
+            current.session != null || current.monitoringPlace || current.checkingPlace -> R.string.service_stopped
+            current.message in setOf(R.string.service_stopped, R.string.blocking_error,
+                R.string.engine_storage_error, R.string.engine_location_lost, R.string.engine_location_needed,
+                R.string.engine_setup_needed, R.string.engine_not_ready) -> current.message
+            else -> R.string.engine_reconnected
+        }
+        stopInternal(notice)
+        mutableState.value = state.value.copy(connected = true)
+    }
     fun disconnect() {
         stopInternal(R.string.service_stopped)
         mutableState.value = state.value.copy(connected = false)
@@ -95,13 +106,16 @@ object FocusController {
         invalidateChecks()
         endWallMillis = null
         mutableState.value = state.value.copy(session = null, remaining = 0, message = message,
-            insidePlace = false, checkingPlace = false, observedAt = null, placeSession = false, monitoringPlace = false)
+            insidePlace = false, checkingPlace = false, observedAt = null, distanceMeters = null,
+            accuracyMeters = null, placeSession = false, monitoringPlace = false)
         context?.stopService(Intent(context, PlaceMonitor::class.java))
         onChange?.invoke()
         if (wasActive) notify(R.string.engine_ended)
     }
     fun checkArrival(context: Context) {
-        if (!state.value.monitoringPlace) requestArrival(context, false)
+        if (state.value.monitoringPlace) {
+            mutableState.value = state.value.copy(message = R.string.engine_monitor_body)
+        } else requestArrival(context, false)
     }
     fun startPlaceFocus(context: Context) { requestArrival(context, true) }
     fun startPlaceMonitoring(context: Context) { requestArrival(context, false, monitor = true) }

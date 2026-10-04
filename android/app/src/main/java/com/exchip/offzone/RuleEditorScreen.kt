@@ -20,13 +20,29 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.clearAndSetSemantics
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.semantics
+import java.time.DayOfWeek
 import java.time.LocalTime
 import java.time.format.DateTimeFormatter
 import java.time.format.FormatStyle
+import java.time.format.TextStyle
 import java.util.Locale
 import java.util.UUID
 
 internal fun timeLabel(minutes: Int): String = LocalTime.of(minutes / 60, minutes % 60).format(DateTimeFormatter.ofLocalizedTime(FormatStyle.SHORT))
+internal fun dayLabel(day: DayOfWeek, style: TextStyle = TextStyle.SHORT): String = day.getDisplayName(style, Locale.getDefault())
+
+@Composable
+internal fun daysLabel(days: Int): String = when (days) {
+    RulePolicy.EVERY_DAY -> stringResource(R.string.days_every)
+    RulePolicy.WEEKDAYS -> stringResource(R.string.days_weekdays)
+    RulePolicy.EVERY_DAY - RulePolicy.WEEKDAYS -> stringResource(R.string.days_weekends)
+    else -> DayOfWeek.entries.filter { RulePolicy.dayOn(days, it) }.joinToString(", ") { dayLabel(it) }
+}
+
+@Composable
+internal fun scheduleLabel(rule: FocusRule): String = "${timeLabel(rule.startMinutes)} – ${timeLabel(rule.endMinutes)} · ${daysLabel(rule.days)}"
 
 @Composable
 private fun EditorCard(title: String, detail: String, onClick: () -> Unit) {
@@ -46,6 +62,7 @@ private fun EditorSummary(label: String, value: String) {
     }
 }
 
+@OptIn(ExperimentalLayoutApi::class)
 @Composable
 fun RuleEditorScreen(
     rule: FocusRule?, defaultStart: Int, onBack: () -> Unit, onSaved: (FocusRule) -> Unit,
@@ -61,6 +78,7 @@ fun RuleEditorScreen(
     var name by rememberSaveable { mutableStateOf(rule?.name ?: context.getString(suggestedName)) }
     var start by rememberSaveable { mutableIntStateOf(rule?.startMinutes ?: defaultStart) }
     var end by rememberSaveable { mutableIntStateOf(rule?.endMinutes ?: defaultEnd) }
+    var days by rememberSaveable { mutableIntStateOf(rule?.days ?: RulePolicy.EVERY_DAY) }
     var packages by rememberSaveable(stateSaver = listSaver<Set<String>, String>(save = { it.toList() }, restore = { it.toSet() })) { mutableStateOf(rule?.packages ?: emptySet()) }
     var latitude by rememberSaveable { mutableStateOf(rule?.latitude) }
     var longitude by rememberSaveable { mutableStateOf(rule?.longitude) }
@@ -72,7 +90,7 @@ fun RuleEditorScreen(
     val placeName = if (latitude != null && longitude != null)
         label.ifBlank { String.format(Locale.getDefault(), "%.5f, %.5f", latitude, longitude) }
     else ""
-    val durationValid = RulePolicy.intervalMinutes(start, end) >= 15
+    val durationValid = RulePolicy.intervalMinutes(start, end) >= 15 && days != 0
     val saveValid = name.isNotBlank() && packages.isNotEmpty() && latitude != null && longitude != null && durationValid
     val nextEnabled = when (step) { 0 -> packages.isNotEmpty(); 1 -> latitude != null && longitude != null; 2 -> durationValid; else -> saveValid }
     val nextLabel = when (step) { 0 -> R.string.editor_next_place; 1 -> R.string.editor_next_time; 2 -> R.string.editor_next_review; else -> R.string.m_save_rule }
@@ -94,7 +112,7 @@ fun RuleEditorScreen(
                         if (!saveValid) return@PrimaryButton
                         val draft = FocusRule(
                             id = rule?.id ?: UUID.randomUUID().toString(), name = name.trim(), packages = packages,
-                            startMinutes = start, endMinutes = end, latitude = latitude!!, longitude = longitude!!, placeLabel = label,
+                            startMinutes = start, endMinutes = end, latitude = latitude!!, longitude = longitude!!, placeLabel = label, days = days,
                         )
                         if (FocusController.ruleStore.save(draft)) onSaved(draft) else failed = true
                     }
@@ -116,12 +134,9 @@ fun RuleEditorScreen(
                 TextButton(onClick = { if (step == 0) onBack() else step-- }) { Text(stringResource(R.string.m_back)) }
                 Text("OFFZONE", style = MaterialTheme.typography.titleMedium, color = Ink)
                 Spacer(Modifier.weight(1f))
-                Text("${step + 3} / 6", style = MaterialTheme.typography.bodyMedium, color = InkMuted)
+                Text("${step + 1} / 4", style = MaterialTheme.typography.bodyMedium, color = InkMuted)
             }
-            StepProgress((step + 3) / 6f)
-            Box(Modifier.fillMaxWidth().height(100.dp), contentAlignment = Alignment.CenterEnd) {
-                NookCatView(NookExpression.READY, Modifier.width(110.dp).height(100.dp))
-            }
+            StepProgress((step + 1) / 4f)
             Text(stringResource(when (step) {
                 0 -> R.string.editor_apps_title; 1 -> R.string.editor_place_title
                 2 -> R.string.editor_schedule_title; else -> R.string.editor_review_title
@@ -141,6 +156,14 @@ fun RuleEditorScreen(
                 }
                 2 -> {
                     Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
+                        Text(stringResource(R.string.editor_days), style = MaterialTheme.typography.bodyMedium, fontWeight = FontWeight.SemiBold, color = InkMuted)
+                        FlowRow(horizontalArrangement = Arrangement.spacedBy(8.dp), verticalArrangement = Arrangement.spacedBy(4.dp)) {
+                            DayOfWeek.entries.forEach { day ->
+                                val bit = 1 shl (day.value - 1)
+                                val full = dayLabel(day, TextStyle.FULL)
+                                OffzoneChip(days and bit != 0, onClick = { days = days xor bit }, modifier = Modifier.heightIn(min = 48.dp).semantics { contentDescription = full }) { Text(dayLabel(day)) }
+                            }
+                        }
                         SecondaryButton(onClick = {
                             TimePickerDialog(context, { _, hour, minute -> start = hour * 60 + minute }, start / 60, start % 60, DateFormat.is24HourFormat(context)).show()
                         }, modifier = Modifier.fillMaxWidth()) { Text(stringResource(R.string.m_start_time, timeLabel(start))) }
@@ -148,7 +171,8 @@ fun RuleEditorScreen(
                             TimePickerDialog(context, { _, hour, minute -> end = hour * 60 + minute }, end / 60, end % 60, DateFormat.is24HourFormat(context)).show()
                         }, modifier = Modifier.fillMaxWidth()) { Text(stringResource(R.string.m_end_time, timeLabel(end))) }
                     }
-                    if (!durationValid) Text(stringResource(R.string.editor_schedule_warning), color = MaterialTheme.colorScheme.error)
+                    if (days == 0) Text(stringResource(R.string.editor_days_warning), color = MaterialTheme.colorScheme.error)
+                    else if (!durationValid) Text(stringResource(R.string.editor_schedule_warning), color = MaterialTheme.colorScheme.error)
                     else if (end < start) Text(stringResource(R.string.editor_schedule_overnight), color = InkMuted)
                     Text(stringResource(R.string.m_schedule_note), style = MaterialTheme.typography.bodyMedium, color = InkMuted)
                 }
@@ -161,7 +185,7 @@ fun RuleEditorScreen(
                             HorizontalDivider()
                             EditorSummary(stringResource(R.string.editor_place), placeName)
                             HorizontalDivider()
-                            EditorSummary(stringResource(R.string.editor_time), "${timeLabel(start)}–${timeLabel(end)}")
+                            EditorSummary(stringResource(R.string.editor_time), "${timeLabel(start)}–${timeLabel(end)} · ${daysLabel(days)}")
                         }
                     }
                     Text(stringResource(R.string.editor_save_note), style = MaterialTheme.typography.bodyMedium, color = InkMuted)

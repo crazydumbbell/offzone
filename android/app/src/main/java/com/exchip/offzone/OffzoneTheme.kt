@@ -79,6 +79,10 @@ internal val OffzoneShapes = Shapes(
 )
 
 @Composable
+internal fun OffzoneTheme(content: @Composable () -> Unit) =
+    MaterialTheme(colorScheme = OffzoneColors, typography = OffzoneTypography, shapes = OffzoneShapes, content = content)
+
+@Composable
 internal fun StepProgress(progress: Float, modifier: Modifier = Modifier) =
     LinearProgressIndicator({ progress }, modifier.fillMaxWidth(), color = Pine, trackColor = PineHairline, gapSize = 0.dp, drawStopIndicator = {})
 
@@ -95,9 +99,9 @@ internal fun SecondaryButton(onClick: () -> Unit, modifier: Modifier = Modifier,
     )
 
 @Composable
-internal fun OffzoneChip(selected: Boolean, onClick: () -> Unit, enabled: Boolean = true, label: @Composable () -> Unit) =
+internal fun OffzoneChip(selected: Boolean, onClick: () -> Unit, enabled: Boolean = true, modifier: Modifier = Modifier, label: @Composable () -> Unit) =
     FilterChip(
-        selected, onClick, label, Modifier.heightIn(min = 40.dp), enabled,
+        selected, onClick, label, modifier.heightIn(min = 40.dp), enabled,
         colors = FilterChipDefaults.filterChipColors(containerColor = WarmIvory, labelColor = Ink, selectedContainerColor = Mint),
         border = FilterChipDefaults.filterChipBorder(enabled, selected, borderColor = PineLine, selectedBorderColor = Pine, selectedBorderWidth = 1.5.dp),
     )

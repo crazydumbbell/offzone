@@ -40,6 +40,7 @@ fun PlacePickerScreen(initialLat: Double?, initialLon: Double?, initialLabel: St
     var busy by remember { mutableStateOf(false) }
     var error by remember { mutableStateOf(false) }
     var mapAllowed by rememberSaveable { mutableStateOf(false) }
+    var coordinatesExpanded by rememberSaveable { mutableStateOf(false) }
     var web by remember { mutableStateOf<WebView?>(null) }
     var cancelFix by remember { mutableStateOf<(() -> Unit)?>(null) }
     var latitudeText by rememberSaveable { mutableStateOf(initialLat?.toString() ?: "") }
@@ -83,12 +84,12 @@ fun PlacePickerScreen(initialLat: Double?, initialLon: Double?, initialLabel: St
             }, enabled = !busy) { Text(stringResource(R.string.m_current_place)) }
         }
         if (busy) LinearProgressIndicator(Modifier.fillMaxWidth(), trackColor = PineHairline)
-        if (error) Text(stringResource(R.string.m_place_error), style = MaterialTheme.typography.bodySmall)
+        if (error) Text(stringResource(R.string.m_place_error), style = MaterialTheme.typography.bodyMedium, color = MaterialTheme.colorScheme.error)
         if (results.isNotEmpty()) LazyColumn(Modifier.heightIn(max = 150.dp)) {
             items(results) { address -> TextButton(onClick = { select(address.latitude, address.longitude, address.getAddressLine(0).orEmpty()); results = emptyList() }) { Text(address.getAddressLine(0).orEmpty()) } }
         }
         if (!mapAllowed) {
-            Text(stringResource(R.string.m_map_privacy), style = MaterialTheme.typography.bodySmall)
+            Text(stringResource(R.string.m_map_privacy), style = MaterialTheme.typography.bodyMedium)
             SecondaryButton(onClick = { mapAllowed = true }) { Text(stringResource(R.string.m_show_map)) }
         } else AndroidView(modifier = Modifier.fillMaxWidth().height(260.dp), factory = {
             WebView(context).apply {
@@ -128,10 +129,17 @@ fun PlacePickerScreen(initialLat: Double?, initialLon: Double?, initialLabel: St
             }
         })
         if (!mapAllowed) Spacer(Modifier.height(16.dp))
-        Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-            OutlinedTextField(latitudeText, { value -> latitudeText = value; label = ""; lat = value.toDoubleOrNull()?.takeIf { it.isFinite() && it in -90.0..90.0 } }, label = { Text(stringResource(R.string.m_latitude)) }, singleLine = true, modifier = Modifier.weight(1f))
-            OutlinedTextField(longitudeText, { value -> longitudeText = value; label = ""; lon = value.toDoubleOrNull()?.takeIf { it.isFinite() && it in -180.0..180.0 } }, label = { Text(stringResource(R.string.m_longitude)) }, singleLine = true, modifier = Modifier.weight(1f))
+        if (lat != null && lon != null) OutlinedTextField(label, { label = it.take(120) },
+            label = { Text(stringResource(R.string.audit_place_name)) },
+            placeholder = { Text(stringResource(R.string.audit_place_example)) },
+            modifier = Modifier.fillMaxWidth(), singleLine = true)
+        TextButton(onClick = { coordinatesExpanded = !coordinatesExpanded }) {
+            Text(stringResource(if (coordinatesExpanded) R.string.audit_hide_coordinates else R.string.audit_coordinates))
         }
-        Text(stringResource(R.string.m_place_note), style = MaterialTheme.typography.bodySmall)
+        if (coordinatesExpanded) Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
+            OutlinedTextField(latitudeText, { value -> latitudeText = value; label = ""; lat = value.toDoubleOrNull()?.takeIf { it.isFinite() && it in -90.0..90.0 } }, label = { Text(stringResource(R.string.m_latitude)) }, singleLine = true, modifier = Modifier.fillMaxWidth())
+            OutlinedTextField(longitudeText, { value -> longitudeText = value; label = ""; lon = value.toDoubleOrNull()?.takeIf { it.isFinite() && it in -180.0..180.0 } }, label = { Text(stringResource(R.string.m_longitude)) }, singleLine = true, modifier = Modifier.fillMaxWidth())
+        }
+        Text(stringResource(R.string.m_place_note), style = MaterialTheme.typography.bodyMedium)
     }
 }

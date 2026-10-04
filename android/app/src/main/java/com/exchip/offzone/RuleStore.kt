@@ -56,11 +56,13 @@ class RuleStore(context: Context) {
         internal fun encode(rule: FocusRule) = JSONObject().put("id", rule.id).put("name", rule.name)
             .put("packages", JSONArray(rule.packages.sorted())).put("start", rule.startMinutes).put("end", rule.endMinutes)
             .put("latitude", rule.latitude).put("longitude", rule.longitude).put("placeLabel", rule.placeLabel)
+            .put("days", rule.days)
         internal fun decode(value: JSONObject): FocusRule {
             val apps = value.getJSONArray("packages")
             return FocusRule(value.getString("id"), value.getString("name"),
                 (0 until apps.length()).map { apps.getString(it) }.toSet(), value.getInt("start"), value.getInt("end"),
-                value.getDouble("latitude"), value.getDouble("longitude"), value.optString("placeLabel"))
+                value.getDouble("latitude"), value.getDouble("longitude"), value.optString("placeLabel"),
+                value.optInt("days", RulePolicy.EVERY_DAY))
                 .also { require(it.valid()) }
         }
     }

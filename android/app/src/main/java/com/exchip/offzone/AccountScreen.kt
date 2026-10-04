@@ -13,6 +13,8 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
@@ -27,25 +29,29 @@ fun AccountScreen(store: AccountStore, onBack: () -> Unit, initialGoal: String? 
     val state by store.state.collectAsState()
     val context = LocalContext.current
     val activity = context.accountActivity()
-    var email by remember { mutableStateOf("") }
+    var email by rememberSaveable { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
     var confirmation by remember { mutableStateOf("") }
-    var mode by remember { mutableStateOf("signin") }
+    var mode by rememberSaveable { mutableStateOf("signin") }
     var deleting by remember { mutableStateOf(false) }
     var mismatch by remember { mutableStateOf(false) }
     var goal by remember(initialGoal) { mutableStateOf(initialGoal?.takeIf(AccountIdentity.goals::contains) ?: "work") }
     LaunchedEffect(state.uid) { deleting = false; password = ""; confirmation = ""; mode = "signin"; store.refresh() }
+    val snackbar = remember { SnackbarHostState() }
+    LaunchedEffect(state.notice, state.error) {
+        (state.error ?: state.notice)?.let { snackbar.showSnackbar(it) }
+    }
+    Box(Modifier.fillMaxSize()) {
     Column(Modifier.fillMaxSize().safeDrawingPadding().imePadding().verticalScroll(rememberScrollState()).padding(24.dp), verticalArrangement = Arrangement.spacedBy(12.dp)) {
         TextButton(onClick = onBack) { Text(stringResource(R.string.account_done)) }
-        Text(stringResource(R.string.account_title), style = MaterialTheme.typography.titleMedium)
-        Surface(color = SoftButter, shape = RoundedCornerShape(24.dp)) {
-            Box(Modifier.fillMaxWidth().heightIn(min = 132.dp), contentAlignment = androidx.compose.ui.Alignment.Center) {
-                NookCatView(NookExpression.WELCOME_FULL, Modifier.size(width = 146.dp, height = 126.dp))
+        Row(Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) {
+            Column(Modifier.weight(1f)) {
+                Text(stringResource(R.string.account_title), style = MaterialTheme.typography.headlineSmall)
+                Text(stringResource(if (state.pro) R.string.account_pro_active else R.string.account_free_space), style = MaterialTheme.typography.bodyLarge)
             }
+            NookCatView(NookExpression.WELCOME_FULL, Modifier.size(72.dp))
         }
-        Text(stringResource(if (state.pro) R.string.account_pro_active else R.string.account_free_space), style = MaterialTheme.typography.headlineLarge)
-        Text(stringResource(R.string.account_local))
-        if (onJournal != null) TextButton(onClick = onJournal, modifier = Modifier.heightIn(min = 48.dp)) { Text(stringResource(R.string.m_journal)) }
+        Text(stringResource(R.string.account_local), style = MaterialTheme.typography.bodyLarge)
         if (!state.configured) Text(stringResource(R.string.account_unavailable))
         else if (state.uid == null) {
             Text(stringResource(R.string.account_signin_intro))
@@ -121,7 +127,7 @@ fun AccountScreen(store: AccountStore, onBack: () -> Unit, initialGoal: String? 
                 }
                 Text(stringResource(R.string.account_renews))
             } else if (!state.pro) Text(stringResource(if (store.offersEnabled && state.packages.isNotEmpty() && !state.verified) R.string.account_plans_after_signin else R.string.account_plans_unavailable))
-            TextButton(onClick = store::loadOfferings, enabled = !state.busy && state.verified) { Text(stringResource(R.string.account_refresh_plans)) }
+            if (store.offersEnabled) TextButton(onClick = store::loadOfferings, enabled = !state.busy && state.verified) { Text(stringResource(R.string.account_refresh_plans)) }
             if (state.purchasesConfigured) TextButton(onClick = store::restorePurchases, enabled = !state.busy) { Text(stringResource(R.string.account_restore)) }
             if (activity != null) TextButton(onClick = { store.manageSubscription(activity) }) { Text(stringResource(R.string.account_manage)) }
             if (store.unlockPassEnabled) {
@@ -137,11 +143,12 @@ fun AccountScreen(store: AccountStore, onBack: () -> Unit, initialGoal: String? 
             TextButton(onClick = { deleting = true; password = "" }, enabled = !state.busy) { Text(stringResource(R.string.account_delete), color = MaterialTheme.colorScheme.error) }
         }
         if (state.busy) CircularProgressIndicator()
-        state.notice?.let { Text(it) }
-        state.error?.let { Text(it, color = MaterialTheme.colorScheme.error) }
+        if (onJournal != null) TextButton(onClick = onJournal, modifier = Modifier.heightIn(min = 48.dp)) { Text(stringResource(R.string.m_journal)) }
         listOf(R.string.account_terms to BuildConfig.TERMS_URL, R.string.account_privacy to BuildConfig.PRIVACY_URL).forEach { (label, url) ->
             if (AccountStore.https(url)) TextButton(onClick = { context.startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(url))) }) { Text(stringResource(label)) }
         }
+    }
+    SnackbarHost(snackbar, Modifier.align(Alignment.BottomCenter).safeDrawingPadding().imePadding().padding(16.dp))
     }
     if (deleting && state.uid != null) AlertDialog(onDismissRequest = { if (!state.busy) deleting = false },
         title = { Text(stringResource(R.string.account_delete)) },

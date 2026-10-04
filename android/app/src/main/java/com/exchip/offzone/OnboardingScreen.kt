@@ -3,6 +3,7 @@ package com.exchip.offzone
 import android.app.TimePickerDialog
 import android.content.Context
 import android.text.format.DateFormat
+import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -90,7 +91,7 @@ private fun OnboardingChoice(title: String, detail: String?, selected: Boolean, 
 }
 
 @Composable
-fun OnboardingScreen(onComplete: (goal: String, window: String) -> Unit) {
+fun OnboardingScreen(onQuickFocus: () -> Unit = {}, onComplete: (goal: String, window: String) -> Unit) {
     val context = LocalContext.current
     var step by rememberSaveable { mutableIntStateOf(0) }
     var goal by rememberSaveable { mutableStateOf(OnboardingProfile.goal(context)) }
@@ -100,6 +101,7 @@ fun OnboardingScreen(onComplete: (goal: String, window: String) -> Unit) {
     var busy by remember { mutableStateOf(false) }
     val scope = rememberCoroutineScope()
     val suggestedStart = if (goal == "work") 9 * 60 else 20 * 60
+    BackHandler(step > 0) { if (!busy) { step--; failed = false } }
     val pickTime = {
         TimePickerDialog(context, { _, hour, minute ->
             customStart = hour * 60 + minute
@@ -126,6 +128,9 @@ fun OnboardingScreen(onComplete: (goal: String, window: String) -> Unit) {
             ) {
                 Text(stringResource(when (step) { 0 -> R.string.onboarding_start; 1 -> R.string.onboarding_continue; else -> R.string.onboarding_done }))
             }
+            if (step == 0) TextButton(onClick = onQuickFocus, modifier = Modifier.fillMaxWidth().heightIn(min = 48.dp)) {
+                Text(stringResource(R.string.audit_try_focus), color = Ink)
+            }
         }
     }) { innerPadding ->
         Column(
@@ -135,19 +140,15 @@ fun OnboardingScreen(onComplete: (goal: String, window: String) -> Unit) {
         ) {
             if (step > 0) {
                 Row(Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) {
-                    TextButton(onClick = { step--; failed = false }) { Text(stringResource(R.string.journal_back)) }
+                    TextButton(onClick = { step--; failed = false }, enabled = !busy) { Text(stringResource(R.string.journal_back)) }
                     Text("OFFZONE", style = MaterialTheme.typography.titleMedium, color = Ink)
                     Spacer(Modifier.weight(1f))
-                    Text(step.toString() + " / 6", style = MaterialTheme.typography.bodyMedium, color = InkMuted)
+                    Text(step.toString() + " / 2", style = MaterialTheme.typography.bodyMedium, color = InkMuted)
                 }
-                StepProgress(step / 6f)
+                StepProgress(step / 2f)
             }
             if (step == 0) {
                 NookCatView(NookExpression.WELCOME_FULL, Modifier.fillMaxWidth().height(190.dp))
-            } else {
-                Box(Modifier.fillMaxWidth().height(100.dp), contentAlignment = Alignment.CenterEnd) {
-                    NookCatView(if (step == 1) NookExpression.READY else NookExpression.FOCUSED, Modifier.size(100.dp))
-                }
             }
             Text(
                 stringResource(when (step) { 0 -> R.string.onboarding_title; 1 -> R.string.onboarding_goal; else -> R.string.onboarding_rhythm }),

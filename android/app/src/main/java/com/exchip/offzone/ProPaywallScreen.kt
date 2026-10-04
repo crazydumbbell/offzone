@@ -658,8 +658,9 @@ private fun ProInfoScreen(store: AccountStore, account: AccountState, onContinue
         Column(Modifier.weight(1f).verticalScroll(rememberScrollState()).padding(horizontal = 24.dp),
             verticalArrangement = Arrangement.spacedBy(22.dp)) {
             NookCatView(NookExpression.WELCOME_FULL, Modifier.fillMaxWidth().height(184.dp))
-            Text(stringResource(heading), style = MaterialTheme.typography.headlineLarge)
-            BenefitList()
+            Text(stringResource(if (store.offersEnabled || store.hasProAccess) heading else R.string.audit_pro_unavailable_title), style = MaterialTheme.typography.headlineLarge)
+            if (!store.offersEnabled && !store.hasProAccess) Text(stringResource(R.string.audit_pro_unavailable_body), style = MaterialTheme.typography.bodyLarge)
+            if (store.offersEnabled || store.hasProAccess) BenefitList()
             Surface(color = Mint, shape = RoundedCornerShape(16.dp)) {
                 Text(stringResource(if (store.hasProAccess) R.string.account_pro_active else R.string.account_plans_unavailable),
                     modifier = Modifier.fillMaxWidth().padding(18.dp), style = MaterialTheme.typography.bodyMedium)
