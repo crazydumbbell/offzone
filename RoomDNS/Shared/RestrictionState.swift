@@ -55,6 +55,7 @@ enum QuickFocus {
 
 enum PlaceMode: String, Codable {
     case gps
+    case anywhere // Time only: no place and no Location access. Still needs an explicit Start focus.
     case nfc // Decode-only compatibility: old rules remain editable, never active.
 }
 
@@ -89,7 +90,7 @@ enum RestrictionPolicy {
         ruleEnabled
             && hasSelection
             && scheduleActive
-            && placeMode == .gps && insidePlace && placeFocusConfirmed
+            && (placeMode == .anywhere || (placeMode == .gps && insidePlace)) && placeFocusConfirmed
             && !safetyReleased
     }
 
@@ -300,7 +301,11 @@ struct RuntimeState: Codable {
     }
 
     func canStartPlaceFocus(at date: Date, calendar: Calendar = .current) -> Bool {
-        guard enabled, !recoveryPaused, let rule, rule.placeMode == .gps, rule.hasPlace,
+        guard enabled, !recoveryPaused, let rule else { return false }
+        if rule.placeMode == .anywhere {
+            return RestrictionPolicy.isScheduleActive(at: date, rule: rule, calendar: calendar)
+        }
+        guard rule.placeMode == .gps, rule.hasPlace,
               insidePlace, confirmedInsidePlace == true, let placeObservedAt,
               (0...30).contains(date.timeIntervalSince(placeObservedAt)) else { return false }
         return RestrictionPolicy.isScheduleActive(at: date, rule: rule, calendar: calendar)
@@ -507,7 +512,7 @@ enum SharedState {
 
     static func activate(_ rule: FocusRule) throws {
         try accessRuntime(write: true) { state in
-            guard rule.placeMode == .gps, rule.hasPlace else { throw StorageError.placeNotReady }
+            guard rule.placeMode == .anywhere || (rule.placeMode == .gps && rule.hasPlace) else { throw StorageError.placeNotReady }
             state = RuntimeState(rule: rule, enabled: true)
         }
     }
@@ -541,7 +546,8 @@ enum SharedState {
         try accessRuntime(write: true) { state in
             guard state.enabled, !state.recoveryPaused, let rule = state.rule,
                   state.safetyReleaseUntil.map({ $0 <= now }) ?? true,
-                  rule.placeMode == .gps, state.insidePlace, state.placeFocusConfirmed(at: now, calendar: calendar),
+                  rule.placeMode == .anywhere || (rule.placeMode == .gps && state.insidePlace),
+                  state.placeFocusConfirmed(at: now, calendar: calendar),
                   let occurrence = RestrictionPolicy.scheduleOccurrenceStart(
                     at: now, startMinutes: rule.startMinutes, endMinutes: rule.endMinutes, days: rule.activeDays,
                     calendar: calendar),
@@ -594,7 +600,7 @@ enum SharedState {
         do {
             try accessRuntime(write: true) { state in
                 let now = Date.now
-                if locationAllowed == false {
+                if locationAllowed == false, state.rule?.placeMode != .anywhere {
                     state.insidePlace = false
                     state.confirmedInsidePlace = nil
                     state.placeObservedAt = nil

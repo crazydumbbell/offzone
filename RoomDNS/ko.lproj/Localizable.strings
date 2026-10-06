@@ -884,3 +884,10 @@
 "End Quick focus before starting this rule." = "이 규칙을 시작하려면 바로 집중을 먼저 끝내세요.";
 "Could not start Quick focus: %@" = "바로 집중을 시작하지 못했어요: %@";
 "Quick focus is on until %@." = "바로 집중이 %@까지 켜져 있어요.";
+
+// Time-only rules (D-52): the app works with Location Services off.
+"Use time only, no place" = "장소 없이 시간만 쓰기";
+"A time-only rule never uses Location. Tap Start focus during its schedule." = "시간만 쓰는 규칙은 위치를 쓰지 않아요. 정해진 시간에 집중 시작을 누르세요.";
+"No place, time only" = "장소 없음, 시간만";
+"Rule ready. Tap Start focus when you are ready." = "규칙이 준비됐어요. 준비되면 집중 시작을 누르세요.";
+"Time-only rule: tap Start focus during its schedule. No Location needed." = "시간만 쓰는 규칙이에요. 정해진 시간에 집중 시작을 누르세요. 위치는 필요 없어요.";

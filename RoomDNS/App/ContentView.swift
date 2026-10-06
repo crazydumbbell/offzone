@@ -249,6 +249,10 @@ struct ContentView: View {
             }
             let arguments = ProcessInfo.processInfo.arguments
             if arguments.contains("-offzonePreviewQuick") { quickFocusPresented = true }
+            if arguments.contains("-offzonePreviewPlace") {
+                model.beginNewRuleDraft()
+                screen = .place
+            }
             if arguments.contains("-offzonePreviewSchedule") {
                 model.beginNewRuleDraft()
                 model.days = RestrictionPolicy.weekdays
@@ -572,6 +576,20 @@ struct ContentView: View {
             actionEnabled: model.placeConfigured,
             action: handlePlaceAction
         ) {
+            VStack(alignment: .leading, spacing: 10) {
+                Button {
+                    placeMode = .anywhere
+                    screen = .schedule
+                } label: {
+                    Text("Use time only, no place")
+                        .frame(maxWidth: .infinity, minHeight: 44)
+                }
+                .font(.suit(.body, weight: .medium)).buttonStyle(RoomSecondaryActionStyle(horizontalPadding: 8))
+                Text("A time-only rule never uses Location. Tap Start focus during its schedule.")
+                    .font(.suit(.subheadline)).foregroundStyle(Color.roomInkSecondary)
+                    .fixedSize(horizontal: false, vertical: true)
+            }
+
             placeMapPicker
             Text("Choose a place, then start focus when you arrive during your schedule. The 150 m area is approximate, not room-level accuracy.")
                 .font(.suit(.subheadline))
@@ -843,9 +861,11 @@ struct ContentView: View {
                 summaryRow(icon: "square.stack.3d.up", title: roomString("Apps & sites"), value: model.selectionCount == 1 ? roomString("1 selected item") : roomString("%d selected items", model.selectionCount))
                 Divider().overlay(Color.roomLine).padding(.leading, 54)
                 summaryRow(
-                    icon: "location",
+                    icon: placeMode == .anywhere ? "clock" : "location",
                     title: roomString("Place"),
-                    value: roomString("Within 150 m of this place")
+                    value: placeMode == .anywhere
+                        ? roomString("No place, time only")
+                        : roomString("Within 150 m of this place")
                 )
                 Divider().overlay(Color.roomLine).padding(.leading, 54)
                 summaryRow(icon: "clock", title: roomString("Time"), value: scheduleSummary)
@@ -915,6 +935,11 @@ struct ContentView: View {
                                     .frame(minHeight: 44)
                             }.disabled(model.isCheckingPlace)
                         }
+                    }
+                    if SharedState.ruleEnabled && model.activeRule?.placeMode == .anywhere && !model.isFocused {
+                        Text("Time-only rule: tap Start focus during its schedule. No Location needed.")
+                            .font(.suit(.subheadline)).foregroundStyle(Color.roomInkSecondary)
+                            .fixedSize(horizontal: false, vertical: true)
                     }
                     if model.activeRule?.placeMode == .gps && (model.locationStatus == .denied || model.locationStatus == .restricted || model.placeMonitoringNeedsAttention) {
                         Link("Open Location Settings", destination: URL(string: UIApplication.openSettingsURLString)!)
@@ -993,8 +1018,8 @@ struct ContentView: View {
             } else if model.rules.isEmpty {
                 primaryButton(roomString("Create a rule"), inverted: dark) { addRule() }
             } else if let rule = suggestedRule, !SharedState.ruleEnabled || SharedState.safetyReleased {
-                primaryButton(rule.placeMode == .gps ? roomString("Activate %@", rule.name) : roomString("Choose a place"), inverted: dark) { activate(rule) }
-            } else if model.activeRule?.placeMode == .gps && !model.isFocused && model.canStartPlaceFocus {
+                primaryButton(rule.placeMode != .nfc ? roomString("Activate %@", rule.name) : roomString("Choose a place"), inverted: dark) { activate(rule) }
+            } else if (model.activeRule?.placeMode ?? .nfc) != .nfc && !model.isFocused && model.canStartPlaceFocus {
                 primaryButton(roomString("Start focus"), inverted: dark) {
                     model.startPlaceFocus()
                 }
@@ -1047,11 +1072,11 @@ struct ContentView: View {
 
     @discardableResult
     private func activate(_ rule: FocusRule) -> Bool {
-        guard rule.placeMode == .gps else { editRule(rule); return false }
+        guard rule.placeMode != .nfc else { editRule(rule); return false }
         guard !model.isFocused else { presentSessionEnd(); return false }
         let activated = model.activateRule(rule.id)
         if activated {
-            placeMode = .gps
+            placeMode = rule.placeMode
             roomieReaction = .confirmed
         }
         return activated
@@ -1088,11 +1113,11 @@ struct ContentView: View {
         let hasChanges = model.hasUnappliedChanges(rule.id)
         let canResume = isActive && SharedState.safetyReleased
         // Color carries meaning: soft butter needs attention, mint is active, ivory is saved.
-        let tint: Color = hasChanges || rule.placeMode != .gps ? .roomButter : isActive ? .roomMint : .roomCard
+        let tint: Color = hasChanges || rule.placeMode == .nfc ? .roomButter : isActive ? .roomMint : .roomCard
         return VStack(alignment: .leading, spacing: 8) {
             Button { editRule(rule) } label: {
                 HStack(alignment: .top, spacing: 14) {
-                    Image(systemName: "location.fill")
+                    Image(systemName: rule.placeMode == .anywhere ? "clock.fill" : "location.fill")
                         .font(.suit(.body, weight: .semibold))
                         .foregroundStyle(Color.roomInk)
                         .frame(width: 40, height: 40)
@@ -1109,7 +1134,7 @@ struct ContentView: View {
                             .font(.suit(.headline, weight: .bold))
                             .foregroundStyle(Color.roomInk)
                             .fixedSize(horizontal: false, vertical: true)
-                        if rule.placeMode != .gps {
+                        if rule.placeMode == .nfc {
                             Text("Choose a place to use this rule")
                                 .font(.suit(.subheadline)).foregroundStyle(Color.roomWarning)
                         }
@@ -1142,7 +1167,7 @@ struct ContentView: View {
                     Button {
                         activate(rule)
                     } label: {
-                        Text(rule.placeMode != .gps ? roomString("Choose a place") : hasChanges ? roomString("Apply changes") : canResume ? roomString("Resume rule") : roomString("Activate"))
+                        Text(rule.placeMode == .nfc ? roomString("Choose a place") : hasChanges ? roomString("Apply changes") : canResume ? roomString("Resume rule") : roomString("Activate"))
                             .fixedSize(horizontal: false, vertical: true)
                     }
                     .font(.suit(.subheadline, weight: .bold))
@@ -1341,6 +1366,7 @@ struct ContentView: View {
     }
 
     private func handlePlaceAction() {
+        placeMode = .gps
         if placeReady {
             screen = .schedule
         } else {
@@ -1426,7 +1452,7 @@ struct ContentView: View {
 
     private func editRule(_ rule: FocusRule) {
         model.loadRuleForEditing(rule.id)
-        placeMode = .gps
+        placeMode = rule.placeMode == .anywhere ? .anywhere : .gps
         showsSaveError = false
         permissionDestination = .targets
         screen = model.screenTimeAuthorized ? .targets : .permission

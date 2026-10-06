@@ -147,7 +147,7 @@ final class AppModel: NSObject, ObservableObject {
         let state = SharedState.runtime
         guard state.enabled, !state.recoveryPaused, let rule = state.rule else { return nil }
         if let until = state.safetyReleaseUntil, until > .now {
-            return rule.placeMode == .gps
+            return rule.placeMode != .nfc
                 ? roomString("Until %@", until.formatted(date: .abbreviated, time: .shortened))
                 : nil
         }
@@ -379,7 +379,7 @@ final class AppModel: NSObject, ObservableObject {
             reportError(roomString("Choose at least one app, category, or website."))
             return false
         }
-        guard placeMode == .gps, draftHasPlace else {
+        guard placeMode == .anywhere || (placeMode == .gps && draftHasPlace) else {
             reportError(roomString("Choose a place before saving this rule."))
             return false
         }
@@ -479,7 +479,7 @@ final class AppModel: NSObject, ObservableObject {
     @discardableResult
     func activateRule(_ id: UUID) -> Bool {
         guard let rule = rules.first(where: { $0.id == id }) else { return false }
-        guard rule.placeMode == .gps, rule.hasPlace else {
+        guard rule.placeMode == .anywhere || (rule.placeMode == .gps && rule.hasPlace) else {
             reportError(roomString("Choose a place for this saved rule before activating it."))
             return false
         }
@@ -505,9 +505,13 @@ final class AppModel: NSObject, ObservableObject {
             try SharedState.activate(rule)
             loadDraft(rule)
             refresh()
-            if rule.placeMode == .gps { startPlaceMonitoring(replacingSavedCondition: true) }
-            checkPlaceArrival()
-            message = roomString("Rule ready. Check your location, then tap Start focus.")
+            if rule.placeMode == .gps {
+                startPlaceMonitoring(replacingSavedCondition: true)
+                checkPlaceArrival()
+                message = roomString("Rule ready. Check your location, then tap Start focus.")
+            } else {
+                message = roomString("Rule ready. Tap Start focus when you are ready.")
+            }
             // Successful rule activation, not proof that a focus session completed.
             if FirebaseApp.app() != nil { Analytics.logEvent("rule_activated", parameters: nil) }
             return true
@@ -579,7 +583,8 @@ final class AppModel: NSObject, ObservableObject {
                                     screenTimeAuthorized: Bool, monitoringNeedsAttention: Bool,
                                     scheduleActive: Bool) -> Bool {
         !isChecking && !isFocused && screenTimeAuthorized && !monitoringNeedsAttention && scheduleActive
-            && state.enabled && !state.recoveryPaused && state.rule?.placeMode == .gps && state.rule?.hasPlace == true
+            && state.enabled && !state.recoveryPaused
+            && (state.rule?.placeMode == .anywhere || (state.rule?.placeMode == .gps && state.rule?.hasPlace == true))
     }
 
     var placeArrivalText: String {
@@ -682,7 +687,28 @@ final class AppModel: NSObject, ObservableObject {
     }
 
     func startPlaceFocus() {
+        let state = SharedState.runtime
+        if state.rule?.placeMode == .anywhere { startTimeOnlyFocus(state); return }
         requestArrivalCheck(startFocus: true)
+    }
+
+    // Time-only rules never read Location: the schedule and the explicit tap are the whole condition.
+    private func startTimeOnlyFocus(_ state: RuntimeState) {
+        guard quickEndsAt == nil else {
+            reportError(roomString("End Quick focus before starting this rule."))
+            return
+        }
+        guard state.enabled, !state.recoveryPaused, screenTimeAuthorized else {
+            reportError(roomString("Allow Screen Time before activating this rule."))
+            return
+        }
+        do {
+            try SharedState.startPlaceFocus(generation: state.generation)
+            message = roomString("Focus started. You can restore access at any time.")
+        } catch {
+            reportError(roomString("Could not start focus: %@", error.localizedDescription))
+        }
+        refresh()
     }
 
     private func requestArrivalCheck(startFocus: Bool) {

@@ -305,6 +305,36 @@ final class RestrictionPolicyTests: XCTestCase {
     }
 
     @MainActor
+    func testTimeOnlyRuleSavesActivatesAndStartsWithoutAPlaceOrLocation() async throws {
+        let model = AppModel()
+        let granted = await model.requestScreenTimeAuthorization()
+        XCTAssertTrue(granted)
+        model.requestTargetSelection()
+        model.startTime = .now.addingTimeInterval(-60)
+        model.endTime = .now.addingTimeInterval(60 * 60)
+        model.days = RestrictionPolicy.everyDay
+        model.ruleName = "No location"
+        XCTAssertFalse(model.draftHasPlace)
+        XCTAssertFalse(model.saveRule(placeMode: .gps)) // A place rule still needs its place.
+        XCTAssertTrue(model.saveRule(placeMode: .anywhere))
+        let id = try XCTUnwrap(model.editingRuleID)
+        XCTAssertEqual(model.rules.first { $0.id == id }?.placeMode, .anywhere)
+        XCTAssertEqual(model.rules.first { $0.id == id }?.hasPlace, false)
+        XCTAssertTrue(model.activateRule(id))
+        XCTAssertNil(model.errorMessage)
+        XCTAssertTrue(SharedState.ruleEnabled)
+        XCTAssertTrue(model.canStartPlaceFocus)
+        XCTAssertFalse(model.isFocused) // Armed, not started.
+        model.startPlaceFocus()
+        XCTAssertNil(model.errorMessage)
+        XCTAssertTrue(SharedState.runtime.placeFocusConfirmed(at: .now))
+        XCTAssertTrue(model.isFocused)
+        model.safetyRelease()
+        XCTAssertFalse(model.isFocused)
+        XCTAssertTrue(model.deleteRule(id))
+    }
+
+    @MainActor
     func testDeletingActiveRuleDoesNotActivateAnotherAfterRestart() async throws {
         let model = AppModel()
         _ = await model.requestScreenTimeAuthorization()
@@ -418,6 +448,34 @@ final class RestrictionPolicyTests: XCTestCase {
         try SharedState.activate(rule)
         XCTAssertNil(SharedState.runtime.placeFocusOccurrenceStart)
         XCTAssertFalse(SharedState.insidePlace)
+    }
+
+    func testTimeOnlyRuleNeedsNoPlaceOrLocationButStillNeedsAnExplicitStart() throws {
+        var calendar = Calendar(identifier: .gregorian)
+        calendar.timeZone = TimeZone(secondsFromGMT: 0)!
+        let now = try XCTUnwrap(calendar.date(from: DateComponents(year: 2026, month: 9, day: 16, hour: 12)))
+        func shield(_ mode: PlaceMode, inside: Bool, started: Bool) -> Bool {
+            RestrictionPolicy.shouldShield(ruleEnabled: true, hasSelection: true, scheduleActive: true,
+                placeMode: mode, insidePlace: inside, placeFocusConfirmed: started, safetyReleased: false)
+        }
+        XCTAssertTrue(shield(.anywhere, inside: false, started: true))
+        XCTAssertFalse(shield(.anywhere, inside: false, started: false)) // Still an explicit Start focus.
+        XCTAssertFalse(shield(.gps, inside: false, started: true)) // Place rules are unchanged.
+        XCTAssertTrue(shield(.gps, inside: true, started: true))
+
+        let rule = sampleRule(mode: .anywhere)
+        XCTAssertFalse(rule.hasPlace)
+        try SharedState.activate(rule)
+        let generation = SharedState.runtime.generation
+        XCTAssertFalse(SharedState.runtime.placeFocusConfirmed(at: now, calendar: calendar))
+        XCTAssertThrowsError(try SharedState.startPlaceFocus(generation: UUID(), at: now, calendar: calendar))
+        try SharedState.startPlaceFocus(generation: generation, at: now, calendar: calendar)
+        XCTAssertTrue(SharedState.runtime.placeFocusConfirmed(at: now, calendar: calendar))
+        SharedState.reconcileRestrictions(locationAllowed: false) // Location off must not end it.
+        XCTAssertNotNil(SharedState.runtime.placeFocusOccurrenceStart)
+        try SharedState.restoreAccess(pause: false, at: now)
+        XCTAssertNil(SharedState.runtime.placeFocusOccurrenceStart) // Recovery still ends it.
+        XCTAssertThrowsError(try SharedState.startPlaceFocus(generation: generation, at: now, calendar: calendar))
     }
 
     func testLegacyNFCSessionIsPreservedButCannotActivate() throws {

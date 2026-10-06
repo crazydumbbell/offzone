@@ -884,3 +884,10 @@
 "End Quick focus before starting this rule." = "End Quick focus before starting this rule.";
 "Could not start Quick focus: %@" = "Could not start Quick focus: %@";
 "Quick focus is on until %@." = "Quick focus is on until %@.";
+
+// Time-only rules (D-52): the app works with Location Services off.
+"Use time only, no place" = "Use time only, no place";
+"A time-only rule never uses Location. Tap Start focus during its schedule." = "A time-only rule never uses Location. Tap Start focus during its schedule.";
+"No place, time only" = "No place, time only";
+"Rule ready. Tap Start focus when you are ready." = "Rule ready. Tap Start focus when you are ready.";
+"Time-only rule: tap Start focus during its schedule. No Location needed." = "Time-only rule: tap Start focus during its schedule. No Location needed.";
