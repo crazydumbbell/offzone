@@ -1,0 +1,64 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Privacy Policy — Offzone</title><meta name="robots" content="index,follow"><style>:root{--butter:#F7F0C7;--ivory:#FAF7E8;--pine:#3D5B3F;--ink:#1F2A22;--soft:#5E6660}
+*{box-sizing:border-box}body{margin:0;background:var(--butter);color:var(--ink);font:17px/1.65 -apple-system,BlinkMacSystemFont,"Segoe UI","Apple SD Gothic Neo",sans-serif}
+header{max-width:760px;margin:0 auto;padding:28px 24px 0;display:flex;gap:20px;align-items:baseline;flex-wrap:wrap}
+header a{color:var(--pine);text-decoration:none;font-weight:600;letter-spacing:.08em;font-size:15px}header a.brand{font-size:17px;margin-right:auto}
+main{max-width:760px;margin:0 auto;padding:12px 24px 72px}
+h1{font-size:2.1rem;line-height:1.2;margin:28px 0 8px}h2{font-size:1.2rem;margin:36px 0 6px;color:var(--pine)}h2 .n{opacity:.55;margin-right:.6em;font-variant-numeric:tabular-nums}
+p,li{color:var(--ink)}p.meta{color:var(--soft)}ul{padding-left:1.2em}li{margin:.35em 0}a{color:var(--pine)}
+section{background:var(--ivory);border-radius:18px;padding:4px 22px 18px;margin:18px 0}
+</style></head>
+<body><header><a class="brand" href="../">OFFZONE</a><a href="../privacy/">Privacy</a><a href="../support/">Support</a></header>
+<main>
+<p>Legal</p>
+<h1>Privacy policy</h1>
+<p class="meta">Last updated September 24, 2026</p>
+<p>Offzone is designed to keep sensitive focus information on your device. This policy explains what the app processes, what may be sent to service providers, and the controls available to you.</p>
+<section>
+<h2><span class="n">01</span>Information kept on your device</h2>
+<p>Your saved rules, schedules, selected apps, configured places, location coordinates, and restriction state stay on your device. On iOS, local data also includes selected websites and Apple Screen Time tokens in the app and its App Group container. Legacy NFC identifiers from older versions may remain in local storage; current versions do not offer NFC setup. On Android, app selections use installed app names and package identifiers. Offzone does not upload your app selection or location history to its account backend.</p>
+<p>Where available, Pro weekly plans and personal reflections are saved in a protected local file, excluded from device backups. They are not synced to your account or sent to Offzone. If you choose to export them, your operating system saves or shares a copy with the destination you select. Android can also import an Offzone journal JSON file that you choose; the import is processed locally. Exported copies may be stored by your chosen file or sharing provider under its own policy.</p>
+</section>
+<section>
+<h2><span class="n">02</span>Device permissions and maps</h2>
+<p>On iOS, location access helps check arrival at a configured place. You explicitly choose Start focus while inside the place and within the rule’s time window; arrival alone does not start blocking. Screen Time access applies restrictions to the apps and websites you choose. You can change these permissions in iOS Settings.</p>
+<p>On Android, you can choose to enable an AccessibilityService after reading and accepting the in-app explanation. It reads the package identifier and event class of a newly opened app window to show a blocking screen for your selected apps during active focus. It does not retrieve window content, read messages or passwords, record your screen, or send accessibility events to Offzone servers. You can disable the service in Android Accessibility settings; Restore access remains free.</p>
+<p>Android requests location permission for place selection, arrival checks, and optional place monitoring. Place checks require precise location; approximate access alone is insufficient. After you explicitly start place monitoring or place-based focus, a location foreground service can continue while the app is not on screen and shows an ongoing notification. Restore access stops this monitoring. Offzone does not request unrestricted background-location permission or upload a location history to its backend. Your operating system and its location provider may process location requests under their own policies.</p>
+<p>Android address search uses your device geocoding service, which may send the search text to its provider. The optional map is loaded only after you choose Show map. Map tiles are requested from OpenStreetMap; these requests disclose your IP address and the viewed map area, which may include the place you selected or your current location if you use it to center the map. See the OpenStreetMap Foundation privacy policy. Manual coordinate entry is available without loading the map.</p>
+</section>
+<section>
+<h2><span class="n">03</span>Optional account data</h2>
+<p>You can use Offzone without signing in. Depending on your app version, account options include Apple, Google, or email and password. Firebase Authentication processes your account identifier, sign-in credentials, email address and verification status. Google sign-in may also provide your basic profile, such as your name and profile image. Offzone does not request your name or email address from Apple in the current iOS flow. The Android Apple sign-in flow requests your name and email; Apple may provide a private relay address if you choose Hide My Email. Email accounts use verification and password-reset messages. Passwords are handled by Firebase Authentication and are not stored in Offzone’s goal database. Offzone stores your account identifier, selected high-level focus goal, and an update timestamp in Cloud Firestore. Linking sign-in methods associates them with your existing account.</p>
+</section>
+<section>
+<h2><span class="n">04</span>Purchases</h2>
+<p>When you sign in, RevenueCat connects your Offzone account to its purchase and entitlement service, even while paid offers are disabled. If paid features are offered and you make a purchase, Apple processes iOS payments and Google Play processes Android payments. RevenueCat may process your Offzone account identifier, purchase history, entitlement status, and related receipt information to validate purchases, prevent fraud, provide app features, and produce purchase analytics. Offzone does not receive your payment card details. Where an optional unlock-pass feature is available, an account-linked transaction/session identifier and pass ledger may be processed by Offzone and RevenueCat to reconcile the transaction; this does not include your selected apps or place coordinates.</p>
+</section>
+<section>
+<h2><span class="n">05</span>Service providers and purposes</h2>
+<ul>
+<li>Apple provides Sign in with Apple, Screen Time, location services, and in-app purchase infrastructure.</li>
+<li>Google and Firebase provide Android platform services, Google Play billing, Google sign-in, email/password authentication, account verification and password-reset messages, and storage of your account-linked focus goal.</li>
+<li>RevenueCat provides purchase identity, validation, and entitlement management for signed-in accounts.</li>
+<li>OpenStreetMap Foundation serves Android map tiles only when you choose to show the map. Your device geocoding provider handles address searches.</li>
+</ul>
+<p>The iOS app uses Firebase Analytics. When Firebase is configured, a successful rule activation sends a rule_activated event without custom parameters. This event records product interaction, not a completed focus session, and does not contain the rule name, selected apps, or place coordinates. Firebase Analytics may also collect automatic app events, app-instance identifiers, and device information for product analytics. These identifiers can associate events with an app instance; we do not describe this information as anonymous. Android does not currently include this Firebase Analytics integration.</p>
+<p>Service providers may process technical information such as IP addresses, device or app information, and service diagnostics to deliver, secure, and troubleshoot their services. Offzone does not use this information for advertising or cross-app tracking.</p>
+<p>Offzone does not sell personal information, serve third-party advertising, or use your data for cross-app tracking.</p>
+</section>
+<section>
+<h2><span class="n">06</span>Retention and deletion</h2>
+<p>Local data remains on your device until you delete it in the app or remove the app. If you delete an Offzone account in the app, Offzone deletes its Firebase Authentication account and associated cloud goal. Local rules remain on the device until you remove them. Purchase records may be retained by Apple, Google Play, and RevenueCat as required for transaction, fraud-prevention, accounting, and legal purposes. Deleting an Offzone account does not cancel an App Store or Google Play subscription. Manage cancellation in the store where you subscribed.</p>
+<p>To request account deletion without using the app, email <a href="mailto:wogus5357@gmail.com">wogus5357@gmail.com</a> from your account email address with the subject “Offzone account deletion.” We may ask you to verify account ownership before processing the request. Do not send passwords or payment details. This request covers your Offzone authentication account and cloud goal, not copies exported to another provider or transaction records that must be retained.</p>
+<p>Plans and reflections stay on the device when you sign out, delete your account, or your subscription expires. You can still read, export, or delete existing journal records without an active subscription. Use the journal deletion control to remove them; copies you previously exported must be deleted separately.</p>
+</section>
+<section>
+<h2><span class="n">07</span>Security, children, and changes</h2>
+<p>We use reasonable technical and organizational safeguards, but no electronic service can guarantee absolute security. Offzone is intended for adults and is not directed to children under 13. We may update this policy when the app or its service providers change; the date above will show the latest revision.</p>
+</section>
+<section>
+<h2><span class="n">08</span>Contact</h2>
+<p>Questions or privacy requests can be sent to <a href="mailto:wogus5357@gmail.com">wogus5357@gmail.com</a>.</p>
+</section>
+</main></body></html>
