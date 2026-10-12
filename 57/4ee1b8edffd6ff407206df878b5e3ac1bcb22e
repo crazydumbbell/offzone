@@ -1,0 +1,35 @@
+RoomDNS/App/AccountStore.swift
+  s_9495b60e71132c::t_c98a121cb4d60d 724-726
+ORCHESTRATOR.md
+  s_e86bd21f090057::t_d235e0144bb142 207
+RoomDNS.xcodeproj/project.pbxproj
+  s_9495b60e71132c::t_53450355e2c7ae 637,658,681,705,727,865,895,919,943,967
+RoomDNS/App/ContentView.swift
+  s_9495b60e71132c::t_2021d9e798a15f 1598
+RoomDNS/Info.plist
+  s_9495b60e71132c::t_4729cc2cf1b253 36
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "574ee1b8edffd6ff407206df878b5e3ac1bcb22e",
+  "prompts": {},
+  "sessions": {
+    "s_9495b60e71132c": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "b23e4cdd-ae06-4e2a-87a4-11b365b610ab",
+        "model": "claude-sonnet-5-5"
+      },
+      "human_author": "exchip <wogus5357@gmail.com>"
+    },
+    "s_e86bd21f090057": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "0a61173d-81d0-40f4-a407-ef5e2d907967",
+        "model": "claude-sonnet-5-5"
+      },
+      "human_author": "exchip <wogus5357@gmail.com>"
+    }
+  }
+}
