@@ -98,7 +98,7 @@ fun PlacePickerScreen(initialLat: Double?, initialLon: Double?, initialLabel: St
                 settings.javaScriptEnabled = true
                 settings.allowFileAccess = false; settings.allowContentAccess = false
                 settings.cacheMode = WebSettings.LOAD_DEFAULT
-                settings.userAgentString = "OffzoneAndroid/0.1 (+https://offzone-privacy-support.wogus5357.chatgpt.site/privacy) " + settings.userAgentString
+                settings.userAgentString = "OffzoneAndroid/0.1 (+https://crazydumbbell.github.io/offzone/privacy/) " + settings.userAgentString
                 addJavascriptInterface(object {
                     @JavascriptInterface fun select(a: Double, b: Double) {
                         if (a.isFinite() && b.isFinite() && a in -90.0..90.0 && b in -180.0..180.0) post {

@@ -301,7 +301,7 @@ class AccountStore(context: Context, firebaseApp: FirebaseApp? = null) {
         if (!same(uid, stamp) || currentPurchaseUID() != uid) return
         val entitlement = info.entitlements.active[BuildConfig.PRO_ENTITLEMENT_ID]
         entitlementUID = uid
-        val active = info.entitlements.verification.isVerified && entitlement != null && (BuildConfig.DEBUG || !entitlement.isSandbox)
+        val active = info.entitlements.verification != VerificationResult.FAILED && entitlement != null && (BuildConfig.DEBUG || !entitlement.isSandbox)
         val expires = entitlement?.expirationDate?.time
         mutable.update { it.copy(pro = AccountIdentity.proAccess(uid, uid, active, expires, System.currentTimeMillis()), proExpiresAt = expires,
             managementURL = info.managementURL?.toString()?.takeIf(::https)) }
