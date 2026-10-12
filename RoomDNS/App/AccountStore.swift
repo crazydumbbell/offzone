@@ -721,7 +721,9 @@ final class AccountStore: ObservableObject {
         proExpirationDate = entitlement?.expirationDate
         isPro = Self.proAccessIsValid(
             signedIn: isSignedIn, currentUID: uid, entitlementUID: proUID,
-            verifiedActive: info.entitlements.verification.isVerified && entitlement != nil,
+            // Purchases.configure runs without a verification mode, so a genuine entitlement reads
+            // .notRequested and isVerified is always false. Only a failed signature is rejected.
+            verifiedActive: info.entitlements.verification != .failed && entitlement != nil,
             expirationDate: proExpirationDate, now: Date())
         guard isPro, let expiry = proExpirationDate else { return }
         let generation = purchaseGeneration

@@ -33,7 +33,7 @@
 	<key>RoomTermsURL</key>
 	<string>https://www.apple.com/legal/internet-services/itunes/dev/stdeula/</string>
 	<key>RoomPrivacyURL</key>
-	<string>https://offzone-privacy-support.wogus5357.chatgpt.site/privacy</string>
+	<string>https://crazydumbbell.github.io/offzone/privacy/</string>
 	<key>CFBundleURLTypes</key>
 	<array>
 		<dict>

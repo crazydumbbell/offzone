@@ -1595,7 +1595,7 @@ private struct UnlockPassView: View {
                 .font(.suit(.subheadline)).foregroundStyle(Color.roomWarning)
             Button("Check previous pass") { Task { await account.reconcilePreviousUnlockPass() } }
                 .roomPrimaryAction().disabled(account.isUnlockBusy)
-            Link("Contact support", destination: URL(string: "https://offzone-privacy-support.wogus5357.chatgpt.site/support")!)
+            Link("Contact support", destination: URL(string: "https://crazydumbbell.github.io/offzone/support/")!)
         } else if account.unlockPassBalance == nil {
             ProgressView("Checking your unlock passes…").frame(maxWidth: .infinity)
         } else if let balance = account.unlockPassBalance, balance > 0 {
