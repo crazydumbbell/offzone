@@ -1,0 +1,25 @@
+android/app/src/main/java/com/exchip/offzone/PlacePickerScreen.kt
+  s_e86bd21f090057::t_7e62bc40bf62ec 101
+android/app/build.gradle.kts
+  s_e86bd21f090057::t_7e62bc40bf62ec 29,37
+android/app/src/main/java/com/exchip/offzone/AccountStore.kt
+  s_e86bd21f090057::t_7e62bc40bf62ec 304
+ORCHESTRATOR.md
+  s_e86bd21f090057::t_7bb60bf193ef5d 208
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "7d21ec14cb12535d8f6fe3ef54b9772576970aac",
+  "prompts": {},
+  "sessions": {
+    "s_e86bd21f090057": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "0a61173d-81d0-40f4-a407-ef5e2d907967",
+        "model": "claude-sonnet-5-5"
+      },
+      "human_author": "exchip <wogus5357@gmail.com>"
+    }
+  }
+}
