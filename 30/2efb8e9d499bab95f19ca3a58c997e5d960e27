@@ -1,0 +1,40 @@
+android/app/src/main/java/com/exchip/offzone/RuleEditorScreen.kt
+  s_e86bd21f090057::t_dbca14d03d14d1 161
+  s_e86bd21f090057::t_35da2228b2072b 86,91-92,95,97-98,105,118-119,158-159
+android/app/src/main/res/values-ko/editor_parity.xml
+  s_e86bd21f090057::t_35da2228b2072b 35-38
+android/app/src/main/java/com/exchip/offzone/RuleStore.kt
+  s_e86bd21f090057::t_2b031c444eb359 59,65
+android/app/src/test/java/com/exchip/offzone/RulePolicyTest.kt
+  s_e86bd21f090057::t_ed38a316a5313b 61-73
+android/app/src/main/java/com/exchip/offzone/FocusController.kt
+  s_e86bd21f090057::t_2b031c444eb359 25,111,121-146,154,231-233
+  s_e86bd21f090057::t_5c3d10adebd732 234
+android/app/build.gradle.kts
+  s_e86bd21f090057::t_dbca14d03d14d1 29-30
+android/app/src/main/java/com/exchip/offzone/RulePolicy.kt
+  s_e86bd21f090057::t_2b031c444eb359 18-19
+android/app/src/main/java/com/exchip/offzone/MainActivity.kt
+  s_e86bd21f090057::t_35da2228b2072b 133-134,195,216,291-292,313
+android/app/src/androidTest/java/com/exchip/offzone/TimeOnlyFocusFlowTest.kt
+  s_e86bd21f090057::t_ed38a316a5313b 1-45,47-107
+  s_e86bd21f090057::t_c5efe446a41f72 46
+android/app/src/main/res/values/editor_parity.xml
+  s_e86bd21f090057::t_35da2228b2072b 35-38
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "302efb8e9d499bab95f19ca3a58c997e5d960e27",
+  "prompts": {},
+  "sessions": {
+    "s_e86bd21f090057": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "0a61173d-81d0-40f4-a407-ef5e2d907967",
+        "model": "claude-sonnet-5-5"
+      },
+      "human_author": "exchip <wogus5357@gmail.com>"
+    }
+  }
+}
