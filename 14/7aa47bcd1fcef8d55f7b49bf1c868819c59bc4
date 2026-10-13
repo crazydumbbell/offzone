@@ -1,0 +1,19 @@
+ORCHESTRATOR.md
+  s_e86bd21f090057::t_d9acde3cf6a8c1 208
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "147aa47bcd1fcef8d55f7b49bf1c868819c59bc4",
+  "prompts": {},
+  "sessions": {
+    "s_e86bd21f090057": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "0a61173d-81d0-40f4-a407-ef5e2d907967",
+        "model": "claude-sonnet-5-5"
+      },
+      "human_author": "exchip <wogus5357@gmail.com>"
+    }
+  }
+}
