@@ -83,23 +83,26 @@ fun RuleEditorScreen(
     var latitude by rememberSaveable { mutableStateOf(rule?.latitude) }
     var longitude by rememberSaveable { mutableStateOf(rule?.longitude) }
     var label by rememberSaveable { mutableStateOf(rule?.placeLabel ?: "") }
+    var anywhere by rememberSaveable { mutableStateOf(rule?.anywhere ?: false) }
     var step by rememberSaveable { mutableIntStateOf(0) }
     var picker by remember { mutableStateOf(false) }
     var place by rememberSaveable { mutableStateOf(false) }
     var failed by remember { mutableStateOf(false) }
-    val placeName = if (latitude != null && longitude != null)
+    val placeName = if (anywhere) stringResource(R.string.editor_time_only_place)
+    else if (latitude != null && longitude != null)
         label.ifBlank { String.format(Locale.getDefault(), "%.5f, %.5f", latitude, longitude) }
     else ""
+    val placeReady = anywhere || (latitude != null && longitude != null)
     val durationValid = RulePolicy.intervalMinutes(start, end) >= 15 && days != 0
-    val saveValid = name.isNotBlank() && packages.isNotEmpty() && latitude != null && longitude != null && durationValid
-    val nextEnabled = when (step) { 0 -> packages.isNotEmpty(); 1 -> latitude != null && longitude != null; 2 -> durationValid; else -> saveValid }
+    val saveValid = name.isNotBlank() && packages.isNotEmpty() && placeReady && durationValid
+    val nextEnabled = when (step) { 0 -> packages.isNotEmpty(); 1 -> placeReady; 2 -> durationValid; else -> saveValid }
     val nextLabel = when (step) { 0 -> R.string.editor_next_place; 1 -> R.string.editor_next_time; 2 -> R.string.editor_next_review; else -> R.string.m_save_rule }
 
     BackHandler(place) { place = false }
     BackHandler(step > 0 && !place && !picker) { step-- }
     if (place) {
         PlacePickerScreen(latitude, longitude, label, onBack = { place = false }) { lat, lon, title ->
-            latitude = lat; longitude = lon; label = title; place = false
+            latitude = lat; longitude = lon; label = title; anywhere = false; place = false
         }
         return
     }
@@ -112,7 +115,8 @@ fun RuleEditorScreen(
                         if (!saveValid) return@PrimaryButton
                         val draft = FocusRule(
                             id = rule?.id ?: UUID.randomUUID().toString(), name = name.trim(), packages = packages,
-                            startMinutes = start, endMinutes = end, latitude = latitude!!, longitude = longitude!!, placeLabel = label, days = days,
+                            startMinutes = start, endMinutes = end, latitude = if (anywhere) 0.0 else latitude!!, longitude = if (anywhere) 0.0 else longitude!!,
+                            placeLabel = if (anywhere) "" else label, days = days, anywhere = anywhere,
                         )
                         if (FocusController.ruleStore.save(draft)) onSaved(draft) else failed = true
                     }
@@ -151,8 +155,10 @@ fun RuleEditorScreen(
                     if (packages.isEmpty()) stringResource(R.string.editor_apps_empty) else stringResource(R.string.apps_selected, packages.size),
                 ) { picker = true }
                 1 -> {
+                    SecondaryButton(onClick = { anywhere = true }, modifier = Modifier.fillMaxWidth()) { Text(stringResource(R.string.editor_time_only)) }
+                    Text(stringResource(R.string.editor_time_only_note), style = MaterialTheme.typography.bodyMedium, color = InkMuted)
                     EditorCard(stringResource(R.string.m_choose_place), placeName.ifBlank { stringResource(R.string.editor_place_empty) }) { place = true }
-                    Text(stringResource(R.string.editor_place_hint), style = MaterialTheme.typography.bodyMedium, color = InkMuted)
+                    if (!anywhere) Text(stringResource(R.string.editor_place_hint), style = MaterialTheme.typography.bodyMedium, color = InkMuted)
                 }
                 2 -> {
                     Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {

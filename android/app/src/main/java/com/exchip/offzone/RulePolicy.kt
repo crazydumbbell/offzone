@@ -15,6 +15,8 @@ data class FocusRule(
     val placeLabel: String = "",
     /** Bit (DayOfWeek.value - 1). An overnight occurrence belongs to the day it starts. */
     val days: Int = RulePolicy.EVERY_DAY,
+    /** Time-only rule: no place, never reads location; still starts only with an explicit Start focus inside its schedule. */
+    val anywhere: Boolean = false,
 ) {
     fun valid(): Boolean = id.isNotBlank() && name.isNotBlank() && name.length <= 120 &&
         packages.isNotEmpty() && packages.none { it.isBlank() } &&

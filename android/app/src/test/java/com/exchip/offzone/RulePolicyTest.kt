@@ -58,4 +58,17 @@ class RulePolicyTest {
         assertFalse(RulePolicy.scheduleActive(weekdays, friday.plusDays(1).withHour(10)))
         assertEquals(DayOfWeek.MONDAY, RulePolicy.nextStart(weekdays, friday)!!.dayOfWeek)
     }
+
+    @Test fun timeOnlyRulesNeedNoPlaceAndOldRulesStayPlaceRules() {
+        val rule = FocusRule(name = "Desk hours", packages = setOf("example.video"), startMinutes = 9 * 60, endMinutes = 17 * 60,
+            latitude = 0.0, longitude = 0.0)
+        assertFalse(rule.anywhere)
+        val timeOnly = rule.copy(anywhere = true)
+        assertTrue(timeOnly.valid())
+        assertFalse(timeOnly.copy(packages = emptySet()).valid())
+        assertFalse(timeOnly.copy(endMinutes = 9 * 60 + 10).valid())
+        val friday = ZonedDateTime.of(2026, 9, 25, 10, 0, 0, 0, ZoneId.of("Asia/Seoul"))
+        assertTrue(RulePolicy.scheduleActive(timeOnly, friday))
+        assertFalse(RulePolicy.scheduleActive(timeOnly, friday.withHour(18)))
+    }
 }

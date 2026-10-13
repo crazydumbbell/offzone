@@ -26,8 +26,8 @@ android {
         applicationId = "com.exchip.roomdns"
         minSdk = 26
         targetSdk = 36
-        versionCode = 6
-        versionName = "0.1.0"
+        versionCode = 7
+        versionName = "1.0.0"
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         mapOf(
             "FIREBASE_API_KEY" to "", "FIREBASE_APP_ID" to "1:842668693484:android:90a67f18aa795dabf212c9",

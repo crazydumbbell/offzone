@@ -32,4 +32,8 @@
     <string name="days_weekdays">평일</string>
     <string name="days_weekends">주말</string>
     <string name="home_starts_on">%1$s %2$s에 시작</string>
+    <string name="editor_time_only">장소 없이 시간만 쓰기</string>
+    <string name="editor_time_only_note">시간만 쓰는 규칙은 위치를 쓰지 않아요. 정해진 시간에 집중 시작을 누르세요.</string>
+    <string name="editor_time_only_place">장소 없음, 시간만</string>
+    <string name="audit_start_time_only">시간만 쓰는 규칙이에요. 정해진 시간에 집중 시작을 누르세요. 위치는 필요 없어요.</string>
 </resources>

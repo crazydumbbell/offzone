@@ -130,6 +130,8 @@ class MainActivity : ComponentActivity() {
         }
         fun requestPlace(action: Int) {
             error = null
+            // A time-only rule never reads location: no disclosure, no permission prompt.
+            if (action == 1 && state.appliedRule?.anywhere == true) { dispatchPlace(1); return }
             pendingLocationAction = action; pendingGeneration = FocusController.generation
             pendingLocationRoute = route
             // Reconfirm every continuous-location start, even when Android permission was granted before.
@@ -190,7 +192,7 @@ class MainActivity : ComponentActivity() {
                         TextButton(onClick = { accountReturnRoute = "settings"; route = "account" }) { Text(stringResource(R.string.m_account)) }
                         TextButton(onClick = { journalReturnRoute = "settings"; route = "journal" }) { Text(stringResource(R.string.m_journal)) }
                         HorizontalDivider()
-                            if (state.ruleEnabled) SecondaryButton(onClick = {
+                            if (state.ruleEnabled && state.appliedRule?.anywhere != true) SecondaryButton(onClick = {
                                 if (state.monitoringPlace) FocusController.stopPlaceMonitoring()
                                 else requestPlace(2)
                             }, enabled = state.monitoringPlace || (state.session == null && !state.checkingPlace), modifier = Modifier.fillMaxWidth()) {
@@ -211,7 +213,7 @@ class MainActivity : ComponentActivity() {
                             TextButton(onClick = { FocusController.stop(); error = null }) { Text(stringResource(R.string.restore)) }
 
                         if (state.ruleEnabled && state.session == null) {
-                            TextButton(onClick = { requestPlace(0) }, enabled = !state.checkingPlace && !state.monitoringPlace) {
+                            if (state.appliedRule?.anywhere != true) TextButton(onClick = { requestPlace(0) }, enabled = !state.checkingPlace && !state.monitoringPlace) {
                                 Text(stringResource(if (state.monitoringPlace) R.string.audit_monitoring else R.string.m_check_arrival))
                             }
                             if (state.checkingPlace) LinearProgressIndicator(Modifier.fillMaxWidth(), trackColor = PineHairline)
@@ -286,7 +288,8 @@ class MainActivity : ComponentActivity() {
                                         !state.ruleEnabled -> rules.firstOrNull()?.let { rule -> PrimaryButton(onClick = { if (!FocusController.activateRule(rule.id)) error = R.string.save_error }, modifier = Modifier.fillMaxWidth()) { Text(stringResource(R.string.home_activate_rule, rule.name)) } }
                                         canStart -> PrimaryButton(onClick = { requestPlace(1) }, modifier = Modifier.fillMaxWidth()) { Text(stringResource(R.string.start_focus)) }
                                     }
-                                    if (canStart && !recentInside) Text(stringResource(R.string.audit_start_location), style = MaterialTheme.typography.bodyMedium)
+                                    if (canStart && active?.anywhere == true) Text(stringResource(R.string.audit_start_time_only), style = MaterialTheme.typography.bodyMedium)
+                                    else if (canStart && !recentInside) Text(stringResource(R.string.audit_start_location), style = MaterialTheme.typography.bodyMedium)
                                     (error ?: state.message)?.takeUnless { it == R.string.engine_rule_ready || it == R.string.engine_reconnected }
                                         ?.let { Text(stringResource(it), style = MaterialTheme.typography.bodyMedium) }
                                     if (state.checkingPlace) LinearProgressIndicator(Modifier.fillMaxWidth(), trackColor = PineHairline)
@@ -307,7 +310,7 @@ class MainActivity : ComponentActivity() {
                             Card(Modifier.fillMaxWidth(), colors = CardDefaults.cardColors(containerColor = WarmIvory), shape = RoundedCornerShape(24.dp), border = BorderStroke(1.dp, PineHairline)) { Column(Modifier.padding(16.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
                                 Text(rule.name, style = MaterialTheme.typography.titleLarge)
                                 Text(scheduleLabel(rule), style = MaterialTheme.typography.bodyLarge)
-                                Text(rule.placeLabel.ifBlank { getString(R.string.audit_saved_place) }, style = MaterialTheme.typography.bodyMedium)
+                                Text(if (rule.anywhere) getString(R.string.editor_time_only_place) else rule.placeLabel.ifBlank { getString(R.string.audit_saved_place) }, style = MaterialTheme.typography.bodyMedium)
                                 Text(stringResource(R.string.apps_selected, rule.packages.size))
                                 if (unapplied) Text(stringResource(R.string.m_unapplied))
                                 FlowRow(horizontalArrangement = Arrangement.spacedBy(8.dp)) {

@@ -32,4 +32,8 @@
     <string name="days_weekdays">Weekdays</string>
     <string name="days_weekends">Weekends</string>
     <string name="home_starts_on">Starts %1$s at %2$s</string>
+    <string name="editor_time_only">Use time only, no place</string>
+    <string name="editor_time_only_note">A time-only rule never uses Location. Tap Start focus during its schedule.</string>
+    <string name="editor_time_only_place">No place, time only</string>
+    <string name="audit_start_time_only">Time-only rule: tap Start focus during its schedule. No Location needed.</string>
 </resources>

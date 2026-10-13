@@ -22,6 +22,7 @@ data class FocusState(
     val accuracyMeters: Float? = null,
     val placeSession: Boolean = false,
     val monitoringPlace: Boolean = false,
+    val timeOnlySession: Boolean = false,
 )
 
 object FocusController {
@@ -107,7 +108,7 @@ object FocusController {
         endWallMillis = null
         mutableState.value = state.value.copy(session = null, remaining = 0, message = message,
             insidePlace = false, checkingPlace = false, observedAt = null, distanceMeters = null,
-            accuracyMeters = null, placeSession = false, monitoringPlace = false)
+            accuracyMeters = null, placeSession = false, monitoringPlace = false, timeOnlySession = false)
         context?.stopService(Intent(context, PlaceMonitor::class.java))
         onChange?.invoke()
         if (wasActive) notify(R.string.engine_ended)
@@ -117,7 +118,32 @@ object FocusController {
             mutableState.value = state.value.copy(message = R.string.engine_monitor_body)
         } else requestArrival(context, false)
     }
-    fun startPlaceFocus(context: Context) { requestArrival(context, true) }
+    fun startPlaceFocus(context: Context) {
+        initialize(context)
+        if (state.value.appliedRule?.anywhere == true) startTimeOnlyFocus(context) else requestArrival(context, true)
+    }
+    /** D-52 on Android: a time-only rule needs no place and no location permission. */
+    private fun startTimeOnlyFocus(context: Context) {
+        val current = state.value
+        val rule = current.appliedRule ?: return
+        if (ruleStore.error.value) { mutableState.value = current.copy(message = R.string.engine_storage_error); return }
+        if (current.session != null) return
+        if (!current.ruleEnabled || !current.connected) { mutableState.value = current.copy(message = R.string.engine_setup_needed); return }
+        if (!RulePolicy.scheduleActive(rule)) { mutableState.value = current.copy(message = R.string.engine_outside_schedule); return }
+        val packages = rule.packages - AppSelection.protectedPackages(context)
+        if (packages.isEmpty()) { mutableState.value = current.copy(message = R.string.engine_setup_needed); return }
+        invalidateChecks()
+        val now = SystemClock.elapsedRealtime()
+        val wallNow = ZonedDateTime.now()
+        val end = RulePolicy.scheduleEnd(rule, wallNow).toInstant().toEpochMilli()
+        val duration = end - wallNow.toInstant().toEpochMilli()
+        endWallMillis = end
+        val session = FocusSession(packages.toSet(), now, now + duration)
+        mutableState.value = state.value.copy(session = session, remaining = duration, timeOnlySession = true,
+            placeSession = false, checkingPlace = false, message = R.string.engine_started)
+        onChange?.invoke()
+        notify(R.string.engine_started)
+    }
     fun startPlaceMonitoring(context: Context) { requestArrival(context, false, monitor = true) }
     fun stopPlaceMonitoring() { stopInternal(R.string.engine_monitor_stopped) }
     private fun requestArrival(context: Context, start: Boolean, monitor: Boolean = false) {
@@ -125,6 +151,7 @@ object FocusController {
         val current = state.value
         if (ruleStore.error.value) { mutableState.value = current.copy(message = R.string.engine_storage_error); return }
         if (current.checkingPlace || current.session != null) return
+        if (current.appliedRule?.anywhere == true) return
         if (!current.ruleEnabled || current.appliedRule == null || (start && !current.connected)) {
             mutableState.value = current.copy(message = R.string.engine_setup_needed); return
         }
@@ -200,6 +227,10 @@ object FocusController {
                 endWallMillis?.let { System.currentTimeMillis() >= it } == true)) {
                 finishPlaceFocus(R.string.session_finished); return
             }
+        }
+        if (current.timeOnlySession && (current.appliedRule?.let { RulePolicy.scheduleActive(it) } != true ||
+                endWallMillis?.let { System.currentTimeMillis() >= it } == true)) {
+            stop(R.string.session_finished); return
         }
         val session = current.session ?: return
         val remaining = session.remaining(now)
