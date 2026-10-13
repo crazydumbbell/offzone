@@ -1,0 +1,21 @@
+docs/privacy/index.html
+  s_e86bd21f090057::t_b569c686827891 16,36,43
+docs/support/index.html
+  s_e86bd21f090057::t_b569c686827891 45
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "3a3f0375d29b7d80531cf342d0738459ba718dd1",
+  "prompts": {},
+  "sessions": {
+    "s_e86bd21f090057": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "0a61173d-81d0-40f4-a407-ef5e2d907967",
+        "model": "claude-sonnet-5-5"
+      },
+      "human_author": "exchip <wogus5357@gmail.com>"
+    }
+  }
+}
