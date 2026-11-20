@@ -47,6 +47,13 @@ internal object AccountIdentity {
         currentUID != null && currentUID == requestedUID && currentGeneration == requestedGeneration
     fun proAccess(uid: String?, entitlementUID: String?, active: Boolean, expiresAt: Long?, now: Long) =
         uid != null && uid == entitlementUID && active && (expiresAt == null || expiresAt > now)
+    fun entitlementActive(
+        verificationFailed: Boolean,
+        hasEntitlement: Boolean,
+        isDebug: Boolean,
+        isSandbox: Boolean,
+        isPlayStore: Boolean,
+    ) = !verificationFailed && hasEntitlement && (isDebug || !isSandbox || isPlayStore)
     fun sessionID(value: String) = value.matches(Regex("[a-f0-9]{64}"))
     val goals = setOf("work", "rest", "presence", "personal")
 }
@@ -301,7 +308,13 @@ class AccountStore(context: Context, firebaseApp: FirebaseApp? = null) {
         if (!same(uid, stamp) || currentPurchaseUID() != uid) return
         val entitlement = info.entitlements.active[BuildConfig.PRO_ENTITLEMENT_ID]
         entitlementUID = uid
-        val active = info.entitlements.verification != VerificationResult.FAILED && entitlement != null && (BuildConfig.DEBUG || !entitlement.isSandbox)
+        val active = AccountIdentity.entitlementActive(
+            verificationFailed = info.entitlements.verification == VerificationResult.FAILED,
+            hasEntitlement = entitlement != null,
+            isDebug = BuildConfig.DEBUG,
+            isSandbox = entitlement?.isSandbox == true,
+            isPlayStore = entitlement?.store == Store.PLAY_STORE,
+        )
         val expires = entitlement?.expirationDate?.time
         mutable.update { it.copy(pro = AccountIdentity.proAccess(uid, uid, active, expires, System.currentTimeMillis()), proExpiresAt = expires,
             managementURL = info.managementURL?.toString()?.takeIf(::https)) }

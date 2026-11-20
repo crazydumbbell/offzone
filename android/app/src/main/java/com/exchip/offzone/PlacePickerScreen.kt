@@ -27,6 +27,13 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import java.util.Locale
 
+class OffzoneMapBridge(private val onSelect: (Double, Double) -> Unit) {
+    @JavascriptInterface
+    fun select(a: Double, b: Double) {
+        onSelect(a, b)
+    }
+}
+
 @SuppressLint("SetJavaScriptEnabled")
 @Composable
 fun PlacePickerScreen(initialLat: Double?, initialLon: Double?, initialLabel: String, onBack: () -> Unit, onPick: (Double, Double, String) -> Unit) {
@@ -99,12 +106,10 @@ fun PlacePickerScreen(initialLat: Double?, initialLon: Double?, initialLabel: St
                 settings.allowFileAccess = false; settings.allowContentAccess = false
                 settings.cacheMode = WebSettings.LOAD_DEFAULT
                 settings.userAgentString = "OffzoneAndroid/0.1 (+https://crazydumbbell.github.io/offzone/privacy/) " + settings.userAgentString
-                addJavascriptInterface(object {
-                    @JavascriptInterface fun select(a: Double, b: Double) {
-                        if (a.isFinite() && b.isFinite() && a in -90.0..90.0 && b in -180.0..180.0) post {
-                            if (lat == null || lon == null || kotlin.math.abs(lat!! - a) > 0.000001 || kotlin.math.abs(lon!! - b) > 0.000001) label = ""
-                            lat = a; lon = b; latitudeText = a.toString(); longitudeText = b.toString()
-                        }
+                addJavascriptInterface(OffzoneMapBridge { a, b ->
+                    if (a.isFinite() && b.isFinite() && a in -90.0..90.0 && b in -180.0..180.0) post {
+                        if (lat == null || lon == null || kotlin.math.abs(lat!! - a) > 0.000001 || kotlin.math.abs(lon!! - b) > 0.000001) label = ""
+                        lat = a; lon = b; latitudeText = a.toString(); longitudeText = b.toString()
                     }
                 }, "OffzoneMap")
                 webViewClient = object : WebViewClient() {

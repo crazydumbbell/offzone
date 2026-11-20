@@ -26,8 +26,8 @@ android {
         applicationId = "com.exchip.roomdns"
         minSdk = 26
         targetSdk = 36
-        versionCode = 7
-        versionName = "1.0.0"
+        versionCode = 8
+        versionName = "1.0.1"
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         mapOf(
             "FIREBASE_API_KEY" to "", "FIREBASE_APP_ID" to "1:842668693484:android:90a67f18aa795dabf212c9",
@@ -48,7 +48,12 @@ android {
         targetCompatibility = JavaVersion.VERSION_17
     }
     buildTypes {
-        getByName("release") { signingConfig = signingConfigs.getByName("upload") }
+        getByName("release") {
+            signingConfig = signingConfigs.getByName("upload")
+            isMinifyEnabled = true
+            isShrinkResources = true
+            proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro")
+        }
         debug {
         applicationIdSuffix = ".debug"
         buildConfigField("String", "FIREBASE_APP_ID", "\"1:842668693484:android:b484e4679cd99a9ef212c9\"")
