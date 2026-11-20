@@ -47,6 +47,13 @@ internal object AccountIdentity {
         currentUID != null && currentUID == requestedUID && currentGeneration == requestedGeneration
     fun proAccess(uid: String?, entitlementUID: String?, active: Boolean, expiresAt: Long?, now: Long) =
         uid != null && uid == entitlementUID && active && (expiresAt == null || expiresAt > now)
+    fun entitlementActive(
+        verificationFailed: Boolean,
+        hasEntitlement: Boolean,
+        isDebug: Boolean,
+        isSandbox: Boolean,
+        isPlayStore: Boolean,
+    ) = !verificationFailed && hasEntitlement && (isDebug || !isSandbox || isPlayStore)
     fun sessionID(value: String) = value.matches(Regex("[a-f0-9]{64}"))
     val goals = setOf("work", "rest", "presence", "personal")
 }
@@ -258,15 +265,28 @@ class AccountStore(context: Context, firebaseApp: FirebaseApp? = null) {
         loadOffersInternal()
         if (unlockPassEnabled) refreshBalance(uid, stamp)
     }
-    fun loadOfferings() = action { identityJob?.join(); loadOffersInternal() }
+    /** Prices are public, so this skips the busy flag: the first-run funnel must not wait on, or be dropped by, another action (D-50). */
+    fun loadOfferings(): Job = scope.launch {
+        identityJob?.join()
+        try { loadOffersInternal() } catch (e: Exception) { report(e) }
+    }
+    /** Purchases is configured without an identity until someone signs in; `logIn` later moves it onto the account (D-50). */
+    private fun ensurePurchases(): Boolean {
+        if (!purchasesAllowed || !BuildConfig.REVENUECAT_PUBLIC_KEY.startsWith("goog_")) return false
+        if (!Purchases.isConfigured) Purchases.configure(PurchasesConfiguration.Builder(context, BuildConfig.REVENUECAT_PUBLIC_KEY)
+            .entitlementVerificationMode(EntitlementVerificationMode.INFORMATIONAL).build())
+        return true
+    }
+    /** Signed out: prices for display only (no purchase identity). Signed in: the same list, tied to the verified account. */
     private suspend fun loadOffersInternal() {
-        val uid = currentPurchaseUID() ?: return; val stamp = generation
-        if (!offersEnabled) return
+        if (!offersEnabled || !ensurePurchases()) return
+        val uid = currentPurchaseUID(); val stamp = generation
         val offerings = Purchases.sharedInstance.awaitOfferings()
         val plans = offerings[BuildConfig.PRO_OFFERING_ID]?.availablePackages.orEmpty().filter {
             it.packageType in setOf(PackageType.ANNUAL, PackageType.MONTHLY) && it.product.type == ProductType.SUBS
         }
-        if (same(uid, stamp)) mutable.update { it.copy(packages = plans) }
+        val current = if (uid != null) same(uid, stamp) else generation == stamp && currentPurchaseUID() == null
+        if (current) mutable.update { it.copy(packages = plans) }
     }
     fun purchase(activity: Activity, plan: Package) = action {
         val uid = currentPurchaseUID() ?: fail(R.string.account_verify_required); val stamp = generation
@@ -288,7 +308,13 @@ class AccountStore(context: Context, firebaseApp: FirebaseApp? = null) {
         if (!same(uid, stamp) || currentPurchaseUID() != uid) return
         val entitlement = info.entitlements.active[BuildConfig.PRO_ENTITLEMENT_ID]
         entitlementUID = uid
-        val active = info.entitlements.verification.isVerified && entitlement != null && (BuildConfig.DEBUG || !entitlement.isSandbox)
+        val active = AccountIdentity.entitlementActive(
+            verificationFailed = info.entitlements.verification == VerificationResult.FAILED,
+            hasEntitlement = entitlement != null,
+            isDebug = BuildConfig.DEBUG,
+            isSandbox = entitlement?.isSandbox == true,
+            isPlayStore = entitlement?.store == Store.PLAY_STORE,
+        )
         val expires = entitlement?.expirationDate?.time
         mutable.update { it.copy(pro = AccountIdentity.proAccess(uid, uid, active, expires, System.currentTimeMillis()), proExpiresAt = expires,
             managementURL = info.managementURL?.toString()?.takeIf(::https)) }

@@ -8,9 +8,11 @@ final class RoomDNSShieldConfiguration: ShieldConfigurationDataSource {
     }
 
     private var configuration: ShieldConfiguration {
-        let background = UIColor(red: 229 / 255, green: 241 / 255, blue: 246 / 255, alpha: 1)
-        let ink = UIColor(red: 17 / 255, green: 17 / 255, blue: 17 / 255, alpha: 1)
-        let secondary = UIColor(red: 76 / 255, green: 76 / 255, blue: 76 / 255, alpha: 1)
+        // Same palette as the app (DESIGN.md D-47): Butter canvas, Ink text, Pine action.
+        let background = UIColor(red: 247 / 255, green: 240 / 255, blue: 199 / 255, alpha: 1)
+        let ink = UIColor(red: 31 / 255, green: 42 / 255, blue: 34 / 255, alpha: 1)
+        let secondary = UIColor(red: 94 / 255, green: 102 / 255, blue: 96 / 255, alpha: 1)
+        let pine = UIColor(red: 61 / 255, green: 91 / 255, blue: 63 / 255, alpha: 1)
         let buttonTitle = if #available(iOS 26.5, *) {
             localized("View rule")
         } else {
@@ -26,8 +28,8 @@ final class RoomDNSShieldConfiguration: ShieldConfigurationDataSource {
                 text: localized("You chose to put this app or website aside. Open Offzone to review your rule or restore access."),
                 color: secondary
             ),
-            primaryButtonLabel: .init(text: buttonTitle, color: .white),
-            primaryButtonBackgroundColor: ink
+            primaryButtonLabel: .init(text: buttonTitle, color: background),
+            primaryButtonBackgroundColor: pine
         )
     }
 

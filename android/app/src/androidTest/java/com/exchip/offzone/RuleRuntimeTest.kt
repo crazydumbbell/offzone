@@ -12,6 +12,34 @@ import org.junit.runner.RunWith
 
 @RunWith(AndroidJUnit4::class)
 class RuleRuntimeTest {
+    @Test fun reconnectNeverResumesFocusAndKeepsInterruptionOrErrorVisible() {
+        assumeTrue(Build.MODEL.contains("sdk") || Build.FINGERPRINT.contains("generic"))
+        val instrumentation = InstrumentationRegistry.getInstrumentation()
+        instrumentation.runOnMainSync {
+            FocusController.initialize(instrumentation.targetContext)
+            val wasConnected = FocusController.state.value.connected
+            try {
+                FocusController.stop()
+                FocusController.connect()
+                assertEquals(R.string.engine_reconnected, FocusController.state.value.message)
+                assertTrue(FocusController.start(setOf(instrumentation.context.packageName), 1))
+                FocusController.connect()
+                assertNull(FocusController.state.value.session)
+                assertFalse(FocusController.state.value.monitoringPlace)
+                assertEquals(R.string.service_stopped, FocusController.state.value.message)
+                FocusController.stop(R.string.engine_storage_error)
+                FocusController.connect()
+                assertEquals(R.string.engine_storage_error, FocusController.state.value.message)
+                FocusController.disconnect()
+                FocusController.connect()
+                assertEquals(R.string.service_stopped, FocusController.state.value.message)
+            } finally {
+                FocusController.stop()
+                if (!wasConnected) FocusController.disconnect()
+            }
+        }
+    }
+
     @Test fun savedEditsDoNotApplyAndRecoveryRejectsLateLocation() {
         assumeTrue(Build.MODEL.contains("sdk") || Build.FINGERPRINT.contains("generic"))
         val instrumentation = InstrumentationRegistry.getInstrumentation()
@@ -33,12 +61,22 @@ class RuleRuntimeTest {
                 assertTrue(store.hasUnappliedChanges(rule.id))
                 assertTrue(FocusController.activateRule(rule.id))
                 assertFalse(store.hasUnappliedChanges(rule.id))
-                val oldGeneration = FocusController.generation
-                FocusController.stop()
                 val location = Location("test").apply {
                     latitude = 37.0; longitude = 127.0; accuracy = 5f
                     elapsedRealtimeNanos = SystemClock.elapsedRealtimeNanos()
                 }
+                FocusController.acceptLocation(location, FocusController.generation, false)
+                assertNotNull(FocusController.state.value.distanceMeters)
+                assertNotNull(FocusController.state.value.accuracyMeters)
+                // Switching rules must never display the previous place's distance.
+                assertTrue(FocusController.activateRule(rule.id))
+                assertNull(FocusController.state.value.distanceMeters)
+                assertNull(FocusController.state.value.accuracyMeters)
+                FocusController.acceptLocation(location, FocusController.generation, false)
+                val oldGeneration = FocusController.generation
+                FocusController.stop()
+                assertNull(FocusController.state.value.distanceMeters)
+                assertNull(FocusController.state.value.accuracyMeters)
                 FocusController.acceptLocation(location, oldGeneration, true)
                 assertNull(FocusController.state.value.session)
                 assertFalse(FocusController.state.value.insidePlace)

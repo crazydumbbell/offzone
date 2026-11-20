@@ -1,0 +1,12 @@
+<?xml version='1.0' encoding='utf-8'?>
+<resources>
+  <string name="audit_settings">설정</string>
+  <string name="audit_try_focus">빠른 집중 먼저 체험하기</string>
+  <string name="audit_start_location">시작할 때 현재 위치를 확인합니다.</string>
+  <string name="audit_monitoring">위치를 자동 확인하고 있어요</string>
+  <string name="audit_saved_place">저장한 장소</string>
+  <string name="audit_place_name">장소 이름 (선택)</string>
+  <string name="audit_place_example">집, 회사, 좋아하는 장소</string>
+  <string name="audit_coordinates">좌표로 직접 입력하기</string>
+  <string name="audit_hide_coordinates">좌표 입력 접기</string>
+</resources>

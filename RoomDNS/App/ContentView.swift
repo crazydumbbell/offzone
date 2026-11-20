@@ -75,6 +75,7 @@ struct ContentView: View {
     @State private var safetyReleasePresented = false
     @State private var unlockPassPresented = false
     @State private var notificationsPresented = false
+    @State private var quickFocusPresented = false
     @State private var showsSaveError = false
     @State private var ruleToDelete: FocusRule?
     @State private var roomieReaction: RoomSpiritState?
@@ -134,18 +135,18 @@ struct ContentView: View {
             .id(screen)
             .transition(reduceMotion ? .identity : .opacity)
         }
-        .tint(Color.roomInk)
+        .tint(Color.roomAccent)
         .preferredColorScheme(.light)
         .safeAreaInset(edge: .top, spacing: 0) {
             HStack(spacing: 12) {
-                if screen == .home || screen == .ready {
+                if screen == .ready {
                     Button {
-                        screen = screen == .home ? .welcome : .review
+                        screen = .review
                     } label: {
                         Label("Back", systemImage: "chevron.left")
                     }
                     .font(.suit(.subheadline, weight: .semibold))
-                    .foregroundStyle(Color.roomInk)
+                    .foregroundStyle(Color.roomAccent)
                     .frame(minWidth: 44, minHeight: 44)
                 }
                 if !dynamicTypeSize.isAccessibilitySize {
@@ -156,10 +157,10 @@ struct ContentView: View {
                 }
                 Spacer(minLength: 0)
                 Button {
-                    if model.isFocused { unlockPassPresented = true }
+                    if model.isFocused && account.unlockPassEnabled { unlockPassPresented = true }
                     else { safetyReleasePresented = true }
                 } label: {
-                    Label(model.isFocused ? roomString("End session") : roomString("Restore access"), systemImage: "arrow.counterclockwise")
+                    Label(model.isFocused && account.unlockPassEnabled ? roomString("End session") : roomString("Restore access"), systemImage: "arrow.counterclockwise")
                 }
                 .font(.suit(.subheadline, weight: .medium))
                 .foregroundStyle(Color.roomInkSecondary)
@@ -184,6 +185,7 @@ struct ContentView: View {
                 screen = .home
             }
             .presentationDetents([.large])
+            .presentationCornerRadius(24)
         }
         .sheet(isPresented: $unlockPassPresented) {
             UnlockPassView(model: model) {
@@ -191,15 +193,22 @@ struct ContentView: View {
                 roomieReaction = model.errorMessage == nil ? .recovered : nil
                 screen = .home
             }
+            .presentationCornerRadius(24)
         }
         .sheet(isPresented: $notificationsPresented) {
             ZoneNotificationSettingsView(model: model)
+                .presentationCornerRadius(24)
+        }
+        .sheet(isPresented: $quickFocusPresented) {
+            QuickFocusView(model: model)
         }
         .sheet(isPresented: $accountPresented) {
             RoomAccountView(goal: goal)
+                .presentationCornerRadius(24)
         }
         .sheet(isPresented: $paywallPresented, onDismiss: { offerDismissed = true }) {
             RoomPaywallView(goal: goal)
+                .presentationCornerRadius(24)
         }
         .confirmationDialog(
             "Delete rule?",
@@ -211,7 +220,7 @@ struct ContentView: View {
             presenting: ruleToDelete
         ) { rule in
             Button("Delete rule", role: .destructive) {
-                if model.isFocused && model.activeRuleID == rule.id { unlockPassPresented = true }
+                if model.isFocused && model.activeRuleID == rule.id { presentSessionEnd() }
                 else { model.deleteRule(rule.id) }
                 ruleToDelete = nil
             }
@@ -223,8 +232,9 @@ struct ContentView: View {
             if phase == .active { model.refresh(); recordVisit() }
             else { roomieReaction = nil }
         }
-        .task(id: scenePhase) {
-            guard scenePhase == .active else { return }
+        .task(id: scenePhase == .active && !paywallPresented) {
+            // The paywall owns its offer session; foregrounding after an OS prompt must not clear its plans.
+            guard scenePhase == .active && !paywallPresented else { return }
             await account.refresh()
             await account.loadOfferings()
         }
@@ -236,6 +246,17 @@ struct ContentView: View {
             if !didPresentPreviewPaywall && ProcessInfo.processInfo.arguments.contains("-offzonePreviewPaywall") {
                 didPresentPreviewPaywall = true
                 paywallPresented = true
+            }
+            let arguments = ProcessInfo.processInfo.arguments
+            if arguments.contains("-offzonePreviewQuick") { quickFocusPresented = true }
+            if arguments.contains("-offzonePreviewPlace") {
+                model.beginNewRuleDraft()
+                screen = .place
+            }
+            if arguments.contains("-offzonePreviewSchedule") {
+                model.beginNewRuleDraft()
+                model.days = RestrictionPolicy.weekdays
+                screen = .schedule
             }
 #endif
         }
@@ -275,7 +296,7 @@ struct ContentView: View {
                     .frame(height: dynamicTypeSize.isAccessibilitySize ? 150 : 186)
                     .frame(maxWidth: .infinity)
                     .background(Color.roomButter)
-                    .clipShape(RoundedRectangle(cornerRadius: 28))
+                    .clipShape(RoundedRectangle(cornerRadius: 24))
                 Label("You choose the boundaries. You can always restore access.", systemImage: "checkmark.shield")
                     .font(.suit(.subheadline))
                     .foregroundStyle(Color.roomInkSecondary)
@@ -357,14 +378,14 @@ struct ContentView: View {
                     }
                     .font(.suit(.body, weight: .semibold))
                     .padding(16)
-                    .editorialPanel(Color.roomBlue)
+                    .editorialPanel(cornerRadius: 16)
                 } else if windowRaw == "unsure" {
                     Text(roomString("Suggested: %@. You can change it next.", rhythmTimeRange(goal.suggestedWindow)))
                         .font(.suit(.subheadline))
                         .foregroundStyle(Color.roomInkSecondary)
                         .frame(maxWidth: .infinity, alignment: .leading)
                         .padding(16)
-                        .editorialPanel(Color.roomBlue)
+                        .editorialPanel(cornerRadius: 16)
                 }
                 ForEach(FocusWindow.allCases) { item in
                     choiceRow(title: roomString(item.title),
@@ -378,19 +399,22 @@ struct ContentView: View {
     private func rhythmQuickChoice(title: String, symbol: String, selected: Bool,
                                    action: @escaping () -> Void) -> some View {
         Button(action: action) {
-            HStack(spacing: 7) {
+            HStack(spacing: 6) {
                 Image(systemName: symbol).accessibilityHidden(true)
                 Text(title).fixedSize(horizontal: false, vertical: true)
                 Spacer(minLength: 0)
-                if selected { Image(systemName: "checkmark.circle.fill").accessibilityHidden(true) }
+                if selected { RoomRadio(selected: true, font: .suit(.body)).accessibilityHidden(true) }
             }
             .font(.suit(.subheadline, weight: .semibold))
             .foregroundStyle(Color.roomInk)
-            .padding(.horizontal, 12)
+            .padding(.horizontal, 10)
             .frame(maxWidth: .infinity, minHeight: 52)
-            .background(selected ? Color.roomMint : Color.roomPaper)
-            .clipShape(RoundedRectangle(cornerRadius: 14))
-            .overlay { RoundedRectangle(cornerRadius: 14).stroke(selected ? Color.roomAction : Color.roomSeparator) }
+            .background(selected ? Color.roomMint : Color.roomCard)
+            .clipShape(RoundedRectangle(cornerRadius: 16))
+            .overlay {
+                RoundedRectangle(cornerRadius: 16)
+                    .strokeBorder(selected ? Color.roomAccent : Color.roomOutline, lineWidth: selected ? 1.5 : 1)
+            }
         }
         .buttonStyle(.plain)
         .accessibilityAddTraits(selected ? .isSelected : [])
@@ -399,7 +423,7 @@ struct ContentView: View {
     private func choiceRow(title: String, detail: String, symbol: String, selected: Bool,
                            action: @escaping () -> Void) -> some View {
         Button(action: action) {
-            HStack(spacing: 14) {
+            HStack(spacing: 12) {
                 Image(systemName: symbol).font(.suit(.title3)).frame(width: 28)
                 VStack(alignment: .leading, spacing: 5) {
                     Text(title).font(.suit(.headline))
@@ -407,14 +431,16 @@ struct ContentView: View {
                         .foregroundStyle(Color.roomInkSecondary)
                 }
                 Spacer(minLength: 0)
-                Image(systemName: selected ? "checkmark.circle.fill" : "circle")
-                    .foregroundStyle(selected ? Color.roomAction : Color.roomInkTertiary)
+                RoomRadio(selected: selected)
             }
             .multilineTextAlignment(.leading).fixedSize(horizontal: false, vertical: true)
-            .foregroundStyle(Color.roomInk).padding(18).frame(maxWidth: .infinity, minHeight: 76)
-            .background(selected ? Color.roomMint : Color.roomPaper)
+            .foregroundStyle(Color.roomInk).padding(16).frame(maxWidth: .infinity, minHeight: 76)
+            .background(selected ? Color.roomMint : Color.roomCard)
             .clipShape(RoundedRectangle(cornerRadius: 16))
-            .overlay { RoundedRectangle(cornerRadius: 16).stroke(selected ? Color.roomAction : Color.roomSeparator, lineWidth: 1) }
+            .overlay {
+                RoundedRectangle(cornerRadius: 16)
+                    .strokeBorder(selected ? Color.roomAccent : Color.roomOutline, lineWidth: selected ? 1.5 : 1)
+            }
         }
         .buttonStyle(.plain)
         .accessibilityAddTraits(selected ? .isSelected : [])
@@ -436,14 +462,14 @@ struct ContentView: View {
                             .font(.suit(.body)).foregroundStyle(Color.roomInkSecondary)
                     }
                     .padding(20).frame(maxWidth: .infinity, alignment: .leading)
-                    .background(Color.roomBlue).clipShape(RoundedRectangle(cornerRadius: 18))
+                    .editorialPanel()
                 }
                 Label("You can always restore access for free.", systemImage: "arrow.counterclockwise")
                     .font(.suit(.subheadline))
                 actionFeedback
                 if account.isConfigured && !account.isSignedIn {
                     Button("Save my goal to an account") { accountPresented = true }
-                        .font(.suit(.body, weight: .semibold)).frame(minHeight: 44)
+                        .font(.suit(.body, weight: .semibold)).foregroundStyle(Color.roomAccent).frame(minHeight: 44)
                 }
             }
             .foregroundStyle(Color.roomInk).padding(24).frame(maxWidth: 560).frame(maxWidth: .infinity)
@@ -458,7 +484,7 @@ struct ContentView: View {
                     readyActivationError = nil
                     guard activate(rule) else { return }
                     screen = .home
-                    paywallPresented = true
+                    paywallPresented = account.offersEnabled && !account.isPro
                 }
                 Button("Go to home") { screen = .home }
                     .font(.suit(.body, weight: .medium)).frame(minHeight: 44)
@@ -488,7 +514,7 @@ struct ContentView: View {
             }
             .frame(maxWidth: .infinity, alignment: .leading)
             .padding(22)
-            .editorialPanel(model.screenTimeAuthorized ? .roomMint : .roomButter)
+            .editorialPanel(model.screenTimeAuthorized ? .roomMint : .roomButter, outlined: false)
             Text("You’ll choose the apps in Apple’s picker.")
                 .font(.suit(.subheadline)).foregroundStyle(Color.roomInkSecondary)
             actionFeedback
@@ -513,12 +539,8 @@ struct ContentView: View {
                         .font(.suit(.title2))
                         .foregroundStyle(Color.roomInk)
                         .frame(width: 46, height: 46)
-                        .background(Color.roomPaper)
-                        .clipShape(RoundedRectangle(cornerRadius: 10))
-                        .overlay {
-                            RoundedRectangle(cornerRadius: 10)
-                                .stroke(Color.roomSeparator, lineWidth: 1)
-                        }
+                        .background(Color.roomMint)
+                        .clipShape(RoundedRectangle(cornerRadius: 16))
 
                     VStack(alignment: .leading, spacing: 4) {
                         Text(model.selectionCount == 0
@@ -541,7 +563,7 @@ struct ContentView: View {
                         .foregroundStyle(Color.roomInkTertiary)
                 }
                 .padding(18)
-                .editorialPanel(Color.roomBlue)
+                .editorialPanel(cornerRadius: 16)
             }
             .buttonStyle(.plain)
         }
@@ -554,6 +576,20 @@ struct ContentView: View {
             actionEnabled: model.placeConfigured,
             action: handlePlaceAction
         ) {
+            VStack(alignment: .leading, spacing: 10) {
+                Button {
+                    placeMode = .anywhere
+                    screen = .schedule
+                } label: {
+                    Text("Use time only, no place")
+                        .frame(maxWidth: .infinity, minHeight: 44)
+                }
+                .font(.suit(.body, weight: .medium)).buttonStyle(RoomSecondaryActionStyle(horizontalPadding: 8))
+                Text("A time-only rule never uses Location. Tap Start focus during its schedule.")
+                    .font(.suit(.subheadline)).foregroundStyle(Color.roomInkSecondary)
+                    .fixedSize(horizontal: false, vertical: true)
+            }
+
             placeMapPicker
             Text("Choose a place, then start focus when you arrive during your schedule. The 150 m area is approximate, not room-level accuracy.")
                 .font(.suit(.subheadline))
@@ -575,6 +611,7 @@ struct ContentView: View {
             VStack(alignment: .leading, spacing: 8) {
                 HStack {
                     TextField("Search places or addresses", text: $placeQuery)
+                        .foregroundStyle(Color.roomInk)
                         .submitLabel(.search)
                         .onSubmit { searchPlaces() }
                     Button { searchPlaces() } label: {
@@ -585,7 +622,7 @@ struct ContentView: View {
                 }
                 .font(.suit(.body))
                 .padding(.leading, 14)
-                .background(Color.roomSurfaceRaised, in: RoundedRectangle(cornerRadius: 12))
+                .roomField()
                 .onChange(of: placeQuery) {
                     placeSearch?.cancel()
                     placeSearchID = UUID()
@@ -620,7 +657,7 @@ struct ContentView: View {
                             .foregroundStyle(Color.roomAccent.opacity(0.18))
                             .stroke(Color.roomAccent, lineWidth: 2)
                         Marker(roomString("Focus place"), coordinate: coordinate)
-                            .tint(Color.roomInk)
+                            .tint(Color.roomAccent)
                     }
                 }
                 .mapStyle(.standard(elevation: .flat))
@@ -665,8 +702,8 @@ struct ContentView: View {
                         Label(roomString("Current location"), systemImage: "location")
                             .frame(maxWidth: .infinity, minHeight: 44)
                     }
-                }.font(.suit(.body, weight: .medium)).buttonStyle(.bordered).tint(Color.roomInk)
-            }.padding(16).background(Color.roomPaper)
+                }.font(.suit(.body, weight: .medium)).buttonStyle(RoomSecondaryActionStyle(horizontalPadding: 8))
+            }.padding(16).background(Color.roomCard)
         }
         .editorialPanel()
         .onDisappear { placeSearch?.cancel(); placeSearchID = UUID() }
@@ -725,7 +762,7 @@ struct ContentView: View {
     private var scheduleScreen: some View {
         setupScreen(
             title: roomString("Choose your schedule"),
-            detail: roomString("Repeats daily."),
+            detail: roomString("Pick the days and times it repeats."),
             actionTitle: roomString("Review rule"),
             actionEnabled: scheduleIsValid,
             action: {
@@ -733,20 +770,23 @@ struct ContentView: View {
                 screen = .review
             }
         ) {
+            dayPicker
             VStack(spacing: 0) {
                 DatePicker("Start", selection: $model.startTime, displayedComponents: .hourAndMinute)
                     .padding(18)
-                    .background(Color.roomBlue)
-                Divider().overlay(Color.roomSeparator)
+                Divider().overlay(Color.roomLine)
                 DatePicker("End", selection: $model.endTime, displayedComponents: .hourAndMinute)
                     .padding(18)
-                    .background(Color.roomBlush)
             }
             .font(.suit(.body, weight: .semibold))
             .foregroundStyle(Color.roomInk)
             .editorialPanel()
 
-            if !scheduleIsValid {
+            if model.days == 0 {
+                Label("Choose at least one day.", systemImage: "exclamationmark.circle.fill")
+                    .font(.suit(.subheadline))
+                    .foregroundStyle(Color.roomWarning)
+            } else if !scheduleIsValid {
                 Label("Choose a focus window of at least 15 minutes.", systemImage: "exclamationmark.circle.fill")
                     .font(.suit(.subheadline))
                     .foregroundStyle(Color.roomWarning)
@@ -756,6 +796,45 @@ struct ContentView: View {
                     .font(.suit(.subheadline))
                     .foregroundStyle(Color.roomInkSecondary)
             }
+        }
+    }
+
+    private var dayPicker: some View {
+        let symbols = Calendar.current.shortWeekdaySymbols
+        let columns = [GridItem(.adaptive(minimum: dynamicTypeSize.isAccessibilitySize ? 96 : 40), spacing: 8)]
+        return VStack(alignment: .leading, spacing: 10) {
+            Text("Days").font(.suit(.subheadline, weight: .semibold)).foregroundStyle(Color.roomInkSecondary)
+            LazyVGrid(columns: columns, spacing: 8) {
+                ForEach(Self.mondayFirstWeekdays, id: \.self) { weekday in
+                    let bit = RestrictionPolicy.dayBit(weekday: weekday)
+                    let on = model.days & bit != 0
+                    Button { model.days ^= bit } label: {
+                        Text(symbols[weekday - 1])
+                            .font(.suit(.subheadline, weight: .semibold))
+                            .frame(maxWidth: .infinity, minHeight: 44)
+                            .background(on ? Color.roomAccent : Color.roomCard, in: Capsule())
+                            .overlay { if !on { Capsule().strokeBorder(Color.roomOutline, lineWidth: 1) } }
+                            .foregroundStyle(on ? Color.roomCanvas : Color.roomInk)
+                    }
+                    .buttonStyle(.plain)
+                    .accessibilityLabel(Calendar.current.weekdaySymbols[weekday - 1])
+                    .accessibilityAddTraits(on ? .isSelected : [])
+                }
+            }
+        }
+    }
+
+    private static let mondayFirstWeekdays = [2, 3, 4, 5, 6, 7, 1]
+
+    private func daysSummary(_ days: Int) -> String {
+        switch days {
+        case RestrictionPolicy.everyDay: return roomString("Every day")
+        case RestrictionPolicy.weekdays: return roomString("Weekdays")
+        case RestrictionPolicy.everyDay ^ RestrictionPolicy.weekdays: return roomString("Weekends")
+        default:
+            let symbols = Calendar.current.shortWeekdaySymbols
+            return Self.mondayFirstWeekdays.filter { days & RestrictionPolicy.dayBit(weekday: $0) != 0 }
+                .map { symbols[$0 - 1] }.joined(separator: ", ")
         }
     }
 
@@ -773,20 +852,22 @@ struct ContentView: View {
                 TextField("e.g. Work time or Wind-down", text: $model.ruleName)
                     .textInputAutocapitalization(.words)
                     .font(.suit(.body))
+                    .foregroundStyle(Color.roomInk)
                     .padding(16)
-                    .background(Color.roomCanvas)
-                    .overlay(alignment: .bottom) { Rectangle().fill(Color.roomSeparator).frame(height: 1) }
+                    .roomField()
             }
 
             VStack(spacing: 0) {
                 summaryRow(icon: "square.stack.3d.up", title: roomString("Apps & sites"), value: model.selectionCount == 1 ? roomString("1 selected item") : roomString("%d selected items", model.selectionCount))
-                Divider().overlay(Color.roomSeparator).padding(.leading, 54)
+                Divider().overlay(Color.roomLine).padding(.leading, 54)
                 summaryRow(
-                    icon: "location",
+                    icon: placeMode == .anywhere ? "clock" : "location",
                     title: roomString("Place"),
-                    value: roomString("Within 150 m of this place")
+                    value: placeMode == .anywhere
+                        ? roomString("No place, time only")
+                        : roomString("Within 150 m of this place")
                 )
-                Divider().overlay(Color.roomSeparator).padding(.leading, 54)
+                Divider().overlay(Color.roomLine).padding(.leading, 54)
                 summaryRow(icon: "clock", title: roomString("Time"), value: scheduleSummary)
             }
             .background(Color.roomCanvas)
@@ -798,7 +879,7 @@ struct ContentView: View {
                     .font(.suit(.subheadline)).foregroundStyle(Color.roomInkSecondary)
                     .fixedSize(horizontal: false, vertical: true)
             }
-            .padding(18).background(Color.roomButter).clipShape(RoundedRectangle(cornerRadius: 16))
+            .padding(18).editorialPanel(Color.roomButter, outlined: false)
 
             Label("Saving won’t start restrictions.", systemImage: "checkmark")
                 .font(.suit(.subheadline)).foregroundStyle(Color.roomInkSecondary)
@@ -817,26 +898,33 @@ struct ContentView: View {
     }
 
     private var homeScreen: some View {
-        VStack(spacing: 0) {
-            HStack {
+        let toolbarLayout = dynamicTypeSize.isAccessibilitySize
+            ? AnyLayout(VStackLayout(alignment: .leading, spacing: 8))
+            : AnyLayout(HStackLayout())
+        return VStack(spacing: 0) {
+            toolbarLayout {
                 Text("Your space")
                     .font(.suit(.headline, weight: .bold))
                     .foregroundStyle(Color.roomInk)
-                Spacer()
-                Button { notificationsPresented = true } label: { Image(systemName: "bell") }
-                    .font(.suit(.title3)).foregroundStyle(Color.roomInk)
-                    .frame(minWidth: 44, minHeight: 44).accessibilityLabel("Zone notifications")
-                Button { accountPresented = true } label: { Image(systemName: "person.crop.circle") }
-                    .font(.suit(.title3)).foregroundStyle(Color.roomInk)
-                    .frame(minWidth: 44, minHeight: 44).accessibilityLabel("Account & plan")
-                Button { addRule() } label: { Label("New rule", systemImage: "plus") }
-                    .font(.suit(.subheadline, weight: .medium))
-                    .foregroundStyle(Color.roomAction).frame(minHeight: 44)
+                if !dynamicTypeSize.isAccessibilitySize { Spacer() }
+                HStack {
+                    Button { notificationsPresented = true } label: { Image(systemName: "bell") }
+                        .font(.suit(.title3)).foregroundStyle(Color.roomInk)
+                        .frame(minWidth: 44, minHeight: 44).accessibilityLabel("Zone notifications")
+                    Button { accountPresented = true } label: { Image(systemName: "person.crop.circle") }
+                        .font(.suit(.title3)).foregroundStyle(Color.roomInk)
+                        .frame(minWidth: 44, minHeight: 44).accessibilityLabel("Account & plan")
+                    Button { addRule() } label: { Label("New rule", systemImage: "plus").fixedSize(horizontal: !dynamicTypeSize.isAccessibilitySize, vertical: true) }
+                        .font(.suit(.subheadline, weight: .medium))
+                        .foregroundStyle(Color.roomAction).frame(minHeight: 44)
+                }
             }
             .padding(.horizontal, 24).padding(.bottom, 10)
             ScrollView {
                 VStack(spacing: 24) {
                     homeStatusCard
+                    actionFeedback
+                    quickFocusSection
                     if SharedState.ruleEnabled && model.activeRule?.placeMode == .gps && !model.isFocused {
                         VStack(alignment: .leading, spacing: 12) {
                             Text(model.placeArrivalText)
@@ -848,12 +936,16 @@ struct ContentView: View {
                             }.disabled(model.isCheckingPlace)
                         }
                     }
+                    if SharedState.ruleEnabled && model.activeRule?.placeMode == .anywhere && !model.isFocused {
+                        Text("Time-only rule: tap Start focus during its schedule. No Location needed.")
+                            .font(.suit(.subheadline)).foregroundStyle(Color.roomInkSecondary)
+                            .fixedSize(horizontal: false, vertical: true)
+                    }
                     if model.activeRule?.placeMode == .gps && (model.locationStatus == .denied || model.locationStatus == .restricted || model.placeMonitoringNeedsAttention) {
                         Link("Open Location Settings", destination: URL(string: UIApplication.openSettingsURLString)!)
                             .font(.suit(.subheadline, weight: .semibold)).foregroundStyle(Color.roomWarning).frame(minHeight: 44)
                     }
-                    actionFeedback
-                    if firstFocus && account.canShowOffer && !account.isPro && !offerDismissed {
+                    if firstFocus && account.offersEnabled && !account.isPro && !offerDismissed {
                         VStack(alignment: .leading, spacing: 10) {
                             Text(roomString(goal.headline))
                                 .font(.suit(.title2, weight: .bold))
@@ -865,7 +957,7 @@ struct ContentView: View {
                                     .font(.suit(.subheadline))
                             }.frame(minHeight: 44)
                         }
-                        .padding(20).background(Color.roomMint).clipShape(RoundedRectangle(cornerRadius: 18))
+                        .padding(20).editorialPanel(Color.roomMint, outlined: false)
                     }
                     VStack(alignment: .leading, spacing: 12) {
                         HStack {
@@ -882,8 +974,8 @@ struct ContentView: View {
                         } else {
                             VStack(spacing: 0) {
                                 ForEach(Array(model.rules.enumerated()), id: \.element.id) { index, rule in
-                                    if index > 0 { Divider().overlay(Color.roomSeparator) }
-                                    ruleRow(rule, tint: index.isMultiple(of: 2) ? .roomMint : .roomBlush)
+                                    if index > 0 { Divider().overlay(Color.roomLine) }
+                                    ruleRow(rule)
                                 }
                             }
                         }
@@ -898,7 +990,7 @@ struct ContentView: View {
 
     private var homeStatusCard: some View {
         let dark = model.isFocused && !homeNeedsAction && !SharedState.safetyReleased
-        let foreground: Color = dark ? .roomPaper : .roomInk
+        let foreground: Color = dark ? .roomCanvas : .roomInk
         let layout = dynamicTypeSize.isAccessibilitySize
             ? AnyLayout(VStackLayout(alignment: .leading, spacing: 12))
             : AnyLayout(HStackLayout(alignment: .center, spacing: 16))
@@ -909,7 +1001,7 @@ struct ContentView: View {
                         Text(rule.name).font(.suit(.subheadline, weight: .medium))
                     }
                     Text(model.currentStatusTitle)
-                        .font(.suit(.title, weight: .semibold))
+                        .font(.suit(.title, weight: .bold))
                         .fixedSize(horizontal: false, vertical: true)
                         .accessibilityAddTraits(.isHeader)
                     if let detail = model.currentStatusDetail {
@@ -926,15 +1018,38 @@ struct ContentView: View {
             } else if model.rules.isEmpty {
                 primaryButton(roomString("Create a rule"), inverted: dark) { addRule() }
             } else if let rule = suggestedRule, !SharedState.ruleEnabled || SharedState.safetyReleased {
-                primaryButton(rule.placeMode == .gps ? roomString("Activate %@", rule.name) : roomString("Choose a place"), inverted: dark) { activate(rule) }
-            } else if model.activeRule?.placeMode == .gps && !model.isFocused && model.canStartPlaceFocus {
+                primaryButton(rule.placeMode != .nfc ? roomString("Activate %@", rule.name) : roomString("Choose a place"), inverted: dark) { activate(rule) }
+            } else if (model.activeRule?.placeMode ?? .nfc) != .nfc && !model.isFocused && model.canStartPlaceFocus {
                 primaryButton(roomString("Start focus"), inverted: dark) {
                     model.startPlaceFocus()
                 }
             }
         }
-        .foregroundStyle(foreground).padding(22).frame(maxWidth: .infinity, alignment: .leading)
-        .background(homeStatusTint).clipShape(RoundedRectangle(cornerRadius: 22))
+        .foregroundStyle(foreground).padding(24).frame(maxWidth: .infinity, alignment: .leading)
+        .editorialPanel(homeStatusTint, outlined: homeStatusTint == .roomCard)
+    }
+
+    @ViewBuilder private var quickFocusSection: some View {
+        if let end = model.quickEndsAt {
+            VStack(alignment: .leading, spacing: 16) {
+                Text("Quick focus").font(.suit(.subheadline, weight: .medium))
+                Text(roomString("Until %@", end.formatted(date: .omitted, time: .shortened)))
+                    .font(.suit(.title, weight: .semibold)).monospacedDigit()
+                    .fixedSize(horizontal: false, vertical: true).accessibilityAddTraits(.isHeader)
+                primaryButton(roomString("Restore access"), inverted: true) {
+                    model.endQuickFocus()
+                    roomieReaction = model.errorMessage == nil ? .recovered : nil
+                }
+            }
+            .foregroundStyle(Color.roomCanvas).padding(22).frame(maxWidth: .infinity, alignment: .leading)
+            .background(Color.roomAccent).clipShape(RoundedRectangle(cornerRadius: 22))
+        } else if model.screenTimeAuthorized && !model.isFocused {
+            Button { quickFocusPresented = true } label: {
+                Label("Quick focus", systemImage: "timer").frame(maxWidth: .infinity, minHeight: 50)
+            }
+            .font(.suit(.body, weight: .semibold)).foregroundStyle(Color.roomInk)
+            .overlay(RoundedRectangle(cornerRadius: 12).stroke(Color.roomInk.opacity(0.35)))
+        }
     }
 
     private var suggestedRule: FocusRule? {
@@ -950,21 +1065,26 @@ struct ContentView: View {
 
     private var homeStatusTint: Color {
         if homeNeedsAction { return .roomButter }
-        if SharedState.runtime.recoveryPaused { return .roomBlue }
+        if SharedState.runtime.recoveryPaused { return .roomCard }
         if SharedState.safetyReleased { return .roomMint }
-        return model.isFocused ? .roomInk : .roomBlue
+        return model.isFocused ? .roomAccent : .roomCard
     }
 
     @discardableResult
     private func activate(_ rule: FocusRule) -> Bool {
-        guard rule.placeMode == .gps else { editRule(rule); return false }
-        guard !model.isFocused else { unlockPassPresented = true; return false }
+        guard rule.placeMode != .nfc else { editRule(rule); return false }
+        guard !model.isFocused else { presentSessionEnd(); return false }
         let activated = model.activateRule(rule.id)
         if activated {
-            placeMode = .gps
+            placeMode = rule.placeMode
             roomieReaction = .confirmed
         }
         return activated
+    }
+
+    private func presentSessionEnd() {
+        if account.unlockPassEnabled { unlockPassPresented = true }
+        else { safetyReleasePresented = true }
     }
 
     private func recordVisit() {
@@ -984,26 +1104,28 @@ struct ContentView: View {
                 .fixedSize(horizontal: false, vertical: true)
                 .frame(maxWidth: .infinity, alignment: .leading)
                 .padding(16)
-                .editorialPanel(Color.roomButter)
+                .editorialPanel(Color.roomButter, outlined: false)
         }
     }
 
-    private func ruleRow(_ rule: FocusRule, tint: Color) -> some View {
+    private func ruleRow(_ rule: FocusRule) -> some View {
         let isActive = SharedState.ruleEnabled && model.activeRuleID == rule.id
         let hasChanges = model.hasUnappliedChanges(rule.id)
         let canResume = isActive && SharedState.safetyReleased
+        // Color carries meaning: soft butter needs attention, mint is active, ivory is saved.
+        let tint: Color = hasChanges || rule.placeMode == .nfc ? .roomButter : isActive ? .roomMint : .roomCard
         return VStack(alignment: .leading, spacing: 8) {
             Button { editRule(rule) } label: {
                 HStack(alignment: .top, spacing: 14) {
-                    Image(systemName: "location.fill")
+                    Image(systemName: rule.placeMode == .anywhere ? "clock.fill" : "location.fill")
                         .font(.suit(.body, weight: .semibold))
                         .foregroundStyle(Color.roomInk)
                         .frame(width: 40, height: 40)
                         .background(tint)
-                        .clipShape(RoundedRectangle(cornerRadius: 9))
+                        .clipShape(RoundedRectangle(cornerRadius: 16))
                         .overlay {
-                            RoundedRectangle(cornerRadius: 9)
-                                .stroke(Color.roomSeparator, lineWidth: 1)
+                            RoundedRectangle(cornerRadius: 16)
+                                .strokeBorder(Color.roomOutline, lineWidth: 1)
                         }
                         .accessibilityHidden(true)
 
@@ -1012,13 +1134,13 @@ struct ContentView: View {
                             .font(.suit(.headline, weight: .bold))
                             .foregroundStyle(Color.roomInk)
                             .fixedSize(horizontal: false, vertical: true)
-                        if rule.placeMode != .gps {
+                        if rule.placeMode == .nfc {
                             Text("Choose a place to use this rule")
-                                .font(.suit(.caption)).foregroundStyle(Color.roomWarning)
+                                .font(.suit(.subheadline)).foregroundStyle(Color.roomWarning)
                         }
                         if hasChanges || isActive {
                             Text(hasChanges ? roomString("Unapplied changes") : canResume ? roomString("Paused") : roomString("Active"))
-                                .font(.suit(.caption, weight: .bold))
+                                .font(.suit(.subheadline, weight: .bold))
                                 .foregroundStyle(hasChanges ? Color.roomWarning : Color.roomAccent)
                         }
                         Text(ruleScheduleSummary(rule))
@@ -1045,7 +1167,7 @@ struct ContentView: View {
                     Button {
                         activate(rule)
                     } label: {
-                        Text(rule.placeMode != .gps ? roomString("Choose a place") : hasChanges ? roomString("Apply changes") : canResume ? roomString("Resume rule") : roomString("Activate"))
+                        Text(rule.placeMode == .nfc ? roomString("Choose a place") : hasChanges ? roomString("Apply changes") : canResume ? roomString("Resume rule") : roomString("Activate"))
                             .fixedSize(horizontal: false, vertical: true)
                     }
                     .font(.suit(.subheadline, weight: .bold))
@@ -1055,7 +1177,7 @@ struct ContentView: View {
                 }
                 Spacer(minLength: 0)
                 Button(role: .destructive) {
-                    if isActive && model.isFocused { unlockPassPresented = true }
+                    if isActive && model.isFocused { presentSessionEnd() }
                     else { ruleToDelete = rule }
                 } label: {
                     Image(systemName: "trash")
@@ -1083,13 +1205,13 @@ struct ContentView: View {
             ScrollView {
                 VStack(alignment: .leading, spacing: 28) {
                     VStack(alignment: .leading, spacing: 18) {
-                        HStack {
-                            Spacer()
+                        if screen == .goal || screen == .permission {
                             RoomSpirit(state: setupSpiritState)
-                                .frame(width: 104, height: 94)
+                                .frame(width: 64, height: 58)
+                                .accessibilityHidden(true)
                         }
                         Text(title)
-                            .font(.suit(dynamicTypeSize.isAccessibilitySize ? .title : .largeTitle, weight: .bold))
+                            .font(.suit(dynamicTypeSize.isAccessibilitySize ? .title2 : .title, weight: .bold))
                             .foregroundStyle(Color.roomInk)
                             .fixedSize(horizontal: false, vertical: true)
                             .accessibilityAddTraits(.isHeader)
@@ -1133,7 +1255,7 @@ struct ContentView: View {
                         .font(.suit(.subheadline, weight: .semibold))
                         .frame(minWidth: 44, minHeight: 44)
                 }
-                .foregroundStyle(Color.roomInk)
+                .foregroundStyle(Color.roomAccent)
                 .accessibilityLabel("Back")
 
                 Spacer()
@@ -1150,7 +1272,7 @@ struct ContentView: View {
                 if onboardingCompleted || !model.rules.isEmpty {
                     Button("Cancel") { cancelEditing() }
                         .font(.suit(.subheadline, weight: .semibold))
-                        .foregroundStyle(Color.roomInk)
+                        .foregroundStyle(Color.roomAccent)
                         .frame(minWidth: 44, minHeight: 44)
                 } else {
                     Color.clear.frame(width: 44, height: 44)
@@ -1159,7 +1281,7 @@ struct ContentView: View {
 
             if let progress = setupProgress {
                 ProgressView(value: Double(progress.current), total: Double(progress.total))
-                    .tint(Color.roomInk)
+                    .progressViewStyle(RoomProgressStyle())
             }
         }
         .padding(.horizontal, 20)
@@ -1193,21 +1315,7 @@ struct ContentView: View {
     }
 
     private func primaryButton(_ title: String, enabled: Bool = true, inverted: Bool = false, action: @escaping () -> Void) -> some View {
-        Button(action: action) {
-            HStack(spacing: 12) {
-                Text(title).fixedSize(horizontal: false, vertical: true)
-                Spacer(minLength: 0)
-                Image(systemName: "arrow.right").accessibilityHidden(true)
-            }
-            .font(.suit(.headline, weight: .semibold))
-            .multilineTextAlignment(.leading)
-            .foregroundStyle(enabled ? (inverted ? Color.roomInk : Color.roomPaper) : Color.roomInkSecondary)
-            .padding(.horizontal, 18).padding(.vertical, 14)
-            .frame(maxWidth: .infinity, minHeight: 54)
-            .background(enabled ? (inverted ? Color.roomPaper : Color.roomAction) : Color.roomSurfaceRaised)
-            .clipShape(RoundedRectangle(cornerRadius: 12))
-        }
-        .buttonStyle(.plain).disabled(!enabled)
+        RoomPrimaryButton(title: title, enabled: enabled, inverted: inverted, action: action)
     }
 
     private var permissionActionTitle: String {
@@ -1258,6 +1366,7 @@ struct ContentView: View {
     }
 
     private func handlePlaceAction() {
+        placeMode = .gps
         if placeReady {
             screen = .schedule
         } else {
@@ -1274,11 +1383,11 @@ struct ContentView: View {
         RestrictionPolicy.intervalMinutes(
             start: minutes(from: model.startTime),
             end: minutes(from: model.endTime)
-        ) >= 15
+        ) >= 15 && model.days != 0
     }
 
     private var scheduleSummary: String {
-        "\(model.startTime.formatted(date: .omitted, time: .shortened))–\(model.endTime.formatted(date: .omitted, time: .shortened))"
+        "\(model.startTime.formatted(date: .omitted, time: .shortened))–\(model.endTime.formatted(date: .omitted, time: .shortened)) · \(daysSummary(model.days))"
     }
 
     private var homeNeedsAction: Bool {
@@ -1329,9 +1438,8 @@ struct ContentView: View {
             to: Calendar.current.startOfDay(for: .now)
         ) ?? .now
         let timeRange = "\(start.formatted(date: .omitted, time: .shortened))–\(end.formatted(date: .omitted, time: .shortened))"
-        return rule.endMinutes < rule.startMinutes
-            ? roomString("%@ (+1 day)", timeRange)
-            : timeRange
+        let range = rule.endMinutes < rule.startMinutes ? roomString("%@ (+1 day)", timeRange) : timeRange
+        return "\(range) · \(daysSummary(rule.activeDays))"
     }
 
     private func addRule() {
@@ -1344,7 +1452,7 @@ struct ContentView: View {
 
     private func editRule(_ rule: FocusRule) {
         model.loadRuleForEditing(rule.id)
-        placeMode = .gps
+        placeMode = rule.placeMode == .anywhere ? .anywhere : .gps
         showsSaveError = false
         permissionDestination = .targets
         screen = model.screenTimeAuthorized ? .targets : .permission
@@ -1371,8 +1479,8 @@ private struct SafetyReleaseView: View {
     var body: some View {
         ScrollView {
             VStack(alignment: .leading, spacing: 22) {
-                Button { dismiss() } label: { Label("Back", systemImage: "arrow.left") }
-                    .font(.suit(.subheadline)).foregroundStyle(Color.roomInkSecondary).frame(minHeight: 44)
+                Button { dismiss() } label: { Label("Back", systemImage: "chevron.left") }
+                    .font(.suit(.subheadline, weight: .semibold)).foregroundStyle(Color.roomAccent).frame(minHeight: 44)
                 Text("You’re in control")
                     .font(.suit(.subheadline)).foregroundStyle(Color.roomInkSecondary)
                 Text("Need your apps back?")
@@ -1392,25 +1500,12 @@ private struct SafetyReleaseView: View {
         }
         .safeAreaInset(edge: .bottom) {
             VStack(spacing: 4) {
-                Button {
-                    release(); dismiss()
-                } label: {
-                    HStack {
-                        Text("Restore access now").fixedSize(horizontal: false, vertical: true)
-                        Spacer(minLength: 4)
-                        Image(systemName: "arrow.right").accessibilityHidden(true)
-                    }
-                    .font(.suit(.headline, weight: .semibold))
-                    .foregroundStyle(Color.roomPaper)
-                    .padding(.horizontal, 18).padding(.vertical, 16)
-                    .frame(maxWidth: .infinity, minHeight: 54)
-                    .background(Color.roomAction).clipShape(RoundedRectangle(cornerRadius: 12))
-                }.buttonStyle(.plain)
+                RoomPrimaryButton(title: roomString("Restore access now")) { release(); dismiss() }
                 Button("Cancel") { dismiss() }
-                    .foregroundStyle(Color.roomInkSecondary).frame(maxWidth: .infinity, minHeight: 44)
+                    .foregroundStyle(Color.roomAccent).frame(maxWidth: .infinity, minHeight: 44)
             }.bottomBarStyle()
         }
-        .background(Color.roomCanvas).preferredColorScheme(.light)
+        .background(Color.roomCanvas)
     }
 }
 
@@ -1435,7 +1530,7 @@ private struct UnlockPassView: View {
                     }
                     RoomSpirit(state: .attentive)
                         .frame(height: 150).frame(maxWidth: .infinity)
-                        .background(Color.roomBlue).clipShape(RoundedRectangle(cornerRadius: 22))
+                        .editorialPanel()
                     VStack(alignment: .leading, spacing: 12) {
                         Label("1 unlock pass", systemImage: "ticket")
                             .font(.suit(.title2, weight: .bold))
@@ -1444,7 +1539,7 @@ private struct UnlockPassView: View {
                             .font(.suit(.subheadline)).foregroundStyle(Color.roomInkSecondary)
                     }
                     .padding(20).frame(maxWidth: .infinity, alignment: .leading)
-                    .background(Color.roomButter).clipShape(RoundedRectangle(cornerRadius: 18))
+                    .editorialPanel(Color.roomButter, outlined: false)
                     passControls
                 }
                 .font(.suit(.body)).foregroundStyle(Color.roomInk)
@@ -1465,7 +1560,7 @@ private struct UnlockPassView: View {
             .navigationTitle("Unlock pass").navigationBarTitleDisplayMode(.inline)
             .toolbar { ToolbarItem(placement: .cancellationAction) { Button("Close") { dismiss() } } }
         }
-        .tint(Color.roomAction).preferredColorScheme(.light)
+        .tint(Color.roomAction)
         .task { await account.loadUnlockPass() }
         .onChange(of: account.isSignedIn) { _, signedIn in
             if signedIn { Task { await account.loadUnlockPass() } }
@@ -1475,6 +1570,7 @@ private struct UnlockPassView: View {
                 recover()
                 dismiss()
             }
+            .presentationCornerRadius(24)
         }
         .onChange(of: model.isFocused) { _, focused in
             if !focused && !recoveryPresented { dismiss() }
@@ -1485,7 +1581,7 @@ private struct UnlockPassView: View {
         if !account.unlockPassEnabled {
             Text("Unlock passes aren’t available yet. You haven’t been charged.")
                 .font(.suit(.subheadline)).foregroundStyle(Color.roomInkSecondary)
-            Button("Purchases unavailable") {}.roomPrimaryAction().disabled(true).opacity(0.45)
+            Button("Purchases unavailable") {}.roomPrimaryAction().disabled(true)
         } else if !account.isSignedIn {
             Text("Sign in to see and use your unlock passes.")
                 .font(.suit(.subheadline)).foregroundStyle(Color.roomInkSecondary)
@@ -1499,7 +1595,7 @@ private struct UnlockPassView: View {
                 .font(.suit(.subheadline)).foregroundStyle(Color.roomWarning)
             Button("Check previous pass") { Task { await account.reconcilePreviousUnlockPass() } }
                 .roomPrimaryAction().disabled(account.isUnlockBusy)
-            Link("Contact support", destination: URL(string: "https://offzone-privacy-support.wogus5357.chatgpt.site/support")!)
+            Link("Contact support", destination: URL(string: "https://crazydumbbell.github.io/offzone/support/")!)
         } else if account.unlockPassBalance == nil {
             ProgressView("Checking your unlock passes…").frame(maxWidth: .infinity)
         } else if let balance = account.unlockPassBalance, balance > 0 {
@@ -1539,6 +1635,55 @@ private struct UnlockPassView: View {
     }
 }
 
+private struct QuickFocusView: View {
+    @ObservedObject var model: AppModel
+    @Environment(\.dismiss) private var dismiss
+    @State private var minutes = 25
+
+    var body: some View {
+        NavigationStack {
+            Form {
+                Section {
+                    Picker("Duration", selection: $minutes) {
+                        ForEach(QuickFocus.durations, id: \.self) { Text(roomString("%d min", $0)).tag($0) }
+                    }
+                    .pickerStyle(.segmented)
+                    Button { model.requestQuickSelection() } label: {
+                        LabeledContent("Choose apps", value: roomString("%d selected", model.quickSelectionCount))
+                            .frame(minHeight: 44)
+                    }
+                } footer: {
+                    Text("Choose a duration and apps. Quick focus works anywhere, without a saved place.")
+                }
+                Section {
+                    Button {
+                        if model.startQuickFocus(minutes: minutes) { dismiss() }
+                    } label: {
+                        Text("Start focus").font(.suit(.headline, weight: .semibold)).frame(maxWidth: .infinity, minHeight: 44)
+                    }
+                    .disabled(model.quickSelectionCount == 0)
+                    if let error = model.errorMessage {
+                        Text(error).font(.suit(.subheadline)).foregroundStyle(Color.roomWarning)
+                    }
+                } footer: {
+                    Text("You can end it anytime with Restore access. It ends on its own when time is up.")
+                }
+            }
+            .font(.suit(.body))
+            .scrollContentBackground(.hidden).background(Color.roomCanvas)
+            .navigationTitle("Quick focus").navigationBarTitleDisplayMode(.inline)
+            .toolbar { ToolbarItem(placement: .cancellationAction) { Button("Cancel") { dismiss() } } }
+            .familyActivityPicker(
+                headerText: roomString("Choose apps, categories, and websites to put aside."),
+                footerText: roomString("Your selection stays on this iPhone."),
+                isPresented: $model.isQuickPickerPresented,
+                selection: $model.quickSelection
+            )
+        }
+        .tint(Color.roomAction)
+    }
+}
+
 private struct ZoneNotificationSettingsView: View {
     @ObservedObject var model: AppModel
     @Environment(\.dismiss) private var dismiss
@@ -1561,11 +1706,12 @@ private struct ZoneNotificationSettingsView: View {
                     Text(model.notificationStatusText).font(.suit(.subheadline))
                     if model.notificationStatus == .denied {
                         Link("Open Notification Settings", destination: URL(string: UIApplication.openSettingsURLString)!)
-                            .frame(minHeight: 44)
+                            .foregroundStyle(Color.roomAccent).frame(minHeight: 44)
                     }
                 } footer: {
                     Text("Get updates when your active GPS zone is entered or left, and when blocking starts or ends. Only one rule is active at a time.")
                 }
+                .listRowBackground(Color.roomCard)
                 Section {
                     Label("Zone entered or left", systemImage: "location")
                     Label("Blocking started or ended", systemImage: "shield")
@@ -1574,13 +1720,14 @@ private struct ZoneNotificationSettingsView: View {
                 } footer: {
                     Text("Alerts follow detected changes and may be delayed by iOS or Focus settings. Rule names may appear on your Lock Screen.")
                 }
+                .listRowBackground(Color.roomCard)
             }
-            .font(.suit(.body))
+            .font(.suit(.body)).foregroundStyle(Color.roomInk)
             .scrollContentBackground(.hidden).background(Color.roomCanvas)
             .navigationTitle("Zone notifications").navigationBarTitleDisplayMode(.inline)
             .toolbar { ToolbarItem(placement: .confirmationAction) { Button("Done") { dismiss() } } }
         }
-        .tint(Color.roomAction).preferredColorScheme(.light)
+        .tint(Color.roomAction)
         .task { await model.refreshNotificationSettings() }
     }
 }
@@ -1746,18 +1893,78 @@ struct RoomSpirit: View {
     }
 }
 
-private extension View {
+// Selection mark shared by choice rows and plan rows: filled Pine disc with a Butter check, or a Pine 28% ring.
+struct RoomRadio: View {
+    let selected: Bool
+    var font: Font = .suit(.title2)
+
+    var body: some View {
+        Image(systemName: selected ? "checkmark.circle.fill" : "circle")
+            .symbolRenderingMode(.palette)
+            .foregroundStyle(selected ? Color.roomCanvas : Color.roomOutline, Color.roomAccent)
+            .font(font)
+    }
+}
+
+// Pill button for the one main action on a screen. Inverse (Butter fill, Ink text) sits on Pine surfaces.
+private struct RoomPrimaryButton: View {
+    let title: String
+    var enabled = true
+    var inverted = false
+    let action: () -> Void
+
+    var body: some View {
+        Button(action: action) {
+            HStack(spacing: 8) {
+                Text(title).fixedSize(horizontal: false, vertical: true)
+                Image(systemName: "chevron.right").fontWeight(.bold).accessibilityHidden(true)
+            }
+            .font(.suit(.headline, weight: .semibold))
+            .multilineTextAlignment(.center)
+            .foregroundStyle(!enabled ? Color.roomDisabledText : inverted ? Color.roomInk : Color.roomCanvas)
+            .padding(.horizontal, 24).padding(.vertical, 14)
+            .frame(maxWidth: .infinity, minHeight: 56)
+            .background(!enabled ? Color.roomDisabledFill : inverted ? Color.roomCanvas : Color.roomAccent, in: Capsule())
+        }
+        .buttonStyle(.plain).disabled(!enabled)
+    }
+}
+
+// Pine fill on a Pine 14% track, 4pt tall.
+private struct RoomProgressStyle: ProgressViewStyle {
+    func makeBody(configuration: Configuration) -> some View {
+        let fraction = configuration.fractionCompleted ?? 0
+        Capsule().fill(Color.roomLine)
+            .frame(height: 4)
+            .overlay(alignment: .leading) {
+                GeometryReader { proxy in
+                    Capsule().fill(Color.roomAccent).frame(width: proxy.size.width * fraction)
+                }
+            }
+            .accessibilityElement(children: .ignore)
+            .accessibilityValue(Text(fraction, format: .percent.precision(.fractionLength(0))))
+    }
+}
+
+extension View {
+    // Card: ivory by default, mint (positive) or soft butter (attention) through `fill`. Radius 24, or 16 for rows.
     func editorialPanel(
-        _ fill: Color = .roomPaper,
-        cornerRadius: CGFloat = 16,
-        lineWidth: CGFloat = 0
+        _ fill: Color = .roomCard,
+        cornerRadius: CGFloat = 24,
+        outlined: Bool = true
     ) -> some View {
         background(fill)
             .clipShape(RoundedRectangle(cornerRadius: cornerRadius))
             .overlay {
                 RoundedRectangle(cornerRadius: cornerRadius)
-                    .stroke(Color.roomSeparator, lineWidth: lineWidth)
+                    .strokeBorder(outlined ? Color.roomLine : Color.clear, lineWidth: 1)
             }
+    }
+
+    // Text field: ivory fill, Pine 28% outline, radius 16.
+    func roomField() -> some View {
+        background(Color.roomCard, in: RoundedRectangle(cornerRadius: 16))
+            .overlay { RoundedRectangle(cornerRadius: 16).strokeBorder(Color.roomOutline, lineWidth: 1) }
     }
 
     func bottomBarStyle() -> some View {
@@ -1767,21 +1974,20 @@ private extension View {
 }
 
 
+// Palette (DESIGN.md D-47): black is text only, Pine is the one accent for actions and active states.
 extension Color {
-    static let roomCanvas = Color(red: 247 / 255, green: 240 / 255, blue: 199 / 255)
-    static let roomSurfaceRaised = Color(red: 239 / 255, green: 234 / 255, blue: 210 / 255)
-    static let roomInk = Color(red: 25 / 255, green: 27 / 255, blue: 25 / 255)
-    static let roomInkSecondary = Color(red: 102 / 255, green: 105 / 255, blue: 99 / 255)
-    static let roomInkTertiary = Color(red: 102 / 255, green: 105 / 255, blue: 99 / 255)
-    static let roomSeparator = Color(red: 221 / 255, green: 223 / 255, blue: 213 / 255)
-    static let roomAccent = Color(red: 61 / 255, green: 91 / 255, blue: 63 / 255)
-    static let roomAction = roomInk
+    static let roomCanvas = Color(red: 247 / 255, green: 240 / 255, blue: 199 / 255)  // Butter #F7F0C7, also text on Pine
+    static let roomInk = Color(red: 31 / 255, green: 42 / 255, blue: 34 / 255)        // #1F2A22
+    static let roomInkSecondary = Color(red: 94 / 255, green: 102 / 255, blue: 96 / 255)  // #5E6660
+    static let roomInkTertiary = roomInkSecondary
+    static let roomAccent = Color(red: 61 / 255, green: 91 / 255, blue: 63 / 255)     // Pine #3D5B3F
+    static let roomAction = roomAccent
+    static let roomOutline = roomAccent.opacity(0.28)
+    static let roomLine = roomAccent.opacity(0.14)
+    static let roomDisabledFill = roomInk.opacity(0.10)  // Disabled controls: Ink 10% fill, Ink 38% label
+    static let roomDisabledText = roomInk.opacity(0.38)
     static let roomWarning = Color(red: 137 / 255, green: 104 / 255, blue: 57 / 255)
-    static let roomPaper = Color(red: 253 / 255, green: 253 / 255, blue: 249 / 255)
-    static let roomBlue = Color(red: 250 / 255, green: 247 / 255, blue: 232 / 255)
-    static let roomMint = Color(red: 232 / 255, green: 238 / 255, blue: 221 / 255)
-    static let roomBlush = Color(red: 238 / 255, green: 239 / 255, blue: 232 / 255)
-    static let roomButter = Color(red: 239 / 255, green: 229 / 255, blue: 171 / 255)
-
-
+    static let roomCard = Color(red: 250 / 255, green: 247 / 255, blue: 232 / 255)    // Ivory #FAF7E8, default card
+    static let roomMint = Color(red: 232 / 255, green: 238 / 255, blue: 221 / 255)    // #E8EEDD, positive / selected / restored
+    static let roomButter = Color(red: 239 / 255, green: 229 / 255, blue: 171 / 255)  // Soft butter #EFE5AB, attention / setup
 }

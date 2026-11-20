@@ -10,6 +10,7 @@ final class RoomDNSMonitor: DeviceActivityMonitor {
 
     override func intervalDidEnd(for activity: DeviceActivityName) {
         super.intervalDidEnd(for: activity)
+        if activity == .quickFocus { QuickFocus.finish(); return }
         guard activity == .roomDNS else { return }
         reconcileCurrentState()
     }

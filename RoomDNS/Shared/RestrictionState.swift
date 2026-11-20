@@ -8,14 +8,54 @@ import UserNotifications
 
 extension DeviceActivityName {
     static let roomDNS = Self("roomdns.daily-focus")
+    static let quickFocus = Self("roomdns.quick-focus")
 }
 
 extension ManagedSettingsStore.Name {
     static let roomDNS = Self("roomdns.focus")
+    static let quickFocus = Self("roomdns.quick-focus")
+}
+
+// A timed, placeless session in its own store, so rule changes never touch it and it never touches rules.
+// A one-shot OS schedule ends it in the monitor extension even if the app is not running.
+enum QuickFocus {
+    static let durations = [15, 25, 50] // DeviceActivity rejects intervals shorter than 15 minutes.
+    private static let endKey = "quickFocus.endsAt"
+    private static let selectionKey = "quickFocus.selection"
+
+    static var endsAt: Date? {
+        (SharedState.defaults.object(forKey: endKey) as? Date).flatMap { $0 > .now ? $0 : nil }
+    }
+
+    static var selection: FamilyActivitySelection {
+        get {
+            SharedState.defaults.data(forKey: selectionKey)
+                .flatMap { try? JSONDecoder().decode(FamilyActivitySelection.self, from: $0) } ?? FamilyActivitySelection()
+        }
+        set { SharedState.defaults.set(try? JSONEncoder().encode(newValue), forKey: selectionKey) }
+    }
+
+    static func begin(_ selection: FamilyActivitySelection, until end: Date) {
+        SharedState.defaults.set(end, forKey: endKey)
+        let store = ManagedSettingsStore(named: .quickFocus)
+        store.shield.applications = selection.applicationTokens.isEmpty ? nil : selection.applicationTokens
+        store.shield.applicationCategories = selection.categoryTokens.isEmpty ? nil : .specific(selection.categoryTokens)
+        store.shield.webDomains = selection.webDomainTokens.isEmpty ? nil : selection.webDomainTokens
+        store.shield.webDomainCategories = selection.categoryTokens.isEmpty ? nil : .specific(selection.categoryTokens)
+    }
+
+    static func finish() {
+        ManagedSettingsStore(named: .quickFocus).clearAllSettings()
+        SharedState.defaults.removeObject(forKey: endKey)
+    }
+
+    /// Clears a session whose end time has passed, whoever notices first.
+    static func reconcile() { if endsAt == nil { finish() } }
 }
 
 enum PlaceMode: String, Codable {
     case gps
+    case anywhere // Time only: no place and no Location access. Still needs an explicit Start focus.
     case nfc // Decode-only compatibility: old rules remain editable, never active.
 }
 
@@ -32,6 +72,9 @@ struct FocusRule: Codable, Identifiable {
     var placeLongitude: Double
     var nfcConfigured: Bool
     var preventAppRemoval: Bool? = nil // Missing in existing rules: opt-in stays off.
+    var days: Int? = nil // Missing in existing rules: every day. Same bits as Android, Monday = 1.
+
+    var activeDays: Int { days ?? RestrictionPolicy.everyDay }
 }
 
 enum RestrictionPolicy {
@@ -47,7 +90,7 @@ enum RestrictionPolicy {
         ruleEnabled
             && hasSelection
             && scheduleActive
-            && placeMode == .gps && insidePlace && placeFocusConfirmed
+            && (placeMode == .anywhere || (placeMode == .gps && insidePlace)) && placeFocusConfirmed
             && !safetyReleased
     }
 
@@ -62,20 +105,53 @@ enum RestrictionPolicy {
         return wasInside
     }
 
+    static let everyDay = 0x7F
+    static let weekdays = 0x1F
+
+    // Calendar weekday 1 = Sunday; bit 0 = Monday.
+    static func dayBit(weekday: Int) -> Int { 1 << ((weekday + 5) % 7) }
+
+    static func dayBit(_ date: Date, calendar: Calendar = .current) -> Int {
+        dayBit(weekday: calendar.component(.weekday, from: date))
+    }
+
+    // An overnight occurrence belongs to the day it starts.
     static func isScheduleActive(
         at date: Date,
         startMinutes: Int,
         endMinutes: Int,
+        days: Int = everyDay,
         calendar: Calendar = .current
     ) -> Bool {
         let components = calendar.dateComponents([.hour, .minute], from: date)
         let current = (components.hour ?? 0) * 60 + (components.minute ?? 0)
 
         guard startMinutes != endMinutes else { return false }
-        if startMinutes < endMinutes {
-            return current >= startMinutes && current < endMinutes
+        let inWindow = startMinutes < endMinutes
+            ? current >= startMinutes && current < endMinutes
+            : current >= startMinutes || current < endMinutes
+        guard inWindow else { return false }
+        let carried = startMinutes > endMinutes && current < endMinutes
+        let day = carried ? calendar.date(byAdding: .day, value: -1, to: date) ?? date : date
+        return days & dayBit(day, calendar: calendar) != 0
+    }
+
+    static func isScheduleActive(at date: Date, rule: FocusRule, calendar: Calendar = .current) -> Bool {
+        isScheduleActive(at: date, startMinutes: rule.startMinutes, endMinutes: rule.endMinutes,
+                         days: rule.activeDays, calendar: calendar)
+    }
+
+    static func nextScheduleStart(after date: Date, rule: FocusRule, calendar: Calendar = .current) -> Date? {
+        let today = calendar.startOfDay(for: date)
+        for offset in 0...7 {
+            guard let day = calendar.date(byAdding: .day, value: offset, to: today),
+                  rule.activeDays & dayBit(day, calendar: calendar) != 0,
+                  let start = calendar.date(bySettingHour: rule.startMinutes / 60, minute: rule.startMinutes % 60,
+                                            second: 0, of: day),
+                  start > date else { continue }
+            return start
         }
-        return current >= startMinutes || current < endMinutes
+        return nil
     }
 
     static func intervalMinutes(start: Int, end: Int) -> Int {
@@ -102,9 +178,11 @@ enum RestrictionPolicy {
         at date: Date,
         startMinutes: Int,
         endMinutes: Int,
+        days: Int = everyDay,
         calendar: Calendar = .current
     ) -> Date? {
-        guard isScheduleActive(at: date, startMinutes: startMinutes, endMinutes: endMinutes, calendar: calendar) else { return nil }
+        guard isScheduleActive(at: date, startMinutes: startMinutes, endMinutes: endMinutes, days: days,
+                               calendar: calendar) else { return nil }
         let minute = calendar.component(.hour, from: date) * 60 + calendar.component(.minute, from: date)
         var day = calendar.startOfDay(for: date)
         if startMinutes > endMinutes, minute < endMinutes {
@@ -218,15 +296,19 @@ struct RuntimeState: Codable {
     func placeFocusConfirmed(at date: Date, calendar: Calendar = .current) -> Bool {
         guard let rule, let placeFocusOccurrenceStart else { return false }
         return placeFocusOccurrenceStart == RestrictionPolicy.scheduleOccurrenceStart(
-            at: date, startMinutes: rule.startMinutes, endMinutes: rule.endMinutes, calendar: calendar)
+            at: date, startMinutes: rule.startMinutes, endMinutes: rule.endMinutes, days: rule.activeDays,
+            calendar: calendar)
     }
 
     func canStartPlaceFocus(at date: Date, calendar: Calendar = .current) -> Bool {
-        guard enabled, !recoveryPaused, let rule, rule.placeMode == .gps, rule.hasPlace,
+        guard enabled, !recoveryPaused, let rule else { return false }
+        if rule.placeMode == .anywhere {
+            return RestrictionPolicy.isScheduleActive(at: date, rule: rule, calendar: calendar)
+        }
+        guard rule.placeMode == .gps, rule.hasPlace,
               insidePlace, confirmedInsidePlace == true, let placeObservedAt,
               (0...30).contains(date.timeIntervalSince(placeObservedAt)) else { return false }
-        return RestrictionPolicy.isScheduleActive(at: date, startMinutes: rule.startMinutes,
-                                                  endMinutes: rule.endMinutes, calendar: calendar)
+        return RestrictionPolicy.isScheduleActive(at: date, rule: rule, calendar: calendar)
     }
 
     func shouldShield(at date: Date) -> Bool {
@@ -236,8 +318,7 @@ struct RuntimeState: Codable {
             hasSelection: !rule.selection.applicationTokens.isEmpty
                 || !rule.selection.categoryTokens.isEmpty
                 || !rule.selection.webDomainTokens.isEmpty,
-            scheduleActive: RestrictionPolicy.isScheduleActive(
-                at: date, startMinutes: rule.startMinutes, endMinutes: rule.endMinutes),
+            scheduleActive: RestrictionPolicy.isScheduleActive(at: date, rule: rule),
             placeMode: rule.placeMode, insidePlace: insidePlace, placeFocusConfirmed: placeFocusConfirmed(at: date),
             safetyReleased: safetyReleaseUntil.map { $0 > date } ?? false
         )
@@ -348,7 +429,8 @@ enum SharedState {
               Set(value.map(\.id)).count == value.count,
               value.allSatisfy({ (0..<1440).contains($0.startMinutes)
                   && (0..<1440).contains($0.endMinutes)
-                  && RestrictionPolicy.intervalMinutes(start: $0.startMinutes, end: $0.endMinutes) >= 15 })
+                  && RestrictionPolicy.intervalMinutes(start: $0.startMinutes, end: $0.endMinutes) >= 15
+                  && (1...RestrictionPolicy.everyDay).contains($0.activeDays) })
         else { throw StorageError.invalidRules }
         return value
     }
@@ -423,14 +505,14 @@ enum SharedState {
     }
     static var scheduleActive: Bool {
         guard let rule = runtime.rule else { return false }
-        return RestrictionPolicy.isScheduleActive(at: .now, startMinutes: rule.startMinutes, endMinutes: rule.endMinutes)
+        return RestrictionPolicy.isScheduleActive(at: .now, rule: rule)
     }
     static var shouldShield: Bool { runtime.shouldShield(at: .now) }
     static var placeIdentifier: String { "place-" + runtime.generation.uuidString }
 
     static func activate(_ rule: FocusRule) throws {
         try accessRuntime(write: true) { state in
-            guard rule.placeMode == .gps, rule.hasPlace else { throw StorageError.placeNotReady }
+            guard rule.placeMode == .anywhere || (rule.placeMode == .gps && rule.hasPlace) else { throw StorageError.placeNotReady }
             state = RuntimeState(rule: rule, enabled: true)
         }
     }
@@ -464,9 +546,11 @@ enum SharedState {
         try accessRuntime(write: true) { state in
             guard state.enabled, !state.recoveryPaused, let rule = state.rule,
                   state.safetyReleaseUntil.map({ $0 <= now }) ?? true,
-                  rule.placeMode == .gps, state.insidePlace, state.placeFocusConfirmed(at: now, calendar: calendar),
+                  rule.placeMode == .anywhere || (rule.placeMode == .gps && state.insidePlace),
+                  state.placeFocusConfirmed(at: now, calendar: calendar),
                   let occurrence = RestrictionPolicy.scheduleOccurrenceStart(
-                    at: now, startMinutes: rule.startMinutes, endMinutes: rule.endMinutes, calendar: calendar),
+                    at: now, startMinutes: rule.startMinutes, endMinutes: rule.endMinutes, days: rule.activeDays,
+                    calendar: calendar),
                   RestrictionPolicy.unlockSessionID(generation: state.generation, occurrenceStart: occurrence) == sessionID
             else { return false }
             state.generation = UUID()
@@ -507,7 +591,8 @@ enum SharedState {
                   let rule = state.rule else { throw StorageError.placeNotReady }
             state.safetyReleaseUntil = nil // Only a fresh, explicit Start focus can resume after recovery.
             state.placeFocusOccurrenceStart = RestrictionPolicy.scheduleOccurrenceStart(
-                at: now, startMinutes: rule.startMinutes, endMinutes: rule.endMinutes, calendar: calendar)
+                at: now, startMinutes: rule.startMinutes, endMinutes: rule.endMinutes, days: rule.activeDays,
+                calendar: calendar)
         }
     }
 
@@ -515,14 +600,14 @@ enum SharedState {
         do {
             try accessRuntime(write: true) { state in
                 let now = Date.now
-                if locationAllowed == false {
+                if locationAllowed == false, state.rule?.placeMode != .anywhere {
                     state.insidePlace = false
                     state.confirmedInsidePlace = nil
                     state.placeObservedAt = nil
                     state.placeFocusOccurrenceStart = nil
                 }
                 if let rule = state.rule,
-                   !RestrictionPolicy.isScheduleActive(at: now, startMinutes: rule.startMinutes, endMinutes: rule.endMinutes) {
+                   !RestrictionPolicy.isScheduleActive(at: now, rule: rule) {
                     state.placeFocusOccurrenceStart = nil
                 }
             }

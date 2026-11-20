@@ -19,6 +19,7 @@ final class AppModel: NSObject, ObservableObject {
     @Published var selection: FamilyActivitySelection
     @Published var startTime: Date
     @Published var endTime: Date
+    @Published var days: Int
     @Published var ruleName: String
     @Published private(set) var rules: [FocusRule]
     @Published private(set) var activeRuleID: UUID?
@@ -31,12 +32,16 @@ final class AppModel: NSObject, ObservableObject {
     @Published private(set) var screenTimeStatus = AuthorizationCenter.shared.authorizationStatus
     @Published private(set) var locationStatus = CLAuthorizationStatus.notDetermined
     @Published private(set) var isFocused = false
+    @Published var quickSelection = QuickFocus.selection { didSet { QuickFocus.selection = quickSelection } }
+    @Published var isQuickPickerPresented = false
+    @Published private(set) var quickEndsAt = QuickFocus.endsAt
     @Published private(set) var placeMonitoringNeedsAttention = false
     @Published private(set) var notificationStatus: UNAuthorizationStatus = .notDetermined
     @Published private(set) var zoneNotificationsEnabled = SharedState.defaults.bool(forKey: RestrictionNotifications.enabledKey)
 #if targetEnvironment(simulator)
     @Published private var simulatorScreenTimeAuthorized: Bool
     @Published private var simulatorSelectionCount: Int
+    @Published private var simulatorQuickCount = 0
 #endif
     @Published private(set) var errorMessage: String?
     @Published private(set) var message = "" {
@@ -56,8 +61,10 @@ final class AppModel: NSObject, ObservableObject {
     private var placeMonitorTask: Task<Void, Never>?
     private var protectedDataTask: Task<Void, Never>?
     private var scheduleRefreshTask: Task<Void, Never>?
+    private var quickEndTask: Task<Void, Never>?
     private var locationCheckGeneration: UUID?
     private var pendingStartGeneration: UUID?
+    private var retriedArrivalSample = false
     private var locationCheckTask: Task<Void, Never>?
     private var monitorDiagnosticActive = false
     private var locationAutomationReady = false
@@ -74,6 +81,7 @@ final class AppModel: NSObject, ObservableObject {
         selection = active?.selection ?? FamilyActivitySelection()
         startTime = Self.date(minutes: active?.startMinutes ?? 540)
         endTime = Self.date(minutes: active?.endMinutes ?? 1080)
+        days = active?.activeDays ?? RestrictionPolicy.everyDay
         ruleName = active?.name ?? roomString("My time")
         rules = savedRules
         activeRuleID = active?.id
@@ -124,7 +132,8 @@ final class AppModel: NSObject, ObservableObject {
     func hasUnappliedChanges(_ id: UUID) -> Bool {
         guard let saved = rules.first(where: { $0.id == id }), let applied = activeRule, applied.id == id else { return false }
         return saved.name != applied.name || saved.startMinutes != applied.startMinutes
-            || saved.endMinutes != applied.endMinutes || saved.placeMode != applied.placeMode
+            || saved.endMinutes != applied.endMinutes || saved.activeDays != applied.activeDays
+            || saved.placeMode != applied.placeMode
             || saved.hasPlace != applied.hasPlace || saved.placeLatitude != applied.placeLatitude
             || saved.placeLongitude != applied.placeLongitude
             || saved.selection.applicationTokens != applied.selection.applicationTokens
@@ -138,12 +147,16 @@ final class AppModel: NSObject, ObservableObject {
         let state = SharedState.runtime
         guard state.enabled, !state.recoveryPaused, let rule = state.rule else { return nil }
         if let until = state.safetyReleaseUntil, until > .now {
-            return rule.placeMode == .gps
+            return rule.placeMode != .nfc
                 ? roomString("Until %@", until.formatted(date: .abbreviated, time: .shortened))
                 : nil
         }
         if !SharedState.scheduleActive {
-            return roomString("Starts at %@", Self.date(minutes: rule.startMinutes).formatted(date: .omitted, time: .shortened))
+            guard let next = RestrictionPolicy.nextScheduleStart(after: .now, rule: rule) else { return nil }
+            let time = next.formatted(date: .omitted, time: .shortened)
+            return Calendar.current.isDateInToday(next)
+                ? roomString("Starts at %@", time)
+                : roomString("Starts %@ at %@", next.formatted(.dateTime.weekday(.abbreviated)), time)
         }
         return isFocused
             ? roomString("Until %@", Self.date(minutes: rule.endMinutes).formatted(date: .omitted, time: .shortened))
@@ -167,7 +180,7 @@ final class AppModel: NSObject, ObservableObject {
         let state = SharedState.runtime
         guard isFocused, state.enabled, !state.recoveryPaused, let rule = state.rule,
               let occurrence = RestrictionPolicy.scheduleOccurrenceStart(
-                at: .now, startMinutes: rule.startMinutes, endMinutes: rule.endMinutes)
+                at: .now, startMinutes: rule.startMinutes, endMinutes: rule.endMinutes, days: rule.activeDays)
         else { return nil }
         return RestrictionPolicy.unlockSessionID(generation: state.generation, occurrenceStart: occurrence)
     }
@@ -276,12 +289,24 @@ final class AppModel: NSObject, ObservableObject {
         notificationStatus = await UNUserNotificationCenter.current().notificationSettings().authorizationStatus
     }
 
+    /// Shared permission request. Trial opt-in must not turn on zone event notifications.
+    static func requestNotificationAuthorization() async throws -> Bool {
+        let center = UNUserNotificationCenter.current()
+        let status = await center.notificationSettings().authorizationStatus
+        switch status {
+        case .authorized, .provisional, .ephemeral: return true
+        case .denied: return false
+        case .notDetermined: return try await center.requestAuthorization(options: [.alert, .sound])
+        @unknown default: return false
+        }
+    }
+
     func setZoneNotificationsEnabled(_ enabled: Bool) async {
         zoneNotificationsEnabled = enabled
         SharedState.defaults.set(enabled, forKey: RestrictionNotifications.enabledKey)
         if enabled {
             do {
-                _ = try await UNUserNotificationCenter.current().requestAuthorization(options: [.alert, .sound])
+                _ = try await Self.requestNotificationAuthorization()
             } catch { reportError(roomString("Couldn't enable notifications: %@", error.localizedDescription)) }
         } else {
             let center = UNUserNotificationCenter.current()
@@ -354,7 +379,7 @@ final class AppModel: NSObject, ObservableObject {
             reportError(roomString("Choose at least one app, category, or website."))
             return false
         }
-        guard placeMode == .gps, draftHasPlace else {
+        guard placeMode == .anywhere || (placeMode == .gps && draftHasPlace) else {
             reportError(roomString("Choose a place before saving this rule."))
             return false
         }
@@ -362,6 +387,10 @@ final class AppModel: NSObject, ObservableObject {
         let end = Self.minutes(from: endTime)
         guard RestrictionPolicy.intervalMinutes(start: start, end: end) >= 15 else {
             reportError(roomString("Choose a schedule of at least 15 minutes."))
+            return false
+        }
+        guard (1...RestrictionPolicy.everyDay).contains(days) else {
+            reportError(roomString("Choose at least one day."))
             return false
         }
         let name = ruleName.trimmingCharacters(in: .whitespacesAndNewlines)
@@ -373,7 +402,8 @@ final class AppModel: NSObject, ObservableObject {
             placeLatitude: draftPlaceCoordinate?.latitude ?? 0,
             placeLongitude: draftPlaceCoordinate?.longitude ?? 0,
             nfcConfigured: false,
-            preventAppRemoval: preventAppRemoval)
+            preventAppRemoval: preventAppRemoval,
+            days: days)
         do {
             var updated = try SharedState.readRules()
             if let index = updated.firstIndex(where: { $0.id == rule.id }) { updated[index] = rule }
@@ -431,6 +461,7 @@ final class AppModel: NSObject, ObservableObject {
         selection = activeRule?.selection ?? FamilyActivitySelection()
         startTime = Self.date(minutes: activeRule?.startMinutes ?? 9 * 60)
         endTime = Self.date(minutes: activeRule?.endMinutes ?? 18 * 60)
+        days = activeRule?.activeDays ?? RestrictionPolicy.everyDay
         draftHasPlace = false
         draftPlaceCoordinate = nil
         preventAppRemoval = false
@@ -448,7 +479,7 @@ final class AppModel: NSObject, ObservableObject {
     @discardableResult
     func activateRule(_ id: UUID) -> Bool {
         guard let rule = rules.first(where: { $0.id == id }) else { return false }
-        guard rule.placeMode == .gps, rule.hasPlace else {
+        guard rule.placeMode == .anywhere || (rule.placeMode == .gps && rule.hasPlace) else {
             reportError(roomString("Choose a place for this saved rule before activating it."))
             return false
         }
@@ -474,9 +505,13 @@ final class AppModel: NSObject, ObservableObject {
             try SharedState.activate(rule)
             loadDraft(rule)
             refresh()
-            if rule.placeMode == .gps { startPlaceMonitoring(replacingSavedCondition: true) }
-            checkPlaceArrival()
-            message = roomString("Rule ready. Check your location, then tap Start focus.")
+            if rule.placeMode == .gps {
+                startPlaceMonitoring(replacingSavedCondition: true)
+                checkPlaceArrival()
+                message = roomString("Rule ready. Check your location, then tap Start focus.")
+            } else {
+                message = roomString("Rule ready. Tap Start focus when you are ready.")
+            }
             // Successful rule activation, not proof that a focus session completed.
             if FirebaseApp.app() != nil { Analytics.logEvent("rule_activated", parameters: nil) }
             return true
@@ -522,6 +557,7 @@ final class AppModel: NSObject, ObservableObject {
         selection = rule.selection
         startTime = Self.date(minutes: rule.startMinutes)
         endTime = Self.date(minutes: rule.endMinutes)
+        days = rule.activeDays
         draftHasPlace = rule.hasPlace
         draftPlaceCoordinate = rule.hasPlace
             ? CLLocationCoordinate2D(latitude: rule.placeLatitude, longitude: rule.placeLongitude)
@@ -538,13 +574,17 @@ final class AppModel: NSObject, ObservableObject {
     }
 
     var canStartPlaceFocus: Bool {
-        let state = SharedState.runtime
-        guard !isCheckingPlace, !isFocused, screenTimeAuthorized,
-              state.enabled, !state.recoveryPaused, state.rule?.placeMode == .gps,
-              SharedState.scheduleActive, state.insidePlace,
-              let observed = state.placeObservedAt,
-              (0...30).contains(Date.now.timeIntervalSince(observed)) else { return false }
-        return !placeMonitoringNeedsAttention
+        Self.canRequestPlaceFocus(state: SharedState.runtime, isChecking: isCheckingPlace,
+            isFocused: isFocused || quickEndsAt != nil, screenTimeAuthorized: screenTimeAuthorized,
+            monitoringNeedsAttention: placeMonitoringNeedsAttention, scheduleActive: SharedState.scheduleActive)
+    }
+
+    static func canRequestPlaceFocus(state: RuntimeState, isChecking: Bool, isFocused: Bool,
+                                    screenTimeAuthorized: Bool, monitoringNeedsAttention: Bool,
+                                    scheduleActive: Bool) -> Bool {
+        !isChecking && !isFocused && screenTimeAuthorized && !monitoringNeedsAttention && scheduleActive
+            && state.enabled && !state.recoveryPaused
+            && (state.rule?.placeMode == .anywhere || (state.rule?.placeMode == .gps && state.rule?.hasPlace == true))
     }
 
     var placeArrivalText: String {
@@ -558,7 +598,7 @@ final class AppModel: NSObject, ObservableObject {
         if placeMonitoringNeedsAttention { return roomString("Check Always and Precise Location in Settings.") }
         guard let observed = state.placeObservedAt,
               (0...30).contains(Date.now.timeIntervalSince(observed)) else {
-            return roomString("Check your location to confirm you are near the saved place.")
+            return roomString("Tap Start focus. We’ll confirm your location before blocking apps.")
         }
         return state.insidePlace
             ? roomString("You are near your saved place. Tap Start focus when you are ready.")
@@ -569,12 +609,114 @@ final class AppModel: NSObject, ObservableObject {
         requestArrivalCheck(startFocus: false)
     }
 
+    var quickSelectionCount: Int {
+        let count = quickSelection.applicationTokens.count + quickSelection.categoryTokens.count
+            + quickSelection.webDomainTokens.count
+#if targetEnvironment(simulator)
+        return count == 0 ? simulatorQuickCount : count
+#else
+        return count
+#endif
+    }
+
+    func requestQuickSelection() {
+#if targetEnvironment(simulator)
+        simulatorQuickCount = 3
+        message = roomString("Selected three demo items for Simulator.")
+#else
+        isQuickPickerPresented = true
+#endif
+    }
+
+    // One session at a time: Quick focus cannot start over a rule session, and a rule cannot start over it.
+    @discardableResult
+    func startQuickFocus(minutes: Int) -> Bool {
+        guard QuickFocus.durations.contains(minutes), quickEndsAt == nil else { return false }
+        screenTimeStatus = AuthorizationCenter.shared.authorizationStatus
+        guard screenTimeAuthorized else {
+            reportError(roomString("Allow Screen Time before starting Quick focus."))
+            return false
+        }
+        guard quickSelectionCount > 0 else {
+            reportError(roomString("Choose at least one app, category, or website."))
+            return false
+        }
+        guard !isFocused else {
+            reportError(roomString("End your current focus before starting Quick focus."))
+            return false
+        }
+        let now = Date.now
+        let end = now.addingTimeInterval(TimeInterval(minutes * 60))
+#if !targetEnvironment(simulator)
+        // Without an OS-owned end, never shield: the app may not be running when time is up.
+        let parts: Set<Calendar.Component> = [.year, .month, .day, .hour, .minute, .second]
+        do {
+            try DeviceActivityCenter().startMonitoring(.quickFocus, during: DeviceActivitySchedule(
+                intervalStart: Calendar.current.dateComponents(parts, from: now),
+                intervalEnd: Calendar.current.dateComponents(parts, from: end), repeats: false))
+        } catch {
+            reportError(roomString("Could not start Quick focus: %@", error.localizedDescription))
+            return false
+        }
+#endif
+        QuickFocus.begin(quickSelection, until: end)
+        refresh()
+        message = roomString("Quick focus is on until %@.", end.formatted(date: .omitted, time: .shortened))
+        return true
+    }
+
+    func endQuickFocus() {
+#if !targetEnvironment(simulator)
+        DeviceActivityCenter().stopMonitoring([.quickFocus])
+#endif
+        QuickFocus.finish()
+        refresh()
+        message = roomString("Restrictions cleared. Check that your apps open.")
+    }
+
+    private func refreshQuickFocus() {
+        QuickFocus.reconcile()
+        quickEndsAt = QuickFocus.endsAt
+        quickEndTask?.cancel()
+        guard let end = quickEndsAt else { return }
+        quickEndTask = Task { [weak self] in
+            try? await Task.sleep(for: .seconds(max(0, end.timeIntervalSinceNow) + 0.25))
+            guard !Task.isCancelled else { return }
+            self?.refresh()
+        }
+    }
+
     func startPlaceFocus() {
+        let state = SharedState.runtime
+        if state.rule?.placeMode == .anywhere { startTimeOnlyFocus(state); return }
         requestArrivalCheck(startFocus: true)
+    }
+
+    // Time-only rules never read Location: the schedule and the explicit tap are the whole condition.
+    private func startTimeOnlyFocus(_ state: RuntimeState) {
+        guard quickEndsAt == nil else {
+            reportError(roomString("End Quick focus before starting this rule."))
+            return
+        }
+        guard state.enabled, !state.recoveryPaused, screenTimeAuthorized else {
+            reportError(roomString("Allow Screen Time before activating this rule."))
+            return
+        }
+        do {
+            try SharedState.startPlaceFocus(generation: state.generation)
+            message = roomString("Focus started. You can restore access at any time.")
+        } catch {
+            reportError(roomString("Could not start focus: %@", error.localizedDescription))
+        }
+        refresh()
     }
 
     private func requestArrivalCheck(startFocus: Bool) {
         guard !isCheckingPlace else { return }
+        if startFocus && quickEndsAt != nil {
+            reportError(roomString("End Quick focus before starting this rule."))
+            return
+        }
         let state = SharedState.runtime
         guard state.enabled, !state.recoveryPaused,
               let rule = state.rule, rule.placeMode == .gps, rule.hasPlace else {
@@ -593,6 +735,7 @@ final class AppModel: NSObject, ObservableObject {
         cancelPlaceLookup()
         locationCheckGeneration = state.generation
         pendingStartGeneration = startFocus ? state.generation : nil
+        retriedArrivalSample = false
         isCheckingPlace = true
         locationManager.requestLocation()
         locationCheckTask?.cancel()
@@ -615,12 +758,12 @@ final class AppModel: NSObject, ObservableObject {
     private func updatePlaceArrival(_ location: CLLocation) {
         guard let generation = locationCheckGeneration else { return }
         let shouldStart = pendingStartGeneration == generation
-        cancelArrivalCheck()
         let state = SharedState.runtime
         guard state.generation == generation, state.enabled, !state.recoveryPaused,
-              let rule = state.rule, rule.placeMode == .gps else { return }
+              let rule = state.rule, rule.placeMode == .gps else { cancelArrivalCheck(); return }
         guard locationManager.accuracyAuthorization == .fullAccuracy,
               locationManager.authorizationStatus == .authorizedAlways else {
+            cancelArrivalCheck()
             failOpenLocation(roomString("Check Always and Precise Location in Settings."))
             return
         }
@@ -628,9 +771,16 @@ final class AppModel: NSObject, ObservableObject {
         guard let inside = RestrictionPolicy.placePresence(
             distance: location.distance(from: center), horizontalAccuracy: location.horizontalAccuracy,
             sampleDate: location.timestamp, now: .now, wasInside: state.insidePlace) else {
+            if !retriedArrivalSample {
+                retriedArrivalSample = true
+                locationManager.requestLocation()
+                return
+            }
+            cancelArrivalCheck()
             failOpenLocation(roomString("Location could not be confirmed. Check again near a window or outside."))
             return
         }
+        cancelArrivalCheck()
         monitorDiagnosticActive = false
         placeMonitoringNeedsAttention = false
         SharedState.setInsidePlace(inside, generation: generation, confirmed: true, observedAt: location.timestamp)
@@ -681,6 +831,7 @@ final class AppModel: NSObject, ObservableObject {
 
     func refresh() {
         Task { [weak self] in await self?.refreshNotificationSettings() }
+        refreshQuickFocus()
         screenTimeStatus = AuthorizationCenter.shared.authorizationStatus
         locationStatus = locationManager.authorizationStatus
         guard let state = try? SharedState.readRuntime(), !SharedState.rulesStorageError else {

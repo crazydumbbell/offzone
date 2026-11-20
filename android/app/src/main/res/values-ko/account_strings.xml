@@ -74,4 +74,5 @@
     <string name="account_purchase_cancelled">구매를 취소했어요. 결제되지 않았어요.</string>
     <string name="account_purchase_pending">결제가 대기 중이에요. 집중 세션은 유지돼요.</string>
     <string name="account_google_credential_missing">사용할 수 있는 Google 로그인 정보를 찾지 못했어요. 이 기기에 Google 계정을 추가하거나 선택한 뒤 다시 시도해 주세요. Offzone 계정에 이미 연결된 다른 로그인 방법도 사용할 수 있어요.</string>
+    <string name="account_plans_after_signin">로그인하면 구독할 수 있어요. 구독은 계정에 연결돼요.</string>
 </resources>

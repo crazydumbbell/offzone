@@ -1,0 +1,4 @@
+<resources>
+    <string name="engine_reconnected">앱 차단이 준비됐어요. 이전 집중 세션은 자동으로 이어지지 않아요. 준비되면 새로 시작하세요.</string>
+    <string name="engine_restart_note">Android가 Offzone이나 차단 서비스를 종료하면 집중도 끝나요. 이전 집중 세션과 장소 모니터링은 자동으로 다시 시작되지 않아요. 준비되면 다시 시작하세요.</string>
+</resources>

@@ -2,6 +2,24 @@ import XCTest
 @testable import RoomDNS
 
 final class AccountStoreTests: XCTestCase {
+    func testJournalDraftGuardKeepsOtherUnsavedEditorDirtyAfterSavingOne() {
+        let plan = ProJournalData.Plan(intention: "Read", context: "personal", weekdays: [2])
+        let reflection = ProJournalData.Reflection(note: "A quiet hour", outcome: "Kept my intention")
+        var baseline = JournalDraftBaseline(plan: plan, reflection: reflection)
+        var editedPlan = plan
+        editedPlan.weekdays.insert(3)
+        var editedReflection = reflection
+        editedReflection.note = "New unsaved reflection"
+        XCTAssertFalse(baseline.hasChanges(plan: plan, reflection: reflection))
+        XCTAssertTrue(baseline.hasChanges(plan: editedPlan, reflection: reflection))
+        baseline.plan = editedPlan // Saving the plan must not discard the reflection warning.
+        XCTAssertTrue(baseline.hasChanges(plan: editedPlan, reflection: editedReflection))
+        baseline.reflection = editedReflection
+        XCTAssertFalse(baseline.hasChanges(plan: editedPlan, reflection: editedReflection))
+        editedPlan.context = "work"
+        XCTAssertTrue(baseline.hasChanges(plan: editedPlan, reflection: editedReflection))
+    }
+
     func testPendingUnlockRequestIsDurableUntilExplicitCompletion() throws {
         let directory = FileManager.default.temporaryDirectory
             .appendingPathComponent("offzone-pending-\(UUID().uuidString)", isDirectory: true)

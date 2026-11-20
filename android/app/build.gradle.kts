@@ -26,20 +26,20 @@ android {
         applicationId = "com.exchip.roomdns"
         minSdk = 26
         targetSdk = 36
-        versionCode = 2
-        versionName = "0.1.0"
+        versionCode = 8
+        versionName = "1.0.1"
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         mapOf(
             "FIREBASE_API_KEY" to "", "FIREBASE_APP_ID" to "1:842668693484:android:90a67f18aa795dabf212c9",
             "FIREBASE_PROJECT_ID" to "roomdns-exchip", "GOOGLE_WEB_CLIENT_ID" to "",
             "REVENUECAT_PUBLIC_KEY" to "", "PRO_ENTITLEMENT_ID" to "offzone_pro",
             "PRO_OFFERING_ID" to "offzone_pro", "UNLOCK_PRODUCT_ID" to "",
-            "TERMS_URL" to "", "PRIVACY_URL" to "https://offzone-privacy-support.wogus5357.chatgpt.site/privacy",
+            "TERMS_URL" to "", "PRIVACY_URL" to "https://crazydumbbell.github.io/offzone/privacy/",
         ).forEach { (key, fallback) ->
             val value = providers.gradleProperty(key).orElse(fallback).get()
             buildConfigField("String", key, "\"${value.replace("\\", "\\\\").replace("\"", "\\\"")}\"")
         }
-        buildConfigField("boolean", "PRO_OFFER_READY", "false")
+        buildConfigField("boolean", "PRO_OFFER_READY", providers.gradleProperty("PRO_OFFER_READY").orElse("false").get())
         buildConfigField("boolean", "UNLOCK_PASS_READY", "false")
     }
     buildFeatures { compose = true; buildConfig = true }
@@ -48,7 +48,12 @@ android {
         targetCompatibility = JavaVersion.VERSION_17
     }
     buildTypes {
-        getByName("release") { signingConfig = signingConfigs.getByName("upload") }
+        getByName("release") {
+            signingConfig = signingConfigs.getByName("upload")
+            isMinifyEnabled = true
+            isShrinkResources = true
+            proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro")
+        }
         debug {
         applicationIdSuffix = ".debug"
         buildConfigField("String", "FIREBASE_APP_ID", "\"1:842668693484:android:b484e4679cd99a9ef212c9\"")

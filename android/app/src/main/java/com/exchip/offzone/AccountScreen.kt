@@ -5,6 +5,7 @@ import android.content.Context
 import android.content.ContextWrapper
 import android.content.Intent
 import android.net.Uri
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.text.KeyboardOptions
@@ -12,6 +13,8 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
@@ -26,41 +29,45 @@ fun AccountScreen(store: AccountStore, onBack: () -> Unit, initialGoal: String? 
     val state by store.state.collectAsState()
     val context = LocalContext.current
     val activity = context.accountActivity()
-    var email by remember { mutableStateOf("") }
+    var email by rememberSaveable { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
     var confirmation by remember { mutableStateOf("") }
-    var mode by remember { mutableStateOf("signin") }
+    var mode by rememberSaveable { mutableStateOf("signin") }
     var deleting by remember { mutableStateOf(false) }
     var mismatch by remember { mutableStateOf(false) }
     var goal by remember(initialGoal) { mutableStateOf(initialGoal?.takeIf(AccountIdentity.goals::contains) ?: "work") }
     LaunchedEffect(state.uid) { deleting = false; password = ""; confirmation = ""; mode = "signin"; store.refresh() }
+    val snackbar = remember { SnackbarHostState() }
+    LaunchedEffect(state.notice, state.error) {
+        (state.error ?: state.notice)?.let { snackbar.showSnackbar(it) }
+    }
+    Box(Modifier.fillMaxSize()) {
     Column(Modifier.fillMaxSize().safeDrawingPadding().imePadding().verticalScroll(rememberScrollState()).padding(24.dp), verticalArrangement = Arrangement.spacedBy(12.dp)) {
         TextButton(onClick = onBack) { Text(stringResource(R.string.account_done)) }
-        Text(stringResource(R.string.account_title), style = MaterialTheme.typography.titleMedium)
-        Surface(color = SoftButter, shape = RoundedCornerShape(22.dp)) {
-            Box(Modifier.fillMaxWidth().heightIn(min = 132.dp), contentAlignment = androidx.compose.ui.Alignment.Center) {
-                NookCatView(NookExpression.WELCOME_FULL, Modifier.size(width = 146.dp, height = 126.dp))
+        Row(Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) {
+            Column(Modifier.weight(1f)) {
+                Text(stringResource(R.string.account_title), style = MaterialTheme.typography.headlineSmall)
+                Text(stringResource(if (state.pro) R.string.account_pro_active else R.string.account_free_space), style = MaterialTheme.typography.bodyLarge)
             }
+            NookCatView(NookExpression.WELCOME_FULL, Modifier.size(72.dp))
         }
-        Text(stringResource(if (state.pro) R.string.account_pro_active else R.string.account_free_space), style = MaterialTheme.typography.headlineLarge)
-        Text(stringResource(R.string.account_local))
-        if (onJournal != null) TextButton(onClick = onJournal, modifier = Modifier.heightIn(min = 48.dp)) { Text(stringResource(R.string.m_journal)) }
+        Text(stringResource(R.string.account_local), style = MaterialTheme.typography.bodyLarge)
         if (!state.configured) Text(stringResource(R.string.account_unavailable))
         else if (state.uid == null) {
             Text(stringResource(R.string.account_signin_intro))
             if (activity != null) {
-                Button(onClick = { store.apple(activity) }, enabled = !state.busy, modifier = Modifier.fillMaxWidth()) { Text(stringResource(R.string.account_apple)) }
-                if (store.googleConfigured) OutlinedButton(onClick = { store.google(activity) }, enabled = !state.busy, modifier = Modifier.fillMaxWidth()) { Text(stringResource(R.string.account_google)) }
+                SecondaryButton(onClick = { store.apple(activity) }, enabled = !state.busy, modifier = Modifier.fillMaxWidth()) { Text(stringResource(R.string.account_apple)) }
+                if (store.googleConfigured) SecondaryButton(onClick = { store.google(activity) }, enabled = !state.busy, modifier = Modifier.fillMaxWidth()) { Text(stringResource(R.string.account_google)) }
             }
             AccountEmailFields(email, { email = it }, password, { password = it }, confirmation, { confirmation = it }, mode == "create")
             if (mismatch) Text(stringResource(R.string.account_password_mismatch), color = MaterialTheme.colorScheme.error)
-            Button(onClick = {
+            PrimaryButton(onClick = {
                 mismatch = mode == "create" && password != confirmation
                 if (!mismatch) {
                     if (mode == "create") store.createAccount(email, password) else store.signIn(email, password)
                     password = ""; confirmation = ""
                 }
-            }, enabled = !state.busy) { Text(stringResource(if (mode == "create") R.string.account_create else R.string.account_signin)) }
+            }, enabled = !state.busy, modifier = Modifier.fillMaxWidth()) { Text(stringResource(if (mode == "create") R.string.account_create else R.string.account_signin)) }
             TextButton(onClick = { mode = if (mode == "create") "signin" else "create"; password = ""; confirmation = ""; mismatch = false }, enabled = !state.busy) {
                 Text(stringResource(if (mode == "create") R.string.account_signin else R.string.account_create))
             }
@@ -72,7 +79,7 @@ fun AccountScreen(store: AccountStore, onBack: () -> Unit, initialGoal: String? 
                 Row { RadioButton(selected = goal == value, onClick = { goal = value }); TextButton(onClick = { goal = value }) { Text(stringResource(accountGoalLabel(value))) } }
             }
             state.savedGoal?.let { Text(stringResource(R.string.account_saved_goal, stringResource(accountGoalLabel(it)))) }
-            Button(onClick = { store.saveGoal(goal) }, enabled = !state.busy && state.verified && state.savedGoal != goal) { Text(stringResource(R.string.account_save_goal)) }
+            PrimaryButton(onClick = { store.saveGoal(goal) }, enabled = !state.busy && state.verified && state.savedGoal != goal, modifier = Modifier.fillMaxWidth()) { Text(stringResource(R.string.account_save_goal)) }
             if ("password" in state.providers && !state.emailVerified) {
                 Text(stringResource(R.string.account_verify_required))
                 TextButton(onClick = store::sendVerification, enabled = !state.busy) { Text(stringResource(R.string.account_resend)) }
@@ -92,17 +99,17 @@ fun AccountScreen(store: AccountStore, onBack: () -> Unit, initialGoal: String? 
                     if (mode == "link") {
                         AccountEmailFields(email, { email = it }, password, { password = it }, confirmation, { confirmation = it }, true)
                         if (mismatch) Text(stringResource(R.string.account_password_mismatch), color = MaterialTheme.colorScheme.error)
-                        Button(onClick = { mismatch = password != confirmation; if (!mismatch) { store.linkEmail(email, password); password = ""; confirmation = "" } }, enabled = !state.busy) { Text(stringResource(R.string.account_link_email)) }
+                        PrimaryButton(onClick = { mismatch = password != confirmation; if (!mismatch) { store.linkEmail(email, password); password = ""; confirmation = "" } }, enabled = !state.busy, modifier = Modifier.fillMaxWidth()) { Text(stringResource(R.string.account_link_email)) }
                     }
                 } else TextButton(onClick = { store.resetPassword(state.email) }, enabled = !state.busy) { Text(stringResource(R.string.account_reset)) }
             }
             HorizontalDivider()
             Text(stringResource(R.string.account_plan), style = MaterialTheme.typography.titleMedium)
-            if (store.offersEnabled && state.packages.isNotEmpty() && !state.pro) {
+            if (store.offersEnabled && state.verified && state.purchasesConfigured && state.packages.isNotEmpty() && !state.pro) {
                 Text(stringResource(R.string.account_pro_benefits))
                 Text(stringResource(R.string.account_journal_local))
                 state.packages.forEach { plan ->
-                    Card(Modifier.fillMaxWidth()) {
+                    Card(Modifier.fillMaxWidth(), colors = CardDefaults.cardColors(containerColor = WarmIvory), shape = RoundedCornerShape(24.dp), border = BorderStroke(1.dp, PineHairline)) {
                         Column(Modifier.padding(16.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
                             Text(plan.product.name, style = MaterialTheme.typography.titleMedium)
                             val phases = plan.product.defaultOption?.pricingPhases.orEmpty()
@@ -114,20 +121,20 @@ fun AccountScreen(store: AccountStore, onBack: () -> Unit, initialGoal: String? 
                             }
                             if (phases.isEmpty()) Text(plan.product.price.formatted)
                             Text(stringResource(R.string.account_play_confirms))
-                            Button(onClick = { activity?.let { store.purchase(it, plan) } }, enabled = !state.busy && activity != null) { Text(stringResource(R.string.account_subscribe)) }
+                            PrimaryButton(onClick = { activity?.let { store.purchase(it, plan) } }, enabled = !state.busy && activity != null, modifier = Modifier.fillMaxWidth()) { Text(stringResource(R.string.account_subscribe)) }
                         }
                     }
                 }
                 Text(stringResource(R.string.account_renews))
-            } else if (!state.pro) Text(stringResource(R.string.account_plans_unavailable))
-            TextButton(onClick = store::loadOfferings, enabled = !state.busy && state.verified) { Text(stringResource(R.string.account_refresh_plans)) }
+            } else if (!state.pro) Text(stringResource(if (store.offersEnabled && state.packages.isNotEmpty() && !state.verified) R.string.account_plans_after_signin else R.string.account_plans_unavailable))
+            if (store.offersEnabled) TextButton(onClick = store::loadOfferings, enabled = !state.busy && state.verified) { Text(stringResource(R.string.account_refresh_plans)) }
             if (state.purchasesConfigured) TextButton(onClick = store::restorePurchases, enabled = !state.busy) { Text(stringResource(R.string.account_restore)) }
             if (activity != null) TextButton(onClick = { store.manageSubscription(activity) }) { Text(stringResource(R.string.account_manage)) }
             if (store.unlockPassEnabled) {
                 TextButton(onClick = store::loadUnlockPass, enabled = !state.busy) { Text(stringResource(R.string.account_refresh_pass)) }
                 state.unlockBalance?.let { Text(stringResource(R.string.account_pass_balance, it)) }
                 state.unlockProduct?.let { product ->
-                    Button(onClick = { activity?.let(store::purchaseUnlockPass) }, enabled = !state.busy && activity != null) { Text(stringResource(R.string.account_buy_pass, product.price.formatted)) }
+                    PrimaryButton(onClick = { activity?.let(store::purchaseUnlockPass) }, enabled = !state.busy && activity != null, modifier = Modifier.fillMaxWidth()) { Text(stringResource(R.string.account_buy_pass, product.price.formatted)) }
                 }
                 if (state.pendingUnlockSessionID != null) TextButton(onClick = store::reconcilePreviousUnlockPass, enabled = !state.busy) { Text(stringResource(R.string.account_check_pass)) }
             }
@@ -136,11 +143,12 @@ fun AccountScreen(store: AccountStore, onBack: () -> Unit, initialGoal: String? 
             TextButton(onClick = { deleting = true; password = "" }, enabled = !state.busy) { Text(stringResource(R.string.account_delete), color = MaterialTheme.colorScheme.error) }
         }
         if (state.busy) CircularProgressIndicator()
-        state.notice?.let { Text(it) }
-        state.error?.let { Text(it, color = MaterialTheme.colorScheme.error) }
+        if (onJournal != null) TextButton(onClick = onJournal, modifier = Modifier.heightIn(min = 48.dp)) { Text(stringResource(R.string.m_journal)) }
         listOf(R.string.account_terms to BuildConfig.TERMS_URL, R.string.account_privacy to BuildConfig.PRIVACY_URL).forEach { (label, url) ->
             if (AccountStore.https(url)) TextButton(onClick = { context.startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(url))) }) { Text(stringResource(label)) }
         }
+    }
+    SnackbarHost(snackbar, Modifier.align(Alignment.BottomCenter).safeDrawingPadding().imePadding().padding(16.dp))
     }
     if (deleting && state.uid != null) AlertDialog(onDismissRequest = { if (!state.busy) deleting = false },
         title = { Text(stringResource(R.string.account_delete)) },

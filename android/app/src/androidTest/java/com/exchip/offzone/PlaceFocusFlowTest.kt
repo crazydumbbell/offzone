@@ -65,7 +65,7 @@ class PlaceFocusFlowTest {
         }
         fun openApp() {
             context.startActivity(Intent(context, MainActivity::class.java).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK))
-            assertTrue(device.wait(Until.hasObject(By.text("offzone")), 10_000))
+            assertTrue(device.wait(Until.hasObject(By.text(context.getString(R.string.home_your_space))), 10_000))
         }
         fun startPlace() {
             openApp()
@@ -93,6 +93,14 @@ class PlaceFocusFlowTest {
             repeat(30) { if (!FocusController.state.value.insidePlace) { fix(); SystemClock.sleep(300) } }
             waitFor { FocusController.state.value.monitoringPlace && FocusController.state.value.insidePlace }
             assertNull("Arrival monitoring must never start blocking", FocusController.state.value.session)
+            instrumentation.runOnMainSync {
+                val generation = FocusController.generation
+                FocusController.checkArrival(context)
+                assertEquals(R.string.engine_monitor_body, FocusController.state.value.message)
+                assertEquals(generation, FocusController.generation)
+                assertTrue(FocusController.state.value.monitoringPlace)
+                assertNull(FocusController.state.value.session)
+            }
             startPlace()
             context.startActivity(Intent().setComponent(ComponentName(target, FocusTestActivity::class.java.name)).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK))
             assertTrue(device.wait(Until.hasObject(By.text(context.getString(R.string.blocked_title))), 5_000))

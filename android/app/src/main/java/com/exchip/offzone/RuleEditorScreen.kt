@@ -3,6 +3,7 @@ package com.exchip.offzone
 import android.app.TimePickerDialog
 import android.text.format.DateFormat
 import androidx.activity.compose.BackHandler
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
@@ -14,29 +15,41 @@ import androidx.compose.runtime.saveable.listSaver
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.clearAndSetSemantics
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.semantics
+import java.time.DayOfWeek
 import java.time.LocalTime
 import java.time.format.DateTimeFormatter
 import java.time.format.FormatStyle
+import java.time.format.TextStyle
 import java.util.Locale
 import java.util.UUID
 
 internal fun timeLabel(minutes: Int): String = LocalTime.of(minutes / 60, minutes % 60).format(DateTimeFormatter.ofLocalizedTime(FormatStyle.SHORT))
+internal fun dayLabel(day: DayOfWeek, style: TextStyle = TextStyle.SHORT): String = day.getDisplayName(style, Locale.getDefault())
 
-private val EditorPaper = Color(0xFFFAF7E8)
-private val EditorMuted = Color(0xFF666963)
+@Composable
+internal fun daysLabel(days: Int): String = when (days) {
+    RulePolicy.EVERY_DAY -> stringResource(R.string.days_every)
+    RulePolicy.WEEKDAYS -> stringResource(R.string.days_weekdays)
+    RulePolicy.EVERY_DAY - RulePolicy.WEEKDAYS -> stringResource(R.string.days_weekends)
+    else -> DayOfWeek.entries.filter { RulePolicy.dayOn(days, it) }.joinToString(", ") { dayLabel(it) }
+}
+
+@Composable
+internal fun scheduleLabel(rule: FocusRule): String = "${timeLabel(rule.startMinutes)} – ${timeLabel(rule.endMinutes)} · ${daysLabel(rule.days)}"
 
 @Composable
 private fun EditorCard(title: String, detail: String, onClick: () -> Unit) {
-    Surface(Modifier.fillMaxWidth().clickable(onClick = onClick), color = EditorPaper, shape = RoundedCornerShape(18.dp)) {
+    Surface(Modifier.fillMaxWidth().clickable(onClick = onClick), color = WarmIvory, shape = RoundedCornerShape(16.dp), border = BorderStroke(1.dp, PineLine)) {
         Column(Modifier.padding(20.dp), verticalArrangement = Arrangement.spacedBy(6.dp)) {
             Text(title, style = MaterialTheme.typography.titleMedium, fontWeight = FontWeight.SemiBold, color = Ink)
-            Text(detail, style = MaterialTheme.typography.bodyMedium, color = EditorMuted)
+            Text(detail, style = MaterialTheme.typography.bodyMedium, color = InkMuted)
         }
     }
 }
@@ -44,11 +57,12 @@ private fun EditorCard(title: String, detail: String, onClick: () -> Unit) {
 @Composable
 private fun EditorSummary(label: String, value: String) {
     Column(Modifier.fillMaxWidth().padding(vertical = 12.dp), verticalArrangement = Arrangement.spacedBy(4.dp)) {
-        Text(label, style = MaterialTheme.typography.bodyMedium, fontWeight = FontWeight.SemiBold, color = EditorMuted)
+        Text(label, style = MaterialTheme.typography.bodyMedium, fontWeight = FontWeight.SemiBold, color = InkMuted)
         Text(value, style = MaterialTheme.typography.bodyLarge, color = Ink)
     }
 }
 
+@OptIn(ExperimentalLayoutApi::class)
 @Composable
 fun RuleEditorScreen(
     rule: FocusRule?, defaultStart: Int, onBack: () -> Unit, onSaved: (FocusRule) -> Unit,
@@ -64,46 +78,50 @@ fun RuleEditorScreen(
     var name by rememberSaveable { mutableStateOf(rule?.name ?: context.getString(suggestedName)) }
     var start by rememberSaveable { mutableIntStateOf(rule?.startMinutes ?: defaultStart) }
     var end by rememberSaveable { mutableIntStateOf(rule?.endMinutes ?: defaultEnd) }
+    var days by rememberSaveable { mutableIntStateOf(rule?.days ?: RulePolicy.EVERY_DAY) }
     var packages by rememberSaveable(stateSaver = listSaver<Set<String>, String>(save = { it.toList() }, restore = { it.toSet() })) { mutableStateOf(rule?.packages ?: emptySet()) }
     var latitude by rememberSaveable { mutableStateOf(rule?.latitude) }
     var longitude by rememberSaveable { mutableStateOf(rule?.longitude) }
     var label by rememberSaveable { mutableStateOf(rule?.placeLabel ?: "") }
+    var anywhere by rememberSaveable { mutableStateOf(rule?.anywhere ?: false) }
     var step by rememberSaveable { mutableIntStateOf(0) }
     var picker by remember { mutableStateOf(false) }
     var place by rememberSaveable { mutableStateOf(false) }
     var failed by remember { mutableStateOf(false) }
-    val placeName = if (latitude != null && longitude != null)
+    val placeName = if (anywhere) stringResource(R.string.editor_time_only_place)
+    else if (latitude != null && longitude != null)
         label.ifBlank { String.format(Locale.getDefault(), "%.5f, %.5f", latitude, longitude) }
     else ""
-    val durationValid = RulePolicy.intervalMinutes(start, end) >= 15
-    val saveValid = name.isNotBlank() && packages.isNotEmpty() && latitude != null && longitude != null && durationValid
-    val nextEnabled = when (step) { 0 -> packages.isNotEmpty(); 1 -> latitude != null && longitude != null; 2 -> durationValid; else -> saveValid }
+    val placeReady = anywhere || (latitude != null && longitude != null)
+    val durationValid = RulePolicy.intervalMinutes(start, end) >= 15 && days != 0
+    val saveValid = name.isNotBlank() && packages.isNotEmpty() && placeReady && durationValid
+    val nextEnabled = when (step) { 0 -> packages.isNotEmpty(); 1 -> placeReady; 2 -> durationValid; else -> saveValid }
     val nextLabel = when (step) { 0 -> R.string.editor_next_place; 1 -> R.string.editor_next_time; 2 -> R.string.editor_next_review; else -> R.string.m_save_rule }
 
     BackHandler(place) { place = false }
     BackHandler(step > 0 && !place && !picker) { step-- }
     if (place) {
         PlacePickerScreen(latitude, longitude, label, onBack = { place = false }) { lat, lon, title ->
-            latitude = lat; longitude = lon; label = title; place = false
+            latitude = lat; longitude = lon; label = title; anywhere = false; place = false
         }
         return
     }
 
     Scaffold(containerColor = Butter, bottomBar = {
         Column(Modifier.fillMaxWidth().padding(horizontal = 24.dp, vertical = 12.dp).navigationBarsPadding()) {
-            Button(
+            PrimaryButton(
                 onClick = {
                     if (step < 3) step++ else {
-                        if (!saveValid) return@Button
+                        if (!saveValid) return@PrimaryButton
                         val draft = FocusRule(
                             id = rule?.id ?: UUID.randomUUID().toString(), name = name.trim(), packages = packages,
-                            startMinutes = start, endMinutes = end, latitude = latitude!!, longitude = longitude!!, placeLabel = label,
+                            startMinutes = start, endMinutes = end, latitude = if (anywhere) 0.0 else latitude!!, longitude = if (anywhere) 0.0 else longitude!!,
+                            placeLabel = if (anywhere) "" else label, days = days, anywhere = anywhere,
                         )
                         if (FocusController.ruleStore.save(draft)) onSaved(draft) else failed = true
                     }
                 },
-                enabled = nextEnabled, modifier = Modifier.fillMaxWidth().heightIn(min = 56.dp),
-                colors = ButtonDefaults.buttonColors(containerColor = Ink, contentColor = Color.White), shape = RoundedCornerShape(16.dp),
+                enabled = nextEnabled, modifier = Modifier.fillMaxWidth(),
             ) {
                 Row(Modifier.fillMaxWidth().padding(horizontal = 4.dp), verticalAlignment = Alignment.CenterVertically) {
                     Text(stringResource(nextLabel), modifier = Modifier.weight(1f))
@@ -117,60 +135,66 @@ fun RuleEditorScreen(
                 .padding(horizontal = 24.dp, vertical = 16.dp), verticalArrangement = Arrangement.spacedBy(20.dp),
         ) {
             Row(Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) {
-                TextButton(onClick = { if (step == 0) onBack() else step-- }) { Text(stringResource(R.string.m_back), color = Ink) }
+                TextButton(onClick = { if (step == 0) onBack() else step-- }) { Text(stringResource(R.string.m_back)) }
                 Text("OFFZONE", style = MaterialTheme.typography.titleMedium, color = Ink)
                 Spacer(Modifier.weight(1f))
-                Text("${step + 3} / 6", style = MaterialTheme.typography.bodyMedium, color = EditorMuted)
+                Text("${step + 1} / 4", style = MaterialTheme.typography.bodyMedium, color = InkMuted)
             }
-            LinearProgressIndicator(progress = { (step + 3) / 6f }, modifier = Modifier.fillMaxWidth(), color = Ink, trackColor = Ink.copy(alpha = 0.14f))
-            Box(Modifier.fillMaxWidth().height(100.dp), contentAlignment = Alignment.CenterEnd) {
-                NookCatView(NookExpression.READY, Modifier.width(110.dp).height(100.dp))
-            }
+            StepProgress((step + 1) / 4f)
             Text(stringResource(when (step) {
                 0 -> R.string.editor_apps_title; 1 -> R.string.editor_place_title
                 2 -> R.string.editor_schedule_title; else -> R.string.editor_review_title
-            }), style = MaterialTheme.typography.headlineLarge, color = Ink)
+            }), style = MaterialTheme.typography.headlineMedium, color = Ink)
             Text(stringResource(when (step) {
                 0 -> R.string.editor_apps_detail; 1 -> R.string.editor_place_detail
                 2 -> R.string.editor_schedule_detail; else -> R.string.editor_review_detail
-            }), style = MaterialTheme.typography.bodyLarge, color = EditorMuted)
+            }), style = MaterialTheme.typography.bodyLarge, color = InkMuted)
             when (step) {
                 0 -> EditorCard(
                     if (packages.isEmpty()) stringResource(R.string.editor_apps_choose) else stringResource(R.string.editor_apps_choose_again),
                     if (packages.isEmpty()) stringResource(R.string.editor_apps_empty) else stringResource(R.string.apps_selected, packages.size),
                 ) { picker = true }
                 1 -> {
+                    SecondaryButton(onClick = { anywhere = true }, modifier = Modifier.fillMaxWidth()) { Text(stringResource(R.string.editor_time_only)) }
+                    Text(stringResource(R.string.editor_time_only_note), style = MaterialTheme.typography.bodyMedium, color = InkMuted)
                     EditorCard(stringResource(R.string.m_choose_place), placeName.ifBlank { stringResource(R.string.editor_place_empty) }) { place = true }
-                    Text(stringResource(R.string.editor_place_hint), style = MaterialTheme.typography.bodyMedium, color = EditorMuted)
+                    if (!anywhere) Text(stringResource(R.string.editor_place_hint), style = MaterialTheme.typography.bodyMedium, color = InkMuted)
                 }
                 2 -> {
-                    Surface(color = EditorPaper, shape = RoundedCornerShape(18.dp)) {
-                        Column(Modifier.padding(16.dp), verticalArrangement = Arrangement.spacedBy(12.dp)) {
-                            OutlinedButton(onClick = {
-                                TimePickerDialog(context, { _, hour, minute -> start = hour * 60 + minute }, start / 60, start % 60, DateFormat.is24HourFormat(context)).show()
-                            }, modifier = Modifier.fillMaxWidth().heightIn(min = 56.dp)) { Text(stringResource(R.string.m_start_time, timeLabel(start))) }
-                            OutlinedButton(onClick = {
-                                TimePickerDialog(context, { _, hour, minute -> end = hour * 60 + minute }, end / 60, end % 60, DateFormat.is24HourFormat(context)).show()
-                            }, modifier = Modifier.fillMaxWidth().heightIn(min = 56.dp)) { Text(stringResource(R.string.m_end_time, timeLabel(end))) }
+                    Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
+                        Text(stringResource(R.string.editor_days), style = MaterialTheme.typography.bodyMedium, fontWeight = FontWeight.SemiBold, color = InkMuted)
+                        FlowRow(horizontalArrangement = Arrangement.spacedBy(8.dp), verticalArrangement = Arrangement.spacedBy(4.dp)) {
+                            DayOfWeek.entries.forEach { day ->
+                                val bit = 1 shl (day.value - 1)
+                                val full = dayLabel(day, TextStyle.FULL)
+                                OffzoneChip(days and bit != 0, onClick = { days = days xor bit }, modifier = Modifier.heightIn(min = 48.dp).semantics { contentDescription = full }) { Text(dayLabel(day)) }
+                            }
                         }
+                        SecondaryButton(onClick = {
+                            TimePickerDialog(context, { _, hour, minute -> start = hour * 60 + minute }, start / 60, start % 60, DateFormat.is24HourFormat(context)).show()
+                        }, modifier = Modifier.fillMaxWidth()) { Text(stringResource(R.string.m_start_time, timeLabel(start))) }
+                        SecondaryButton(onClick = {
+                            TimePickerDialog(context, { _, hour, minute -> end = hour * 60 + minute }, end / 60, end % 60, DateFormat.is24HourFormat(context)).show()
+                        }, modifier = Modifier.fillMaxWidth()) { Text(stringResource(R.string.m_end_time, timeLabel(end))) }
                     }
-                    if (!durationValid) Text(stringResource(R.string.editor_schedule_warning), color = MaterialTheme.colorScheme.error)
-                    else if (end < start) Text(stringResource(R.string.editor_schedule_overnight), color = EditorMuted)
-                    Text(stringResource(R.string.m_schedule_note), style = MaterialTheme.typography.bodyMedium, color = EditorMuted)
+                    if (days == 0) Text(stringResource(R.string.editor_days_warning), color = MaterialTheme.colorScheme.error)
+                    else if (!durationValid) Text(stringResource(R.string.editor_schedule_warning), color = MaterialTheme.colorScheme.error)
+                    else if (end < start) Text(stringResource(R.string.editor_schedule_overnight), color = InkMuted)
+                    Text(stringResource(R.string.m_schedule_note), style = MaterialTheme.typography.bodyMedium, color = InkMuted)
                 }
                 else -> {
                     OutlinedTextField(name, { name = it.take(120) }, label = { Text(stringResource(R.string.m_rule_name)) },
                         placeholder = { Text(stringResource(R.string.editor_name_placeholder)) }, modifier = Modifier.fillMaxWidth(), singleLine = true)
-                    Surface(color = EditorPaper, shape = RoundedCornerShape(18.dp)) {
+                    Surface(color = WarmIvory, shape = RoundedCornerShape(24.dp), border = BorderStroke(1.dp, PineHairline)) {
                         Column(Modifier.padding(horizontal = 18.dp, vertical = 8.dp)) {
                             EditorSummary(stringResource(R.string.editor_apps), stringResource(R.string.apps_selected, packages.size))
                             HorizontalDivider()
                             EditorSummary(stringResource(R.string.editor_place), placeName)
                             HorizontalDivider()
-                            EditorSummary(stringResource(R.string.editor_time), "${timeLabel(start)}–${timeLabel(end)}")
+                            EditorSummary(stringResource(R.string.editor_time), "${timeLabel(start)}–${timeLabel(end)} · ${daysLabel(days)}")
                         }
                     }
-                    Text(stringResource(R.string.editor_save_note), style = MaterialTheme.typography.bodyMedium, color = EditorMuted)
+                    Text(stringResource(R.string.editor_save_note), style = MaterialTheme.typography.bodyMedium, color = InkMuted)
                     if (failed) Text(stringResource(R.string.save_error), color = MaterialTheme.colorScheme.error)
                 }
             }

@@ -22,4 +22,46 @@ class AccountIdentityTest {
         assertFalse(AccountIdentity.sessionID("A".repeat(64)))
         assertFalse(AccountIdentity.sessionID("a".repeat(63)))
     }
+
+    @Test fun entitlementActiveAllowsPlaySandboxInRelease() {
+        // Release production entitlement -> active
+        assertTrue(AccountIdentity.entitlementActive(
+            verificationFailed = false, hasEntitlement = true, isDebug = false, isSandbox = false, isPlayStore = true,
+        ))
+        assertTrue(AccountIdentity.entitlementActive(
+            verificationFailed = false, hasEntitlement = true, isDebug = false, isSandbox = false, isPlayStore = false,
+        ))
+        // Release Play Store sandbox (Play license tester) -> active
+        assertTrue(AccountIdentity.entitlementActive(
+            verificationFailed = false, hasEntitlement = true, isDebug = false, isSandbox = true, isPlayStore = true,
+        ))
+        // Release non-Play sandbox (e.g. iOS App Store sandbox) -> inactive
+        assertFalse(AccountIdentity.entitlementActive(
+            verificationFailed = false, hasEntitlement = true, isDebug = false, isSandbox = true, isPlayStore = false,
+        ))
+        // Debug non-Play sandbox -> active
+        assertTrue(AccountIdentity.entitlementActive(
+            verificationFailed = false, hasEntitlement = true, isDebug = true, isSandbox = true, isPlayStore = false,
+        ))
+        // Verification failed -> inactive across all build/store combinations
+        assertFalse(AccountIdentity.entitlementActive(
+            verificationFailed = true, hasEntitlement = true, isDebug = false, isSandbox = false, isPlayStore = true,
+        ))
+        assertFalse(AccountIdentity.entitlementActive(
+            verificationFailed = true, hasEntitlement = true, isDebug = false, isSandbox = true, isPlayStore = true,
+        ))
+        assertFalse(AccountIdentity.entitlementActive(
+            verificationFailed = true, hasEntitlement = true, isDebug = true, isSandbox = true, isPlayStore = false,
+        ))
+        // Missing entitlement -> inactive across all build/store combinations
+        assertFalse(AccountIdentity.entitlementActive(
+            verificationFailed = false, hasEntitlement = false, isDebug = false, isSandbox = false, isPlayStore = true,
+        ))
+        assertFalse(AccountIdentity.entitlementActive(
+            verificationFailed = false, hasEntitlement = false, isDebug = false, isSandbox = true, isPlayStore = true,
+        ))
+        assertFalse(AccountIdentity.entitlementActive(
+            verificationFailed = false, hasEntitlement = false, isDebug = true, isSandbox = true, isPlayStore = false,
+        ))
+    }
 }

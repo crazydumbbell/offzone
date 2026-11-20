@@ -1,0 +1,12 @@
+<?xml version='1.0' encoding='utf-8'?>
+<resources>
+  <string name="audit_settings">Settings</string>
+  <string name="audit_try_focus">Try quick focus first</string>
+  <string name="audit_start_location">Your location is checked when you start.</string>
+  <string name="audit_monitoring">Location monitoring is on</string>
+  <string name="audit_saved_place">Saved place</string>
+  <string name="audit_place_name">Place name (optional)</string>
+  <string name="audit_place_example">Home, office, or your favorite spot</string>
+  <string name="audit_coordinates">Enter coordinates instead</string>
+  <string name="audit_hide_coordinates">Hide coordinates</string>
+</resources>

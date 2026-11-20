@@ -22,6 +22,7 @@ data class FocusState(
     val accuracyMeters: Float? = null,
     val placeSession: Boolean = false,
     val monitoringPlace: Boolean = false,
+    val timeOnlySession: Boolean = false,
 )
 
 object FocusController {
@@ -53,7 +54,18 @@ object FocusController {
         mutableNotifications.value = enabled
         if (!enabled) context?.getSystemService(android.app.NotificationManager::class.java)?.cancel(411)
     }
-    fun connect() { stopInternal(null); mutableState.value = state.value.copy(connected = true) }
+    fun connect() {
+        val current = state.value
+        val notice = when {
+            current.session != null || current.monitoringPlace || current.checkingPlace -> R.string.service_stopped
+            current.message in setOf(R.string.service_stopped, R.string.blocking_error,
+                R.string.engine_storage_error, R.string.engine_location_lost, R.string.engine_location_needed,
+                R.string.engine_setup_needed, R.string.engine_not_ready) -> current.message
+            else -> R.string.engine_reconnected
+        }
+        stopInternal(notice)
+        mutableState.value = state.value.copy(connected = true)
+    }
     fun disconnect() {
         stopInternal(R.string.service_stopped)
         mutableState.value = state.value.copy(connected = false)
@@ -95,15 +107,43 @@ object FocusController {
         invalidateChecks()
         endWallMillis = null
         mutableState.value = state.value.copy(session = null, remaining = 0, message = message,
-            insidePlace = false, checkingPlace = false, observedAt = null, placeSession = false, monitoringPlace = false)
+            insidePlace = false, checkingPlace = false, observedAt = null, distanceMeters = null,
+            accuracyMeters = null, placeSession = false, monitoringPlace = false, timeOnlySession = false)
         context?.stopService(Intent(context, PlaceMonitor::class.java))
         onChange?.invoke()
         if (wasActive) notify(R.string.engine_ended)
     }
     fun checkArrival(context: Context) {
-        if (!state.value.monitoringPlace) requestArrival(context, false)
+        if (state.value.monitoringPlace) {
+            mutableState.value = state.value.copy(message = R.string.engine_monitor_body)
+        } else requestArrival(context, false)
     }
-    fun startPlaceFocus(context: Context) { requestArrival(context, true) }
+    fun startPlaceFocus(context: Context) {
+        initialize(context)
+        if (state.value.appliedRule?.anywhere == true) startTimeOnlyFocus(context) else requestArrival(context, true)
+    }
+    /** D-52 on Android: a time-only rule needs no place and no location permission. */
+    private fun startTimeOnlyFocus(context: Context) {
+        val current = state.value
+        val rule = current.appliedRule ?: return
+        if (ruleStore.error.value) { mutableState.value = current.copy(message = R.string.engine_storage_error); return }
+        if (current.session != null) return
+        if (!current.ruleEnabled || !current.connected) { mutableState.value = current.copy(message = R.string.engine_setup_needed); return }
+        if (!RulePolicy.scheduleActive(rule)) { mutableState.value = current.copy(message = R.string.engine_outside_schedule); return }
+        val packages = rule.packages - AppSelection.protectedPackages(context)
+        if (packages.isEmpty()) { mutableState.value = current.copy(message = R.string.engine_setup_needed); return }
+        invalidateChecks()
+        val now = SystemClock.elapsedRealtime()
+        val wallNow = ZonedDateTime.now()
+        val end = RulePolicy.scheduleEnd(rule, wallNow).toInstant().toEpochMilli()
+        val duration = end - wallNow.toInstant().toEpochMilli()
+        endWallMillis = end
+        val session = FocusSession(packages.toSet(), now, now + duration)
+        mutableState.value = state.value.copy(session = session, remaining = duration, timeOnlySession = true,
+            placeSession = false, checkingPlace = false, message = R.string.engine_started)
+        onChange?.invoke()
+        notify(R.string.engine_started)
+    }
     fun startPlaceMonitoring(context: Context) { requestArrival(context, false, monitor = true) }
     fun stopPlaceMonitoring() { stopInternal(R.string.engine_monitor_stopped) }
     private fun requestArrival(context: Context, start: Boolean, monitor: Boolean = false) {
@@ -111,6 +151,7 @@ object FocusController {
         val current = state.value
         if (ruleStore.error.value) { mutableState.value = current.copy(message = R.string.engine_storage_error); return }
         if (current.checkingPlace || current.session != null) return
+        if (current.appliedRule?.anywhere == true) return
         if (!current.ruleEnabled || current.appliedRule == null || (start && !current.connected)) {
             mutableState.value = current.copy(message = R.string.engine_setup_needed); return
         }
@@ -186,6 +227,10 @@ object FocusController {
                 endWallMillis?.let { System.currentTimeMillis() >= it } == true)) {
                 finishPlaceFocus(R.string.session_finished); return
             }
+        }
+        if (current.timeOnlySession && (current.appliedRule?.let { RulePolicy.scheduleActive(it) } != true ||
+                endWallMillis?.let { System.currentTimeMillis() >= it } == true)) {
+            stop(R.string.session_finished); return
         }
         val session = current.session ?: return
         val remaining = session.remaining(now)

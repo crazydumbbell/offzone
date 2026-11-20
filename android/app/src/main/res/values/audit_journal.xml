@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="audit_journal_read_only">Your saved plans and reflections remain available to read, export or delete. New entries require Pro.</string>
+    <string name="audit_journal_unsaved">Unsaved changes</string>
+    <string name="audit_journal_discard_message">Save your changes before leaving, or discard them to continue.</string>
+    <string name="audit_journal_discard">Discard changes</string>
+    <string name="audit_journal_keep_editing">Keep editing</string>
+    <string name="audit_journal_delete_entry">Delete this entry?</string>
+    <string name="audit_journal_delete_message">This cannot be undone.</string>
+    <string name="audit_journal_delete">Delete</string>
+    <string name="audit_pro_unavailable_title">Pro is not available yet</string>
+    <string name="audit_pro_unavailable_body">You can keep using focus for free. If you already purchased Pro, restore your purchase below.</string>
+</resources>
