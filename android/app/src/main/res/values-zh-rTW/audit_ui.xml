@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="audit_settings">設定</string>
+    <string name="audit_start_location">開始時會確認你目前的位置。</string>
+    <string name="audit_monitoring">地點監測已開啟</string>
+    <string name="audit_saved_place">已儲存地點</string>
+</resources>

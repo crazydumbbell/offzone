@@ -25,8 +25,17 @@ struct ProJournalStore {
     static let outcomes = ["Kept my intention", "Partly", "Try again"]
     static var calendar: Calendar {
         var calendar = Calendar(identifier: .iso8601)
+        calendar.locale = .current
         calendar.timeZone = .current
         return calendar
+    }
+    static func date(fromKey value: String) -> Date? {
+        let formatter = DateFormatter()
+        formatter.calendar = calendar
+        formatter.locale = Locale(identifier: "en_US_POSIX")
+        formatter.dateFormat = "yyyy-MM-dd"
+        formatter.isLenient = false
+        return formatter.date(from: value)
     }
     static func key(_ date: Date, calendar: Calendar = calendar) -> String {
         let c = calendar.dateComponents([.year, .month, .day], from: date)
@@ -56,12 +65,7 @@ struct ProJournalStore {
               data.reflections.values.allSatisfy({ !$0.note.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty && $0.note.count <= 2000 && outcomes.contains($0.outcome) }) else { throw Failure.invalidData }
     }
     private static func validDay(_ value: String) -> Bool {
-        let formatter = DateFormatter()
-        formatter.calendar = calendar
-        formatter.locale = Locale(identifier: "en_US_POSIX")
-        formatter.dateFormat = "yyyy-MM-dd"
-        formatter.isLenient = false
-        return formatter.date(from: value).map { key($0) == value } ?? false
+        date(fromKey: value).map { key($0) == value } ?? false
     }
     mutating func setPlan(_ plan: ProJournalData.Plan, week: Date, hasAccess: Bool) throws {
         guard hasAccess else { throw Failure.accessRequired }

@@ -25,6 +25,9 @@ class LocationDisclosureTest {
         val context = instrumentation.targetContext
         Configurator.getInstance().setUiAutomationFlags(UiAutomation.FLAG_DONT_SUPPRESS_ACCESSIBILITY_SERVICES)
         val device = UiDevice.getInstance(instrumentation)
+        val uiAutomation = instrumentation.getUiAutomation(UiAutomation.FLAG_DONT_SUPPRESS_ACCESSIBILITY_SERVICES)
+        uiAutomation.grantRuntimePermission(context.packageName, Manifest.permission.ACCESS_FINE_LOCATION)
+        if (Build.VERSION.SDK_INT >= 33) uiAutomation.grantRuntimePermission(context.packageName, Manifest.permission.POST_NOTIFICATIONS)
         // Runner setup pregrants these on the isolated emulator; keep OS permission dialogs out of this consent test.
         assertEquals(android.content.pm.PackageManager.PERMISSION_GRANTED, context.checkSelfPermission(Manifest.permission.ACCESS_FINE_LOCATION))
         if (Build.VERSION.SDK_INT >= 33) assertEquals(android.content.pm.PackageManager.PERMISSION_GRANTED, context.checkSelfPermission(Manifest.permission.POST_NOTIFICATIONS))
@@ -35,14 +38,15 @@ class LocationDisclosureTest {
         val rule = FocusRule("location-disclosure-test", "Location consent test", setOf("com.android.settings"), 0, 1439, 37.5665, 126.978)
         fun clearCache() { if (Build.VERSION.SDK_INT >= 33) instrumentation.getUiAutomation(
             UiAutomation.FLAG_DONT_SUPPRESS_ACCESSIBILITY_SERVICES).clearCache() }
-        fun click(id: Int) {
+        fun click(id: Int, byDesc: Boolean = false) {
             val text = context.getString(id)
+            val selector = if (byDesc) By.desc(text) else By.text(text)
             repeat(10) {
                 clearCache()
-                val found = device.findObject(By.text(text))
+                val found = device.findObject(selector)
                 if (found != null) {
                     device.waitForIdle(1_000); SystemClock.sleep(500); clearCache()
-                    val current = device.findObject(By.text(text)) ?: return@repeat
+                    val current = device.findObject(selector) ?: return@repeat
                     current.click()
                     device.waitForIdle(1_000); SystemClock.sleep(500); clearCache(); return
                 }
@@ -64,8 +68,12 @@ class LocationDisclosureTest {
                 assertTrue(FocusController.ruleStore.save(rule))
                 assertTrue(FocusController.activateRule(rule.id))
             }
-            context.startActivity(Intent(context, MainActivity::class.java).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK))
-            click(R.string.audit_settings)
+            context.startActivity(
+                Intent(context, MainActivity::class.java)
+                    .putExtra(ProAccessGate.EXTRA_DEBUG_PRO, true)
+                    .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK),
+            )
+            click(R.string.audit_settings, byDesc = true)
             click(R.string.engine_monitor_start)
             clearCache()
             assertTrue(device.hasObject(By.text(context.getString(R.string.location_disclosure_title))))
@@ -94,6 +102,7 @@ class LocationDisclosureTest {
             while (FocusController.generation == accepted && SystemClock.elapsedRealtime() < deadline) SystemClock.sleep(100)
             assertTrue("Agree dispatches the new monitoring request", FocusController.generation > accepted)
         } finally {
+            ProAccessGate.debugProOverride = null
             instrumentation.runOnMainSync {
                 FocusController.stop()
                 FocusController.ruleStore.delete(rule.id)

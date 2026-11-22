@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="engine_storage_error">无法读取或写入已保存的规则，已保留原始数据。</string>
+    <string name="engine_rule_ready">规则已启用。请检查位置，并在计划时段内开始专注。</string>
+    <string name="engine_paused">规则已暂停，已恢复访问。</string>
+    <string name="engine_setup_needed">开始专注前，请先开启应用屏蔽并选择应用。</string>
+    <string name="engine_location_needed">请授予精确位置权限并开启定位服务。</string>
+    <string name="engine_outside_schedule">请在已保存的计划时段内开始专注。</string>
+    <string name="engine_checking">正在检查你的位置…</string>
+    <string name="engine_arrived">你位于已保存的地点附近，准备好后即可开始专注。</string>
+    <string name="engine_outside_place">请靠近已保存的地点，然后重新检查。</string>
+    <string name="engine_left">你已离开专注地点，已恢复访问。</string>
+    <string name="engine_not_ready">无法确认位置或计划时间，专注未开始。</string>
+    <string name="engine_started">专注已开始，你随时可以恢复访问。</string>
+    <string name="engine_ended">专注已结束，已恢复访问。</string>
+    <string name="engine_location_lost">无法确认位置，已恢复访问。如需重新开始，请先检查位置。</string>
+    <string name="engine_monitor_channel">地点监测</string>
+    <string name="engine_event_channel">专注状态更新</string>
+    <string name="engine_monitor_title">Offzone · 地点监测中</string>
+    <string name="engine_monitor_body">正在监测地点。到达时不会自动开始屏蔽。点击“恢复访问”即可停止。</string>
+    <string name="engine_monitor_stopped">地点监测已停止，已恢复访问。</string>
+    <string name="engine_monitor_start">开始地点监测</string>
+    <string name="engine_monitor_stop">停止监测</string>
+</resources>

@@ -42,6 +42,8 @@ class OnboardingNookTest {
             assertTrue(runCatching { OnboardingProfile.save(context,"work","custom", 1440) }.isFailure)
             assertEquals("work",OnboardingProfile.goal(context))
             assertEquals("custom",OnboardingProfile.window(context))
+            assertTrue(OnboardingProfile.complete(context))
+            assertTrue(OnboardingProfile.completed(reopened))
         } finally { assertTrue(target.deleteSharedPreferences(file)) }
     }
 

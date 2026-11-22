@@ -31,7 +31,7 @@ class WeekdayEditorUiTest {
         fun await(selector: androidx.test.uiautomator.BySelector, present: Boolean = true) {
             val deadline = SystemClock.elapsedRealtime() + 5_000
             while (SystemClock.elapsedRealtime() < deadline) {
-                if (Build.VERSION.SDK_INT >= 33) instrumentation.uiAutomation.clearCache()
+                if (Build.VERSION.SDK_INT >= 33) instrumentation.getUiAutomation(androidx.test.uiautomator.Configurator.getInstance().uiAutomationFlags).clearCache()
                 if (device.hasObject(selector) == present) break
                 SystemClock.sleep(150)
             }
@@ -57,24 +57,20 @@ class WeekdayEditorUiTest {
                 scenario.onActivity { activity ->
                     activity.setContent { OffzoneTheme { RuleEditorScreen(rule, rule.startMinutes, {}, { saved.set(it) }) } }
                 }
-                listOf(R.string.editor_next_place, R.string.editor_next_time).forEach {
-                    tap(By.text(text(it)))
-                }
+                tap(By.text(text(R.string.onboarding_continue)))
                 await(By.text(text(R.string.editor_days)))
                 fun day(value: DayOfWeek) = By.desc(value.getDisplayName(TextStyle.FULL, Locale.getDefault()))
-                // Clearing every day blocks the next step and says why.
+                // Clearing every day blocks saving and says why.
                 DayOfWeek.entries.forEach { tap(day(it)) }
                 await(By.text(text(R.string.editor_days_warning)))
-                tap(By.text(text(R.string.editor_next_review)))
+                tap(By.text(text(R.string.m_save_rule)))
                 SystemClock.sleep(400)
+                assertNull("Rule must not save without days", saved.get())
                 assertTrue("Still on the schedule step", device.hasObject(By.text(text(R.string.editor_days_warning))))
                 DayOfWeek.entries.take(5).forEach { tap(day(it)) }
                 await(By.text(text(R.string.editor_days_warning)), present = false)
                 SystemClock.sleep(400)
                 assertTrue(device.takeScreenshot(File(context.getExternalFilesDir(null), "weekday-editor.png")))
-                tap(By.text(text(R.string.editor_next_review)))
-                await(By.textContains(text(R.string.days_weekdays)))
-                assertTrue(device.takeScreenshot(File(context.getExternalFilesDir(null), "weekday-review.png")))
                 tap(By.text(text(R.string.m_save_rule)))
                 val deadline = SystemClock.elapsedRealtime() + 5_000
                 while (saved.get() == null && SystemClock.elapsedRealtime() < deadline) SystemClock.sleep(100)

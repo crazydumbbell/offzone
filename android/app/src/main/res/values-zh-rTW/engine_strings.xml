@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="engine_storage_error">無法讀取或寫入已儲存的規則，已保留原始資料。</string>
+    <string name="engine_rule_ready">規則已啟用。請確認位置後，於排程時段內開始專注。</string>
+    <string name="engine_paused">規則已暫停，已恢復存取。</string>
+    <string name="engine_setup_needed">開始專注前，請先設定應用程式封鎖並選取 App。</string>
+    <string name="engine_location_needed">請允許準確位置權限並開啟定位服務。</string>
+    <string name="engine_outside_schedule">請於已儲存的排程時段內開始專注。</string>
+    <string name="engine_checking">正在檢查你的位置…</string>
+    <string name="engine_arrived">你已接近儲存的地點，準備好後即可開始專注。</string>
+    <string name="engine_outside_place">請更靠近儲存的地點後再重新檢查。</string>
+    <string name="engine_left">你已離開專注地點，已恢復存取。</string>
+    <string name="engine_not_ready">無法確認位置或排程時間，因此尚未開始專注。</string>
+    <string name="engine_started">專注已開始，你隨時都能恢復存取。</string>
+    <string name="engine_ended">專注已結束，已恢復存取。</string>
+    <string name="engine_location_lost">無法確認位置，已恢復存取。若要重新開始，請先確認位置。</string>
+    <string name="engine_monitor_channel">地點監測</string>
+    <string name="engine_event_channel">專注狀態更新</string>
+    <string name="engine_monitor_title">Offzone · 地點監測中</string>
+    <string name="engine_monitor_body">正在監測地點。抵達時不會自動開始封鎖，點選「恢復存取」即可停止。</string>
+    <string name="engine_monitor_stopped">地點監測已停止，已恢復存取。</string>
+    <string name="engine_monitor_start">開始地點監測</string>
+    <string name="engine_monitor_stop">停止監測</string>
+</resources>

@@ -141,15 +141,17 @@ class JournalDraftUiTest {
     }
 
     private fun scrollTo(device: UiDevice, selector: BySelector, up: Boolean = false) {
-        repeat(9) {
+        repeat(18) {
             if (device.wait(Until.hasObject(selector), 300)) return
-            val low = device.displayHeight * 4 / 5
-            val high = device.displayHeight / 3
+            val low = device.displayHeight * 3 / 5
+            val high = device.displayHeight * 2 / 5
             device.swipe(device.displayWidth / 2, if (up) high else low,
-                device.displayWidth / 2, if (up) low else high, 40)
+                device.displayWidth / 2, if (up) low else high, 80)
             device.waitForIdle()
         }
-        fail("Missing journal UI: $selector")
+        val dump = File(InstrumentationRegistry.getInstrumentation().targetContext.getExternalFilesDir(null), "journal-fail.xml")
+        device.dumpWindowHierarchy(dump)
+        fail("Missing journal UI: $selector (dumped to ${dump.absolutePath})")
     }
 
 }

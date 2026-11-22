@@ -1,0 +1,33 @@
+<resources>
+    <string name="m_back">Voltar</string>
+    <string name="m_rule_name">Nome da regra</string>
+    <string name="m_choose_place">Escolher um local</string>
+    <string name="m_schedule">Período diário</string>
+    <string name="m_start_time">Das %1$s</string>
+    <string name="m_end_time">Até %1$s</string>
+    <string name="m_schedule_note">Escolha pelo menos 15 minutos. Um horário final anterior continua no dia seguinte.</string>
+    <string name="m_save_rule">Salvar regra</string>
+    <string name="m_search_place">Endereço ou local</string>
+    <string name="m_search">Buscar</string>
+    <string name="m_current_place">Usar minha localização</string>
+    <string name="m_place_error">Localização indisponível. Verifique a localização precisa e as configurações de localização do dispositivo, ou tente outra busca.</string>
+    <string name="m_map_privacy">A busca usa o serviço de geocodificação do seu dispositivo. O mapa envia a área visualizada e o endereço IP para o OpenStreetMap. Seu local salvo permanece neste dispositivo.</string>
+    <string name="m_place_note">Mova o mapa para posicionar a mira. A chegada exige uma localização recente e precisa dentro de cerca de 150 m.</string>
+    <string name="m_account">Conta</string>
+    <string name="m_check_arrival">Verificar chegada</string>
+    <string name="m_distance">Última verificação: a %1$d m · precisão ±%2$d m</string>
+    <string name="m_rules">Suas regras</string>
+    <string name="m_unapplied">As alterações salvas ainda não foram aplicadas.</string>
+    <string name="m_edit">Editar</string>
+    <string name="m_pause">Pausar</string>
+    <string name="m_apply">Aplicar</string>
+    <string name="m_delete">Excluir</string>
+    <string name="m_quick">Foco rápido</string>
+    <string name="m_quick_note">Escolha uma duração e os apps. O Foco rápido funciona em qualquer lugar, sem um local salvo.</string>
+    <string name="m_journal">Planos e reflexões</string>
+    <string name="m_notifications">Notificações de foco</string>
+    <string name="m_notifications_note">Ative o monitoramento de local para alertas de chegada e saída. O monitoramento exibe uma notificação contínua, nunca inicia o foco automaticamente e para quando você restaura o acesso.</string>
+    <string name="m_android_limits">Você sempre pode restaurar sessões ativas. O Android permite revogar o acesso ou desinstalar o Offzone. O foco termina se o serviço parar; tela dividida e picture-in-picture podem limitar o bloqueio de apps.</string>
+    <string name="m_settings">Permissões e configurações do app</string>
+    <string name="m_delete_note">Excluir “%1$s”? O foco ativo dessa regra será encerrado.</string>
+</resources>

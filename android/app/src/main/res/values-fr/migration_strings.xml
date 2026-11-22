@@ -1,0 +1,33 @@
+<resources>
+    <string name="m_back">Retour</string>
+    <string name="m_rule_name">Nom de la règle</string>
+    <string name="m_choose_place">Choisir un lieu</string>
+    <string name="m_schedule">Plage quotidienne</string>
+    <string name="m_start_time">De %1$s</string>
+    <string name="m_end_time">Jusqu’à %1$s</string>
+    <string name="m_schedule_note">Choisissez au moins 15 minutes. Une heure de fin antérieure se poursuit le lendemain.</string>
+    <string name="m_save_rule">Enregistrer la règle</string>
+    <string name="m_search_place">Adresse ou lieu</string>
+    <string name="m_search">Rechercher</string>
+    <string name="m_current_place">Utiliser ma position</string>
+    <string name="m_place_error">Position indisponible. Vérifiez la localisation précise et les paramètres de position de l’appareil, ou essayez une autre recherche.</string>
+    <string name="m_map_privacy">La recherche utilise le service de géocodage de votre appareil. La carte envoie la zone affichée et l’adresse IP à OpenStreetMap. Votre lieu enregistré reste sur cet appareil.</string>
+    <string name="m_place_note">Déplacez la carte pour placer le viseur. L’arrivée nécessite une position récente et précise à environ 150 m.</string>
+    <string name="m_account">Compte</string>
+    <string name="m_check_arrival">Vérifier l’arrivée</string>
+    <string name="m_distance">Dernier contrôle : à %1$d m · précision ±%2$d m</string>
+    <string name="m_rules">Vos règles</string>
+    <string name="m_unapplied">Les modifications enregistrées ne sont pas encore appliquées.</string>
+    <string name="m_edit">Modifier</string>
+    <string name="m_pause">Mettre en pause</string>
+    <string name="m_apply">Appliquer</string>
+    <string name="m_delete">Supprimer</string>
+    <string name="m_quick">Concentration rapide</string>
+    <string name="m_quick_note">Choisissez une durée et des apps. La concentration rapide fonctionne partout, sans lieu enregistré.</string>
+    <string name="m_journal">Plans et réflexions</string>
+    <string name="m_notifications">Notifications de concentration</string>
+    <string name="m_notifications_note">Activez la surveillance du lieu pour les alertes d’arrivée et de départ. La surveillance affiche une notification permanente, ne démarre jamais la concentration automatiquement et s’arrête lorsque vous rétablissez l’accès.</string>
+    <string name="m_android_limits">Vous pouvez toujours rétablir les sessions actives. Android vous permet de révoquer l’accès ou de désinstaller Offzone. La concentration s’arrête si son service s’interrompt ; l’écran partagé et le mode image dans l’image peuvent limiter le blocage d’apps.</string>
+    <string name="m_settings">Autorisations et paramètres de l’app</string>
+    <string name="m_delete_note">Supprimer « %1$s » ? Sa session active prendra fin.</string>
+</resources>

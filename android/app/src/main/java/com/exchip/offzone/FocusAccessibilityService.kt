@@ -19,6 +19,7 @@ import android.os.PowerManager
 import android.os.SystemClock
 import android.view.Gravity
 import android.view.View
+import android.view.WindowInsets
 import android.view.WindowManager
 import android.view.accessibility.AccessibilityEvent
 import android.widget.Button
@@ -112,7 +113,7 @@ class FocusAccessibilityService : AccessibilityService() {
             setPadding(0, pad / 2, 0, pad / 2)
             layout.addView(this, LinearLayout.LayoutParams(-1, -2))
         }
-        label("offzone", 18f)
+        label(getString(R.string.app_name), 18f)
         label(getString(R.string.blocked_title), 30f).setTypeface(resources.getFont(R.font.suit_bold), Typeface.NORMAL)
         label(getString(R.string.blocked_body), 17f)
         timeLabel = label("", 22f)
@@ -144,6 +145,21 @@ class FocusAccessibilityService : AccessibilityService() {
             isFillViewport = true
             setBackgroundColor(BUTTER)
             addView(layout, android.widget.FrameLayout.LayoutParams(-1, -2))
+            setOnApplyWindowInsetsListener { _, insets ->
+                if (Build.VERSION.SDK_INT >= 30) {
+                    val bars = insets.getInsets(WindowInsets.Type.systemBars() or WindowInsets.Type.displayCutout())
+                    layout.setPadding(pad + bars.left, pad + bars.top, pad + bars.right, pad + bars.bottom)
+                } else {
+                    @Suppress("DEPRECATION")
+                    layout.setPadding(
+                        pad + insets.systemWindowInsetLeft,
+                        pad + insets.systemWindowInsetTop,
+                        pad + insets.systemWindowInsetRight,
+                        pad + insets.systemWindowInsetBottom,
+                    )
+                }
+                insets
+            }
         }
         try {
             windows.addView(scroll, WindowManager.LayoutParams(
@@ -152,6 +168,7 @@ class FocusAccessibilityService : AccessibilityService() {
                 WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE,
                 PixelFormat.OPAQUE,
             ))
+            scroll.post { scroll.requestApplyInsets() }
             overlay = scroll
         } catch (_: RuntimeException) {
             timeLabel = null

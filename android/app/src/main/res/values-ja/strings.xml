@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Offzone</string>
+    <string name="minutes">%1$d分</string>
+    <string name="apps">一時停止するアプリ</string>
+    <string name="choose_apps">アプリを選択</string>
+    <string name="apps_selected">%1$d件選択中</string>
+    <string name="select_hint">開始するにはアプリを1つ以上選択してください。</string>
+    <string name="protected_hint">必須のシステムアプリ、通話、キーボード、ホーム画面はそのまま利用できます。</string>
+    <string name="empty_apps">対象となるアプリが見つかりませんでした。制限したいアプリをインストールしてから、この一覧を再度開いてください。</string>
+    <string name="search_apps">アプリを検索</string>
+    <string name="done">完了</string>
+    <string name="start_focus">集中を開始</string>
+    <string name="restore">アクセスを復元</string>
+    <string name="go_home">ホーム画面に戻る</string>
+    <string name="blocked_title">自分のためのひととき。</string>
+    <string name="blocked_body">このアプリは集中セッション中一時停止されています。アクセスはいつでも無料で復元できます。</string>
+    <string name="remaining">残り %1$s</string>
+    <string name="enable">アプリ制限を設定</string>
+    <string name="disclosure_title">Offzoneによるアプリの一時停止を許可</string>
+    <string name="disclosure_body">OffzoneはAndroidのユーザー補助機能を使用し、ユーザーが開始した集中セッション中にのみ、どのアプリが開かれたかを検知して選択したアプリ上に一時停止画面を表示します。アプリのパッケージ名のみを使用し、画面の内容や入力した文字は読み取りません。選択内容はこの端末内にのみ保存され、外部へ送信・共有されることはありません。アクセスはいつでも無料で復元でき、Androidの設定からいつでもサービスをオフにできます。次の画面でOffzoneを選択し、サービスをオンにしてください。</string>
+    <string name="agree">同意して設定を開く</string>
+    <string name="not_now">今はしない</string>
+    <string name="service_description">ユーザーが開始した集中セッション中、選択したアプリを一時停止します。アプリ名のみを使用し、画面内容は読み取りません。いつでも無料で復元できます。</string>
+    <string name="session_finished">セッションが終了しました。アプリを利用できます。</string>
+    <string name="access_restored">アクセスを復元しました。準備ができたら再開できます。</string>
+    <string name="service_stopped">アプリ制限が停止されたため、セッションを終了しました。</string>
+    <string name="save_error">選択内容を保存できませんでした。もう一度お試しください。</string>
+    <string name="blocking_error">アプリ制限を継続できなかったため、アクセスを復元しました。</string>
+    <string name="setup_error">Androidの設定を開けませんでした。「設定」→「ユーザー補助」→「Offzone」を開いてください。</string>
+    <string name="loading_apps">アプリを検索中…</string>
+    <string name="load_error">アプリを読み込めませんでした。一覧を閉じてやり直してください。</string>
+    <string name="location_disclosure_title">継続的な場所の確認を許可</string>
+    <string name="location_disclosure_body">Offzoneは正確な位置情報を使って、選択した場所の中にいるかどうかを確認し、その場所から離れたときや位置を確認できないときにアクセスを復元します。場所を使った集中や監視を開始すると、Offzoneが画面に表示されていない間も確認が続けられます。継続中の通知では監視状況を確認できるほか、いつでも無料でアクセスを復元して監視を停止できます。場所に到着しただけで自動的に制限が開始されることはありません。位置情報の記録はこの端末内にのみ保存され、Offzoneには送信されません。場所選択の地図を開くと、表示範囲とIPアドレスがOpenStreetMapに送信されます。</string>
+    <string name="location_disclosure_agree">同意して続ける</string>
+</resources>

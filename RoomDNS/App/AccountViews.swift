@@ -19,9 +19,9 @@ struct RoomAccountView: View {
                 VStack(alignment: .leading, spacing: 24) {
                     RoomSpirit(state: .welcome).frame(height: 132).frame(maxWidth: .infinity)
                         .background(Color.roomButter).clipShape(RoundedRectangle(cornerRadius: 24))
-                    Text(account.isPro ? roomString("Offzone Pro") : roomString("Your free space"))
+                    Text(account.hasProAccess ? roomString("Offzone Pro") : roomString("Account"))
                         .font(.suit(.largeTitle, weight: .bold))
-                    Text("Your rules and free recovery stay on this iPhone.")
+                    Text("Your rules stay on this iPhone.")
                         .foregroundStyle(Color.roomInkSecondary)
                     Button { journalPresented = true } label: {
                         Label("Plan & reflect", systemImage: "book.closed")
@@ -30,16 +30,7 @@ struct RoomAccountView: View {
                     if account.isSignedIn {
                         Label(account.accountName, systemImage: "person.crop.circle.fill")
                             .font(.suit(.headline))
-                        Text("Save your goal to your account. App selections and places stay on this iPhone.")
-                        Text(roomString("Goal on this iPhone: %@", roomString(goal.title))).font(.suit(.subheadline))
-                        if let saved = account.savedGoal.flatMap(FocusGoal.init(rawValue:)) {
-                            Text(roomString("Saved account goal: %@", roomString(saved.title))).font(.suit(.subheadline))
-                        }
-                        Button { Task { await account.saveGoal(goal.rawValue) } } label: {
-                            Label(account.savedGoal == goal.rawValue ? roomString("Goal saved") : roomString("Save my goal"),
-                                  systemImage: account.savedGoal == goal.rawValue ? "checkmark" : "arrow.up.circle")
-                        }.frame(minHeight: 44).disabled(account.isBusy || account.savedGoal == goal.rawValue)
-                        if account.isPro {
+                        if account.hasProAccess {
                             Link("Manage subscription", destination: URL(string: "https://apps.apple.com/account/subscriptions")!)
                                 .foregroundStyle(Color.roomAccent).frame(minHeight: 44)
                         } else if account.offersEnabled {
@@ -50,13 +41,13 @@ struct RoomAccountView: View {
                                 Task { await account.restorePurchases(); restored = account.errorMessage == nil }
                             }.frame(minHeight: 44).disabled(account.isBusy)
                             if restored {
-                                Text(account.isPro ? roomString("Your Pro subscription is active.") : roomString("No active Pro subscription was found."))
+                                Text(account.hasProAccess ? roomString("Your Pro subscription is active.") : roomString("No active Pro subscription was found."))
                                     .font(.suit(.subheadline))
                             }
                         }
                         if account.providerIDs.contains("password") && !account.emailVerified {
                             Text(account.needsEmailVerification
-                                 ? roomString("Verify your email to save your goal and manage purchases.")
+                                 ? roomString("Verify your email to manage your account and purchases.")
                                  : roomString("Verify your linked email address.")).font(.suit(.subheadline))
                             Button("Resend verification email") { Task { await account.sendEmailVerification() } }
                                 .frame(minHeight: 44).disabled(account.isBusy)
@@ -91,7 +82,7 @@ struct RoomAccountView: View {
                         Button("Sign out") { Task { await account.signOut() } }
                             .frame(minHeight: 44).disabled(account.isBusy)
                         if deleting {
-                            Text("Delete your account and saved goal? Your local rules stay here. Deleting an account does not cancel an App Store subscription.")
+                            Text("Delete your account? Your local rules stay here. Deleting an account does not cancel an App Store subscription.")
                                 .font(.suit(.subheadline))
                             Link("Manage subscription", destination: URL(string: "https://apps.apple.com/account/subscriptions")!)
                                 .foregroundStyle(Color.roomAccent).frame(minHeight: 44)
@@ -112,9 +103,9 @@ struct RoomAccountView: View {
                                 .frame(minHeight: 44).disabled(account.isBusy)
                         }
                     } else if account.isConfigured {
-                        Text("Keep your goal with you.")
+                        Text("Sign in to Offzone")
                             .font(.suit(.title2, weight: .bold))
-                        Text("Sign in to save your goal and manage purchases. You can keep using Offzone for free.")
+                        Text("Sign in to manage your subscription and restore purchases across devices.")
                         appleButton(deleting: false)
                         if account.googleSignInConfigured {
                             GoogleSignInButton { Task { await account.signInWithGoogle() } }
@@ -124,7 +115,7 @@ struct RoomAccountView: View {
                             .roomSecondaryAction()
                             .disabled(account.isBusy)
                     } else {
-                        Text("Account sign-in isn’t available yet. You can keep using Offzone for free.")
+                        Text("Account sign-in isn’t available right now.")
                             .foregroundStyle(Color.roomInkSecondary)
                     }
                     if account.isBusy { ProgressView().frame(maxWidth: .infinity).accessibilityLabel("Please wait") }

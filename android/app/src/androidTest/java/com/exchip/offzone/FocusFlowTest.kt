@@ -51,12 +51,17 @@ class FocusFlowTest {
             context.startActivity(Intent().setComponent(ComponentName(target, FocusTestActivity::class.java.name))
                 .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK))
         }
-        fun start(stage: String) {
+        fun start(stage: String, durationMillis: Long? = null) {
             instrumentation.runOnMainSync {
                 val before = FocusController.state.value
+                val started = if (durationMillis != null) {
+                    FocusController.startTimedForTest(setOf(target), durationMillis)
+                } else {
+                    FocusController.start(setOf(target), 15)
+                }
                 assertTrue("$stage rejected: connected=${before.connected}, remaining=${before.session?.remaining(SystemClock.elapsedRealtime())}, " +
                     "generation=${FocusController.generation}, protected=${target in AppSelection.protectedPackages(context)}",
-                    FocusController.start(setOf(target), 1))
+                    started)
             }
             launchTarget()
             assertTrue(device.wait(Until.hasObject(By.text(context.getString(R.string.blocked_title))), 5_000))
@@ -72,10 +77,14 @@ class FocusFlowTest {
             instrumentation.runOnMainSync {
                 val oldGeneration = FocusController.generation
                 FocusController.stop()
-                assertFalse(FocusController.start(setOf(target), 1, oldGeneration))
+                assertFalse(FocusController.start(setOf(target), 15, oldGeneration))
             }
             // Exercise actual picker and Start focus once, then inspect the native shield.
-            context.startActivity(Intent(context, MainActivity::class.java).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK))
+            context.startActivity(
+                Intent(context, MainActivity::class.java)
+                    .putExtra(ProAccessGate.EXTRA_DEBUG_PRO, true)
+                    .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK),
+            )
             scrollTo(context.getString(R.string.m_quick))
             device.findObject(By.text(context.getString(R.string.m_quick))).click()
             scrollTo(context.getString(R.string.choose_apps))
@@ -92,7 +101,7 @@ class FocusFlowTest {
             device.findObject(By.text(context.getString(R.string.restore))).click()
             waitFor { FocusController.state.value.session == null }
             assertTrue(device.wait(Until.gone(By.text(context.getString(R.string.blocked_title))), 5_000))
-            start("expiry check")
+            start("expiry check", durationMillis = 8_000L)
             context.startActivity(Intent(Settings.ACTION_SETTINGS).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK))
             assertTrue(device.wait(Until.gone(By.text(context.getString(R.string.blocked_title))), 5_000))
             launchTarget()
@@ -100,7 +109,7 @@ class FocusFlowTest {
             // Real monotonic expiry while the test app remains foreground.
             val expiresAt = FocusController.state.value.session!!.endsAt
             // Accessibility can briefly return a null overlay root before expiry; it is not a timer signal.
-            waitFor(65_000) { FocusController.state.value.session == null }
+            waitFor(15_000) { FocusController.state.value.session == null }
             assertTrue(SystemClock.elapsedRealtime() >= expiresAt)
             assertEquals(R.string.session_finished, FocusController.state.value.message)
             if (Build.VERSION.SDK_INT >= 33) instrumentation.getUiAutomation(
@@ -112,6 +121,7 @@ class FocusFlowTest {
             assertNull(FocusController.state.value.session)
             assertTrue(device.wait(Until.gone(By.text(context.getString(R.string.blocked_title))), 5_000))
         } finally {
+            ProAccessGate.debugProOverride = null
             instrumentation.runOnMainSync { FocusController.stop() }
             preferences.edit().putBoolean("disclosure", previousDisclosure).putStringSet("selected", previousSelection).commit()
             onboarding.edit().apply { if (onboardingCompleted == null) remove("completed") else putBoolean("completed", onboardingCompleted) }.commit()

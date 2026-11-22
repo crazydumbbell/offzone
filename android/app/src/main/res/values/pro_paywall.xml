@@ -9,7 +9,7 @@
     <string name="pro_benefit_journal">Keep a private reflection journal.</string>
     <string name="pro_benefit_review">Review your weekly intentions and reflections.</string>
     <string name="pro_view_plans">View plans and account</string>
-    <string name="pro_continue_free">Continue with free</string>
+    <string name="pro_tomorrow">Tomorrow</string>
     <plurals name="pro_days">
         <item quantity="one">%d day</item>
         <item quantity="other">%d days</item>
@@ -34,12 +34,12 @@
     <string name="trial_reminder_channel">Trial reminders</string>
     <string name="pro_how_title">How your free trial works.</string>
     <string name="pro_how_today">Today</string>
-    <string name="pro_how_today_body">Pro opens right away. Your free rules stay free.</string>
+    <string name="pro_how_today_body">All focus tools and your journal open right away.</string>
     <string name="pro_how_remind_body">We remind you.</string>
-    <string name="pro_how_free_body">Still free.</string>
+    <string name="pro_how_free_body">Still in your free trial.</string>
     <string name="pro_how_end_body">Your plan starts unless you cancel first.</string>
     <string name="pro_plans_title">Choose your plan.</string>
-    <string name="pro_plans_sub">Weekly planning, a private journal and weekly reviews.</string>
+    <string name="pro_plans_sub">Focus rules, quick focus, weekly planning, and a private journal.</string>
     <string name="pro_yearly">Yearly</string>
     <string name="pro_monthly">Monthly</string>
     <string name="pro_best_value">Best value</string>
@@ -53,7 +53,7 @@
     <string name="pro_legal">Cancel anytime in Google Play. Renews automatically until cancelled.</string>
     <string name="pro_done_title">Pro is on.</string>
     <string name="pro_done_trial">Your free trial has started.</string>
-    <string name="pro_done_body">Weekly planning, your journal and weekly reviews are open now.</string>
+    <string name="pro_done_body">Focus rules, weekly planning, and your journal are open now.</string>
     <string name="pro_sign_in_note">You\'ll sign in next, so your plan stays with your account.</string>
     <string name="pro_step_of">Step %1$d of %2$d</string>
 </resources>

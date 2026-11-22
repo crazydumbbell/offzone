@@ -11,8 +11,8 @@ internal object ProPreview {
     fun plans(variant: String?): List<ProPlan>? {
         val trial = when (variant) { "trial", "signedout" -> 14; "plain" -> null; else -> return null }
         return listOf(
-            ProPlan("preview_monthly", false, "\$4.99", 4_990_000, "USD", trial),
-            ProPlan("preview_annual", true, "\$29.99", 29_990_000, "USD", null),
+            ProPlan("preview_monthly", false, ProPlans.money(4_990_000, "USD") ?: "$4.99", 4_990_000, "USD", trial),
+            ProPlan("preview_annual", true, ProPlans.money(29_990_000, "USD") ?: "$29.99", 29_990_000, "USD", null),
         )
     }
 

@@ -40,12 +40,13 @@ object TrialReminder {
     internal fun post(context: Context) {
         context.getSharedPreferences(PREFS, Context.MODE_PRIVATE).edit().remove("at").apply()
         if (Build.VERSION.SDK_INT >= 33 && context.checkSelfPermission(Manifest.permission.POST_NOTIFICATIONS) != PackageManager.PERMISSION_GRANTED) return
-        val manager = context.getSystemService(NotificationManager::class.java)
-        manager.createNotificationChannel(NotificationChannel("trial_reminder", context.getString(R.string.trial_reminder_channel), NotificationManager.IMPORTANCE_DEFAULT))
+        val localized = EngineNotifications.localizedContext(context)
+        val manager = localized.getSystemService(NotificationManager::class.java)
+        manager.createNotificationChannel(NotificationChannel("trial_reminder", localized.getString(R.string.trial_reminder_channel), NotificationManager.IMPORTANCE_DEFAULT))
         val open = PendingIntent.getActivity(context, 2, Intent(context, MainActivity::class.java), PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_UPDATE_CURRENT)
         runCatching {
-            manager.notify(412, Notification.Builder(context, "trial_reminder").setSmallIcon(android.R.drawable.ic_lock_idle_lock)
-                .setContentTitle(context.getString(R.string.pro_banner_title)).setContentText(context.getString(R.string.trial_reminder_body))
+            manager.notify(412, Notification.Builder(localized, "trial_reminder").setSmallIcon(android.R.drawable.ic_lock_idle_lock)
+                .setContentTitle(localized.getString(R.string.pro_banner_title)).setContentText(localized.getString(R.string.trial_reminder_body))
                 .setContentIntent(open).setAutoCancel(true).build())
         }
     }

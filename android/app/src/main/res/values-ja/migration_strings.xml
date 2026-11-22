@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="m_back">戻る</string>
+    <string name="m_rule_name">ルール名</string>
+    <string name="m_choose_place">場所を選択</string>
+    <string name="m_schedule">集中する時間帯</string>
+    <string name="m_start_time">開始 %1$s</string>
+    <string name="m_end_time">%1$sまで</string>
+    <string name="m_schedule_note">15分以上に設定してください。終了時刻が開始時刻より前の場合は翌日終了となります。</string>
+    <string name="m_save_rule">ルールを保存</string>
+    <string name="m_search_place">住所または場所</string>
+    <string name="m_search">検索</string>
+    <string name="m_current_place">現在地を使用</string>
+    <string name="m_place_error">位置情報を取得できませんでした。正確な位置情報と端末の位置設定を確認するか、別の検索をお試しください。</string>
+    <string name="m_map_privacy">検索には端末のジオコーディング機能を使用します。地図を表示すると閲覧範囲とIPアドレスがOpenStreetMapに送信されますが、保存した場所はこの端末のみに保管されます。</string>
+    <string name="m_place_note">地図を動かして十字線に場所を合わせてください。到着判定には約150 m以内の最新かつ正確な位置情報が必要です。</string>
+    <string name="m_account">アカウント</string>
+    <string name="m_check_arrival">到着を確認</string>
+    <string name="m_distance">前回の確認: %1$d m先 · 精度 ±%2$d m</string>
+    <string name="m_rules">あなたのルール</string>
+    <string name="m_unapplied">保存された変更はまだ適用されていません。</string>
+    <string name="m_edit">編集</string>
+    <string name="m_pause">一時停止</string>
+    <string name="m_apply">適用</string>
+    <string name="m_delete">削除</string>
+    <string name="m_quick">クイック集中</string>
+    <string name="m_quick_note">時間とアプリを選択してください。クイック集中は場所を保存しなくてもどこでも使えます。</string>
+    <string name="m_journal">計画とふりかえり</string>
+    <string name="m_notifications">集中通知</string>
+    <string name="m_notifications_note">到着・出発の通知を受け取るには場所の監視をオンにしてください。監視中は常時通知が表示され、自動で集中は開始されず、アクセスを復元すると停止します。</string>
+    <string name="m_android_limits">実行中のセッションはいつでもアクセスを復元できます。Androidでは権限の取り消しやOffzoneのアンインストールが可能です。サービスが停止すると集中も終了し、画面分割やピクチャーインピクチャーではアプリ制限が制限される場合があります。</string>
+    <string name="m_settings">アプリの権限と設定</string>
+    <string name="m_delete_note">「%1$s」を削除しますか？実行中の集中も終了します。</string>
+</resources>

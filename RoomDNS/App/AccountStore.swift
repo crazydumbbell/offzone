@@ -52,9 +52,14 @@ final class AccountStore: ObservableObject {
     let unlockPassEnabled: Bool
     /// Recheck at the action boundary, including while an expiry timer is suspended.
     var hasProAccess: Bool {
-        Self.proAccessIsValid(signedIn: isSignedIn, currentUID: currentPurchaseUID,
-                              entitlementUID: proUID, verifiedActive: isPro,
-                              expirationDate: proExpirationDate, now: Date())
+#if DEBUG
+        if ProcessInfo.processInfo.arguments.contains("-offzoneDebugPro") {
+            return true
+        }
+#endif
+        return Self.proAccessIsValid(signedIn: isSignedIn, currentUID: currentPurchaseUID,
+                                     entitlementUID: proUID, verifiedActive: isPro,
+                                     expirationDate: proExpirationDate, now: Date())
     }
     var canShowOffer: Bool { offersEnabled && purchasesConfigured && !packages.isEmpty }
     var canMakeStorePurchase: Bool { currentPurchaseUID != nil }
@@ -156,7 +161,7 @@ final class AccountStore: ObservableObject {
             appleRequestUID = Auth.auth().currentUser?.uid
             request.requestedScopes = []
             request.nonce = SHA256.hash(data: Data(rawNonce.utf8)).map { String(format: "%02x", $0) }.joined()
-        } catch { errorMessage = error.localizedDescription }
+        } catch { errorMessage = Self.localizedAuthError(error) }
     }
 
     func completeAppleSignIn(_ result: Result<ASAuthorization, Error>) async {
@@ -354,10 +359,7 @@ final class AccountStore: ObservableObject {
     private func reportAuthError(_ error: Error) {
         let nsError = error as NSError
         if nsError.domain == kGIDSignInErrorDomain && nsError.code == GIDSignInError.canceled.rawValue { return }
-        if nsError.domain == AuthErrorDomain && [AuthErrorCode.accountExistsWithDifferentCredential.rawValue,
-            AuthErrorCode.credentialAlreadyInUse.rawValue, AuthErrorCode.emailAlreadyInUse.rawValue].contains(nsError.code) {
-            errorMessage = NSLocalizedString("This sign-in method may belong to an existing account. Sign in using its original method, then link another method in Account & plan. Accounts and purchases are not merged automatically.", comment: "")
-        } else { errorMessage = error.localizedDescription }
+        errorMessage = Self.localizedAuthError(error)
     }
 
     func signOut() async {
@@ -370,7 +372,7 @@ final class AccountStore: ObservableObject {
             statusMessage = nil
             identityChanged(nil)
             await identityTask?.value
-        } catch { errorMessage = error.localizedDescription }
+        } catch { errorMessage = Self.localizedAuthError(error) }
     }
 
     func saveGoal(_ goal: String) async {
@@ -384,7 +386,7 @@ final class AccountStore: ObservableObject {
             ])
             if Auth.auth().currentUser?.uid == uid { savedGoal = goal }
         } catch {
-            if Auth.auth().currentUser?.uid == uid { errorMessage = error.localizedDescription }
+            if Auth.auth().currentUser?.uid == uid { errorMessage = Self.localizedAuthError(error) }
         }
     }
 
@@ -424,7 +426,7 @@ final class AccountStore: ObservableObject {
         } catch {
             if purchaseGeneration == generation, Purchases.shared.appUserID == storeID,
                (isConfigured ? Auth.auth().currentUser?.uid : nil) == authUID {
-                errorMessage = error.localizedDescription
+                errorMessage = Self.localizedStoreError(error)
             }
         }
     }
@@ -445,7 +447,7 @@ final class AccountStore: ObservableObject {
             return ProPurchaseOutcome(trialEndsAt: entitlement.periodType == .trial ? entitlement.expirationDate : nil)
         } catch let error as ErrorCode where error == .purchaseCancelledError {
             return nil
-        } catch { errorMessage = error.localizedDescription; return nil }
+        } catch { errorMessage = Self.localizedStoreError(error); return nil }
     }
 
     func loadUnlockPass() async {
@@ -463,7 +465,7 @@ final class AccountStore: ObservableObject {
             unlockProduct = product
             try await refreshUnlockBalance(for: uid)
         } catch {
-            if currentPurchaseUID == uid { errorMessage = error.localizedDescription }
+            if currentPurchaseUID == uid { errorMessage = Self.localizedStoreError(error) }
         }
     }
 
@@ -493,7 +495,7 @@ final class AccountStore: ObservableObject {
                 unlockNotice = NSLocalizedString("Purchase pending. Your session is still active.", comment: "")
             }
         } catch {
-            if currentPurchaseUID == uid { errorMessage = error.localizedDescription }
+            if currentPurchaseUID == uid { errorMessage = Self.localizedStoreError(error) }
         }
     }
 
@@ -516,7 +518,7 @@ final class AccountStore: ObservableObject {
         if pending == nil {
             do { try UnlockPassPendingStore.save(sessionID: sessionID, uid: uid) }
             catch {
-                errorMessage = error.localizedDescription
+                errorMessage = Self.localizedStoreError(error)
                 return nil
             }
         }
@@ -538,7 +540,7 @@ final class AccountStore: ObservableObject {
         } catch {
             if currentPurchaseUID == uid {
                 unlockNotice = NSLocalizedString("We couldn’t confirm the pass. Your session is still active.", comment: "")
-                errorMessage = error.localizedDescription
+                errorMessage = Self.localizedStoreError(error)
             }
             return nil
         }
@@ -573,7 +575,7 @@ final class AccountStore: ObservableObject {
             }
             try? await refreshUnlockBalance(for: uid)
         } catch {
-            if currentPurchaseUID == uid { errorMessage = error.localizedDescription }
+            if currentPurchaseUID == uid { errorMessage = Self.localizedStoreError(error) }
         }
     }
 
@@ -596,7 +598,7 @@ final class AccountStore: ObservableObject {
                 apply(info)
                 if unlockPassEnabled { try await refreshUnlockBalance(for: uid) }
             }
-        } catch { errorMessage = error.localizedDescription }
+        } catch { errorMessage = Self.localizedStoreError(error) }
     }
 
     func refresh() async {
@@ -609,7 +611,7 @@ final class AccountStore: ObservableObject {
                 apply(info)
                 if unlockPassEnabled { try await refreshUnlockBalance(for: uid) }
             }
-        } catch { errorMessage = error.localizedDescription }
+        } catch { errorMessage = Self.localizedStoreError(error) }
     }
 
     private func refreshUnlockBalance(for uid: String) async throws {
@@ -681,7 +683,7 @@ final class AccountStore: ObservableObject {
                                 self.observeCustomerInfo(for: uid)
                             }
                         } catch {
-                            if Auth.auth().currentUser?.uid == uid { self.errorMessage = error.localizedDescription }
+                            if Auth.auth().currentUser?.uid == uid { self.errorMessage = Self.localizedStoreError(error) }
                         }
                     }
                     let profile = try await Firestore.firestore().collection("users").document(uid).getDocument()
@@ -690,7 +692,7 @@ final class AccountStore: ObservableObject {
                     _ = try await Purchases.shared.logOut()
                 }
             } catch {
-                if Auth.auth().currentUser?.uid == uid { self.errorMessage = error.localizedDescription }
+                if Auth.auth().currentUser?.uid == uid { self.errorMessage = Self.localizedAuthError(error) }
             }
         }
     }
@@ -736,11 +738,78 @@ final class AccountStore: ObservableObject {
         }
     }
 
+    nonisolated static func localizedAuthError(_ error: Error) -> String {
+        if error is AccountError { return error.localizedDescription }
+        let nsError = error as NSError
+        if nsError.domain == AuthErrorDomain {
+            switch AuthErrorCode(rawValue: nsError.code) {
+            case .accountExistsWithDifferentCredential, .credentialAlreadyInUse, .emailAlreadyInUse:
+                return NSLocalizedString("This sign-in method may belong to an existing account. Sign in using its original method, then link another method in Account & plan. Accounts and purchases are not merged automatically.", comment: "")
+            case .invalidEmail:
+                return NSLocalizedString("Enter a valid email address.", comment: "")
+            case .wrongPassword, .invalidCredential:
+                return NSLocalizedString("Incorrect email or password. Please try again.", comment: "")
+            case .userNotFound:
+                return NSLocalizedString("No account was found for that email address.", comment: "")
+            case .userDisabled:
+                return NSLocalizedString("This account has been disabled.", comment: "")
+            case .weakPassword:
+                return NSLocalizedString("Use a password with at least 8 characters.", comment: "")
+            case .tooManyRequests:
+                return NSLocalizedString("Too many attempts. Wait a moment and try again.", comment: "")
+            case .networkError:
+                return NSLocalizedString("Network error. Check your connection and try again.", comment: "")
+            case .requiresRecentLogin:
+                return NSLocalizedString("Please sign in again to continue.", comment: "")
+            default:
+                return NSLocalizedString("Sign-in failed. Please try again.", comment: "")
+            }
+        }
+        if nsError.domain == kGIDSignInErrorDomain {
+            return NSLocalizedString("Google sign-in couldn't be completed. Please try again.", comment: "")
+        }
+        if error is ASAuthorizationError {
+            return NSLocalizedString("Apple sign-in couldn't be completed. Please try again.", comment: "")
+        }
+        if error is URLError || nsError.domain == NSURLErrorDomain {
+            return NSLocalizedString("Network error. Check your connection and try again.", comment: "")
+        }
+        return NSLocalizedString("We could not complete that request. Please try again.", comment: "")
+    }
+
+    nonisolated static func localizedStoreError(_ error: Error) -> String {
+        if error is AccountError { return error.localizedDescription }
+        if let rcError = error as? ErrorCode {
+            switch rcError {
+            case .networkError, .offlineConnectionError:
+                return NSLocalizedString("Network error. Check your connection and try again.", comment: "")
+            case .purchaseNotAllowedError:
+                return NSLocalizedString("Purchases are not allowed on this device.", comment: "")
+            case .purchaseInvalidError:
+                return NSLocalizedString("Purchase could not be verified. Please try again.", comment: "")
+            case .productNotAvailableForPurchaseError:
+                return NSLocalizedString("This plan isn't available right now.", comment: "")
+            case .paymentPendingError:
+                return NSLocalizedString("Purchase pending approval.", comment: "")
+            case .storeProblemError:
+                return NSLocalizedString("Couldn't reach the App Store. Please try again.", comment: "")
+            case .receiptAlreadyInUseError, .productAlreadyPurchasedError:
+                return NSLocalizedString("This subscription is already linked to another account. Restore purchases on the original account.", comment: "")
+            default:
+                return NSLocalizedString("Subscription service is unavailable right now. Please try again.", comment: "")
+            }
+        }
+        if error is URLError || (error as NSError).domain == NSURLErrorDomain {
+            return NSLocalizedString("Network error. Check your connection and try again.", comment: "")
+        }
+        return NSLocalizedString("Subscription service is unavailable right now. Please try again.", comment: "")
+    }
+
     private enum AccountError: LocalizedError {
         case unavailable, invalidIdentity, invalidResponse, verifyEmail, invalidEmail, invalidPassword, appleDeletionRequired
         var errorDescription: String? {
             switch self {
-            case .unavailable: NSLocalizedString("This service is unavailable right now. You can continue with free.", comment: "")
+            case .unavailable: NSLocalizedString("This service is unavailable right now. Please try again later.", comment: "")
             case .invalidIdentity: NSLocalizedString("We could not verify this account. Please try again.", comment: "")
             case .verifyEmail: NSLocalizedString("Verify your email before saving account changes or making purchases.", comment: "")
             case .invalidEmail: NSLocalizedString("Enter a valid email address.", comment: "")

@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="pro_eyebrow">OFFZONE PRO</string>
+    <string name="pro_close">关闭</string>
+    <string name="pro_headline_work">为专注留出空间。</string>
+    <string name="pro_headline_rest">为宁静的夜晚留出空间。</string>
+    <string name="pro_headline_presence">为当下此刻留出空间。</string>
+    <string name="pro_headline_personal">为自己留出空间。</string>
+    <string name="pro_benefit_plan">围绕重要的事规划每周日程。</string>
+    <string name="pro_benefit_journal">记录私密的回顾日记。</string>
+    <string name="pro_benefit_review">复盘每周目标和每日回顾。</string>
+    <string name="pro_view_plans">查看方案与账号</string>
+    <string name="pro_tomorrow">明天</string>
+    <plurals name="pro_days">
+        <item quantity="other">%d 天</item>
+    </plurals>
+    <plurals name="pro_in_days">
+        <item quantity="other">%d 天后</item>
+    </plurals>
+    <string name="pro_preview_note">预览 · 示例方案，不会产生扣费</string>
+    <string name="pro_try_title">免费试用 Offzone Pro %1$s。</string>
+    <string name="pro_no_payment">现在无需付款。</string>
+    <string name="pro_start_trial">开始免费试用</string>
+    <string name="pro_see_plans">查看方案</string>
+    <string name="pro_continue">继续</string>
+    <string name="pro_skip">跳过</string>
+    <string name="pro_remind_title">我们会在试用结束前提醒你。</string>
+    <string name="pro_remind_body">在结束前一天发送一次通知。随时可在 Google Play 中取消。</string>
+    <string name="pro_remind_cta">提醒我</string>
+    <string name="pro_banner_title">Offzone Pro</string>
+    <string name="pro_banner_body">你的免费试用将于明天结束。</string>
+    <string name="trial_reminder_body">你的免费试用将于明天结束，可在 Google Play 中管理或取消。</string>
+    <string name="trial_reminder_channel">试用提醒</string>
+    <string name="pro_how_title">免费试用说明</string>
+    <string name="pro_how_today">今天</string>
+    <string name="pro_how_today_body">所有专注工具和日记功能立即开放。</string>
+    <string name="pro_how_remind_body">我们会提醒你。</string>
+    <string name="pro_how_free_body">仍处于免费试用期内。</string>
+    <string name="pro_how_end_body">除非提前取消，否则订阅方案将自动开始。</string>
+    <string name="pro_plans_title">选择你的方案</string>
+    <string name="pro_plans_sub">解锁专注规则、快速专注、每周计划和私密日记。</string>
+    <string name="pro_yearly">按年</string>
+    <string name="pro_monthly">按月</string>
+    <string name="pro_best_value">最划算</string>
+    <string name="pro_save">省 %d%%</string>
+    <string name="pro_per_year">%s / 年</string>
+    <string name="pro_per_month">%s / 月</string>
+    <string name="pro_due_today">今日应付：%s</string>
+    <string name="pro_free_then">%1$s 免费，之后 %2$s</string>
+    <string name="pro_cta_trial_sub">今日不扣费 · 之后 %s</string>
+    <string name="pro_cta_sub">%s · 随时可取消</string>
+    <string name="pro_legal">随时可在 Google Play 中取消。取消前将自动续订。</string>
+    <string name="pro_done_title">Pro 已开启。</string>
+    <string name="pro_done_trial">你的免费试用已开始。</string>
+    <string name="pro_done_body">专注规则、每周计划和日记现已全面开放。</string>
+    <string name="pro_sign_in_note">下一步请登录，以将方案绑定至你的账号。</string>
+    <string name="pro_step_of">第 %1$d 步，共 %2$d 步</string>
+</resources>

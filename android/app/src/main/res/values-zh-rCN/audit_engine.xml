@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="engine_reconnected">应用屏蔽已就绪。先前的专注会话不会自动恢复，准备好后请开始新的会话。</string>
+    <string name="engine_restart_note">如果 Android 停止了 Offzone 或其屏蔽服务，专注将会结束。先前的会话和地点监测不会自动重启，准备好后请重新开始。</string>
+</resources>

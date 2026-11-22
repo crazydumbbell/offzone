@@ -1,0 +1,35 @@
+<resources>
+    <string name="app_name">Offzone</string>
+    <string name="minutes">%1$d Min.</string>
+    <string name="apps">Zu pausierende Apps</string>
+    <string name="choose_apps">Apps wählen</string>
+    <string name="apps_selected">%1$d ausgewählt</string>
+    <string name="select_hint">Wähle zum Starten mindestens eine App.</string>
+    <string name="protected_hint">Wichtige System-Apps, Anrufe, Tastatur und Startbildschirm bleiben verfügbar.</string>
+    <string name="empty_apps">Keine passenden Apps gefunden. Installiere eine App, die du pausieren möchtest, und öffne diese Liste erneut.</string>
+    <string name="search_apps">Apps suchen</string>
+    <string name="done">Fertig</string>
+    <string name="start_focus">Fokus starten</string>
+    <string name="restore">Zugriff freigeben</string>
+    <string name="go_home">Zurück zum Startbildschirm</string>
+    <string name="blocked_title">Ein Moment für dich.</string>
+    <string name="blocked_body">Diese App pausiert während deiner Fokussitzung. Du kannst den Zugriff jederzeit kostenlos freigeben.</string>
+    <string name="remaining">Noch %1$s</string>
+    <string name="enable">App-Sperre einrichten</string>
+    <string name="disclosure_title">Offzone erlauben, Apps zu pausieren</string>
+    <string name="disclosure_body">Offzone nutzt die Android-Bedienungshilfen, um zu erkennen, welche App geöffnet wird, und legt nur während einer von dir gestarteten Fokussitzung einen Pausenbildschirm über deine gewählten Apps. Dabei werden nur App-Paketnamen verwendet, keine Bildschirminhalte oder Eingaben. Deine Auswahl bleibt auf diesem Gerät und wird weder gesendet noch geteilt. Du kannst den Zugriff jederzeit kostenlos freigeben oder den Dienst in den Android-Einstellungen ausschalten. Wähle auf dem nächsten Bildschirm Offzone und aktiviere den Dienst.</string>
+    <string name="agree">Zustimmen und Einstellungen öffnen</string>
+    <string name="not_now">Jetzt nicht</string>
+    <string name="service_description">Pausiert deine gewählten Apps während selbst gestarteter Fokussitzungen. Nutzt nur App-Namen; liest keine Bildschirminhalte. Kostenlose Freigabe ist jederzeit verfügbar.</string>
+    <string name="session_finished">Sitzung beendet. Deine Apps sind wieder verfügbar.</string>
+    <string name="access_restored">Zugriff freigegeben. Starte erneut, wenn du bereit bist.</string>
+    <string name="service_stopped">App-Sperre wurde beendet. Deine Sitzung ist abgeschlossen.</string>
+    <string name="save_error">Deine Auswahl konnte nicht gespeichert werden. Bitte versuche es erneut.</string>
+    <string name="blocking_error">Die App-Sperre konnte nicht fortgesetzt werden. Der Zugriff wurde freigegeben.</string>
+    <string name="setup_error">Android-Einstellungen konnten nicht geöffnet werden. Öffne Einstellungen → Bedienungshilfen → Offzone.</string>
+    <string name="loading_apps">Apps werden gesucht…</string>
+    <string name="load_error">Apps konnten nicht geladen werden. Schließe diese Liste und versuche es erneut.</string>
+    <string name="location_disclosure_title">Laufende Ortsprüfungen erlauben</string>
+    <string name="location_disclosure_body">Offzone nutzt den genauen Standort, um zu bestätigen, dass du dich an deinem gewählten Ort befindest, und den Zugriff freizugeben, wenn du ihn verlässt oder dein Standort nicht bestätigt werden kann. Nach dem Start von Ortsfokus oder Überwachung laufen die Prüfungen weiter, auch wenn Offzone nicht sichtbar ist. Eine dauerhafte Benachrichtigung zeigt die Überwachung an und lässt dich den Zugriff kostenlos freigeben und beenden. Die Ankunft startet nie automatisch eine Sperre. Standortdaten bleiben auf diesem Gerät und werden nicht an Offzone gesendet. Die Karte zur Ortsauswahl sendet beim Öffnen den sichtbaren Bereich und deine IP-Adresse an OpenStreetMap.</string>
+    <string name="location_disclosure_agree">Zustimmen und weiter</string>
+</resources>

@@ -32,6 +32,7 @@ struct ProJournalView: View {
     @State private var confirmDiscard = false
     @State private var planFeedback: String?
     @State private var reflectionFeedback: String?
+    private static let mondayFirstWeekdays = [2, 3, 4, 5, 6, 7, 1]
     private var planDraft: ProJournalData.Plan { .init(intention: intention, context: context, weekdays: weekdays) }
     private var reflectionDraft: ProJournalData.Reflection { .init(note: note, outcome: outcome) }
     private var hasUnsavedChanges: Bool {
@@ -97,7 +98,7 @@ struct ProJournalView: View {
                     }.disabled(!hasAccess)
                     ScrollView(.horizontal) {
                         HStack(spacing: 4) {
-                            ForEach([2, 3, 4, 5, 6, 7, 1], id: \.self) { day in
+                            ForEach(Self.mondayFirstWeekdays, id: \.self) { day in
                                 Button {
                                     if weekdays.contains(day) { weekdays.remove(day) } else { weekdays.insert(day) }
                                 } label: {
@@ -135,8 +136,20 @@ struct ProJournalView: View {
 
                 Section {
                     DatePicker("Reflection date", selection: Binding(get: { reflectionDate }, set: { date in
-                        navigate { reflectionDate = date; loadReflection() }
+                        let targetWeek = ProJournalStore.week(date)
+                        let needsDiscard = targetWeek != week
+                            ? hasUnsavedChanges
+                            : (baseline.reflection != nil && baseline.reflection != reflectionDraft)
+                        navigate(confirmWhen: needsDiscard) {
+                            reflectionDate = date
+                            if targetWeek != week {
+                                week = targetWeek
+                                loadPlan()
+                            }
+                            loadReflection()
+                        }
                     }), in: ...Date.now, displayedComponents: .date)
+                    .environment(\.calendar, ProJournalStore.calendar)
                     Picker("How did it go?", selection: $outcome) {
                         ForEach(ProJournalStore.outcomes, id: \.self) { Text(roomString($0)).tag($0) }
                     }.disabled(!hasAccess)
@@ -158,7 +171,7 @@ struct ProJournalView: View {
                     Section {
                         Text(plan.intention).textSelection(.enabled)
                         Text(roomString(FocusGoal(rawValue: plan.context)?.title ?? plan.context))
-                        Text(plan.weekdays.sorted().map { ProJournalStore.calendar.shortWeekdaySymbols[$0 - 1] }.joined(separator: ", "))
+                        Text(Self.mondayFirstWeekdays.filter { plan.weekdays.contains($0) }.map { ProJournalStore.calendar.shortWeekdaySymbols[$0 - 1] }.joined(separator: ", "))
                         Button("Delete this plan", role: .destructive) {
                             perform { try store.deletePlan(week: week); loadPlan() }
                         }
@@ -170,7 +183,7 @@ struct ProJournalView: View {
                     if weeklyEntries.isEmpty { Text("No reflections this week yet.").foregroundStyle(Color.roomInkSecondary) }
                     ForEach(weeklyEntries, id: \.0) { key, reflection in
                         VStack(alignment: .leading, spacing: 8) {
-                            Text(key).font(.suit(.caption)).monospacedDigit()
+                            Text(formattedEntryDate(key)).font(.suit(.caption)).foregroundStyle(Color.roomInkSecondary)
                             Text(roomString(reflection.outcome)).font(.suit(.headline))
                             Text(reflection.note).textSelection(.enabled)
                             Button("Delete reflection", role: .destructive) {
@@ -241,9 +254,13 @@ struct ProJournalView: View {
             loadPlan(); loadReflection(); saved = false
         }
     }
-    private func navigate(_ action: @escaping () -> Void) {
-        if hasUnsavedChanges { pendingNavigation = action; confirmDiscard = true }
+    private func navigate(confirmWhen shouldConfirm: Bool? = nil, _ action: @escaping () -> Void) {
+        if shouldConfirm ?? hasUnsavedChanges { pendingNavigation = action; confirmDiscard = true }
         else { action() }
+    }
+    private func formattedEntryDate(_ key: String) -> String {
+        guard let date = ProJournalStore.date(fromKey: key) else { return key }
+        return date.formatted(.dateTime.weekday(.abbreviated).month(.abbreviated).day().year())
     }
     private func loadPlan() {
         let plan = store.data.plans[weekKey]

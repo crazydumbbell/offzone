@@ -1,0 +1,33 @@
+<resources>
+    <string name="m_back">Indietro</string>
+    <string name="m_rule_name">Nome della regola</string>
+    <string name="m_choose_place">Scegli un luogo</string>
+    <string name="m_schedule">Fascia giornaliera</string>
+    <string name="m_start_time">Dalle %1$s</string>
+    <string name="m_end_time">Fino alle %1$s</string>
+    <string name="m_schedule_note">Scegli almeno 15 minuti. Un orario di fine precedente prosegue nel giorno successivo.</string>
+    <string name="m_save_rule">Salva regola</string>
+    <string name="m_search_place">Indirizzo o luogo</string>
+    <string name="m_search">Cerca</string>
+    <string name="m_current_place">Usa la mia posizione</string>
+    <string name="m_place_error">Posizione non disponibile. Controlla la posizione esatta e le impostazioni di localizzazione del dispositivo, oppure prova un’altra ricerca.</string>
+    <string name="m_map_privacy">La ricerca usa il servizio di geocodifica del dispositivo. La mappa invia l’area visualizzata e l’indirizzo IP a OpenStreetMap. Il luogo salvato resta su questo dispositivo.</string>
+    <string name="m_place_note">Sposta la mappa per posizionare il mirino. L’arrivo richiede una posizione recente ed esatta entro circa 150 m.</string>
+    <string name="m_account">Account</string>
+    <string name="m_check_arrival">Verifica arrivo</string>
+    <string name="m_distance">Ultimo controllo: a %1$d m · precisione ±%2$d m</string>
+    <string name="m_rules">Le tue regole</string>
+    <string name="m_unapplied">Le modifiche salvate non sono ancora state applicate.</string>
+    <string name="m_edit">Modifica</string>
+    <string name="m_pause">Metti in pausa</string>
+    <string name="m_apply">Applica</string>
+    <string name="m_delete">Elimina</string>
+    <string name="m_quick">Concentrazione rapida</string>
+    <string name="m_quick_note">Scegli una durata e le app. La concentrazione rapida funziona ovunque, senza un luogo salvato.</string>
+    <string name="m_journal">Piani e riflessioni</string>
+    <string name="m_notifications">Notifiche di concentrazione</string>
+    <string name="m_notifications_note">Attiva il monitoraggio del luogo per gli avvisi di arrivo e uscita. Il monitoraggio mostra una notifica fissa, non avvia mai la concentrazione automaticamente e si ferma quando ripristini l’accesso.</string>
+    <string name="m_android_limits">Puoi sempre ripristinare le sessioni attive. Android ti permette di revocare l’accesso o disinstallare Offzone. La concentrazione termina se il servizio si arresta; schermo diviso e Picture-in-Picture possono limitare il blocco delle app.</string>
+    <string name="m_settings">Permessi e impostazioni dell’app</string>
+    <string name="m_delete_note">Eliminare “%1$s”? Il relativo blocco attivo terminerà.</string>
+</resources>

@@ -50,7 +50,11 @@ class TimeOnlyFocusFlowTest {
             assertTrue("Timed out waiting for engine state: ${FocusController.state.value}", condition())
         }
         fun openApp() {
-            context.startActivity(Intent(context, MainActivity::class.java).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK))
+            context.startActivity(
+                Intent(context, MainActivity::class.java)
+                    .putExtra(ProAccessGate.EXTRA_DEBUG_PRO, true)
+                    .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK),
+            )
             assertTrue(device.wait(Until.hasObject(By.text(context.getString(R.string.home_your_space))), 10_000))
         }
         try {
@@ -92,6 +96,7 @@ class TimeOnlyFocusFlowTest {
             assertFalse(FocusController.state.value.timeOnlySession)
             assertTrue(device.wait(Until.gone(By.text(context.getString(R.string.blocked_title))), 5_000))
         } finally {
+            ProAccessGate.debugProOverride = null
             instrumentation.runOnMainSync { FocusController.pauseRule() }
             device.executeShellCommand(if (services.isEmpty()) "settings delete secure enabled_accessibility_services" else "settings put secure enabled_accessibility_services $services")
             device.executeShellCommand("settings put secure accessibility_enabled $accessibility")

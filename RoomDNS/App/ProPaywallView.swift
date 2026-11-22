@@ -49,7 +49,6 @@ struct RoomPaywallView: View {
                     } footer: {
                         Button(roomString("pro_sign_in_plans")) { accountPresented = true }
                             .roomPrimaryAction().accessibilityIdentifier("pro.signIn")
-                        freeButton
                     }
                 } else {
                     unavailable
@@ -61,7 +60,7 @@ struct RoomPaywallView: View {
                 ToolbarItem(placement: .principal) {
                     Text(roomString("pro_eyebrow")).font(.suit(.caption, weight: .bold)).tracking(1.4)
                 }
-                ToolbarItem(placement: .cancellationAction) {
+                ToolbarItem(placement: .topBarTrailing) {
                     Button { dismiss() } label: { Image(systemName: "xmark") }
                         .accessibilityLabel(roomString("pro_close")).accessibilityIdentifier("pro.close")
                 }
@@ -127,19 +126,13 @@ struct RoomPaywallView: View {
         }
     }
 
-    private var freeButton: some View {
-        Button(roomString("pro_continue_free")) { dismiss() }
-            .font(.suit(.body, weight: .semibold)).frame(minHeight: 44)
-            .accessibilityIdentifier("pro.free")
-    }
-
     // D-45 remains the sales-off / failed-offering screen. No prices or purchase claims.
     private var unavailable: some View {
         ProPage {
             RoomSpirit(state: .welcome).frame(height: 184).frame(maxWidth: .infinity).accessibilityHidden(true)
             Text(roomString(goal.headline)).proHeading()
             if !account.proBenefits.isEmpty { ProBenefits(benefits: account.proBenefits) }
-            Text(account.hasProAccess ? roomString("Your Pro subscription is active.") : roomString("Plans aren’t available right now. Your free rules are ready to use."))
+            Text(account.hasProAccess ? roomString("Your Pro subscription is active.") : roomString("Plans aren’t available right now. Try again in a moment."))
                 .font(.suit(.subheadline)).padding(18).frame(maxWidth: .infinity, alignment: .leading)
                 .editorialPanel(Color.roomMint, outlined: false)
             if account.offersEnabled && !account.hasProAccess {
@@ -153,7 +146,7 @@ struct RoomPaywallView: View {
             }.frame(minHeight: 44).disabled(account.isBusy)
             legalLinks
         } footer: {
-            Button(roomString("pro_continue_free")) { dismiss() }.roomPrimaryAction().accessibilityIdentifier("pro.free")
+            Button(roomString("pro_close")) { dismiss() }.roomPrimaryAction().accessibilityIdentifier("pro.close.footer")
         }
     }
 
@@ -174,6 +167,7 @@ private struct ProFunnelView: View {
     let signIn: () -> Void
     let close: () -> Void
     @EnvironmentObject private var account: AccountStore
+    @EnvironmentObject private var model: AppModel
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
     @State private var index = 0
     @State private var selectedID: String
@@ -269,7 +263,6 @@ private struct ProFunnelView: View {
                 }
                 Button(roomString(defaultPlan.trialDays != nil ? "pro_start_trial" : "pro_see_plans")) { go(index + 1) }
                     .roomPrimaryAction().accessibilityIdentifier("pro.next").proReveal(delay: 440)
-                freeButton
             }
         case .remind:
             ProPage(centered: true) {
@@ -288,7 +281,6 @@ private struct ProFunnelView: View {
                 }.roomPrimaryAction().disabled(requestingPermission).accessibilityIdentifier("pro.remind")
                 Button(roomString("pro_skip")) { reminder = false; go(index + 1) }
                     .frame(minHeight: 44).accessibilityIdentifier("pro.skip")
-                freeButton
             }
         case .how:
             ProPage {
@@ -300,11 +292,11 @@ private struct ProFunnelView: View {
                 ProTrialTimeline(days: ProPlanMath.timelineDays(defaultPlan.trialDays ?? 1), remind: reminder)
             } footer: {
                 Button(roomString("pro_continue")) { go(index + 1) }.roomPrimaryAction().accessibilityIdentifier("pro.next")
-                freeButton
             }
         case .plans:
             ProPlansPage(plans: plans, selected: selected, busy: preview ? false : account.isBusy,
-                         select: { selectedID = $0.id }, purchase: purchase, restore: restore, close: close, notice: notice)
+                         signedInForPurchase: verifiedForStoreAction,
+                         select: { selectedID = $0.id }, purchase: purchase, restore: restore, notice: notice)
         case .done:
             ProPage(centered: true) {
                 ProDoneHero()
@@ -313,16 +305,16 @@ private struct ProFunnelView: View {
                     .foregroundStyle(Color.roomInkSecondary).fixedSize(horizontal: false, vertical: true).proReveal(delay: 370)
                 if let notice { Text(notice).font(.suit(.subheadline)).foregroundStyle(Color.roomInkSecondary) }
             } footer: {
-                Button(roomString("pro_continue"), action: close).roomPrimaryAction().accessibilityIdentifier("pro.finish")
-                freeButton
+                Button(roomString("pro_continue")) {
+                    if !preview && account.hasProAccess {
+                        model.autoArmSavedRuleIfNeeded()
+                    }
+                    close()
+                }.roomPrimaryAction().accessibilityIdentifier("pro.finish")
             }
         }
     }
 
-    private var freeButton: some View {
-        Button(roomString("pro_continue_free"), action: close)
-            .font(.suit(.body, weight: .semibold)).frame(minHeight: 44).accessibilityIdentifier("pro.free")
-    }
     private func go(_ destination: Int) {
         forward = destination > index
         withAnimation(reduceMotion ? .linear(duration: 0.1) : ProMotion.enter) { index = min(max(0, destination), steps.count - 1) }
@@ -375,10 +367,10 @@ private struct ProPlansPage: View {
     let plans: [ProPlanDisplay]
     let selected: ProPlanDisplay
     let busy: Bool
+    let signedInForPurchase: Bool
     let select: (ProPlanDisplay) -> Void
     let purchase: () -> Void
     let restore: () -> Void
-    let close: () -> Void
     let notice: String?
     @EnvironmentObject private var account: AccountStore
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
@@ -417,6 +409,12 @@ private struct ProPlansPage: View {
             if let error = account.errorMessage { Text(error).font(.suit(.subheadline)).foregroundStyle(Color.roomInkSecondary) }
             if let notice { Text(notice).font(.suit(.subheadline)).foregroundStyle(Color.roomInkSecondary) }
         } footer: {
+            if !signedInForPurchase {
+                Text(roomString("pro_sign_in_note"))
+                    .font(.suit(.caption)).foregroundStyle(Color.roomInkSecondary)
+                    .multilineTextAlignment(.center)
+                    .fixedSize(horizontal: false, vertical: true)
+            }
             if selected.trialDays != nil, let zero = ProPlanMath.money(0, currency: selected.currency) {
                 Text(roomString("pro_due_today", zero)).font(.suit(.subheadline, weight: .semibold))
             }
@@ -432,7 +430,6 @@ private struct ProPlansPage: View {
                     }
                 }.frame(maxWidth: .infinity).multilineTextAlignment(.center)
             }.roomPrimaryAction().disabled(busy).proShimmer(disabled: busy).accessibilityIdentifier("pro.purchase")
-            Button(roomString("pro_continue_free"), action: close).frame(minHeight: 44).accessibilityIdentifier("pro.free")
         }
         .task(id: reduceMotion) {
             guard !reduceMotion && selected.annual else { return }

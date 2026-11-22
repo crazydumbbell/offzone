@@ -35,6 +35,7 @@ import androidx.compose.animation.slideInVertically
 import androidx.compose.animation.slideOutHorizontally
 import androidx.compose.animation.slideOutVertically
 import androidx.compose.animation.togetherWith
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -46,6 +47,7 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.DateRange
 import androidx.compose.material.icons.filled.Notifications
 import androidx.compose.material.icons.filled.Star
@@ -86,6 +88,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import java.text.NumberFormat
 import kotlin.math.PI
 import kotlin.math.cos
 import kotlin.math.sin
@@ -100,14 +103,19 @@ private enum class Step { INVITE, REMIND, HOW, PLANS, DONE }
 
 @Composable
 fun ProPaywallScreen(
-    store: AccountStore, onContinue: () -> Unit, onOpenAccount: (resumePlanId: String?, remind: Boolean) -> Unit,
-    resumePlanId: String? = null, resumeRemind: Boolean = false, preview: String? = null,
+    store: AccountStore,
+    onContinue: () -> Unit,
+    onOpenAccount: (resumePlanId: String?, remind: Boolean) -> Unit,
+    resumePlanId: String? = null,
+    resumeRemind: Boolean = false,
+    preview: String? = null,
+    onDone: () -> Unit = onContinue,
 ) {
     val account by store.state.collectAsState()
     val context = LocalContext.current
     val sample = remember(preview) { ProPreview.plans(preview) }
     val plans = remember(account.packages, sample) { ProPlans.ordered(sample ?: account.packages.map(ProPlans::of)) }
-    val startedPro = remember { store.hasProAccess }
+    val startedPro = remember(preview) { if (preview != null) false else store.hasProAccessEffective }
     // A user with animations switched off in system settings gets still screens (Reduce Motion).
     val motion = remember { Settings.Global.getFloat(context.contentResolver, Settings.Global.ANIMATOR_DURATION_SCALE, 1f) > 0f }
     // True once the first offerings request has finished, so a failed or empty answer falls through to the plain screen.
@@ -118,8 +126,18 @@ fun ProPaywallScreen(
     CompositionLocalProvider(LocalMotion provides motion) {
         when {
             plans.isNotEmpty() && !startedPro && (sample != null || store.offersEnabled) ->
-                ProFunnel(store, account, plans, signedIn = preview != "signedout" && (preview != null || account.verified), preview = preview != null,
-                    resumePlanId = resumePlanId, resumeRemind = resumeRemind, onContinue = onContinue, onOpenAccount = onOpenAccount)
+                ProFunnel(
+                    store = store,
+                    account = account,
+                    plans = plans,
+                    signedIn = preview != "signedout" && (preview != null || account.verified),
+                    preview = preview != null,
+                    resumePlanId = resumePlanId,
+                    resumeRemind = resumeRemind,
+                    onContinue = onContinue,
+                    onDone = onDone,
+                    onOpenAccount = onOpenAccount,
+                )
             store.offersEnabled && !startedPro && !loadedOnce && !account.pro -> ProLoading(onContinue)
             else -> ProInfoScreen(store, account, onContinue) { onOpenAccount(null, false) }
         }
@@ -127,9 +145,24 @@ fun ProPaywallScreen(
 }
 
 @Composable
+private fun PaywallCloseButton(onClick: () -> Unit) {
+    IconButton(onClick = onClick, modifier = Modifier.sizeIn(minWidth = 48.dp, minHeight = 48.dp)) {
+        Icon(Icons.Filled.Close, contentDescription = stringResource(R.string.pro_close), tint = Ink)
+    }
+}
+
+@Composable
 private fun ProFunnel(
-    store: AccountStore, account: AccountState, plans: List<ProPlan>, signedIn: Boolean, preview: Boolean,
-    resumePlanId: String?, resumeRemind: Boolean, onContinue: () -> Unit, onOpenAccount: (String?, Boolean) -> Unit,
+    store: AccountStore,
+    account: AccountState,
+    plans: List<ProPlan>,
+    signedIn: Boolean,
+    preview: Boolean,
+    resumePlanId: String?,
+    resumeRemind: Boolean,
+    onContinue: () -> Unit,
+    onDone: () -> Unit,
+    onOpenAccount: (String?, Boolean) -> Unit,
 ) {
     val context = LocalContext.current
     val activity = remember(context) { context.findActivity() }
@@ -146,7 +179,7 @@ private fun ProFunnel(
     var previewDone by remember { mutableStateOf(false) }
     var forward by remember { mutableStateOf(true) }
     val selected = plans.firstOrNull { it.id == selectedId } ?: default
-    val done = account.pro || previewDone
+    val done = account.pro || previewDone || (!preview && store.hasProAccessEffective)
     val step = if (done) Step.DONE else steps[index.coerceIn(0, steps.lastIndex)]
     fun go(to: Int) { forward = to > index; index = to.coerceIn(0, steps.lastIndex) }
     BackHandler(index > 0 && !done) { go(index - 1) }
@@ -165,9 +198,16 @@ private fun ProFunnel(
     val motion = LocalMotion.current
 
     Column(Modifier.fillMaxSize().background(Butter).safeDrawingPadding()) {
-        Row(Modifier.fillMaxWidth().padding(start = 24.dp, end = 12.dp).heightIn(min = 56.dp), verticalAlignment = Alignment.CenterVertically) {
+        Row(Modifier.fillMaxWidth().padding(start = 16.dp, end = 12.dp).heightIn(min = 56.dp), verticalAlignment = Alignment.CenterVertically) {
+            if (index > 0 && step != Step.DONE) {
+                TextButton(onClick = { go(index - 1) }, modifier = Modifier.heightIn(min = 48.dp)) {
+                    Text(stringResource(R.string.m_back))
+                }
+            } else {
+                Spacer(Modifier.width(8.dp))
+            }
             if (steps.size > 1 && step != Step.DONE) StepDots(steps.size, index, Modifier.weight(1f)) else Spacer(Modifier.weight(1f))
-            TextButton(onClick = onContinue, modifier = Modifier.heightIn(min = 48.dp)) { Text(stringResource(R.string.pro_close)) }
+            PaywallCloseButton { if (step == Step.DONE) onDone() else onContinue() }
         }
         if (preview) Text(stringResource(R.string.pro_preview_note), style = MaterialTheme.typography.bodySmall, color = InkMuted,
             modifier = Modifier.padding(horizontal = 24.dp))
@@ -191,9 +231,6 @@ private fun ProFunnel(
                                 textAlign = TextAlign.Center, modifier = Modifier.fillMaxWidth().reveal(rememberReveal(560)))
                             PrimaryButton(onClick = { go(index + 1) }, modifier = Modifier.fillMaxWidth().reveal(rememberReveal(620))) {
                                 Text(stringResource(if (trial != null) R.string.pro_start_trial else R.string.pro_see_plans))
-                            }
-                            TextButton(onClick = onContinue, modifier = Modifier.fillMaxWidth().heightIn(min = 48.dp).reveal(rememberReveal(680))) {
-                                Text(stringResource(R.string.pro_continue_free))
                             }
                         },
                     ) {
@@ -247,7 +284,7 @@ private fun ProFunnel(
                 Step.DONE -> StepScaffold(
                     center = true,
                     bottom = {
-                        PrimaryButton(onClick = onContinue, modifier = Modifier.fillMaxWidth()) { Text(stringResource(R.string.pro_continue)) }
+                        PrimaryButton(onClick = onDone, modifier = Modifier.fillMaxWidth()) { Text(stringResource(R.string.pro_continue)) }
                     },
                 ) {
                     Box(Modifier.fillMaxWidth().height(250.dp), contentAlignment = Alignment.Center) {
@@ -276,7 +313,7 @@ private fun StepScaffold(bottom: @Composable ColumnScope.() -> Unit, center: Boo
                 Column(Modifier.heightIn(min = viewport), verticalArrangement = Arrangement.spacedBy(16.dp, if (center) Alignment.CenterVertically else Alignment.Top), content = content)
             }
         }
-        Column(Modifier.fillMaxWidth().padding(horizontal = 24.dp, vertical = 12.dp), verticalArrangement = Arrangement.spacedBy(4.dp), content = bottom)
+        Column(Modifier.fillMaxWidth().padding(horizontal = 24.dp, vertical = 12.dp), verticalArrangement = Arrangement.spacedBy(6.dp), content = bottom)
     }
 }
 
@@ -330,26 +367,28 @@ private fun goalHeadline(goal: String) = when (goal) {
 private class TileSpec(@DrawableRes val res: Int, val dx: Int, val dy: Int, val rotation: Float, val size: Int, val phase: Float)
 
 private val inviteTiles = listOf(
-    TileSpec(R.drawable.pro_tile_1, -112, -64, -10f, 68, 0f), TileSpec(R.drawable.pro_tile_2, 112, -88, 8f, 60, .25f),
-    TileSpec(R.drawable.pro_tile_3, -104, 56, 6f, 64, .5f), TileSpec(R.drawable.pro_tile_4, 116, 72, -7f, 72, .75f),
+    TileSpec(R.drawable.pro_tile_1, -94, -56, -10f, 64, 0f), TileSpec(R.drawable.pro_tile_2, 94, -72, 8f, 58, .25f),
+    TileSpec(R.drawable.pro_tile_3, -88, 52, 6f, 60, .5f), TileSpec(R.drawable.pro_tile_4, 96, 62, -7f, 66, .75f),
 )
 
 /** The "make room" motion: app tiles slide out from behind Nook and leave the middle free. */
 @Composable
 private fun InviteHero(compact: Boolean = false) {
     val motion = LocalMotion.current
-    val k = (LocalConfiguration.current.screenHeightDp * 0.34f).coerceIn(250f, 330f) / 270f * if (compact) 0.8f else 1f
     val room = rememberReveal(0, 600)
     val nook = rememberReveal(100, 500)
     val float: State<Float>? = if (motion) rememberInfiniteTransition(label = "nook").animateFloat(
         -1f, 1f, infiniteRepeatable(tween(3200, easing = FastOutSlowInEasing), RepeatMode.Reverse), label = "float") else null
-    Box(Modifier.fillMaxWidth().height((270 * k).dp), contentAlignment = Alignment.Center) {
-        Box(Modifier.size((224 * k).dp).graphicsLayer { val s = 0.6f + 0.4f * room.value; scaleX = s; scaleY = s; alpha = room.value }.background(Mint, CircleShape))
-        inviteTiles.forEachIndexed { i, tile -> FloatingTile(tile, 120 + 80 * i, k) }
-        Image(painterResource(NookExpression.WELCOME_FULL.asset), stringResource(R.string.nook_description), Modifier.height((190 * k).dp).graphicsLayer {
-            val s = 0.92f + 0.08f * nook.value; scaleX = s; scaleY = s; alpha = nook.value
-            translationY = (float?.value ?: 0f) * 4.dp.toPx()
-        })
+    BoxWithConstraints(Modifier.fillMaxWidth()) {
+        val k = (maxWidth.value / 280f).coerceIn(0.75f, 1.05f) * if (compact) 0.85f else 1f
+        Box(Modifier.fillMaxWidth().height((280 * k).dp), contentAlignment = Alignment.Center) {
+            Box(Modifier.size((216 * k).dp).graphicsLayer { val s = 0.6f + 0.4f * room.value; scaleX = s; scaleY = s; alpha = room.value }.background(Mint, CircleShape))
+            inviteTiles.forEachIndexed { i, tile -> FloatingTile(tile, 120 + 80 * i, k) }
+            Image(painterResource(NookExpression.WELCOME_FULL.asset), stringResource(R.string.nook_description), Modifier.height((184 * k).dp).graphicsLayer {
+                val s = 0.92f + 0.08f * nook.value; scaleX = s; scaleY = s; alpha = nook.value
+                translationY = (float?.value ?: 0f) * 4.dp.toPx()
+            })
+        }
     }
 }
 
@@ -387,7 +426,7 @@ private fun RemindHero() {
             modifier = Modifier.fillMaxWidth().graphicsLayer {
                 translationY = -72.dp.toPx() * (1f - drop.value); alpha = drop.value.coerceIn(0f, 1f)
             },
-            shape = RoundedCornerShape(20.dp), color = WarmIvory, shadowElevation = 6.dp, border = androidx.compose.foundation.BorderStroke(1.dp, PineHairline),
+            shape = RoundedCornerShape(20.dp), color = WarmIvory, shadowElevation = 6.dp, border = BorderStroke(1.dp, PineHairline),
         ) {
             Row(Modifier.padding(12.dp), verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(12.dp)) {
                 Image(painterResource(R.drawable.offzone_icon), null, Modifier.size(40.dp).clip(RoundedCornerShape(10.dp)))
@@ -439,8 +478,12 @@ private fun TrialTimeline(days: List<Int>, remind: Boolean) {
                 Column(Modifier.padding(bottom = if (i < last) 22.dp else 0.dp).graphicsLayer {
                     alpha = 0.55f + 0.45f * ((fill.value - litAt) / 0.08f).coerceIn(0f, 1f)
                 }) {
-                    Text(if (i == 0) stringResource(R.string.pro_how_today) else pluralStringResource(R.plurals.pro_in_days, day, day),
-                        style = MaterialTheme.typography.titleMedium, fontWeight = FontWeight.SemiBold)
+                    val heading = when {
+                        i == 0 -> stringResource(R.string.pro_how_today)
+                        day == 1 -> stringResource(R.string.pro_tomorrow)
+                        else -> pluralStringResource(R.plurals.pro_in_days, day, day)
+                    }
+                    Text(heading, style = MaterialTheme.typography.titleMedium, fontWeight = FontWeight.SemiBold)
                     Text(stringResource(when {
                         i == 0 -> R.string.pro_how_today_body
                         i == last -> R.string.pro_how_end_body
@@ -473,6 +516,7 @@ private fun PlansStep(
     onPurchase: () -> Unit, onRestore: () -> Unit,
 ) {
     val context = LocalContext.current
+    val locale = LocalConfiguration.current.locales[0]
     val motion = LocalMotion.current
     val yearly = plans.firstOrNull { it.annual }
     val monthly = plans.firstOrNull { !it.annual }
@@ -484,12 +528,14 @@ private fun PlansStep(
         if (motion && !account.busy) { delay(2000); while (true) { shimmer.snapTo(0f); shimmer.animateTo(1f, tween(600, easing = Standard)); delay(5000) } }
     }
     val trial = selected.trialDays
-    val zero = remember(selected) { ProPlans.money(0, selected.currency) ?: "0" }
+    val zero = remember(selected, locale) { ProPlans.money(0, selected.currency, locale) ?: NumberFormat.getNumberInstance(locale).format(0) }
     val cadence = stringResource(if (selected.annual) R.string.pro_per_year else R.string.pro_per_month, selected.price)
     StepScaffold(
         bottom = {
             if (trial != null) Text(stringResource(R.string.pro_due_today, zero), style = MaterialTheme.typography.bodyMedium, fontWeight = FontWeight.SemiBold,
                 textAlign = TextAlign.Center, modifier = Modifier.fillMaxWidth().reveal(rememberReveal(520)))
+            if (!signedIn) Text(stringResource(R.string.pro_sign_in_note), style = MaterialTheme.typography.bodySmall, color = InkMuted,
+                textAlign = TextAlign.Center, modifier = Modifier.fillMaxWidth())
             PrimaryButton(onClick = onPurchase, enabled = !account.busy, modifier = Modifier.fillMaxWidth().reveal(rememberReveal(560)).shimmer(shimmer)) {
                 if (account.busy) CircularProgressIndicator(Modifier.size(24.dp), color = Butter, strokeWidth = 2.dp)
                 else Column(horizontalAlignment = Alignment.CenterHorizontally) {
@@ -521,12 +567,11 @@ private fun PlansStep(
                 detail = if (plan.trialDays != null) stringResource(R.string.pro_free_then, pluralStringResource(R.plurals.pro_days, plan.trialDays, plan.trialDays),
                     stringResource(if (plan.annual) R.string.pro_per_year else R.string.pro_per_month, plan.price))
                 else stringResource(if (plan.annual) R.string.pro_per_year else R.string.pro_per_month, plan.price),
-                extra = if (plan.annual) ProPlans.perMonth(plan)?.let { stringResource(R.string.pro_per_month, it) } else null,
+                extra = if (plan.annual) ProPlans.perMonth(plan, locale)?.let { stringResource(R.string.pro_per_month, it) } else null,
                 modifier = Modifier.reveal(rememberReveal(240 + 90 * i), 24.dp),
-                onClick = { onSelect(plan); if (plan.annual && !plan.id.equals(selected.id)) burst++ },
+                onClick = { onSelect(plan); if (plan.annual && plan.id != selected.id) burst++ },
             )
         }
-        if (!signedIn) Text(stringResource(R.string.pro_sign_in_note), style = MaterialTheme.typography.bodySmall, color = InkMuted)
         // D-23: before paying, say where Pro data lives; and that the store, not this screen, confirms eligibility and the final price.
         Text(stringResource(R.string.account_journal_local), style = MaterialTheme.typography.bodySmall, color = InkMuted)
         Text(stringResource(R.string.account_play_confirms), style = MaterialTheme.typography.bodySmall, color = InkMuted)
@@ -562,13 +607,13 @@ private fun PlanCard(
         Row(Modifier.fillMaxWidth().heightIn(min = 84.dp).clip(shape).background(fill, shape).border(width, line, shape)
             .selectable(selected = selected, role = Role.RadioButton, onClick = onClick).padding(horizontal = 18.dp, vertical = 14.dp),
             verticalAlignment = Alignment.CenterVertically) {
-            Column(Modifier.weight(1f), verticalArrangement = Arrangement.spacedBy(2.dp)) {
+            Column(Modifier.weight(1f).padding(end = 12.dp), verticalArrangement = Arrangement.spacedBy(4.dp)) {
                 FlowRow(horizontalArrangement = Arrangement.spacedBy(6.dp), verticalArrangement = Arrangement.spacedBy(4.dp), itemVerticalAlignment = Alignment.CenterVertically) {
                     Text(title, style = MaterialTheme.typography.titleMedium, fontWeight = FontWeight.SemiBold)
                     badges.forEachIndexed { i, label ->
-                        Surface(color = if (i == 0) Pine else SoftButter, shape = CircleShape) {
-                            Text(label, color = if (i == 0) Butter else Ink, fontSize = 12.sp, fontWeight = FontWeight.Bold, maxLines = 1, softWrap = false,
-                                modifier = Modifier.padding(horizontal = 8.dp, vertical = 2.dp))
+                        Surface(color = if (i == 0) Pine else SoftButter, shape = RoundedCornerShape(12.dp)) {
+                            Text(label, color = if (i == 0) Butter else Ink, fontSize = 12.sp, fontWeight = FontWeight.Bold,
+                                maxLines = 2, modifier = Modifier.padding(horizontal = 8.dp, vertical = 2.dp))
                         }
                     }
                 }
@@ -630,19 +675,17 @@ private fun ProLoading(onContinue: () -> Unit) {
     Column(Modifier.fillMaxSize().background(Butter).safeDrawingPadding()) {
         Row(Modifier.fillMaxWidth().padding(start = 24.dp, end = 12.dp).heightIn(min = 56.dp), verticalAlignment = Alignment.CenterVertically) {
             Spacer(Modifier.weight(1f))
-            TextButton(onClick = onContinue, modifier = Modifier.heightIn(min = 48.dp)) { Text(stringResource(R.string.pro_close)) }
+            PaywallCloseButton(onContinue)
         }
         Box(Modifier.weight(1f).fillMaxWidth(), contentAlignment = Alignment.Center) { CircularProgressIndicator(color = Pine) }
-        TextButton(onClick = onContinue, modifier = Modifier.fillMaxWidth().padding(horizontal = 24.dp, vertical = 12.dp).heightIn(min = 48.dp)) {
-            Text(stringResource(R.string.pro_continue_free))
-        }
     }
 }
 
-/** Sales off, or Pro already active: the plain screen from D-45. No price, trial or purchase button. */
+/** Sales off, or Pro already active: plain screen with Restore / Account access and Close (X). */
 @Composable
 private fun ProInfoScreen(store: AccountStore, account: AccountState, onContinue: () -> Unit, onOpenAccount: () -> Unit) {
     val context = LocalContext.current
+    val hasPro = store.hasProAccessEffective
     val heading = when (OnboardingProfile.goal(context)) {
         "rest" -> R.string.pro_headline_rest
         "presence" -> R.string.pro_headline_presence
@@ -650,22 +693,22 @@ private fun ProInfoScreen(store: AccountStore, account: AccountState, onContinue
         else -> R.string.pro_headline_work
     }
     Column(Modifier.fillMaxSize().background(Butter).safeDrawingPadding()) {
-        Row(Modifier.fillMaxWidth().padding(horizontal = 24.dp, vertical = 8.dp), verticalAlignment = Alignment.CenterVertically) {
+        Row(Modifier.fillMaxWidth().padding(start = 24.dp, end = 12.dp, top = 8.dp, bottom = 8.dp), verticalAlignment = Alignment.CenterVertically) {
             Text(stringResource(R.string.pro_eyebrow), style = MaterialTheme.typography.labelLarge,
                 fontWeight = FontWeight.Bold, letterSpacing = 1.5.sp, modifier = Modifier.weight(1f))
-            TextButton(onClick = onContinue) { Text(stringResource(R.string.pro_close)) }
+            PaywallCloseButton(onContinue)
         }
         Column(Modifier.weight(1f).verticalScroll(rememberScrollState()).padding(horizontal = 24.dp),
             verticalArrangement = Arrangement.spacedBy(22.dp)) {
             NookCatView(NookExpression.WELCOME_FULL, Modifier.fillMaxWidth().height(184.dp))
-            Text(stringResource(if (store.offersEnabled || store.hasProAccess) heading else R.string.audit_pro_unavailable_title), style = MaterialTheme.typography.headlineLarge)
-            if (!store.offersEnabled && !store.hasProAccess) Text(stringResource(R.string.audit_pro_unavailable_body), style = MaterialTheme.typography.bodyLarge)
-            if (store.offersEnabled || store.hasProAccess) BenefitList()
+            Text(stringResource(if (store.offersEnabled || hasPro) heading else R.string.audit_pro_unavailable_title), style = MaterialTheme.typography.headlineLarge)
+            if (!store.offersEnabled && !hasPro) Text(stringResource(R.string.audit_pro_unavailable_body), style = MaterialTheme.typography.bodyLarge)
+            if (store.offersEnabled || hasPro) BenefitList()
             Surface(color = Mint, shape = RoundedCornerShape(16.dp)) {
-                Text(stringResource(if (store.hasProAccess) R.string.account_pro_active else R.string.account_plans_unavailable),
+                Text(stringResource(if (hasPro) R.string.account_pro_active else R.string.account_plans_unavailable),
                     modifier = Modifier.fillMaxWidth().padding(18.dp), style = MaterialTheme.typography.bodyMedium)
             }
-            if (store.offersEnabled && !store.hasProAccess) {
+            if (store.offersEnabled && !hasPro) {
                 PrimaryButton(onClick = onOpenAccount, modifier = Modifier.fillMaxWidth()) {
                     Text(stringResource(R.string.pro_view_plans))
                 }
@@ -685,10 +728,7 @@ private fun ProInfoScreen(store: AccountStore, account: AccountState, onContinue
                 TextButton(onClick = { context.startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(BuildConfig.PRIVACY_URL))) },
                     modifier = Modifier.heightIn(min = 48.dp)) { Text(stringResource(R.string.account_privacy)) }
             }
-            Spacer(Modifier.height(8.dp))
-        }
-        PrimaryButton(onClick = onContinue, modifier = Modifier.fillMaxWidth().padding(horizontal = 24.dp, vertical = 12.dp)) {
-            Text(stringResource(R.string.pro_continue_free))
+            Spacer(Modifier.height(16.dp))
         }
     }
 }

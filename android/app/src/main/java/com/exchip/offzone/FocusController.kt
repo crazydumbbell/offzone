@@ -23,6 +23,7 @@ data class FocusState(
     val placeSession: Boolean = false,
     val monitoringPlace: Boolean = false,
     val timeOnlySession: Boolean = false,
+    val quickSession: Boolean = false,
 )
 
 object FocusController {
@@ -85,6 +86,13 @@ object FocusController {
         mutableState.value = state.value.copy(ruleEnabled = false, appliedRule = null,
             message = if (saved) R.string.engine_paused else R.string.engine_storage_error)
     }
+    /** Activates the first saved rule when no rule is currently applied. */
+    fun autoArmSavedRule(): Boolean {
+        if (!::ruleStore.isInitialized || ruleStore.error.value) return false
+        if (state.value.appliedRule != null) return false
+        val first = ruleStore.rules.value.firstOrNull() ?: return false
+        return activateRule(first.id)
+    }
     fun start(packages: Set<String>, minutes: Int, expectedGeneration: Long = generation): Boolean {
         if (expectedGeneration != generation || !state.value.connected || state.value.session != null || packages.isEmpty()) return false
         if (minutes !in FocusSession.durations) return false
@@ -92,9 +100,26 @@ object FocusController {
         if (safe.isEmpty()) return false
         stopInternal(null)
         val session = FocusSession.start(safe, minutes, SystemClock.elapsedRealtime())
-        mutableState.value = state.value.copy(session = session, remaining = session.remaining(SystemClock.elapsedRealtime()), message = null, placeSession = false)
+        mutableState.value = state.value.copy(
+            session = session, remaining = session.remaining(SystemClock.elapsedRealtime()), message = null,
+            placeSession = false, timeOnlySession = false, quickSession = true,
+        )
         onChange?.invoke()
         notify(R.string.engine_started)
+        return true
+    }
+    internal fun startTimedForTest(packages: Set<String>, durationMillis: Long): Boolean {
+        if (!state.value.connected || state.value.session != null || packages.isEmpty() || durationMillis <= 0L) return false
+        val safe = context?.let { packages - AppSelection.protectedPackages(it) } ?: packages
+        if (safe.isEmpty()) return false
+        stopInternal(null)
+        val now = SystemClock.elapsedRealtime()
+        val session = FocusSession(safe.toSet(), now, now + durationMillis)
+        mutableState.value = state.value.copy(
+            session = session, remaining = session.remaining(now), message = null,
+            placeSession = false, timeOnlySession = false, quickSession = true,
+        )
+        onChange?.invoke()
         return true
     }
     fun stop(message: Int = R.string.access_restored) { stopInternal(message) }
@@ -108,7 +133,7 @@ object FocusController {
         endWallMillis = null
         mutableState.value = state.value.copy(session = null, remaining = 0, message = message,
             insidePlace = false, checkingPlace = false, observedAt = null, distanceMeters = null,
-            accuracyMeters = null, placeSession = false, monitoringPlace = false, timeOnlySession = false)
+            accuracyMeters = null, placeSession = false, monitoringPlace = false, timeOnlySession = false, quickSession = false)
         context?.stopService(Intent(context, PlaceMonitor::class.java))
         onChange?.invoke()
         if (wasActive) notify(R.string.engine_ended)
@@ -140,7 +165,7 @@ object FocusController {
         endWallMillis = end
         val session = FocusSession(packages.toSet(), now, now + duration)
         mutableState.value = state.value.copy(session = session, remaining = duration, timeOnlySession = true,
-            placeSession = false, checkingPlace = false, message = R.string.engine_started)
+            placeSession = false, quickSession = false, checkingPlace = false, message = R.string.engine_started)
         onChange?.invoke()
         notify(R.string.engine_started)
     }
@@ -199,7 +224,7 @@ object FocusController {
         val duration = end - wallNow.toInstant().toEpochMilli()
         endWallMillis = end
         val session = FocusSession(packages.toSet(), now, now + duration)
-        mutableState.value = state.value.copy(session = session, remaining = duration, placeSession = true, message = R.string.engine_started)
+        mutableState.value = state.value.copy(session = session, remaining = duration, placeSession = true, timeOnlySession = false, quickSession = false, message = R.string.engine_started)
         onChange?.invoke()
         notify(R.string.engine_started)
     }
@@ -207,7 +232,7 @@ object FocusController {
         if (!state.value.monitoringPlace) { stop(message); return }
         val wasActive = state.value.session != null
         endWallMillis = null
-        mutableState.value = state.value.copy(session = null, remaining = 0, placeSession = false, checkingPlace = false, message = message)
+        mutableState.value = state.value.copy(session = null, remaining = 0, placeSession = false, quickSession = false, checkingPlace = false, message = message)
         onChange?.invoke()
         if (wasActive) notify(R.string.engine_ended)
     }

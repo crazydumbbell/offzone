@@ -1,5 +1,15 @@
 # Offzone Design System
 
+## v2 리디자인·유료 전환·10개 언어·스토어 ASO — 2026-11-23 (D-57)
+
+v2는 첫 설정을 마친 사용자가 무료 차단으로 우회하지 않고 바로 구독 페이월로 들어가도록 구조를 바꾸고, 화면 단계와 다국어·스토어 메타데이터를 함께 손봤다.
+
+- Figma: 기존 `리디자인` 페이지를 그대로 둔 채 `7drCIIM7NPfjPlEkiHkWpH`에 `리디자인 v2` 페이지를 새로 만들었다. `Outfit`·`Noto Sans KR`과 기존 색상 변수(`VariableID:14:6..14:41`), Nook·타일 자산을 써서 iOS(`390×844`)와 Android(`360×800`) 7쌍의 화면을 나란히 배치하고 `output/figma-v2/`로 내보냈다.
+- 유료 전환 및 안전 장치: 무료 규칙 차단을 없앴다. 첫 규칙(앱·시간·선택 장소)을 저장하면 곧바로 페이월이 열리고 `Continue with free` 선택지는 제공하지 않는다. 규칙 활성화·집중 시작·빠른 집중 시작은 `ProAccessGate`(Android `hasProAccess`, iOS `hasProAccessEffective`)로 제한하며, 구독 완료(`Step.DONE`) 시 저장된 규칙을 자동으로 켠다. `AccountIdentity.entitlementActive`의 `Store.PLAY_STORE` 샌드박스 허용과 구매 시 로그인(D-50) 흐름은 유지한다. 집중 중인 세션에서 `Restore access`는 구독 상태와 무관하게 항상 무료로 보이고 동작하며, 대기·잠금·온보딩 상태에서는 숨긴다.
+- 흐름 단순화 및 UI 개선: Goal/Rhythm·`ReadyScreen` 중복 단계를 합쳐 온보딩과 편집기를 2단계로 줄였다. 빠른 집중에서 `1`분 선택지를 빼고 `15/25/50`분만 남겼다. `PlacePickerScreen`과 `assets/map/index.html`의 150m 반경 원 표시, `AppPicker`의 앱 아이콘·선택 수 즉시 갱신, 저널·편집기의 날짜·요일·지표 현지화, `Your space` 상단과 WarmIvory 설정 카드 통일, `OffzoneTheme` 줄바꿈·Warning 색, 접근성 서비스 시스템 인셋 처리를 반영했다.
+- 10개 언어 앱·스토어 현지화: 영어를 기본으로 두고 `ko, ja, zh-Hans/rCN, zh-Hant/rTW, es, fr, de, pt-BR/rBR, it` 10개 언어를 iOS `.lproj`(공유 키 `425`개+`InfoPlist`)와 Android `locales_config.xml`(번역 문자열 `309`개+복수형 `2`개)에 넣었다. 미사용 키(Android `13`개, iOS `443`개)를 정리하고 브랜드 표기를 `Offzone`으로 통일했으며 한국어는 해요체와 `Ready`=`준비됨` 기준으로 맞췄다. `store/aso/` 아래에 Apple App Store(10개 로캘)와 Google Play(10개 로캘, `AccessibilityService API` 고지 포함) ASO 문안을 작성했다.
+- 검증 범위와 미확인 항목: `xcodebuild` 시뮬레이터 테스트 `44`건 통과(`StoreKitLocalTests` 1건 스킵)와 10개 `.lproj` 번들 포함을 확인했다. Android는 단위 테스트 `11`건·lint `0` 오류·에뮬레이터 계측 테스트 `18`건 중 `17`건 통과(`AccountStoreAuthIntegrationTest` 1건 스킵)·릴리스 AAB `bundletool validate`를 통과했고, 두 플랫폼의 `en/ko/ja/de` 캡처와 크래시 `0`건을 확인했다. 실기기, 실제 스토어 결제·영수증 검증, 원격 `main` 푸시, 스토어 제출은 수행하지 않았다.
+
 ## Pro 결제 유도 퍼널·모션 — 2026-10-02 (D-49, D-50)
 
 사용자가 참고 영상 2개를 주며 첫 설정이 끝날 때 영상처럼 결제를 유도하는 페이월을 모션그래픽과 함께 보여 달라고 지시했고 Figma Motion 사용도 허용했다. 영상 하나는 무료 체험을 4단계로 풀어 가는 퍼널(초대 → 알림 → 체험 진행 → 플랜 선택 → 스토어 결제 시트)이고, 다른 하나는 마스코트가 움직이는 한 장짜리 체험 화면(진행 타임라인 채움, 플랜 선택 반응, 버튼 문구 전환)이다. 이 절이 D-45·D-46의 "닫을 수 있는 Pro 화면 한 장"보다 우선한다. 영상의 카피·색·그림은 가져오지 않고 순서와 모션 종류만 따른다. 색·모양은 위 D-47을 쓴다.

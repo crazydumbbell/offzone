@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="journal_title">計畫與回顧</string>
+    <string name="journal_intro">一點目標，一點回顧。</string>
+    <string name="journal_local">僅儲存在此裝置上，且不包含於備份中。更換手機或刪除 Offzone 前請先匯出。</string>
+    <string name="journal_offer">探索 Pro</string>
+    <string name="journal_corrupt">無法讀取你的日誌，原始檔案並未變動。請匯出複本或刪除裝置上的資料以重新開始。</string>
+    <string name="journal_back">返回</string>
+    <string name="journal_previous">上一週</string>
+    <string name="journal_next">下一週</string>
+    <string name="journal_summary_note">這是自行撰寫的回顧，並非實際測量的專注時數。每週計畫不會自動排定 App 封鎖。</string>
+    <string name="journal_intention">你想為哪些事物留出空間？</string>
+    <string name="journal_plan_save">儲存每週目標</string>
+    <string name="journal_plan_delete">刪除此計畫</string>
+    <string name="journal_plan_empty">尚未設定本週目標。</string>
+    <string name="journal_date">回顧日期</string>
+    <string name="journal_note">什麼方法有幫助？下次想調整什麼？</string>
+    <string name="journal_reflect_save">儲存回顧</string>
+    <string name="journal_once">每天可寫一篇回顧。再次儲存將會更新當天的紀錄。</string>
+    <string name="journal_entries">本週回顧</string>
+    <string name="journal_empty">本週尚未有回顧。</string>
+    <string name="journal_reflect_delete">刪除回顧</string>
+    <string name="journal_export">匯出日誌 JSON</string>
+    <string name="journal_share">分享日誌複本</string>
+    <string name="journal_import">匯入日誌 JSON</string>
+    <string name="journal_import_note">可匯入來自 Offzone iOS 或 Android 的匯出檔案。相符的紀錄將自動合併；發生衝突的紀錄則會略過，不會更動你現有的日誌。</string>
+    <string name="journal_private">此複本包含你私人的目標與回顧內容。</string>
+    <string name="journal_delete_all">刪除裝置上的所有日誌資料</string>
+    <string name="journal_confirm">要刪除此裝置上的所有計畫與回顧嗎？此操作無法復原。</string>
+    <string name="journal_cancel">取消</string>
+    <string name="journal_saved">已儲存至此裝置。</string>
+    <string name="journal_error">無法完成此操作，現有日誌資料未受影響。請檢查檔案、儲存空間以及寫入所需的 Pro 權限。</string>
+    <string name="journal_exported">已匯出日誌複本。</string>
+    <string name="journal_kept">達成目標</string>
+    <string name="journal_partly">部分達成</string>
+    <string name="journal_again">再試一次</string>
+    <string name="goal_work">工作</string>
+    <string name="goal_rest">休息</string>
+    <string name="goal_presence">相處時光</string>
+    <string name="goal_personal">個人時間</string>
+    <string name="onboarding_title">為重要的事留出空間。</string>
+    <string name="onboarding_detail">選擇封鎖干擾的時間與地點。</string>
+    <string name="onboarding_safe">界線由你決定，進行中的專注階段隨時都能恢復。</string>
+    <string name="onboarding_start">開始使用</string>
+    <string name="onboarding_continue">繼續</string>
+    <string name="nook_description">Nook 貓咪，你的專注夥伴</string>
+</resources>

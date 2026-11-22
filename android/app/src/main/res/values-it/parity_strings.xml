@@ -1,0 +1,20 @@
+<resources>
+    <string name="home_your_space">Il tuo spazio</string>
+    <string name="home_new_rule">+ Nuova regola</string>
+    <string name="home_scheduled">In programma</string>
+    <string name="home_starts_at">Inizia alle %1$s</string>
+    <string name="home_in_focus">In concentrazione</string>
+    <string name="home_setup_needed">Configurazione necessaria</string>
+    <string name="home_create_first_rule">Crea la tua prima regola</string>
+    <string name="home_ready_when_you_are">Pronto quando vuoi</string>
+    <string name="home_ready">Pronto</string>
+    <string name="home_paused">In pausa</string>
+    <string name="home_access_restored">Accesso ripristinato</string>
+    <string name="home_check_rules">Controlla le regole</string>
+    <string name="home_create_rule">Crea una regola</string>
+    <string name="home_saved_count">%1$d salvate</string>
+    <string name="home_activate_rule">Attiva %1$s</string>
+    <string name="home_locked_title">Richiede Offzone Pro</string>
+    <string name="home_locked_body">Abbonati per attivare le regole e avviare sessioni di concentrazione.</string>
+    <string name="home_unlock_pro">Sblocca Offzone Pro</string>
+</resources>

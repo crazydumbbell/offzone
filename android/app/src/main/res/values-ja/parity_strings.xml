@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="home_your_space">あなたの空間</string>
+    <string name="home_new_rule">+ 新しいルール</string>
+    <string name="home_scheduled">予約済み</string>
+    <string name="home_starts_at">%1$sに開始</string>
+    <string name="home_in_focus">集中中</string>
+    <string name="home_setup_needed">設定が必要</string>
+    <string name="home_create_first_rule">最初のルールを作成</string>
+    <string name="home_ready_when_you_are">いつでも準備完了</string>
+    <string name="home_ready">準備完了</string>
+    <string name="home_paused">一時停止</string>
+    <string name="home_access_restored">アクセス復元済み</string>
+    <string name="home_check_rules">ルールを確認</string>
+    <string name="home_create_rule">ルールを作成</string>
+    <string name="home_saved_count">%1$d件保存済み</string>
+    <string name="home_activate_rule">%1$sを有効化</string>
+    <string name="home_locked_title">Offzone Proが必要です</string>
+    <string name="home_locked_body">登録すると、ルールを有効化して集中セッションを開始できます。</string>
+    <string name="home_unlock_pro">Offzone Proを解除</string>
+</resources>

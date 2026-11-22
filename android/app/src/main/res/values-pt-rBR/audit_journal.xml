@@ -1,0 +1,12 @@
+<resources>
+    <string name="audit_journal_read_only">Seus planos e reflexões salvos continuam disponíveis para leitura, exportação ou exclusão. Novas entradas exigem o Pro.</string>
+    <string name="audit_journal_unsaved">Alterações não salvas</string>
+    <string name="audit_journal_discard_message">Salve suas alterações antes de sair ou descarte-as para continuar.</string>
+    <string name="audit_journal_discard">Descartar alterações</string>
+    <string name="audit_journal_keep_editing">Continuar editando</string>
+    <string name="audit_journal_delete_entry">Excluir esta entrada?</string>
+    <string name="audit_journal_delete_message">Essa ação não pode ser desfeita.</string>
+    <string name="audit_journal_delete">Excluir</string>
+    <string name="audit_pro_unavailable_title">O Pro ainda não está disponível</string>
+    <string name="audit_pro_unavailable_body">Os planos não estão disponíveis no momento. Se você já assinou o Pro, restaure sua compra abaixo.</string>
+</resources>

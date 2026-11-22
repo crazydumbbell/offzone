@@ -1,0 +1,12 @@
+<resources>
+    <string name="audit_journal_read_only">I tuoi piani e le tue riflessioni salvate restano disponibili per la lettura, l’esportazione o l’eliminazione. Le nuove voci richiedono Pro.</string>
+    <string name="audit_journal_unsaved">Modifiche non salvate</string>
+    <string name="audit_journal_discard_message">Salva le modifiche prima di uscire oppure scartale per continuare.</string>
+    <string name="audit_journal_discard">Scarta modifiche</string>
+    <string name="audit_journal_keep_editing">Continua a modificare</string>
+    <string name="audit_journal_delete_entry">Eliminare questa voce?</string>
+    <string name="audit_journal_delete_message">Questa azione non può essere annullata.</string>
+    <string name="audit_journal_delete">Elimina</string>
+    <string name="audit_pro_unavailable_title">Pro non è ancora disponibile</string>
+    <string name="audit_pro_unavailable_body">I piani non sono al momento disponibili. Se ti sei già abbonato a Pro, ripristina l’acquisto qui sotto.</string>
+</resources>

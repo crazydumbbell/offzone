@@ -156,7 +156,7 @@ final class AppModel: NSObject, ObservableObject {
             let time = next.formatted(date: .omitted, time: .shortened)
             return Calendar.current.isDateInToday(next)
                 ? roomString("Starts at %@", time)
-                : roomString("Starts %@ at %@", next.formatted(.dateTime.weekday(.abbreviated)), time)
+                : roomString("Starts %@ at %@", next.formatted(.dateTime.weekday(.wide)), time)
         }
         return isFocused
             ? roomString("Until %@", Self.date(minutes: rule.endMinutes).formatted(date: .omitted, time: .shortened))
@@ -268,7 +268,7 @@ final class AppModel: NSObject, ObservableObject {
             try await AuthorizationCenter.shared.requestAuthorization(for: .individual)
             message = roomString("Screen Time is connected.")
         } catch {
-            reportError(roomString("Couldn't connect Screen Time: %@", error.localizedDescription))
+            reportError(Self.localizedScreenTimeError(error))
         }
         refresh()
         return screenTimeAuthorized
@@ -307,7 +307,7 @@ final class AppModel: NSObject, ObservableObject {
         if enabled {
             do {
                 _ = try await Self.requestNotificationAuthorization()
-            } catch { reportError(roomString("Couldn't enable notifications: %@", error.localizedDescription)) }
+            } catch { reportError(roomString("Couldn't enable notifications. Check Notification Settings and try again.")) }
         } else {
             let center = UNUserNotificationCenter.current()
             let pending = await center.pendingNotificationRequests()
@@ -415,7 +415,7 @@ final class AppModel: NSObject, ObservableObject {
             message = roomString("Saved. Activate the rule to apply it. Your current session has not changed.")
             return true
         } catch {
-            reportError(roomString("Could not save the rule: %@", error.localizedDescription))
+            reportError(Self.localizedStorageOrActionError(error, fallbackKey: "Could not save the rule. Please try again."))
             return false
         }
     }
@@ -439,7 +439,7 @@ final class AppModel: NSObject, ObservableObject {
         } catch {
             SharedState.clearRestrictions()
             refresh()
-            reportError(roomString("Could not delete the rule: %@", error.localizedDescription))
+            reportError(Self.localizedStorageOrActionError(error, fallbackKey: "Could not delete the rule. Please try again."))
             return false
         }
     }
@@ -498,7 +498,10 @@ final class AppModel: NSObject, ObservableObject {
 #endif
         let previous: RuntimeState
         do { previous = try SharedState.readRuntime(); _ = try SharedState.readRules() }
-        catch { reportError(roomString("Could not activate the rule: %@", error.localizedDescription)); return false }
+        catch {
+            reportError(Self.localizedStorageOrActionError(error, fallbackKey: "Could not activate the rule. Check Screen Time and try again."))
+            return false
+        }
         do {
             try registerSchedule(for: rule)
             cancelArrivalCheck()
@@ -528,9 +531,26 @@ final class AppModel: NSObject, ObservableObject {
                 SharedState.clearRestrictions()
                 isFocused = false
             }
-            reportError(roomString("Could not activate the rule: %@", error.localizedDescription))
+            reportError(Self.localizedStorageOrActionError(error, fallbackKey: "Could not activate the rule. Check Screen Time and try again."))
             return false
         }
+    }
+
+    /// Arms the saved rule when finishing Pro purchase if no rule is currently active.
+    @discardableResult
+    func autoArmSavedRuleIfNeeded() -> Bool {
+        guard !SharedState.ruleEnabled else { return false }
+        guard let rule = rules.first(where: { $0.id == editingRuleID }) ?? rules.first else { return false }
+        screenTimeStatus = AuthorizationCenter.shared.authorizationStatus
+        guard screenTimeAuthorized else { return false }
+        guard rule.placeMode == .anywhere || (rule.placeMode == .gps && rule.hasPlace) else { return false }
+#if !targetEnvironment(simulator)
+        if rule.placeMode == .gps {
+            guard locationManager.authorizationStatus == .authorizedAlways,
+                  locationManager.accuracyAuthorization == .fullAccuracy else { return false }
+        }
+#endif
+        return activateRule(rule.id)
     }
 
     private func registerSchedule(for rule: FocusRule) throws {
@@ -655,7 +675,7 @@ final class AppModel: NSObject, ObservableObject {
                 intervalStart: Calendar.current.dateComponents(parts, from: now),
                 intervalEnd: Calendar.current.dateComponents(parts, from: end), repeats: false))
         } catch {
-            reportError(roomString("Could not start Quick focus: %@", error.localizedDescription))
+            reportError(roomString("Could not start Quick focus. Check Screen Time and try again."))
             return false
         }
 #endif
@@ -706,7 +726,7 @@ final class AppModel: NSObject, ObservableObject {
             try SharedState.startPlaceFocus(generation: state.generation)
             message = roomString("Focus started. You can restore access at any time.")
         } catch {
-            reportError(roomString("Could not start focus: %@", error.localizedDescription))
+            reportError(Self.localizedStorageOrActionError(error, fallbackKey: "Could not start focus. Please try again."))
         }
         refresh()
     }
@@ -789,7 +809,7 @@ final class AppModel: NSObject, ObservableObject {
                 try SharedState.startPlaceFocus(generation: generation)
                 message = roomString("Focus started. You can restore access at any time.")
             } catch {
-                reportError(roomString("Could not start focus: %@", error.localizedDescription))
+                reportError(Self.localizedStorageOrActionError(error, fallbackKey: "Could not start focus. Please try again."))
             }
         }
         refresh()
@@ -806,7 +826,7 @@ final class AppModel: NSObject, ObservableObject {
         } catch {
             SharedState.clearRestrictions()
             isFocused = false
-            reportError(roomString("Access was cleared, but recovery could not be saved. Restrictions may return. Try restoring access again: %@", error.localizedDescription))
+            reportError(Self.localizedStorageOrActionError(error, fallbackKey: "Access was cleared, but recovery could not be saved. Try restoring access again."))
         }
     }
 
@@ -824,7 +844,7 @@ final class AppModel: NSObject, ObservableObject {
         } catch {
             SharedState.clearRestrictions()
             isFocused = false
-            reportError(roomString("Access was cleared, but recovery could not be saved. Restrictions may return. Try restoring access again: %@", error.localizedDescription))
+            reportError(Self.localizedStorageOrActionError(error, fallbackKey: "Access was cleared, but recovery could not be saved. Try restoring access again."))
             return false
         }
     }
@@ -1208,9 +1228,41 @@ extension AppModel: CLLocationManagerDelegate {
                 self.failOpenLocation(roomString("Location could not be confirmed. Check again near a window or outside."))
             } else if self.captureCurrentLocation {
                 self.cancelPlaceLookup()
-                self.reportError(roomString("Couldn't get your current location: %@", error.localizedDescription))
+                self.reportError(Self.localizedLocationError(error))
                 self.refresh()
             }
         }
+    }
+}
+
+private extension AppModel {
+    static func localizedScreenTimeError(_ error: Error) -> String {
+        guard let fcError = error as? FamilyControlsError else {
+            return roomString("Couldn't connect Screen Time. Please try again.")
+        }
+        switch fcError {
+        case .authorizationCanceled:
+            return roomString("Screen Time access is needed to block apps.")
+        case .restricted:
+            return roomString("Screen Time can't be enabled on this device because of device restrictions.")
+        case .networkError:
+            return roomString("Screen Time couldn't connect. Check your internet connection and try again.")
+        default:
+            return roomString("Couldn't connect Screen Time. Please try again.")
+        }
+    }
+
+    static func localizedLocationError(_ error: Error) -> String {
+        if let clError = error as? CLError, clError.code == .denied {
+            return roomString("Choose Always in Location Settings so Offzone can notice when you arrive and leave.")
+        }
+        return roomString("Couldn't get your current location. Move near a window or try again.")
+    }
+
+    static func localizedStorageOrActionError(_ error: Error, fallbackKey: String) -> String {
+        if error is SharedState.StorageError {
+            return error.localizedDescription
+        }
+        return roomString(fallbackKey)
     }
 }

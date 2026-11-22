@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Offzone</string>
+    <string name="minutes">%1$d 分鐘</string>
+    <string name="apps">要暫停的 App</string>
+    <string name="choose_apps">選取 App</string>
+    <string name="apps_selected">已選取 %1$d 項</string>
+    <string name="select_hint">請至少選取一個 App 以開始。</string>
+    <string name="protected_hint">必需的系統應用程式、通話、鍵盤與主畫面將始終保持可用。</string>
+    <string name="empty_apps">找不到符合條件的 App。請先安裝你想暫停的 App，再重新開啟此清單。</string>
+    <string name="search_apps">搜尋 App</string>
+    <string name="done">完成</string>
+    <string name="start_focus">開始專注</string>
+    <string name="restore">恢復存取</string>
+    <string name="go_home">返回主畫面</string>
+    <string name="blocked_title">留給自己的片刻。</string>
+    <string name="blocked_body">此 App 在專注階段期間已暫停使用。你隨時都能免費恢復存取。</string>
+    <string name="remaining">剩餘 %1$s</string>
+    <string name="enable">設定 App 封鎖</string>
+    <string name="disclosure_title">允許 Offzone 暫停 App</string>
+    <string name="disclosure_body">Offzone 會使用 Android 無障礙功能偵測開啟的 App，並僅於你自行開始的專注階段期間，在你選取的 App 上顯示暫停畫面。此功能僅使用 App 套件名稱，不會讀取螢幕內容或輸入的文字。你的選取項目只會保留在此裝置上，不會傳送或分享給他人。你隨時都能免費恢復存取，或在 Android 設定中關閉此服務。請在下一個畫面中選取 Offzone 並開啟服務。</string>
+    <string name="agree">同意並開啟設定</string>
+    <string name="not_now">稍後再說</string>
+    <string name="service_description">於你開始的專注階段期間暫停所選 App。僅使用 App 名稱，不讀取螢幕內容，且隨時可免費恢復存取。</string>
+    <string name="session_finished">專注階段已結束，App 現已恢復可用。</string>
+    <string name="access_restored">已恢復存取，準備好後可重新開始。</string>
+    <string name="service_stopped">應用程式封鎖已停止，你的專注階段已結束。</string>
+    <string name="save_error">無法儲存你的選取內容，請再試一次。</string>
+    <string name="blocking_error">應用程式封鎖無法繼續，已恢復存取。</string>
+    <string name="setup_error">無法開啟 Android 設定。請前往「設定」→「無障礙」→「Offzone」。</string>
+    <string name="loading_apps">正在尋找 App…</string>
+    <string name="load_error">無法載入 App，請關閉此清單後再試一次。</string>
+    <string name="location_disclosure_title">允許持續地點檢查</string>
+    <string name="location_disclosure_body">Offzone 會使用準確位置來確認你是否位於所選地點內，並在你離開或無法確認位置時恢復存取。在你開始地點專注或地點監測後，即使 Offzone 未顯示於螢幕上，位置檢查仍會持續進行。常駐通知會顯示監測狀態，並讓你免費恢復存取及停止監測。抵達地點絕不會自動開始封鎖。位置紀錄只會保留在此裝置上，不會傳送給 Offzone。開啟地點選取地圖時，會將目前檢視區域與你的 IP 位址傳送至 OpenStreetMap。</string>
+    <string name="location_disclosure_agree">同意並繼續</string>
+</resources>

@@ -22,7 +22,7 @@ class RuleRuntimeTest {
                 FocusController.stop()
                 FocusController.connect()
                 assertEquals(R.string.engine_reconnected, FocusController.state.value.message)
-                assertTrue(FocusController.start(setOf(instrumentation.context.packageName), 1))
+                assertTrue(FocusController.start(setOf(instrumentation.context.packageName), 15))
                 FocusController.connect()
                 assertNull(FocusController.state.value.session)
                 assertFalse(FocusController.state.value.monitoringPlace)

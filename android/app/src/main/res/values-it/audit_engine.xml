@@ -1,0 +1,4 @@
+<resources>
+    <string name="engine_reconnected">Il blocco delle app è pronto. Le sessioni precedenti non vengono riprese; avvia una nuova sessione quando sei pronto.</string>
+    <string name="engine_restart_note">Se Android arresta Offzone o il servizio di blocco, la concentrazione termina. Le sessioni precedenti e il monitoraggio del luogo non si riavviano automaticamente: riavviali quando sei pronto.</string>
+</resources>

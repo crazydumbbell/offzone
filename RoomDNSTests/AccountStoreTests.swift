@@ -1,4 +1,6 @@
 import XCTest
+import FirebaseAuth
+import RevenueCat
 @testable import RoomDNS
 
 final class AccountStoreTests: XCTestCase {
@@ -105,5 +107,29 @@ final class AccountStoreTests: XCTestCase {
         XCTAssertFalse(AccountStore.unlockIsReady(ready: false, productID: "unlock"))
         XCTAssertFalse(AccountStore.unlockIsReady(ready: true, productID: ""))
         XCTAssertTrue(AccountStore.unlockIsReady(ready: true, productID: "unlock"))
+    }
+
+    func testSDKAndStoreErrorsMapToCleanLocalizedMessages() {
+        let networkError = URLError(.notConnectedToInternet)
+        let authMessage = AccountStore.localizedAuthError(networkError)
+        XCTAssertFalse(authMessage.contains("NSURLErrorDomain"))
+        XCTAssertFalse(authMessage.isEmpty)
+
+        let wrongPassword = NSError(domain: AuthErrorDomain, code: AuthErrorCode.wrongPassword.rawValue)
+        let authPasswordMessage = AccountStore.localizedAuthError(wrongPassword)
+        XCTAssertFalse(authPasswordMessage.contains("FIRAuthErrorDomain"))
+        XCTAssertFalse(authPasswordMessage.isEmpty)
+
+        let storeProblem = ErrorCode.storeProblemError
+        let storeMessage = AccountStore.localizedStoreError(storeProblem)
+        XCTAssertFalse(storeMessage.contains("RevenueCat"))
+        XCTAssertFalse(storeMessage.localizedCaseInsensitiveContains("continue with free"))
+        XCTAssertFalse(storeMessage.isEmpty)
+    }
+
+    func testJournalDateKeyParsingHandlesValidAndInvalidDates() {
+        XCTAssertNotNil(ProJournalStore.date(fromKey: "2026-11-22"))
+        XCTAssertNil(ProJournalStore.date(fromKey: "2026-02-30"))
+        XCTAssertNil(ProJournalStore.date(fromKey: "not-a-date"))
     }
 }

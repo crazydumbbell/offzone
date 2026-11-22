@@ -1,0 +1,23 @@
+<resources>
+    <string name="engine_storage_error">Não foi possível ler ou salvar as regras. Os dados originais foram mantidos.</string>
+    <string name="engine_rule_ready">Regra ativada. Verifique sua localização e inicie o foco durante o horário.</string>
+    <string name="engine_paused">Regras pausadas. O acesso foi restaurado.</string>
+    <string name="engine_setup_needed">Conecte o bloqueio de apps e escolha os apps antes de iniciar o foco.</string>
+    <string name="engine_location_needed">Permita a localização precisa e ative os Serviços de localização.</string>
+    <string name="engine_outside_schedule">Inicie o foco durante o horário salvo.</string>
+    <string name="engine_checking">Verificando sua localização…</string>
+    <string name="engine_arrived">Você está perto do local salvo. Inicie o foco quando estiver pronto.</string>
+    <string name="engine_outside_place">Aproxime-se do local salvo e verifique novamente.</string>
+    <string name="engine_left">Você saiu do local de foco. O acesso foi restaurado.</string>
+    <string name="engine_not_ready">Não foi possível confirmar a localização ou o horário. O foco não começou.</string>
+    <string name="engine_started">Foco iniciado. Você pode restaurar o acesso a qualquer momento.</string>
+    <string name="engine_ended">Foco encerrado. O acesso foi restaurado.</string>
+    <string name="engine_location_lost">Não foi possível confirmar a localização. O acesso foi restaurado; verifique sua localização para recomeçar.</string>
+    <string name="engine_monitor_channel">Monitoramento de local</string>
+    <string name="engine_event_channel">Atualizações de foco</string>
+    <string name="engine_monitor_title">Offzone · monitoramento de local</string>
+    <string name="engine_monitor_body">Monitorando seu local. A chegada nunca inicia o bloqueio automaticamente. Restaure o acesso para parar.</string>
+    <string name="engine_monitor_stopped">Monitoramento de local parado. O acesso foi restaurado.</string>
+    <string name="engine_monitor_start">Iniciar monitoramento de local</string>
+    <string name="engine_monitor_stop">Parar monitoramento</string>
+</resources>

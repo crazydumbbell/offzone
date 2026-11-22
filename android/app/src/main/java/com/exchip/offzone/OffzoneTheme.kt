@@ -28,6 +28,7 @@ import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.LineBreak
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
@@ -53,14 +54,18 @@ internal val Suit = FontFamily(
 )
 internal val OffzoneTypography = Typography().let { base ->
     base.copy(
-        headlineLarge = base.headlineLarge.copy(fontFamily = Suit, fontWeight = FontWeight.Bold),
-        headlineMedium = base.headlineMedium.copy(fontFamily = Suit, fontWeight = FontWeight.Bold),
-        headlineSmall = base.headlineSmall.copy(fontFamily = Suit, fontWeight = FontWeight.SemiBold),
-        titleLarge = base.titleLarge.copy(fontFamily = Suit, fontWeight = FontWeight.SemiBold),
-        titleMedium = base.titleMedium.copy(fontFamily = Suit),
-        bodyLarge = base.bodyLarge.copy(fontFamily = Suit, fontSize = 17.sp),
-        bodyMedium = base.bodyMedium.copy(fontFamily = Suit, fontSize = 16.sp),
-        bodySmall = base.bodySmall.copy(fontFamily = Suit, fontSize = 14.sp),
+        displayLarge = base.displayLarge.copy(fontFamily = Suit, lineBreak = LineBreak.Heading),
+        displayMedium = base.displayMedium.copy(fontFamily = Suit, lineBreak = LineBreak.Heading),
+        displaySmall = base.displaySmall.copy(fontFamily = Suit, lineBreak = LineBreak.Heading),
+        headlineLarge = base.headlineLarge.copy(fontFamily = Suit, fontWeight = FontWeight.Bold, lineBreak = LineBreak.Heading),
+        headlineMedium = base.headlineMedium.copy(fontFamily = Suit, fontWeight = FontWeight.Bold, lineBreak = LineBreak.Heading),
+        headlineSmall = base.headlineSmall.copy(fontFamily = Suit, fontWeight = FontWeight.SemiBold, lineBreak = LineBreak.Heading),
+        titleLarge = base.titleLarge.copy(fontFamily = Suit, fontWeight = FontWeight.SemiBold, lineBreak = LineBreak.Heading),
+        titleMedium = base.titleMedium.copy(fontFamily = Suit, lineBreak = LineBreak.Heading),
+        titleSmall = base.titleSmall.copy(fontFamily = Suit, lineBreak = LineBreak.Heading),
+        bodyLarge = base.bodyLarge.copy(fontFamily = Suit, fontSize = 17.sp, lineBreak = LineBreak.Paragraph),
+        bodyMedium = base.bodyMedium.copy(fontFamily = Suit, fontSize = 16.sp, lineBreak = LineBreak.Paragraph),
+        bodySmall = base.bodySmall.copy(fontFamily = Suit, fontSize = 14.sp, lineBreak = LineBreak.Paragraph),
         labelLarge = base.labelLarge.copy(fontFamily = Suit, fontSize = 16.sp),
     )
 }
@@ -71,7 +76,7 @@ internal val OffzoneColors = lightColorScheme(
     background = Butter, onBackground = Ink, surface = Butter, onSurface = Ink, onSurfaceVariant = InkMuted,
     surfaceContainerLowest = WarmIvory, surfaceContainerLow = WarmIvory, surfaceContainer = WarmIvory,
     surfaceContainerHigh = WarmIvory, surfaceContainerHighest = WarmIvory,
-    outline = InkMuted, outlineVariant = PineHairline, scrim = Ink.copy(alpha = 0.55f),
+    outline = InkMuted, outlineVariant = PineHairline, error = Warning, onError = Butter, scrim = Ink.copy(alpha = 0.55f),
 )
 // small = chips, extraSmall = text fields (rows, radius 16); extraLarge = dialogs (radius 24).
 internal val OffzoneShapes = Shapes(

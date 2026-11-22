@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="audit_journal_read_only">保存済みの計画やふりかえりは引き続き閲覧、書き出し、削除ができます。新しく記入するにはProが必要です。</string>
+    <string name="audit_journal_unsaved">未保存の変更</string>
+    <string name="audit_journal_discard_message">離れる前に変更を保存するか、変更を破棄して続行してください。</string>
+    <string name="audit_journal_discard">変更を破棄</string>
+    <string name="audit_journal_keep_editing">編集を続ける</string>
+    <string name="audit_journal_delete_entry">この記録を削除しますか？</string>
+    <string name="audit_journal_delete_message">この操作は取り消せません。</string>
+    <string name="audit_journal_delete">削除</string>
+    <string name="audit_pro_unavailable_title">Proはまだ利用できません</string>
+    <string name="audit_pro_unavailable_body">現在プランを読み込めません。すでにProに登録済みの場合は、下から購入を復元してください。</string>
+</resources>

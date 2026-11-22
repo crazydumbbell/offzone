@@ -3,6 +3,7 @@ package com.exchip.offzone
 import com.revenuecat.purchases.Package
 import com.revenuecat.purchases.PackageType
 import com.revenuecat.purchases.models.Period
+import java.math.BigDecimal
 import java.text.NumberFormat
 import java.util.Currency
 import java.util.Locale
@@ -32,7 +33,7 @@ internal object ProPlans {
         NumberFormat.getCurrencyInstance(locale).apply {
             this.currency = code
             minimumFractionDigits = code.defaultFractionDigits.coerceAtLeast(0); maximumFractionDigits = minimumFractionDigits
-        }.format(micros / 1_000_000.0)
+        }.format(BigDecimal.valueOf(micros).movePointLeft(6))
     }.getOrNull()
 
     fun perMonth(plan: ProPlan, locale: Locale = Locale.getDefault()) = money(plan.micros / 12, plan.currency, locale)

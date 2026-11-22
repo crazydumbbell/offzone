@@ -1,0 +1,9 @@
+<resources>
+    <string name="journal_weekly_overview">Riepilogo settimanale</string>
+    <string name="journal_weekly_intention">Proposito settimanale</string>
+    <string name="journal_daily_reflection">Riflessione quotidiana</string>
+    <string name="journal_your_data">I tuoi dati</string>
+    <string name="journal_planned_days">Giorni pianificati</string>
+    <string name="journal_reflected_days">Riflessioni</string>
+    <string name="journal_kept_days">Proposito rispettato</string>
+</resources>

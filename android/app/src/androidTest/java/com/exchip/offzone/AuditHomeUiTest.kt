@@ -11,6 +11,7 @@ import androidx.test.platform.app.InstrumentationRegistry
 import androidx.test.runner.lifecycle.ActivityLifecycleMonitorRegistry
 import androidx.test.runner.lifecycle.Stage
 import androidx.test.uiautomator.By
+import androidx.test.uiautomator.BySelector
 import androidx.test.uiautomator.UiDevice
 import org.junit.Assert.*
 import org.junit.Assume.assumeTrue
@@ -21,7 +22,7 @@ import java.time.ZonedDateTime
 
 @RunWith(AndroidJUnit4::class)
 class AuditHomeUiTest {
-    @Test fun onboardingBackQuickFocusAndIdleScheduleStart() {
+    @Test fun onboardingCancelLockedGateAndProHomeFlow() {
         assumeTrue("Isolated emulator only", Build.MODEL.contains("sdk") || Build.FINGERPRINT.contains("generic"))
         val instrumentation = InstrumentationRegistry.getInstrumentation()
         val context = instrumentation.targetContext
@@ -38,29 +39,41 @@ class AuditHomeUiTest {
         val originalRules = rules.all.toMap()
         val originalFontScale = Settings.System.getString(context.contentResolver, "font_scale")?.toFloatOrNull()
         var changedFontScale = false
-        fun visible(id: Int): Boolean {
-            if (Build.VERSION.SDK_INT >= 33) instrumentation.uiAutomation.clearCache()
-            return device.hasObject(By.text(context.getString(id)))
+        fun visible(selector: BySelector): Boolean {
+            if (Build.VERSION.SDK_INT >= 33) instrumentation.getUiAutomation(androidx.test.uiautomator.Configurator.getInstance().uiAutomationFlags).clearCache()
+            return device.hasObject(selector)
         }
-        fun awaitText(id: Int, timeout: Long = 10_000) {
+        fun visible(id: Int) = visible(By.text(context.getString(id)))
+        fun awaitSelector(selector: BySelector, label: String, timeout: Long = 10_000) {
             val deadline = SystemClock.elapsedRealtime() + timeout
-            while (!visible(id) && SystemClock.elapsedRealtime() < deadline) SystemClock.sleep(200)
-            assertTrue("Missing ${context.getString(id)}", visible(id))
+            while (SystemClock.elapsedRealtime() < deadline) {
+                if (visible(selector)) return
+                SystemClock.sleep(200)
+            }
+            assertTrue("Missing $label", visible(selector))
         }
-        fun click(id: Int) {
+        fun awaitText(id: Int, timeout: Long = 10_000) = awaitSelector(By.text(context.getString(id)), context.getString(id), timeout)
+        fun clickSelector(selector: BySelector, label: String) {
             repeat(5) {
-                if (!visible(id)) {
+                if (!visible(selector)) {
                     device.swipe(device.displayWidth / 2, device.displayHeight * 4 / 5,
                         device.displayWidth / 2, device.displayHeight / 3, 40)
                     SystemClock.sleep(200)
                 }
             }
-            awaitText(id)
-            device.findObject(By.text(context.getString(id))).click()
+            awaitSelector(selector, label)
+            val target = device.findObject(selector) ?: device.wait(androidx.test.uiautomator.Until.findObject(selector), 5_000)
+            assertNotNull("Missing $label", target)
+            target!!.click()
         }
-        fun openApp() {
-            context.startActivity(Intent(context, MainActivity::class.java)
-                .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK))
+        fun click(id: Int) = clickSelector(By.text(context.getString(id)), context.getString(id))
+        fun openApp(debugPro: Boolean? = null) {
+            val intent = Intent(context, MainActivity::class.java)
+                .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK)
+            if (debugPro != null) intent.putExtra(ProAccessGate.EXTRA_DEBUG_PRO, debugPro)
+            context.startActivity(intent)
+            device.waitForIdle(2_000)
+            SystemClock.sleep(500)
         }
         fun screenshot(name: String) {
             SystemClock.sleep(400)
@@ -72,24 +85,37 @@ class AuditHomeUiTest {
                 assertTrue(rules.edit().clear().commit())
                 assertTrue(onboarding.edit().clear().commit())
             }
-            openApp()
+            openApp(debugPro = false)
+            awaitText(R.string.onboarding_title)
+            assertTrue(visible(R.string.onboarding_sign_in))
+            assertFalse(visible(R.string.restore))
             click(R.string.onboarding_start)
-            awaitText(R.string.onboarding_goal)
-            click(R.string.onboarding_continue)
-            awaitText(R.string.onboarding_rhythm)
-            device.pressBack()
-            awaitText(R.string.onboarding_goal)
-            device.pressBack()
+            awaitText(R.string.editor_apps_title)
+            click(R.string.editor_cancel)
             awaitText(R.string.onboarding_title)
             assertFalse(OnboardingProfile.completed(context))
-            click(R.string.audit_try_focus)
-            awaitText(R.string.m_quick_note)
-            assertNull(FocusController.state.value.session)
-            device.pressBack()
+
+            // Completed onboarding without Pro lands on Locked Home.
+            instrumentation.runOnMainSync { assertTrue(OnboardingProfile.complete(context)) }
+            openApp(debugPro = false)
             awaitText(R.string.home_your_space)
-            click(R.string.audit_settings)
+            awaitText(R.string.home_unlock_pro)
+            assertFalse("Idle Home must never show Restore access", visible(R.string.restore))
+            click(R.string.m_quick)
+            awaitSelector(By.desc(context.getString(R.string.pro_close)), context.getString(R.string.pro_close))
+            clickSelector(By.desc(context.getString(R.string.pro_close)), context.getString(R.string.pro_close))
+            awaitText(R.string.home_unlock_pro)
+
+            // Pro Home flow + Settings + Schedule transition + Large font check.
+            openApp(debugPro = true)
+            val unlockDeadline = SystemClock.elapsedRealtime() + 8_000
+            while (visible(R.string.home_unlock_pro) && SystemClock.elapsedRealtime() < unlockDeadline) SystemClock.sleep(200)
+            assertFalse(visible(R.string.home_unlock_pro))
+            awaitText(R.string.home_your_space)
+            clickSelector(By.desc(context.getString(R.string.audit_settings)), context.getString(R.string.audit_settings))
             awaitText(R.string.m_account)
             assertTrue(visible(R.string.m_notifications))
+            assertFalse("Idle Settings must never show Restore access", visible(R.string.restore))
             screenshot("settings")
             device.pressBack()
             awaitText(R.string.home_your_space)
@@ -147,10 +173,11 @@ class AuditHomeUiTest {
             device.pressBack()
             awaitText(R.string.home_your_space)
             screenshot("home-large-font")
-            click(R.string.audit_settings)
+            clickSelector(By.desc(context.getString(R.string.audit_settings)), context.getString(R.string.audit_settings))
             awaitText(R.string.m_account)
             screenshot("settings-large-font")
         } finally {
+            ProAccessGate.debugProOverride = null
             try { instrumentation.runOnMainSync {
                 ActivityLifecycleMonitorRegistry.getInstance().getActivitiesInStage(Stage.RESUMED)
                     .toList().forEach { it.finish() }

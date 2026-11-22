@@ -1,0 +1,12 @@
+<resources>
+    <string name="audit_journal_read_only">Deine gespeicherten Pläne und Reflexionen bleiben zum Lesen, Exportieren oder Löschen verfügbar. Neue Einträge erfordern Pro.</string>
+    <string name="audit_journal_unsaved">Ungespeicherte Änderungen</string>
+    <string name="audit_journal_discard_message">Speichere deine Änderungen vor dem Verlassen oder verwirf sie, um fortzufahren.</string>
+    <string name="audit_journal_discard">Änderungen verwerfen</string>
+    <string name="audit_journal_keep_editing">Weiter bearbeiten</string>
+    <string name="audit_journal_delete_entry">Diesen Eintrag löschen?</string>
+    <string name="audit_journal_delete_message">Dies kann nicht rückgängig gemacht werden.</string>
+    <string name="audit_journal_delete">Löschen</string>
+    <string name="audit_pro_unavailable_title">Pro ist noch nicht verfügbar</string>
+    <string name="audit_pro_unavailable_body">Pläne sind derzeit nicht verfügbar. Wenn du Pro bereits abonniert hast, stelle deinen Kauf unten wieder her.</string>
+</resources>

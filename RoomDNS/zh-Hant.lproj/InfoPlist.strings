@@ -1,0 +1,4 @@
+"CFBundleDisplayName" = "Offzone";
+"NSLocationWhenInUseUsageDescription" = "用於將你目前的位置儲存為規則地點。";
+"NSLocationAlwaysAndWhenInUseUsageDescription" = "即使在 App 未開啟時，也用於偵測你進入或離開所選地點。";
+"CFBundleName" = "Offzone";

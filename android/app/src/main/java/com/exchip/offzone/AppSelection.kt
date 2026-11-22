@@ -3,11 +3,16 @@ package com.exchip.offzone
 import android.content.Context
 import android.content.Intent
 import android.content.pm.ApplicationInfo
+import android.graphics.drawable.Drawable
 import android.provider.Settings
 import android.telecom.TelecomManager
 import android.view.inputmethod.InputMethodManager
 
-data class SelectableApp(val packageName: String, val label: String)
+data class SelectableApp(
+    val packageName: String,
+    val label: String,
+    val icon: Drawable? = null,
+)
 
 object AppSelection {
     fun protectedPackages(context: Context): Set<String> = buildSet {
@@ -48,7 +53,11 @@ object AppSelection {
                     "com.sec.android.app.sbrowser", "org.mozilla.firefox", "com.microsoft.emmx")
                 (!system || entertainment || reviewed) && app.uid >= 10_000 && app.packageName !in protected
             }
-            .map { SelectableApp(it.activityInfo.packageName, it.loadLabel(pm).toString()) }
+            .map {
+                val packageName = it.activityInfo.packageName
+                val icon = runCatching { pm.getApplicationIcon(packageName) }.getOrNull()
+                SelectableApp(packageName, it.loadLabel(pm).toString(), icon)
+            }
             .distinctBy { it.packageName }.sortedBy { it.label.lowercase() }
     }
 

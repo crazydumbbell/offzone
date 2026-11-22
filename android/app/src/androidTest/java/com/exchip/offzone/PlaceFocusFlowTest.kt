@@ -64,7 +64,11 @@ class PlaceFocusFlowTest {
             })
         }
         fun openApp() {
-            context.startActivity(Intent(context, MainActivity::class.java).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK))
+            context.startActivity(
+                Intent(context, MainActivity::class.java)
+                    .putExtra(ProAccessGate.EXTRA_DEBUG_PRO, true)
+                    .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK),
+            )
             assertTrue(device.wait(Until.hasObject(By.text(context.getString(R.string.home_your_space))), 10_000))
         }
         fun startPlace() {
@@ -124,6 +128,7 @@ class PlaceFocusFlowTest {
             assertFalse(FocusController.state.value.monitoringPlace)
             assertNull(FocusController.state.value.session)
         } finally {
+            ProAccessGate.debugProOverride = null
             instrumentation.runOnMainSync { FocusController.pauseRule() }
             runCatching { manager.removeTestProvider(LocationManager.GPS_PROVIDER) }
             runCatching { manager.removeTestProvider(LocationManager.NETWORK_PROVIDER) }

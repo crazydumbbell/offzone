@@ -1,0 +1,35 @@
+<resources>
+    <string name="app_name">Offzone</string>
+    <string name="minutes">%1$d min</string>
+    <string name="apps">Apps para pausar</string>
+    <string name="choose_apps">Escolher apps</string>
+    <string name="apps_selected">%1$d selecionados</string>
+    <string name="select_hint">Escolha pelo menos um app para começar.</string>
+    <string name="protected_hint">Apps essenciais do sistema, chamadas, teclado e tela inicial continuam disponíveis.</string>
+    <string name="empty_apps">Nenhum app elegível encontrado. Instale um app que deseje pausar e reabra esta lista.</string>
+    <string name="search_apps">Buscar apps</string>
+    <string name="done">Concluído</string>
+    <string name="start_focus">Iniciar foco</string>
+    <string name="restore">Restaurar acesso</string>
+    <string name="go_home">Voltar à tela inicial</string>
+    <string name="blocked_title">Um momento para você.</string>
+    <string name="blocked_body">Este app está pausado durante sua sessão de foco. Você pode restaurar o acesso a qualquer momento, gratuitamente.</string>
+    <string name="remaining">%1$s restantes</string>
+    <string name="enable">Configurar bloqueio de apps</string>
+    <string name="disclosure_title">Permitir que o Offzone pause apps</string>
+    <string name="disclosure_body">O Offzone usa a Acessibilidade do Android para detectar qual app é aberto e exibir uma tela de pausa sobre os apps selecionados, apenas durante uma sessão de foco iniciada por você. Ele usa nomes de pacotes de apps, não o conteúdo da tela nem texto digitado. Sua seleção permanece neste dispositivo e não é enviada nem compartilhada. Você pode restaurar o acesso gratuitamente ou desativar o serviço nas configurações do Android a qualquer momento. Na próxima tela, selecione Offzone e ative o serviço.</string>
+    <string name="agree">Concordar e abrir configurações</string>
+    <string name="not_now">Agora não</string>
+    <string name="service_description">Pausa os apps selecionados durante as sessões de foco iniciadas por você. Usa apenas os nomes dos apps; não lê o conteúdo da tela. A restauração gratuita está sempre disponível.</string>
+    <string name="session_finished">Sessão concluída. Seus apps estão disponíveis.</string>
+    <string name="access_restored">Acesso restaurado. Comece novamente quando estiver pronto.</string>
+    <string name="service_stopped">O bloqueio de apps parou. Sua sessão foi encerrada.</string>
+    <string name="save_error">Não foi possível salvar sua seleção. Tente novamente.</string>
+    <string name="blocking_error">O bloqueio de apps não pôde continuar. O acesso foi restaurado.</string>
+    <string name="setup_error">Não foi possível abrir as configurações do Android. Abra Configurações → Acessibilidade → Offzone.</string>
+    <string name="loading_apps">Buscando seus apps…</string>
+    <string name="load_error">Não foi possível carregar os apps. Feche esta lista e tente novamente.</string>
+    <string name="location_disclosure_title">Permitir verificações contínuas de local</string>
+    <string name="location_disclosure_body">O Offzone usa localização precisa para confirmar que você está dentro do local escolhido e restaurar o acesso quando sair ou quando sua localização não puder ser confirmada. Após iniciar o foco por local ou o monitoramento, as verificações continuam mesmo quando o Offzone não estiver visível. Uma notificação contínua mostra o monitoramento e permite restaurar o acesso e parar gratuitamente. A chegada nunca inicia o bloqueio automaticamente. As leituras de localização permanecem neste dispositivo e não são enviadas ao Offzone. Ao abrir o mapa de seleção de local, a área visualizada e seu endereço IP são enviados ao OpenStreetMap.</string>
+    <string name="location_disclosure_agree">Concordar e continuar</string>
+</resources>

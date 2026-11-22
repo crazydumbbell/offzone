@@ -9,6 +9,7 @@ struct RoomDNSApp: App {
     var body: some Scene {
         WindowGroup {
             ContentView(model: model)
+                .environmentObject(model)
                 .environmentObject(account)
                 .font(.suit(.body))
                 .onOpenURL { GIDSignIn.sharedInstance.handle($0) }
@@ -40,7 +41,7 @@ extension Font {
         case .title3: return 20
         case .headline: return 17
         case .body, .callout: return 16
-        case .subheadline: return 16
+        case .subheadline: return 15
         default: return 14
         }
     }

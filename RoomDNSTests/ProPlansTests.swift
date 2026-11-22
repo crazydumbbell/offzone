@@ -89,4 +89,19 @@ final class ProPlansTests: XCTestCase {
         XCTAssertNil(ProPlanMath.reminderDate(trialEndsAt: now.addingTimeInterval(86_399), now: now))
         XCTAssertNil(ProPlanMath.reminderDate(trialEndsAt: now, now: now))
     }
+
+    func testProAccessGateGatesFocusActionsButNeverGatesActiveSessionRestore() {
+        XCTAssertFalse(ProAccessGate.canActivateRule(hasProAccess: false))
+        XCTAssertTrue(ProAccessGate.canActivateRule(hasProAccess: true))
+
+        XCTAssertFalse(ProAccessGate.canStartFocus(hasProAccess: false))
+        XCTAssertTrue(ProAccessGate.canStartFocus(hasProAccess: true))
+
+        XCTAssertFalse(ProAccessGate.canQuickFocus(hasProAccess: false))
+        XCTAssertTrue(ProAccessGate.canQuickFocus(hasProAccess: true))
+
+        // Safety invariant: active session restore must never depend on Pro access.
+        XCTAssertFalse(ProAccessGate.canRestoreActiveSession(hasActiveSession: false))
+        XCTAssertTrue(ProAccessGate.canRestoreActiveSession(hasActiveSession: true))
+    }
 }

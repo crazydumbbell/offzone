@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="audit_settings">設定</string>
+    <string name="audit_start_location">開始時に現在地を確認します。</string>
+    <string name="audit_monitoring">場所の監視がオンです</string>
+    <string name="audit_saved_place">保存した場所</string>
+</resources>

@@ -117,6 +117,14 @@ enum ProPlanMath {
 
 enum ProStoreAction { case signIn, purchase, restore }
 
+/// Gates paid rule and focus actions while keeping active session restore unconditionally free.
+enum ProAccessGate {
+    static func canActivateRule(hasProAccess: Bool) -> Bool { hasProAccess }
+    static func canStartFocus(hasProAccess: Bool) -> Bool { hasProAccess }
+    static func canQuickFocus(hasProAccess: Bool) -> Bool { hasProAccess }
+    static func canRestoreActiveSession(hasActiveSession: Bool) -> Bool { hasActiveSession }
+}
+
 struct ProPurchaseOutcome {
     let trialEndsAt: Date?
 }

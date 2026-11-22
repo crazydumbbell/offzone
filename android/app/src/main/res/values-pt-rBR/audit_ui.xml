@@ -1,0 +1,6 @@
+<resources>
+    <string name="audit_settings">Configurações</string>
+    <string name="audit_start_location">Sua localização é verificada ao iniciar.</string>
+    <string name="audit_monitoring">O monitoramento de localização está ativo</string>
+    <string name="audit_saved_place">Local salvo</string>
+</resources>

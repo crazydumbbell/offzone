@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="engine_storage_error">保存されたルールを読み書きできませんでした。元のデータは保持されています。</string>
+    <string name="engine_rule_ready">ルールが有効になりました。位置を確認し、スケジュール時間内に集中を開始してください。</string>
+    <string name="engine_paused">ルールを一時停止しました。アクセスは復元されています。</string>
+    <string name="engine_setup_needed">集中を開始する前に、アプリ制限を設定して対象アプリを選択してください。</string>
+    <string name="engine_location_needed">正確な位置情報を許可し、位置情報サービスをオンにしてください。</string>
+    <string name="engine_outside_schedule">保存したスケジュール時間内に集中を開始してください。</string>
+    <string name="engine_checking">現在地を確認しています…</string>
+    <string name="engine_arrived">保存した場所の近くにいます。準備ができたら集中を開始してください。</string>
+    <string name="engine_outside_place">保存した場所にもう少し近づいてから、もう一度確認してください。</string>
+    <string name="engine_left">集中場所から離れました。アクセスを復元しました。</string>
+    <string name="engine_not_ready">位置またはスケジュールを確認できなかったため、集中を開始しませんでした。</string>
+    <string name="engine_started">集中を開始しました。いつでもアクセスを復元できます。</string>
+    <string name="engine_ended">集中が終了しました。アクセスを復元しました。</string>
+    <string name="engine_location_lost">位置を確認できなくなったためアクセスを復元しました。再開するには位置を確認してください。</string>
+    <string name="engine_monitor_channel">場所の監視</string>
+    <string name="engine_event_channel">集中の更新</string>
+    <string name="engine_monitor_title">Offzone · 場所を監視中</string>
+    <string name="engine_monitor_body">場所を監視しています。到着しても自動で制限は始まりません。「アクセスを復元」で停止できます。</string>
+    <string name="engine_monitor_stopped">場所の監視を停止しました。アクセスを復元しました。</string>
+    <string name="engine_monitor_start">場所の監視を開始</string>
+    <string name="engine_monitor_stop">監視を停止</string>
+</resources>

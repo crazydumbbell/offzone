@@ -1,0 +1,9 @@
+<resources>
+    <string name="journal_weekly_overview">Wochenübersicht</string>
+    <string name="journal_weekly_intention">Wochenvorsatz</string>
+    <string name="journal_daily_reflection">Tagesreflexion</string>
+    <string name="journal_your_data">Deine Daten</string>
+    <string name="journal_planned_days">Geplante Tage</string>
+    <string name="journal_reflected_days">Reflexionen</string>
+    <string name="journal_kept_days">Vorsatz eingehalten</string>
+</resources>

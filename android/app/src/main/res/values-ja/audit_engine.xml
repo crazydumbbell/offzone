@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="engine_reconnected">アプリ制限の準備ができました。前回の集中セッションは再開されませんので、準備ができたら新しいセッションを開始してください。</string>
+    <string name="engine_restart_note">AndroidがOffzoneまたは制限サービスを停止すると集中も終了します。前回のセッションや場所の監視は自動では再開されません。準備ができたら再度開始してください。</string>
+</resources>

@@ -1,0 +1,23 @@
+<resources>
+    <string name="engine_storage_error">Impossible de lire ou d’enregistrer les règles. Les données d’origine sont conservées.</string>
+    <string name="engine_rule_ready">Règle activée. Vérifiez votre position, puis lancez la concentration pendant son horaire.</string>
+    <string name="engine_paused">Règles en pause. L’accès est rétabli.</string>
+    <string name="engine_setup_needed">Connectez le blocage d’apps et choisissez les apps avant de lancer la concentration.</string>
+    <string name="engine_location_needed">Autorisez la position exacte et activez les services de localisation.</string>
+    <string name="engine_outside_schedule">Lancez la concentration pendant votre horaire enregistré.</string>
+    <string name="engine_checking">Vérification de votre position…</string>
+    <string name="engine_arrived">Vous êtes près du lieu enregistré. Lancez la concentration quand vous êtes prêt.</string>
+    <string name="engine_outside_place">Rapprochez-vous du lieu enregistré, puis vérifiez à nouveau.</string>
+    <string name="engine_left">Vous avez quitté le lieu de concentration. L’accès est rétabli.</string>
+    <string name="engine_not_ready">Impossible de confirmer la position ou l’horaire. La concentration n’a pas démarré.</string>
+    <string name="engine_started">Concentration démarrée. Vous pouvez rétablir l’accès à tout moment.</string>
+    <string name="engine_ended">Concentration terminée. L’accès est rétabli.</string>
+    <string name="engine_location_lost">Impossible de confirmer la position. L’accès est rétabli ; vérifiez votre position pour recommencer.</string>
+    <string name="engine_monitor_channel">Surveillance du lieu</string>
+    <string name="engine_event_channel">Suivi de concentration</string>
+    <string name="engine_monitor_title">Offzone · surveillance du lieu</string>
+    <string name="engine_monitor_body">Surveillance du lieu en cours. L’arrivée ne déclenche jamais le blocage automatiquement. Rétablissez l’accès pour arrêter.</string>
+    <string name="engine_monitor_stopped">Surveillance du lieu arrêtée. L’accès est rétabli.</string>
+    <string name="engine_monitor_start">Démarrer la surveillance du lieu</string>
+    <string name="engine_monitor_stop">Arrêter la surveillance</string>
+</resources>

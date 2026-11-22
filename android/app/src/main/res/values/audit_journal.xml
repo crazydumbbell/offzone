@@ -9,5 +9,5 @@
     <string name="audit_journal_delete_message">This cannot be undone.</string>
     <string name="audit_journal_delete">Delete</string>
     <string name="audit_pro_unavailable_title">Pro is not available yet</string>
-    <string name="audit_pro_unavailable_body">You can keep using focus for free. If you already purchased Pro, restore your purchase below.</string>
+    <string name="audit_pro_unavailable_body">Plans are not available right now. If you already subscribed to Pro, restore your purchase below.</string>
 </resources>

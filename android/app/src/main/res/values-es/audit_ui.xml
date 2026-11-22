@@ -1,0 +1,6 @@
+<resources>
+    <string name="audit_settings">Ajustes</string>
+    <string name="audit_start_location">Tu ubicación se comprueba al iniciar.</string>
+    <string name="audit_monitoring">La supervisión de ubicación está activa</string>
+    <string name="audit_saved_place">Lugar guardado</string>
+</resources>

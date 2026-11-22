@@ -1,0 +1,23 @@
+<resources>
+    <string name="engine_storage_error">Impossibile leggere o salvare le regole. I dati originali sono stati conservati.</string>
+    <string name="engine_rule_ready">Regola attivata. Controlla la posizione, poi avvia la concentrazione durante l’orario.</string>
+    <string name="engine_paused">Regole in pausa. Accesso ripristinato.</string>
+    <string name="engine_setup_needed">Collega il blocco delle app e scegli le app prima di avviare la concentrazione.</string>
+    <string name="engine_location_needed">Consenti la posizione esatta e attiva la Localizzazione.</string>
+    <string name="engine_outside_schedule">Avvia la concentrazione durante l’orario salvato.</string>
+    <string name="engine_checking">Verifica della posizione…</string>
+    <string name="engine_arrived">Sei vicino al luogo salvato. Avvia la concentrazione quando sei pronto.</string>
+    <string name="engine_outside_place">Avvicinati al luogo salvato, poi controlla di nuovo.</string>
+    <string name="engine_left">Hai lasciato il luogo di concentrazione. Accesso ripristinato.</string>
+    <string name="engine_not_ready">Impossibile confermare posizione o orario. La concentrazione non è iniziata.</string>
+    <string name="engine_started">Concentrazione avviata. Puoi ripristinare l’accesso in qualsiasi momento.</string>
+    <string name="engine_ended">Concentrazione terminata. Accesso ripristinato.</string>
+    <string name="engine_location_lost">Impossibile confermare la posizione. Accesso ripristinato; controlla la posizione per ricominciare.</string>
+    <string name="engine_monitor_channel">Monitoraggio luogo</string>
+    <string name="engine_event_channel">Aggiornamenti concentrazione</string>
+    <string name="engine_monitor_title">Offzone · monitoraggio luogo</string>
+    <string name="engine_monitor_body">Monitoraggio del luogo in corso. L’arrivo non avvia mai il blocco automaticamente. Ripristina l’accesso per interrompere.</string>
+    <string name="engine_monitor_stopped">Monitoraggio luogo interrotto. Accesso ripristinato.</string>
+    <string name="engine_monitor_start">Avvia monitoraggio luogo</string>
+    <string name="engine_monitor_stop">Interrompi monitoraggio</string>
+</resources>

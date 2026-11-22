@@ -1,0 +1,23 @@
+<resources>
+    <string name="engine_storage_error">No se pudieron leer ni guardar las reglas. Se conservan los datos originales.</string>
+    <string name="engine_rule_ready">Regla activada. Comprueba tu ubicación e inicia la concentración durante su horario.</string>
+    <string name="engine_paused">Reglas en pausa. Se ha restaurado el acceso.</string>
+    <string name="engine_setup_needed">Conecta el bloqueo de apps y elige las apps antes de iniciar la concentración.</string>
+    <string name="engine_location_needed">Permite la ubicación precisa y activa los servicios de ubicación.</string>
+    <string name="engine_outside_schedule">Inicia la concentración dentro del horario guardado.</string>
+    <string name="engine_checking">Comprobando tu ubicación…</string>
+    <string name="engine_arrived">Estás cerca del lugar guardado. Inicia la concentración cuando quieras.</string>
+    <string name="engine_outside_place">Acércate más al lugar guardado y vuelve a comprobar.</string>
+    <string name="engine_left">Saliste del lugar de concentración. Se ha restaurado el acceso.</string>
+    <string name="engine_not_ready">No se pudo confirmar la ubicación ni el horario. La concentración no ha comenzado.</string>
+    <string name="engine_started">Concentración iniciada. Puedes restaurar el acceso en cualquier momento.</string>
+    <string name="engine_ended">Concentración finalizada. Se ha restaurado el acceso.</string>
+    <string name="engine_location_lost">No se pudo confirmar la ubicación. Se ha restaurado el acceso; compruébala para volver a empezar.</string>
+    <string name="engine_monitor_channel">Supervisión del lugar</string>
+    <string name="engine_event_channel">Novedades de concentración</string>
+    <string name="engine_monitor_title">Offzone · supervisión del lugar</string>
+    <string name="engine_monitor_body">Supervisando tu lugar. Llegar nunca inicia el bloqueo automáticamente. Restaura el acceso para detenerlo.</string>
+    <string name="engine_monitor_stopped">Supervisión del lugar detenida. Se ha restaurado el acceso.</string>
+    <string name="engine_monitor_start">Iniciar supervisión del lugar</string>
+    <string name="engine_monitor_stop">Detener supervisión</string>
+</resources>

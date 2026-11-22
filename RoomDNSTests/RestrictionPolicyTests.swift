@@ -352,8 +352,28 @@ final class RestrictionPolicyTests: XCTestCase {
         XCTAssertNil(SharedState.activeRuleID)
         XCTAssertFalse(SharedState.ruleEnabled)
         let restarted = AppModel()
-        XCTAssertNil(restarted.activeRuleID)
+        XCTAssertEqual(restarted.activeRuleID, nil)
         XCTAssertFalse(SharedState.ruleEnabled)
+    }
+
+    @MainActor
+    func testAutoArmSavedRuleArmsOnlyWhenNoRuleIsActive() async throws {
+        let model = AppModel()
+        _ = await model.requestScreenTimeAuthorization()
+        model.requestTargetSelection()
+        model.ruleName = "First"
+        XCTAssertTrue(model.saveRule(placeMode: .anywhere))
+        XCTAssertFalse(SharedState.ruleEnabled)
+        XCTAssertTrue(model.autoArmSavedRuleIfNeeded())
+        XCTAssertTrue(SharedState.ruleEnabled)
+        XCTAssertEqual(model.activeRule?.name, "First")
+
+        // Second rule does not override an already active rule.
+        model.beginNewRuleDraft()
+        model.ruleName = "Second"
+        XCTAssertTrue(model.saveRule(placeMode: .anywhere))
+        XCTAssertFalse(model.autoArmSavedRuleIfNeeded())
+        XCTAssertEqual(model.activeRule?.name, "First")
     }
 #endif
 

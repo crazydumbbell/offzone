@@ -13,7 +13,7 @@ class RuleStore(context: Context) {
     val rules = mutableRules.asStateFlow()
     val error = mutableError.asStateFlow()
     private val listener = android.content.SharedPreferences.OnSharedPreferenceChangeListener { _, key ->
-        if (key == "saved") reload()
+        if (key == "saved" || key == null) reload()
     }
     init { reload(); preferences.registerOnSharedPreferenceChangeListener(listener) }
     fun close() { preferences.unregisterOnSharedPreferenceChangeListener(listener) }

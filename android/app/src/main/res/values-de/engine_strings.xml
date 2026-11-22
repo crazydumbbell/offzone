@@ -1,0 +1,23 @@
+<resources>
+    <string name="engine_storage_error">Gespeicherte Regeln konnten nicht gelesen oder geschrieben werden. Originaldaten bleiben erhalten.</string>
+    <string name="engine_rule_ready">Regel aktiviert. Prüfe deinen Standort und starte den Fokus während des Zeitplans.</string>
+    <string name="engine_paused">Regeln pausiert. Zugriff ist wieder freigegeben.</string>
+    <string name="engine_setup_needed">Verbinde die App-Sperre und wähle Apps, bevor du den Fokus startest.</string>
+    <string name="engine_location_needed">Erlaube den genauen Standort und aktiviere die Standortdienste.</string>
+    <string name="engine_outside_schedule">Starte den Fokus während deines gespeicherten Zeitplans.</string>
+    <string name="engine_checking">Standort wird geprüft…</string>
+    <string name="engine_arrived">Du bist in der Nähe deines gespeicherten Ortes. Starte den Fokus, wenn du bereit bist.</string>
+    <string name="engine_outside_place">Bewege dich näher an deinen gespeicherten Ort und prüfe erneut.</string>
+    <string name="engine_left">Du hast den Fokusort verlassen. Zugriff ist wieder freigegeben.</string>
+    <string name="engine_not_ready">Standort oder Zeitplan konnte nicht bestätigt werden. Fokus wurde nicht gestartet.</string>
+    <string name="engine_started">Fokus gestartet. Du kannst den Zugriff jederzeit freigeben.</string>
+    <string name="engine_ended">Fokus beendet. Zugriff ist wieder freigegeben.</string>
+    <string name="engine_location_lost">Standort konnte nicht bestätigt werden. Zugriff wurde freigegeben; prüfe deinen Standort für einen Neustart.</string>
+    <string name="engine_monitor_channel">Ortsüberwachung</string>
+    <string name="engine_event_channel">Fokus-Updates</string>
+    <string name="engine_monitor_title">Offzone · Ortsüberwachung</string>
+    <string name="engine_monitor_body">Dein Ort wird überwacht. Ankunft startet nie automatisch eine Sperre. Zum Beenden Zugriff freigeben.</string>
+    <string name="engine_monitor_stopped">Ortsüberwachung gestoppt. Zugriff ist wieder freigegeben.</string>
+    <string name="engine_monitor_start">Ortsüberwachung starten</string>
+    <string name="engine_monitor_stop">Überwachung stoppen</string>
+</resources>

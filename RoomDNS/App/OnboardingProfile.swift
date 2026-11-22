@@ -11,30 +11,6 @@ enum FocusGoal: String, CaseIterable, Identifiable {
         case .personal: "Personal time"
         }
     }
-    var detail: String {
-        switch self {
-        case .work: "Give one thing your full attention."
-        case .rest: "Leave a little space before sleep."
-        case .presence: "Be here for the people with you."
-        case .personal: "Make time for something you enjoy."
-        }
-    }
-    var symbol: String {
-        switch self {
-        case .work: "sun.max"
-        case .rest: "moon"
-        case .presence: "person.2"
-        case .personal: "leaf"
-        }
-    }
-    var ruleName: String {
-        switch self {
-        case .work: "Work time"
-        case .rest: "Wind-down"
-        case .presence: "Time together"
-        case .personal: "My time"
-        }
-    }
     var headline: String {
         switch self {
         case .work: "Make room for your focus."
@@ -49,13 +25,6 @@ enum FocusGoal: String, CaseIterable, Identifiable {
 enum FocusWindow: String, CaseIterable, Identifiable {
     case morning, afternoon, evening
     var id: String { rawValue }
-    var title: String {
-        switch self {
-        case .morning: "In the morning"
-        case .afternoon: "In the afternoon"
-        case .evening: "In the evening"
-        }
-    }
     var startMinutes: Int {
         switch self {
         case .morning: 9 * 60
@@ -73,6 +42,14 @@ enum OnboardingProfile {
     static let completedKey = "onboarding.completed"
     static let goalKey = "onboarding.goal"
     static let windowKey = "onboarding.window"
+
+    static func isCompleted(defaults: UserDefaults = .standard) -> Bool {
+        defaults.bool(forKey: completedKey)
+    }
+
+    static func markCompleted(defaults: UserDefaults = .standard) {
+        defaults.set(true, forKey: completedKey)
+    }
 
     static func draftMinutes(windowRaw: String, goal: FocusGoal, customStartMinutes: Int) -> (start: Int, end: Int) {
         if windowRaw == "custom" {

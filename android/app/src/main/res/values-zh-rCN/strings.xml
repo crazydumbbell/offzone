@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Offzone</string>
+    <string name="minutes">%1$d 分钟</string>
+    <string name="apps">要暂停的应用</string>
+    <string name="choose_apps">选择应用</string>
+    <string name="apps_selected">已选 %1$d 项</string>
+    <string name="select_hint">请至少选择一个应用以开始。</string>
+    <string name="protected_hint">必需的系统应用、电话、输入法和主屏幕将始终保持可用。</string>
+    <string name="empty_apps">未找到符合条件的应用。请安装你想暂停的应用，然后重新打开此列表。</string>
+    <string name="search_apps">搜索应用</string>
+    <string name="done">完成</string>
+    <string name="start_focus">开始专注</string>
+    <string name="restore">恢复访问</string>
+    <string name="go_home">返回主屏幕</string>
+    <string name="blocked_title">留给自己的片刻。</string>
+    <string name="blocked_body">该应用在专注会话期间已暂停。你随时可以免费恢复访问。</string>
+    <string name="remaining">剩余 %1$s</string>
+    <string name="enable">设置应用屏蔽</string>
+    <string name="disclosure_title">允许 Offzone 暂停应用</string>
+    <string name="disclosure_body">Offzone 使用 Android 无障碍功能来检测打开的应用，仅在你手动开始的专注会话期间，在你选定的应用上覆盖暂停界面。它仅使用应用包名，不会读取屏幕内容或输入的文字。你的选择仅留在此设备上，不会发送或分享。你随时可以免费恢复访问，或在 Android 设置中关闭此服务。请在下一页面选择 Offzone 并开启服务。</string>
+    <string name="agree">同意并打开设置</string>
+    <string name="not_now">暂不设置</string>
+    <string name="service_description">在你开始的专注会话期间暂停所选应用。仅使用应用名称，不读取屏幕内容。随时可免费恢复访问。</string>
+    <string name="session_finished">会话已结束，应用已恢复可用。</string>
+    <string name="access_restored">已恢复访问，准备好后可再次开始。</string>
+    <string name="service_stopped">应用屏蔽已停止，你的会话已结束。</string>
+    <string name="save_error">无法保存你的选择，请重试。</string>
+    <string name="blocking_error">应用屏蔽无法继续，已恢复访问。</string>
+    <string name="setup_error">无法打开 Android 设置。请前往“设置”→“无障碍”→“Offzone”。</string>
+    <string name="loading_apps">正在查找应用…</string>
+    <string name="load_error">无法加载应用，请关闭此列表并重试。</string>
+    <string name="location_disclosure_title">允许持续位置检查</string>
+    <string name="location_disclosure_body">Offzone 使用精确位置来确认你是否位于所选地点内，并在你离开或无法确认位置时恢复访问。在你开始地点专注或地点监测后，即使 Offzone 未显示在屏幕上，位置检查仍会继续。常驻通知会显示监测状态，并允许你免费恢复访问和停止监测。到达地点绝不会自动开始屏蔽。位置记录仅留在此设备上，不会发送给 Offzone。打开地点选择地图时，会将当前查看区域和你的 IP 地址发送至 OpenStreetMap。</string>
+    <string name="location_disclosure_agree">同意并继续</string>
+</resources>

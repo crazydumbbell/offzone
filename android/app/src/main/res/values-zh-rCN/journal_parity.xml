@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="journal_weekly_overview">每周概览</string>
+    <string name="journal_weekly_intention">每周目标</string>
+    <string name="journal_daily_reflection">每日回顾</string>
+    <string name="journal_your_data">你的数据</string>
+    <string name="journal_planned_days">计划天数</string>
+    <string name="journal_reflected_days">回顾天数</string>
+    <string name="journal_kept_days">达成目标</string>
+</resources>
