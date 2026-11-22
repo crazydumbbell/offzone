@@ -308,9 +308,9 @@
 "pro_headline_rest" = "Fai spazio a serate più tranquille.";
 "pro_headline_presence" = "Fai spazio al momento presente.";
 "pro_headline_personal" = "Fai spazio per te.";
-"pro_benefit_plan" = "Regole e orari illimitati";
-"pro_benefit_journal" = "Blocco automatico per luogo";
-"pro_benefit_review" = "Riflessioni e note quotidiane";
+"pro_benefit_plan" = "Regole di concentrazione per orario e luogo opzionale di 150 m.";
+"pro_benefit_journal" = "Concentrazione rapida da 15, 25 o 50 min quando ti serve.";
+"pro_benefit_review" = "Piani settimanali e riflessioni giornaliere salvati solo sul dispositivo.";
 "pro_day" = "%d giorno";
 "pro_days" = "%d giorni";
 "pro_tomorrow" = "Domani";
@@ -336,7 +336,7 @@
 "pro_how_free_body" = "Sei ancora nella prova gratuita.";
 "pro_how_end_body" = "Il tuo piano inizia, a meno che non annulli prima.";
 "pro_plans_title" = "Scegli il tuo piano.";
-"pro_plans_sub" = "Regole illimitate, blocco basato sul luogo e riflessioni quotidiane.";
+"pro_plans_sub" = "Regole di concentrazione, concentrazione rapida, pianificazione settimanale e diario privato.";
 "pro_yearly" = "Annuale";
 "pro_monthly" = "Mensile";
 "pro_best_value" = "Più conveniente";
@@ -381,9 +381,6 @@
 "See plans" = "Vedi i piani";
 "Pick the days, times, and rule details." = "Scegli giorni, orari e dettagli della regola.";
 "Trigger at a place (optional)" = "Attiva in un luogo (opzionale)";
-"Unlimited rules & schedules" = "Regole e orari illimitati";
-"Place-based automatic shielding" = "Blocco automatico per luogo";
-"Daily focus reflections & logs" = "Riflessioni e note quotidiane";
 "Plans aren’t available right now. Try again in a moment." = "I piani non sono al momento disponibili. Riprova tra poco.";
 "Your rules stay on this iPhone." = "Le tue regole restano su questo iPhone.";
 "Verify your email to manage your account and purchases." = "Verifica la tua e-mail per gestire account e acquisti.";

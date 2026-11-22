@@ -10,6 +10,16 @@ v2는 첫 설정을 마친 사용자가 무료 차단으로 우회하지 않고 
 - 10개 언어 앱·스토어 현지화: 영어를 기본으로 두고 `ko, ja, zh-Hans/rCN, zh-Hant/rTW, es, fr, de, pt-BR/rBR, it` 10개 언어를 iOS `.lproj`(공유 키 `425`개+`InfoPlist`)와 Android `locales_config.xml`(번역 문자열 `309`개+복수형 `2`개)에 넣었다. 미사용 키(Android `13`개, iOS `443`개)를 정리하고 브랜드 표기를 `Offzone`으로 통일했으며 한국어는 해요체와 `Ready`=`준비됨` 기준으로 맞췄다. `store/aso/` 아래에 Apple App Store(10개 로캘)와 Google Play(10개 로캘, `AccessibilityService API` 고지 포함) ASO 문안을 작성했다.
 - 검증 범위와 미확인 항목: `xcodebuild` 시뮬레이터 테스트 `44`건 통과(`StoreKitLocalTests` 1건 스킵)와 10개 `.lproj` 번들 포함을 확인했다. Android는 단위 테스트 `11`건·lint `0` 오류·에뮬레이터 계측 테스트 `18`건 중 `17`건 통과(`AccountStoreAuthIntegrationTest` 1건 스킵)·릴리스 AAB `bundletool validate`를 통과했고, 두 플랫폼의 `en/ko/ja/de` 캡처와 크래시 `0`건을 확인했다. 실기기, 실제 스토어 결제·영수증 검증, 원격 `main` 푸시, 스토어 제출은 수행하지 않았다.
 
+## v2 페이월 문구·레이아웃·Figma·스토어 아트워크 정렬 — 2026-11-23 (D-58)
+
+사용자 여정 점검에서 드러난 네 가지 불일치를 코드, Figma `리디자인 v2`, 스토어 홍보 이미지, 메타데이터 전반에 걸쳐 정리했다.
+
+- iOS 플랜 화면 여백 조정: `RoomDNS/App/ProPaywallView.swift`의 `ProPlansPage`에서 `ProPage(spacing: 12)`와 마스코트 높이(`68pt`)를 줄여 기기 로컬 저장·백업 제외 안내와 자동 갱신 안내가 첫 화면 하단 위로 모두 들어오게 고쳤다.
+- 10개 로캘 페이월 문구 정렬: `RoomDNS/Info.plist`의 `RoomProBenefits`를 시맨틱 키(`pro_benefit_plan`, `pro_benefit_journal`, `pro_benefit_review`)로 바꾸고 미사용 영어 리터럴 키 3개를 제거해 공유 iOS 키를 `422`개(`+InfoPlist`)로 줄였다. iOS `*.lproj/Localizable.strings` 10종과 Android `values*/pro_paywall.xml` 10종 모두에서 `pro_plans_sub`와 혜택 3줄을 실제 v2 기능(일정·선택형 150m 장소 집중 규칙, 15·25·50분 바로 집중, 기기 저장 주간 계획·일간 회고)과 일치시켰다.
+- Figma `04` 퍼널 및 계정 표기 정정: Figma `7drCIIM7NPfjPlEkiHkWpH`(`리디자인 v2`의 `04 · Hard Paywall Funnel`)를 D-50 순서(월간 14일 체험 카드 우선, 연간 `Best value · 49% off`, `1 day before end`, `Due today: $0.00`)로 맞추고 `output/figma-v2/04-paywall-funnel.png`를 갱신했다. `AccountStore.swift`·`AccountViews.swift`에 이미 구현된 Apple·Google·이메일 로그인 상태에 맞춰 `APP_METADATA.json`의 `account_provider` 오기도 정정했다.
+- v2 스토어 홍보 이미지 제작: `output/store-art-v2/`에 App Store 3쌍(6장, `1320×2868`)·Google Play 3쌍(6장, `1080×1920`)·`contact-v2.png`를 새로 생성해 v1 7단계 캡처와 유휴 `Restore access` 이미지를 대체했다.
+- 검증 범위: 수정 후 `check_localization.py`·`check_aso.py`·`check_product_alignment.py --self-test` 통과, iOS 시뮬레이터 `xcodebuild test` `44`건 실행(`StoreKitLocalTests` 1건 스킵)·`0` 실패, Android `:app:testDebugUnitTest` `11/11`·`:app:lintDebug` `0` 오류(`48` 경고)·`assembleRelease`/`bundleRelease`/`bundletool validate` 및 `StoreScreenshotTest`·`ProPaywallGateUiTest` `2/2` 통과(`Offzone_Dev`, 크래시 `0`건)를 확인했다. 18건 전체 계측 실행(`17/18`)은 `pro_paywall.xml` 4개 문구 수정 전에 수행했고, 실기기·실결제·원격 푸시·스토어 업로드는 미실행이다.
+
 ## Pro 결제 유도 퍼널·모션 — 2026-10-02 (D-49, D-50)
 
 사용자가 참고 영상 2개를 주며 첫 설정이 끝날 때 영상처럼 결제를 유도하는 페이월을 모션그래픽과 함께 보여 달라고 지시했고 Figma Motion 사용도 허용했다. 영상 하나는 무료 체험을 4단계로 풀어 가는 퍼널(초대 → 알림 → 체험 진행 → 플랜 선택 → 스토어 결제 시트)이고, 다른 하나는 마스코트가 움직이는 한 장짜리 체험 화면(진행 타임라인 채움, 플랜 선택 반응, 버튼 문구 전환)이다. 이 절이 D-45·D-46의 "닫을 수 있는 Pro 화면 한 장"보다 우선한다. 영상의 카피·색·그림은 가져오지 않고 순서와 모션 종류만 따른다. 색·모양은 위 D-47을 쓴다.

@@ -26,9 +26,9 @@
 	<string>offzone_pro</string>
 	<key>RoomProBenefits</key>
 	<array>
-		<string>Unlimited rules &amp; schedules</string>
-		<string>Place-based automatic shielding</string>
-		<string>Daily focus reflections &amp; logs</string>
+		<string>pro_benefit_plan</string>
+		<string>pro_benefit_journal</string>
+		<string>pro_benefit_review</string>
 	</array>
 	<key>RoomTermsURL</key>
 	<string>https://www.apple.com/legal/internet-services/itunes/dev/stdeula/</string>

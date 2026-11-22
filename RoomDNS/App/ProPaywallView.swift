@@ -379,21 +379,25 @@ private struct ProPlansPage: View {
     private var monthly: ProPlanDisplay? { plans.first { !$0.annual } }
 
     var body: some View {
-        ProPage {
-            Image("OffzonePro-nook-peek").resizable().scaledToFit().frame(height: 96)
+        ProPage(spacing: 12) {
+            Image("OffzonePro-nook-peek").resizable().scaledToFit().frame(height: 68)
                 .frame(maxWidth: .infinity).accessibilityHidden(true).proReveal(delay: 0, duration: 420, rise: 24)
-            Text(roomString("pro_plans_title")).proHeading().proReveal(delay: 120)
-            Text(roomString("pro_plans_sub")).foregroundStyle(Color.roomInkSecondary)
-                .fixedSize(horizontal: false, vertical: true).proReveal(delay: 180)
-            ForEach(Array(plans.enumerated()), id: \.element.id) { i, plan in
-                ProPlanCard(plan: plan, selected: selected.id == plan.id,
-                            savings: plan.annual ? ProPlanMath.savingsPercent(annual: annual, monthly: monthly) : nil,
-                            perMonth: plan.annual ? ProPlanMath.monthlyEquivalent(annual: annual, monthly: monthly).flatMap { ProPlanMath.money($0, currency: plan.currency) } : nil,
-                            burst: plan.annual ? burst : 0) {
-                    withAnimation(reduceMotion ? .linear(duration: 0.1) : ProMotion.state(duration: 0.22)) { select(plan) }
+            VStack(alignment: .leading, spacing: 6) {
+                Text(roomString("pro_plans_title")).proHeading().proReveal(delay: 120)
+                Text(roomString("pro_plans_sub")).foregroundStyle(Color.roomInkSecondary)
+                    .fixedSize(horizontal: false, vertical: true).proReveal(delay: 180)
+            }
+            VStack(spacing: 10) {
+                ForEach(Array(plans.enumerated()), id: \.element.id) { i, plan in
+                    ProPlanCard(plan: plan, selected: selected.id == plan.id,
+                                savings: plan.annual ? ProPlanMath.savingsPercent(annual: annual, monthly: monthly) : nil,
+                                perMonth: plan.annual ? ProPlanMath.monthlyEquivalent(annual: annual, monthly: monthly).flatMap { ProPlanMath.money($0, currency: plan.currency) } : nil,
+                                burst: plan.annual ? burst : 0) {
+                        withAnimation(reduceMotion ? .linear(duration: 0.1) : ProMotion.state(duration: 0.22)) { select(plan) }
+                    }
+                    .disabled(busy).proReveal(delay: 200 + i * 90, rise: 24)
+                    .id(plan.annual ? "pro.plan.annual" : "pro.plan.monthly")
                 }
-                .disabled(busy).proReveal(delay: 200 + i * 90, rise: 24)
-                .id(plan.annual ? "pro.plan.annual" : "pro.plan.monthly")
             }
             Text("Stored only on this iPhone, excluded from backup. Export before changing phones or deleting Offzone.")
                 .font(.suit(.footnote)).foregroundStyle(Color.roomInkSecondary).fixedSize(horizontal: false, vertical: true)
@@ -451,13 +455,14 @@ private struct ProPlansPage: View {
 
 struct ProPage<Content: View, Footer: View>: View {
     var centered = false
+    var spacing: CGFloat = 16
     @ViewBuilder let content: () -> Content
     @ViewBuilder let footer: () -> Footer
     var body: some View {
         GeometryReader { proxy in
             ScrollViewReader { reader in
                 ScrollView {
-                    VStack(alignment: .leading, spacing: 16) {
+                    VStack(alignment: .leading, spacing: spacing) {
                         content()
                         Color.clear.frame(height: 1).id("pro.page.bottom")
                     }

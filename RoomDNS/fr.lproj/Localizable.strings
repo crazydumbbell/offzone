@@ -308,9 +308,9 @@
 "pro_headline_rest" = "Faites de la place pour des soirées apaisées.";
 "pro_headline_presence" = "Faites de la place pour l’instant présent.";
 "pro_headline_personal" = "Faites de la place pour vous.";
-"pro_benefit_plan" = "Règles et horaires illimités";
-"pro_benefit_journal" = "Blocage automatique selon le lieu";
-"pro_benefit_review" = "Réflexions et suivi quotidiens";
+"pro_benefit_plan" = "Règles de concentration par horaire et lieu optionnel de 150 m.";
+"pro_benefit_journal" = "Concentration rapide de 15, 25 ou 50 min à tout moment.";
+"pro_benefit_review" = "Plans hebdomadaires et réflexions quotidiennes stockés uniquement sur votre appareil.";
 "pro_day" = "%d jour";
 "pro_days" = "%d jours";
 "pro_tomorrow" = "Demain";
@@ -336,7 +336,7 @@
 "pro_how_free_body" = "Toujours dans votre essai gratuit.";
 "pro_how_end_body" = "Votre forfait démarre sauf si vous annulez avant.";
 "pro_plans_title" = "Choisissez votre forfait.";
-"pro_plans_sub" = "Règles illimitées, blocage par lieu et réflexions quotidiennes.";
+"pro_plans_sub" = "Règles de concentration, concentration rapide, planification hebdomadaire et journal privé.";
 "pro_yearly" = "Annuel";
 "pro_monthly" = "Mensuel";
 "pro_best_value" = "Meilleure offre";
@@ -381,9 +381,6 @@
 "See plans" = "Voir les forfaits";
 "Pick the days, times, and rule details." = "Choisissez les jours, les horaires et les détails de la règle.";
 "Trigger at a place (optional)" = "Déclencher selon un lieu (facultatif)";
-"Unlimited rules & schedules" = "Règles et horaires illimités";
-"Place-based automatic shielding" = "Blocage automatique selon le lieu";
-"Daily focus reflections & logs" = "Réflexions et suivi quotidiens";
 "Plans aren’t available right now. Try again in a moment." = "Les forfaits sont indisponibles pour le moment. Réessayez dans un instant.";
 "Your rules stay on this iPhone." = "Vos règles restent sur cet iPhone.";
 "Verify your email to manage your account and purchases." = "Vérifiez votre e-mail pour gérer votre compte et vos achats.";

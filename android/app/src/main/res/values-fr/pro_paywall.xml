@@ -5,9 +5,9 @@
     <string name="pro_headline_rest">Faites de la place pour des soirées apaisées.</string>
     <string name="pro_headline_presence">Faites de la place pour l’instant présent.</string>
     <string name="pro_headline_personal">Faites de la place pour vous.</string>
-    <string name="pro_benefit_plan">Organisez votre semaine autour de l’essentiel.</string>
-    <string name="pro_benefit_journal">Tenez un journal de réflexion privé.</string>
-    <string name="pro_benefit_review">Passez en revue vos intentions et réflexions hebdomadaires.</string>
+    <string name="pro_benefit_plan">Règles de concentration par horaire et lieu optionnel de 150 m.</string>
+    <string name="pro_benefit_journal">Concentration rapide de 15, 25 ou 50 min à tout moment.</string>
+    <string name="pro_benefit_review">Plans hebdomadaires et réflexions quotidiennes stockés uniquement sur votre appareil.</string>
     <string name="pro_view_plans">Voir les forfaits et le compte</string>
     <string name="pro_tomorrow">Demain</string>
     <plurals name="pro_days">

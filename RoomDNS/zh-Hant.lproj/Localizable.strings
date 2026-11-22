@@ -308,9 +308,9 @@
 "pro_headline_rest" = "為平靜的夜晚留出空間。";
 "pro_headline_presence" = "為當下此刻留出空間。";
 "pro_headline_personal" = "為自己留出空間。";
-"pro_benefit_plan" = "無限制規則與排程";
-"pro_benefit_journal" = "依地點自動封鎖";
-"pro_benefit_review" = "每日專注回顧與紀錄";
+"pro_benefit_plan" = "依日程與可選 150 公尺地點啟用專注規則。";
+"pro_benefit_journal" = "隨時開啟 15、25 或 50 分鐘快速專注。";
+"pro_benefit_review" = "僅儲存在本機的每週計畫與每日回顧。";
 "pro_day" = "%d 天";
 "pro_days" = "%d 天";
 "pro_tomorrow" = "明天";
@@ -336,7 +336,7 @@
 "pro_how_free_body" = "仍處於免費試用期間。";
 "pro_how_end_body" = "除非提前取消，否則訂閱方案將自動開始。";
 "pro_plans_title" = "選擇你的方案";
-"pro_plans_sub" = "暢享無限制規則、依地點自動封鎖及每日專注回顧功能。";
+"pro_plans_sub" = "解鎖專注規則、快速專注、每週計畫與私密日誌。";
 "pro_yearly" = "年繳";
 "pro_monthly" = "月繳";
 "pro_best_value" = "最超值";
@@ -381,9 +381,6 @@
 "See plans" = "檢視方案";
 "Pick the days, times, and rule details." = "選擇星期、時間與規則詳情。";
 "Trigger at a place (optional)" = "於指定地點觸發（選填）";
-"Unlimited rules & schedules" = "無限制規則與排程";
-"Place-based automatic shielding" = "依地點自動封鎖";
-"Daily focus reflections & logs" = "每日專注回顧與紀錄";
 "Plans aren’t available right now. Try again in a moment." = "目前無法載入方案，請稍後再試。";
 "Your rules stay on this iPhone." = "你的規則僅儲存在這部 iPhone 上。";
 "Verify your email to manage your account and purchases." = "請驗證你的電子郵件以管理帳號與購買項目。";

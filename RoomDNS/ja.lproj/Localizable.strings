@@ -308,9 +308,9 @@
 "pro_headline_rest" = "穏やかな夜の余白をつくろう。";
 "pro_headline_presence" = "今この瞬間の余白をつくろう。";
 "pro_headline_personal" = "自分のための余白をつくろう。";
-"pro_benefit_plan" = "無制限のルールとスケジュール";
-"pro_benefit_journal" = "場所に基づく自動シールド";
-"pro_benefit_review" = "毎日の集中ふりかえりと記録";
+"pro_benefit_plan" = "スケジュールと任意の150 mエリアで集中ルールを設定。";
+"pro_benefit_journal" = "いつでも15分・25分・50分のクイック集中を開始。";
+"pro_benefit_review" = "端末内のみに保存される週間計画と毎日のふりかえり。";
 "pro_day" = "%d日";
 "pro_days" = "%d日";
 "pro_tomorrow" = "明日";
@@ -336,7 +336,7 @@
 "pro_how_free_body" = "無料トライアル期間が続きます。";
 "pro_how_end_body" = "事前に解約しない限り、プランが開始されます。";
 "pro_plans_title" = "プランを選択";
-"pro_plans_sub" = "無制限のルール、場所に基づく自動シールド、毎日の集中ふりかえりが利用できます。";
+"pro_plans_sub" = "集中ルール、クイック集中、週間計画、プライベートジャーナルがすべて使えます。";
 "pro_yearly" = "年額";
 "pro_monthly" = "月額";
 "pro_best_value" = "一番お得";
@@ -381,9 +381,6 @@
 "See plans" = "プランを見る";
 "Pick the days, times, and rule details." = "曜日、時間、ルールの詳細を設定します。";
 "Trigger at a place (optional)" = "場所を条件に追加（任意）";
-"Unlimited rules & schedules" = "無制限のルールとスケジュール";
-"Place-based automatic shielding" = "場所に基づく自動シールド";
-"Daily focus reflections & logs" = "毎日の集中ふりかえりと記録";
 "Plans aren’t available right now. Try again in a moment." = "現在プランを読み込めません。しばらくしてからもう一度お試しください。";
 "Your rules stay on this iPhone." = "ルールはこのiPhone内のみに保存されます。";
 "Verify your email to manage your account and purchases." = "アカウントと購入内容を管理するにはメールアドレスを認証してください。";

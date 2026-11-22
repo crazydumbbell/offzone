@@ -308,9 +308,9 @@
 "pro_headline_rest" = "차분한 저녁을 만들어요.";
 "pro_headline_presence" = "지금 이 순간에 머물러요.";
 "pro_headline_personal" = "나를 위한 시간을 만들어요.";
-"pro_benefit_plan" = "무제한 규칙 및 시간표";
-"pro_benefit_journal" = "장소 기반 자동 차단";
-"pro_benefit_review" = "일일 집중 회고 및 기록";
+"pro_benefit_plan" = "일정과 선택형 150m 장소 집중 규칙을 켜요.";
+"pro_benefit_journal" = "필요할 때 15·25·50분 바로 집중을 시작해요.";
+"pro_benefit_review" = "기기에만 남는 주간 계획과 일간 회고를 기록해요.";
 "pro_day" = "%d일";
 "pro_days" = "%d일";
 "pro_tomorrow" = "1일 뒤";
@@ -336,7 +336,7 @@
 "pro_how_free_body" = "무료 체험 기간이 이어져요.";
 "pro_how_end_body" = "그 전에 해지하지 않으면 플랜이 시작돼요.";
 "pro_plans_title" = "플랜을 골라 주세요.";
-"pro_plans_sub" = "무제한 규칙, 장소 기반 자동 차단, 일일 집중 회고가 열려요.";
+"pro_plans_sub" = "집중 규칙, 바로 집중, 주간 계획과 회고 저널이 열려요.";
 "pro_yearly" = "연간";
 "pro_monthly" = "월간";
 "pro_best_value" = "가장 알뜰해요";
@@ -381,9 +381,6 @@
 "See plans" = "요금제 보기";
 "Pick the days, times, and rule details." = "반복할 요일과 시간, 규칙 정보를 정해요.";
 "Trigger at a place (optional)" = "장소 조건 추가 (선택)";
-"Unlimited rules & schedules" = "무제한 규칙 및 시간표";
-"Place-based automatic shielding" = "장소 기반 자동 차단";
-"Daily focus reflections & logs" = "일일 집중 회고 및 기록";
 "Plans aren’t available right now. Try again in a moment." = "지금은 요금제를 불러올 수 없어요. 잠시 후 다시 시도해 주세요.";
 "Your rules stay on this iPhone." = "규칙은 이 iPhone에만 저장돼요.";
 "Verify your email to manage your account and purchases." = "계정과 구매를 관리하려면 이메일을 인증해 주세요.";
