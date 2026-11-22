@@ -31,7 +31,7 @@
     "Extensions/DeviceActivityMonitor/DeviceActivityMonitorExtension.swift": "e7002fd96a2710a3d2ffbf0a6ce90ed8f735366c7da0d8fbcbb4d1a5f3bc05c3",
     "Extensions/ShieldAction/ShieldActionExtension.swift": "e6ba9eee1d13a23aa871128876dc631911f517baf23a4a710341461ec9251fa7",
     "Extensions/ShieldConfiguration/ShieldConfigurationExtension.swift": "48d45d0a6a487b75cb1618d313ab9bef584eaae078cdc477aab66a812938c3a6",
-    "RoomDNS.xcodeproj/project.pbxproj": "0c7b4a92aa481ae36c05b31af7f96f43c4b3b1c29c321c693b36be4a47cedba6",
+    "RoomDNS.xcodeproj/project.pbxproj": "0920e658f86e89918ac20161d882505be6ad94394d14c9ebceb5a52daeba0182",
     "RoomDNS/App/AppModel.swift": "2258828526c9a55158c273588ce7667dbc69297bfc0ad2a16930f9eced42cc73",
     "RoomDNS/App/ContentView.swift": "7963f5d7c38b457f2359168929f443b392d7a26fc7d5f87928c080cb9fd37c4b",
     "RoomDNS/App/RoomDNSApp.swift": "97d098972f11898dc47f26870229f700389b41154fe8668d59734c337955ea5f",

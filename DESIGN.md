@@ -20,6 +20,15 @@ v2는 첫 설정을 마친 사용자가 무료 차단으로 우회하지 않고 
 - v2 스토어 홍보 이미지 제작: `output/store-art-v2/`에 App Store 3쌍(6장, `1320×2868`)·Google Play 3쌍(6장, `1080×1920`)·`contact-v2.png`를 새로 생성해 v1 7단계 캡처와 유휴 `Restore access` 이미지를 대체했다.
 - 검증 범위: 수정 후 `check_localization.py`·`check_aso.py`·`check_product_alignment.py --self-test` 통과, iOS 시뮬레이터 `xcodebuild test` `44`건 실행(`StoreKitLocalTests` 1건 스킵)·`0` 실패, Android `:app:testDebugUnitTest` `11/11`·`:app:lintDebug` `0` 오류(`48` 경고)·`assembleRelease`/`bundleRelease`/`bundletool validate` 및 `StoreScreenshotTest`·`ProPaywallGateUiTest` `2/2` 통과(`Offzone_Dev`, 크래시 `0`건)를 확인했다. 18건 전체 계측 실행(`17/18`)은 `pro_paywall.xml` 4개 문구 수정 전에 수행했고, 실기기·실결제·원격 푸시·스토어 업로드는 미실행이다.
 
+## v2.0 릴리스 버전 반영·최종 검증·main 병합 — 2026-11-23 (D-59)
+
+v2 출시 버전을 올리고 양 플랫폼 릴리스 산출물과 전체 회귀 검증을 마친 뒤 `main`에 병합·푸시했다.
+
+- 버전 반영: `RoomDNS.xcodeproj/project.pbxproj`를 `2.0 (7)`(메인 앱·3개 확장 대상 전체 10쌍)로, `android/app/build.gradle.kts`를 `versionCode = 9`, `versionName = "2.0.0"`으로 올렸다.
+- iOS 검증: `iPhone 17 Pro (OS 26.5)` 시뮬레이터에서 `xcodebuild test` `44`건 실행(`StoreKitLocalTests.testLocalPurchaseLifecycle` 1건 스킵, `0` 실패)을 확인했고, 무서명 `generic/platform=iOS` Release 빌드(`CODE_SIGNING_ALLOWED=NO`)로 `RoomDNS.app`과 3개 확장(`RoomDNSMonitor`, `RoomDNSShieldAction`, `RoomDNSShieldConfiguration`)의 `2.0 (7)`·`RoomProOfferReady = true`·10개 `.lproj` 포함을 확인했다. 서명 `.xcarchive` 생성은 Apple Developer 계정의 최신 Program License Agreement(PLA) 동의 대기로 보류되었다.
+- Android 검증: `:app:testDebugUnitTest` `11/11` 통과, `:app:lintDebug` `0` 오류(`48` 경고), 분리 ADB 포트(`5039`) `Offzone_Dev` 에뮬레이터 전체 계측 `18`건 중 `17`건 통과(`AccountStoreAuthIntegrationTest.signupVerifyGoalResetSignoutSigninDelete` 1건 스킵, `0` 실패)를 확인했다. `output/android-release-vc9/`에 스테이징한 서명·난독화 릴리스 산출물(`offzone-2.0.0-vc9-release.aab` `36.14 MB`, `offzone-2.0.0-vc9-release.apk` `31.87 MB`, `mapping-vc9.txt` `65.94 MB`)은 `bundletool validate`, 매니페스트(`versionCode="9"`, `versionName="2.0.0"`, `package="com.exchip.roomdns"`), AAB 내장 `proguard.map`, `jarsigner`/`apksigner` 서명 검증과 에뮬레이터 냉기동 스모크 테스트(`RELEASE_PID=8621`, 치명적 크래시 `0`건)를 통과했다.
+- 미실행 항목 및 병합: `origin/main`을 `update-offzone-design`으로 병합하고 원격 `update-offzone-design`과 `main`에 푸시했다(기존 체크아웃 `/Users/exchip/Desktop/exchip/App/offzone`는 미변경). 서명 iOS `.xcarchive`(PLA 동의 후), 실기기, 실결제, 스토어 업로드는 미실행이다.
+
 ## Pro 결제 유도 퍼널·모션 — 2026-10-02 (D-49, D-50)
 
 사용자가 참고 영상 2개를 주며 첫 설정이 끝날 때 영상처럼 결제를 유도하는 페이월을 모션그래픽과 함께 보여 달라고 지시했고 Figma Motion 사용도 허용했다. 영상 하나는 무료 체험을 4단계로 풀어 가는 퍼널(초대 → 알림 → 체험 진행 → 플랜 선택 → 스토어 결제 시트)이고, 다른 하나는 마스코트가 움직이는 한 장짜리 체험 화면(진행 타임라인 채움, 플랜 선택 반응, 버튼 문구 전환)이다. 이 절이 D-45·D-46의 "닫을 수 있는 Pro 화면 한 장"보다 우선한다. 영상의 카피·색·그림은 가져오지 않고 순서와 모션 종류만 따른다. 색·모양은 위 D-47을 쓴다.
