@@ -58,7 +58,7 @@
     "firebase.json": "b8d29b4167d1f6b17a0faaec36b80189152ea5edc90305fca87985e898709b16",
     "RoomDNS/App/ProJournal.swift": "d046b66e1cdd0e889860cbe7533f05d0750f7067c53e0f690d0490cef8be17a4",
     "RoomDNS/App/ProJournalView.swift": "6fdb83345de94dd4340ed3781afe838c67b46a6263ea505ad5d75e537fe9d33f",
-    "android/app/src/main/java/com/exchip/offzone/MainActivity.kt": "2fa020fb355dd2d2778edfb1cbb236b3d61486c0a221c3f0a75feabc5834c4c6",
+    "android/app/src/main/java/com/exchip/offzone/MainActivity.kt": "1fdec105e7286d48181a16910857944a335e738dd0bab3f2b144b0cc7ec76cc1",
     "android/app/src/main/java/com/exchip/offzone/AppSelection.kt": "592cbeb6ad5bd3cc9170807a5e05b562af5a97f1fb1c4b84d95d40c5c51afa93",
     "android/app/src/main/java/com/exchip/offzone/FocusController.kt": "8ddbda27144527001bc2f4605572c8797f1da83a5a86f8634601b9325b6c6951",
     "android/app/src/main/java/com/exchip/offzone/FocusSession.kt": "778ba04df541c2149f310ff222a827ad9daa1caa99e8347190ebd27c28a4e040",

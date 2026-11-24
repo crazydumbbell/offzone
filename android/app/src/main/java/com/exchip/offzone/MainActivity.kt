@@ -1,6 +1,7 @@
 package com.exchip.offzone
 
 import android.Manifest
+import android.content.ComponentName
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.os.Build
@@ -514,7 +515,7 @@ class MainActivity : ComponentActivity() {
                     scope.launch {
                         val saved = withContext(Dispatchers.IO) { AppSelection.preferences(this@MainActivity).edit().putBoolean("disclosure", true).commit() }
                         disclosure = false
-                        if (!saved) error = R.string.save_error else runCatching { startActivity(Intent(Settings.ACTION_ACCESSIBILITY_SETTINGS)) }.onFailure { error = R.string.setup_error }
+                        if (!saved) error = R.string.save_error else if (!openAccessibilitySettings()) error = R.string.setup_error
                     }
                 }) { Text(stringResource(R.string.agree)) }
             },
@@ -685,4 +686,17 @@ private fun QuickFocus(
             if (saved) { selected = values; picker = false } else error = R.string.save_error
         }
     }
+}
+
+/**
+ * Opens the accessibility list with Offzone's entry highlighted. The per-service details page
+ * needs the system-only OPEN_ACCESSIBILITY_DETAILS_SETTINGS permission, so the list is the closest we can get.
+ */
+private fun ComponentActivity.openAccessibilitySettings(): Boolean {
+    val service = ComponentName(this, FocusAccessibilityService::class.java).flattenToString()
+    val highlighted = Intent(Settings.ACTION_ACCESSIBILITY_SETTINGS)
+        .putExtra(":settings:fragment_args_key", service)
+        .putExtra(":settings:show_fragment_args", Bundle().apply { putString(":settings:fragment_args_key", service) })
+    return listOf(highlighted, Intent(Settings.ACTION_ACCESSIBILITY_SETTINGS))
+        .any { runCatching { startActivity(it) }.isSuccess }
 }
