@@ -9,7 +9,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 
 /** The selected Nook Cat in states shared by onboarding and focus screens. */
-enum class NookExpression(@DrawableRes val asset: Int) {
+enum class NookExpression(@param:DrawableRes val asset: Int) {
     WELCOME(R.drawable.nook_portraits_welcome), READY(R.drawable.nook_portraits_ready),
     FOCUSED(R.drawable.nook_portraits_focused), REFLECTION(R.drawable.nook_portraits_reflection),
     FINISHED(R.drawable.nook_portraits_finished), RECOVERED(R.drawable.nook_portraits_recovered),
@@ -19,7 +19,7 @@ enum class NookExpression(@DrawableRes val asset: Int) {
 }
 
 @Composable
-fun NookCatView(expression: NookExpression = NookExpression.WELCOME, modifier: Modifier = Modifier) {
+fun NookCatView(expression: NookExpression, modifier: Modifier = Modifier) {
     Image(
         painter = painterResource(expression.asset),
         contentDescription = stringResource(R.string.nook_description),

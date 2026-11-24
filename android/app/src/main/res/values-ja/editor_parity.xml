@@ -6,19 +6,14 @@
     <string name="editor_name_personal">自分の時間</string>
     <string name="editor_cancel">キャンセル</string>
     <string name="editor_apps_title">一時的に遠ざけるアプリを選択</string>
-    <string name="editor_apps_detail">通話、地図、銀行、認証などの必須アプリは使えるままにしておきましょう。</string>
     <string name="editor_apps_choose">アプリを選択</string>
     <string name="editor_apps_choose_again">選び直す</string>
     <string name="editor_apps_empty">まだ選択されていません</string>
     <string name="editor_place_optional">場所（任意）</string>
-    <string name="editor_place_optional_note">空欄のままにすると時間内であればどこでも開始できます。場所を選ぶと、その場所にいるときだけ開始できます。</string>
     <string name="editor_place_empty">場所指定なし（時間のみ）</string>
-    <string name="editor_place_hint">到着の判定は約150 mの範囲で行われ、部屋単位の精度ではありません。</string>
     <string name="editor_clear_place">場所を削除</string>
     <string name="editor_schedule_title">スケジュールと詳細</string>
-    <string name="editor_schedule_detail">繰り返す曜日と時間、任意の場所、ルール名を設定します。</string>
     <string name="editor_schedule_warning">集中時間は15分以上に設定してください。</string>
-    <string name="editor_schedule_overnight">翌日に終了します。</string>
     <string name="editor_next_day_badge">（翌日）</string>
     <string name="editor_name_placeholder">例: 仕事時間、リラックスタイム</string>
     <string name="editor_days">曜日</string>
@@ -28,5 +23,4 @@
     <string name="days_weekends">週末</string>
     <string name="home_starts_on">%1$s %2$sに開始</string>
     <string name="editor_time_only_place">場所なし・時間のみ</string>
-    <string name="audit_start_time_only">時間のみのルール：スケジュール時間内に「集中を開始」をタップしてください。位置情報は不要です。</string>
 </resources>

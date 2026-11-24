@@ -12,7 +12,6 @@
     <string name="pro_tomorrow">Domani</string>
     <string name="pro_preview_note">Anteprima · piani di esempio, nessun addebito</string>
     <string name="pro_try_title">Prova Offzone Pro gratis per %1$s.</string>
-    <string name="pro_no_payment">Nessun addebito ora.</string>
     <string name="pro_start_trial">Inizia prova gratuita</string>
     <string name="pro_see_plans">Vedi i piani</string>
     <string name="pro_continue">Continua</string>
@@ -31,7 +30,6 @@
     <string name="pro_how_free_body">Sei ancora nella prova gratuita.</string>
     <string name="pro_how_end_body">Il tuo piano inizia, a meno che non annulli prima.</string>
     <string name="pro_plans_title">Scegli il tuo piano.</string>
-    <string name="pro_plans_sub">Regole di concentrazione, concentrazione rapida, pianificazione settimanale e diario privato.</string>
     <string name="pro_yearly">Annuale</string>
     <string name="pro_monthly">Mensile</string>
     <string name="pro_best_value">Più conveniente</string>
@@ -40,8 +38,6 @@
     <string name="pro_per_month">%s / mese</string>
     <string name="pro_due_today">Dovuto oggi: %s</string>
     <string name="pro_free_then">%1$s gratis, poi %2$s</string>
-    <string name="pro_cta_trial_sub">Nessun addebito oggi · poi %s</string>
-    <string name="pro_cta_sub">%s · annulla quando vuoi</string>
     <string name="pro_legal">Annulla quando vuoi su Google Play. Si rinnova automaticamente fino all’annullamento.</string>
     <string name="pro_done_title">Pro è attivo.</string>
     <string name="pro_done_trial">La tua prova gratuita è iniziata.</string>

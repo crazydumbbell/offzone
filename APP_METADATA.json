@@ -80,7 +80,7 @@
     "implemented_appearance": "SUIT 한영/버터·따뜻한 아이보리·차콜 UI에 Nook Cat 정지 자산을 iOS 13 상태와 Android 온보딩·규칙 작성·준비·Pro·계정·저널·홈에 매핑. Rue 앱 자산 제거, 공식 off 아이콘 유지. iOS 시뮬레이터 검증과 Android debug 빌드·에뮬레이터 온보딩 2/2 및 첫 규칙 UI 1/1 확인. 실기기·전 여정 접근성·윤곽 프린지/원본성·출시 검증은 별도. Rue 의상3종은 과거 시안이며 Nook 옷장/판매 기능은 없다.",
     "app_icon": {
       "direction": "official_off_wordmark",
-      "source": "assets/brand/offzone-logo-master.png",
+      "source": "RoomDNS/Assets.xcassets/AppIcon.appiconset/AppIcon-1024.png",
       "colors": [
         "#FAF9F3",
         "#223E38"
@@ -94,9 +94,8 @@
       "MOTION.md"
     ],
     "assets": [
-      "assets/quiet-threshold-style-frame.png",
-      "assets/brand/offzone-logo-master.png",
-      "assets/brand/offzone-logo-source-lime.png",
+      "RoomDNS/Assets.xcassets/AppIcon.appiconset/AppIcon-1024.png",
+      "android/app/src/main/res/drawable-nodpi/offzone_icon.png",
       "RoomDNS/Assets.xcassets/OffzoneNook-portraits-welcome.imageset/art.png",
       "RoomDNS/Assets.xcassets/OffzoneNook-fullbody-welcome.imageset/art.png",
       "android/app/src/main/res/drawable-nodpi/nook_fullbody_welcome.png"
@@ -111,7 +110,6 @@
       "ManagedSettingsUI",
       "DeviceActivity",
       "CoreLocation",
-      "CoreNFC",
       "MapKit"
     ],
     "extensions": [
@@ -123,11 +121,11 @@
     "persistence": "Saved rule definitions: App Group UserDefaults/Codable with original backup. Applied runtime: versioned App Group JSON snapshot, atomic write and bounded native file lock. Unsigned simulator uses a separate local sandbox.",
     "third_party_payment_sdk_present": true,
     "account_backend_present": true,
-    "analytics_backend_present": false,
+    "analytics_backend_present": true,
     "active_rule_limit": 1,
     "gps_radius_meters": 150,
     "minimum_schedule_minutes": 15,
-    "schedule_repeats": "매일, 자정 경계 지원, 요일 선택 없음",
+    "schedule_repeats": "요일 선택 및 자정 경계 지원 (iOS weekdays, Android days)",
     "nfc_expected_url_pattern": "Legacy decoded rule URL only: https://roomdns.app/focus/<tag-id>; no current NFC execution",
     "nfc_trigger": "Removed from current runtime; legacy rule decoding only",
     "nfc_tag_rule_binding_present": false,
@@ -190,7 +188,7 @@
       "firebase_billing_plan": "Blaze",
       "blaze_upgrade_authorized": true,
       "billing_blocker": null,
-      "billing_account_id": "01FA86-230529-5132E9",
+      "billing_account_id": null,
       "billing_account_name": "내 결제 계정 2",
       "revenuecat_secret_version": "1",
       "billing_budget": {
@@ -352,13 +350,9 @@
     },
     {
       "id": "break_pass",
-      "name": "조기 종료 해제권 안내 화면",
+      "name": "조기 종료 해제권 백엔드·클라이언트 골격",
       "status": "partial",
       "evidence": [
-        {
-          "path": "RoomDNS/App/ContentView.swift",
-          "section": "UnlockPassView"
-        },
         {
           "path": "RoomDNS/App/AccountStore.swift"
         },
@@ -521,6 +515,7 @@
     "screen_time_token_storage": "기기 App Group",
     "privacy_manifest_declares_tracking": false,
     "privacy_manifest_declares_collected_data": [
+      "NSPrivacyCollectedDataTypeProductInteraction",
       "NSPrivacyCollectedDataTypeUserID",
       "NSPrivacyCollectedDataTypePurchaseHistory",
       "NSPrivacyCollectedDataTypeOtherUserContent",
@@ -530,12 +525,12 @@
     "sdk_privacy_manifest_additions": [
       "NSPrivacyCollectedDataTypeOtherDiagnosticData (unlinked, analytics)"
     ],
-    "userdefaults_required_reason": "1C8F.1",
+    "userdefaults_required_reason": "1C8F.1, CA92.1",
     "network_traffic_audited": false,
     "caveat": "Optional Google/email authentication adds email and basic Google profile to Firebase Auth; linked account UID remains purchase identity. Name/email declared for account functionality, no tracking. Public privacy v4 deployed. ASC name/email privacy labels published and reload-verified for build2. Actual auth/network flows remain unverified.",
-    "public_privacy_policy_url": "https://offzone-privacy-support.wogus5357.chatgpt.site/privacy",
-    "support_url": "https://offzone-privacy-support.wogus5357.chatgpt.site/support",
-    "marketing_url": "https://offzone-privacy-support.wogus5357.chatgpt.site/",
+    "public_privacy_policy_url": "https://crazydumbbell.github.io/offzone/privacy/",
+    "support_url": "https://crazydumbbell.github.io/offzone/support/",
+    "marketing_url": "https://crazydumbbell.github.io/offzone/",
     "domain_ownership_verified": false,
     "evidence": [
       {
@@ -593,7 +588,7 @@
       "price_anchor_currency": "USD",
       "decision_status": "proposed_pending_OFFER-01"
     },
-    "offer_ready": false
+    "offer_ready": true
   },
   "store_listing_draft": {
     "status": "draft_not_ready_for_submission",
@@ -776,7 +771,7 @@
     },
     {
       "gate": "개인정보처리방침과 지원 채널",
-      "status": "not_found_in_workspace"
+      "status": "published_in_docs_github_pages"
     },
     {
       "gate": "App Store 상품 및 가격",

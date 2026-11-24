@@ -18,19 +18,26 @@ struct RoomDNSApp: App {
 }
 
 
-// Named, bundled faces preserve real weights; relativeTo retains Dynamic Type.
+// Single-weight bundled faces (Jua by default; Fredoka-SemiBold for accented European locales).
+// Every weight resolves to the same static face to avoid faux bold; relativeTo retains Dynamic Type.
 extension Font {
+    private static let fredokaLanguages: Set<String> = ["de", "es", "fr", "it", "pt"]
+
     static func suit(_ style: Font.TextStyle, weight: Font.Weight? = nil) -> Font {
         custom(suitFace(weight ?? (style == .headline ? .semibold : .regular)), size: suitSize(style), relativeTo: style)
     }
 
     static func suitFace(_ weight: Font.Weight) -> String {
-        switch weight {
-        case .bold, .heavy, .black: return "SUIT-Bold"
-        case .semibold: return "SUIT-SemiBold"
-        case .medium: return "SUIT-Medium"
-        default: return "SUIT-Regular"
-        }
+        suitFace(forLanguage: Bundle.main.preferredLocalizations.first)
+    }
+
+    static func suitFace(forLanguage language: String?) -> String {
+        let primary = (language ?? "en")
+            .lowercased()
+            .split(whereSeparator: { $0 == "-" || $0 == "_" })
+            .first
+            .map(String.init) ?? "en"
+        return fredokaLanguages.contains(primary) ? "Fredoka-SemiBold" : "Jua-Regular"
     }
 
     static func suitSize(_ style: Font.TextStyle) -> CGFloat {

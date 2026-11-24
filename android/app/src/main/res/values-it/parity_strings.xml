@@ -12,9 +12,7 @@
     <string name="home_access_restored">Accesso ripristinato</string>
     <string name="home_check_rules">Controlla le regole</string>
     <string name="home_create_rule">Crea una regola</string>
-    <string name="home_saved_count">%1$d salvate</string>
     <string name="home_activate_rule">Attiva %1$s</string>
     <string name="home_locked_title">Richiede Offzone Pro</string>
-    <string name="home_locked_body">Abbonati per attivare le regole e avviare sessioni di concentrazione.</string>
     <string name="home_unlock_pro">Sblocca Offzone Pro</string>
 </resources>

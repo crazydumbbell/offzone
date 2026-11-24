@@ -5,14 +5,12 @@
     <string name="m_schedule">Tägliches Zeitfenster</string>
     <string name="m_start_time">Von %1$s</string>
     <string name="m_end_time">Bis %1$s</string>
-    <string name="m_schedule_note">Wähle mindestens 15 Minuten. Eine frühere Endzeit läuft bis in den nächsten Tag.</string>
     <string name="m_save_rule">Regel speichern</string>
     <string name="m_search_place">Adresse oder Ort</string>
     <string name="m_search">Suchen</string>
     <string name="m_current_place">Meinen Standort nutzen</string>
     <string name="m_place_error">Standort nicht verfügbar. Prüfe den genauen Standort und die Geräteeinstellungen oder starte eine andere Suche.</string>
     <string name="m_map_privacy">Die Suche nutzt den Geocodierungsdienst deines Geräts. Die Karte sendet den sichtbaren Bereich und deine IP-Adresse an OpenStreetMap. Dein gespeicherter Ort bleibt auf diesem Gerät.</string>
-    <string name="m_place_note">Verschiebe die Karte, um das Fadenkreuz zu setzen. Für die Ankunft ist ein aktueller, genauer Standort im Umkreis von ca. 150 m nötig.</string>
     <string name="m_account">Konto</string>
     <string name="m_check_arrival">Ankunft prüfen</string>
     <string name="m_distance">Letzte Prüfung: %1$d m entfernt · Genauigkeit ±%2$d m</string>
@@ -23,11 +21,8 @@
     <string name="m_apply">Übernehmen</string>
     <string name="m_delete">Löschen</string>
     <string name="m_quick">Schnellfokus</string>
-    <string name="m_quick_note">Wähle Dauer und Apps. Schnellfokus funktioniert überall, ohne gespeicherten Ort.</string>
     <string name="m_journal">Pläne &amp; Reflexionen</string>
     <string name="m_notifications">Fokus-Mitteilungen</string>
-    <string name="m_notifications_note">Aktiviere die Ortsüberwachung für Ankunfts- und Abfahrtshinweise. Die Überwachung zeigt eine dauerhafte Benachrichtigung an, startet nie automatisch den Fokus und stoppt, wenn du den Zugriff freigibst.</string>
-    <string name="m_android_limits">Du kannst aktive Sitzungen jederzeit freigeben. Android erlaubt es dir, den Zugriff zu widerrufen oder Offzone zu deinstallieren. Der Fokus endet, wenn sein Dienst stoppt; geteilter Bildschirm und Bild-in-Bild können die App-Sperre einschränken.</string>
     <string name="m_settings">App-Berechtigungen &amp; Einstellungen</string>
     <string name="m_delete_note">„%1$s“ löschen? Der aktive Fokus dieser Regel endet damit.</string>
 </resources>

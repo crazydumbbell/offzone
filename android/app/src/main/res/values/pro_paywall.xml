@@ -20,7 +20,6 @@
     </plurals>
     <string name="pro_preview_note">Preview · sample plans, nothing is sold</string>
     <string name="pro_try_title">Try Offzone Pro free for %1$s.</string>
-    <string name="pro_no_payment">No payment due now.</string>
     <string name="pro_start_trial">Start free trial</string>
     <string name="pro_see_plans">See plans</string>
     <string name="pro_continue">Continue</string>
@@ -39,7 +38,6 @@
     <string name="pro_how_free_body">Still in your free trial.</string>
     <string name="pro_how_end_body">Your plan starts unless you cancel first.</string>
     <string name="pro_plans_title">Choose your plan.</string>
-    <string name="pro_plans_sub">Focus rules, quick focus, weekly planning, and a private journal.</string>
     <string name="pro_yearly">Yearly</string>
     <string name="pro_monthly">Monthly</string>
     <string name="pro_best_value">Best value</string>
@@ -48,8 +46,6 @@
     <string name="pro_per_month">%s / month</string>
     <string name="pro_due_today">Due today: %s</string>
     <string name="pro_free_then">%1$s free, then %2$s</string>
-    <string name="pro_cta_trial_sub">No charge today · then %s</string>
-    <string name="pro_cta_sub">%s · cancel anytime</string>
     <string name="pro_legal">Cancel anytime in Google Play. Renews automatically until cancelled.</string>
     <string name="pro_done_title">Pro is on.</string>
     <string name="pro_done_trial">Your free trial has started.</string>

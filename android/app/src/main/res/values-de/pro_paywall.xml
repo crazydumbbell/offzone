@@ -20,7 +20,6 @@
     </plurals>
     <string name="pro_preview_note">Vorschau · Beispielpläne, kein Kauf</string>
     <string name="pro_try_title">Teste Offzone Pro %1$s kostenlos.</string>
-    <string name="pro_no_payment">Jetzt keine Zahlung fällig.</string>
     <string name="pro_start_trial">Gratis-Test starten</string>
     <string name="pro_see_plans">Pläne ansehen</string>
     <string name="pro_continue">Weiter</string>
@@ -39,7 +38,6 @@
     <string name="pro_how_free_body">Noch im kostenlosen Testzeitraum.</string>
     <string name="pro_how_end_body">Dein Plan startet, sofern du vorher nicht kündigst.</string>
     <string name="pro_plans_title">Wähle deinen Plan.</string>
-    <string name="pro_plans_sub">Fokusregeln, Schnellfokus, Wochenplanung und dein privates Journal.</string>
     <string name="pro_yearly">Jährlich</string>
     <string name="pro_monthly">Monatlich</string>
     <string name="pro_best_value">Bestes Angebot</string>
@@ -48,8 +46,6 @@
     <string name="pro_per_month">%s / Monat</string>
     <string name="pro_due_today">Heute fällig: %s</string>
     <string name="pro_free_then">%1$s kostenlos, danach %2$s</string>
-    <string name="pro_cta_trial_sub">Heute kostenlos · danach %s</string>
-    <string name="pro_cta_sub">%s · jederzeit kündbar</string>
     <string name="pro_legal">Jederzeit in Google Play kündbar. Verlängert sich automatisch bis zur Kündigung.</string>
     <string name="pro_done_title">Pro ist aktiv.</string>
     <string name="pro_done_trial">Dein Gratis-Test hat begonnen.</string>

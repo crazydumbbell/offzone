@@ -13,6 +13,63 @@ private enum RoomScreen: Int {
     case home
 }
 
+enum SetupStep: Int, Equatable {
+    case permission
+    case targets
+    case schedule
+}
+
+enum SetupFlowPolicy {
+    static func progress(
+        step: SetupStep,
+        includesPermission: Bool,
+        permissionOnly: Bool
+    ) -> (current: Int, total: Int)? {
+        if step == .permission && permissionOnly { return nil }
+        let steps: [SetupStep] = includesPermission
+            ? [.permission, .targets, .schedule]
+            : [.targets, .schedule]
+        guard let index = steps.firstIndex(of: step) else { return nil }
+        return (index + 1, steps.count)
+    }
+}
+
+enum HomeViewPolicy {
+    static func cardSuggestedRuleID(
+        screenTimeAuthorized: Bool,
+        rulesEmpty: Bool,
+        ruleEnabled: Bool,
+        safetyReleased: Bool,
+        suggestedRuleID: UUID?
+    ) -> UUID? {
+        guard screenTimeAuthorized, !rulesEmpty, (!ruleEnabled || safetyReleased) else { return nil }
+        return suggestedRuleID
+    }
+
+    static func showsRowActivateAction(
+        ruleID: UUID,
+        isActive: Bool,
+        hasUnappliedChanges: Bool,
+        canResume: Bool,
+        cardSuggestedRuleID: UUID?
+    ) -> Bool {
+        guard !isActive || hasUnappliedChanges || canResume else { return false }
+        return ruleID != cardSuggestedRuleID
+    }
+
+    static func showsTopBarRestoreAccess(
+        onHomeScreen: Bool,
+        hasActiveSession: Bool,
+        quickFocusActive: Bool,
+        ruleFocused: Bool,
+        shouldShield: Bool
+    ) -> Bool {
+        guard ProAccessGate.canRestoreActiveSession(hasActiveSession: hasActiveSession) else { return false }
+        let cardShowsRestore = onHomeScreen && quickFocusActive && !ruleFocused && !shouldShield
+        return !cardShowsRestore
+    }
+}
+
 enum RoomSpiritState: Equatable {
     case welcome
     case idle
@@ -60,7 +117,6 @@ struct ContentView: View {
     @State private var safetyReleasePresented = false
     @State private var notificationsPresented = false
     @State private var quickFocusPresented = false
-    @State private var showsSaveError = false
     @State private var ruleToDelete: FocusRule?
     @State private var roomieReaction: RoomSpiritState?
     @State private var accountPresented = false
@@ -114,12 +170,18 @@ struct ContentView: View {
             HStack(spacing: 12) {
                 if !dynamicTypeSize.isAccessibilitySize {
                     Text("OFFZONE")
-                        .font(.suit(.caption, weight: .bold))
+                        .font(.suit(.subheadline, weight: .bold))
                         .tracking(1.4)
                         .foregroundStyle(Color.roomInk)
                 }
                 Spacer(minLength: 0)
-                if ProAccessGate.canRestoreActiveSession(hasActiveSession: isActiveSession) {
+                if HomeViewPolicy.showsTopBarRestoreAccess(
+                    onHomeScreen: screen == .home,
+                    hasActiveSession: isActiveSession,
+                    quickFocusActive: model.quickEndsAt != nil,
+                    ruleFocused: model.isFocused,
+                    shouldShield: SharedState.shouldShield
+                ) {
                     Button {
                         safetyReleasePresented = true
                     } label: {
@@ -143,9 +205,7 @@ struct ContentView: View {
             selection: $model.selection
         )
         .sheet(isPresented: $safetyReleasePresented) {
-            SafetyReleaseView(detail: model.quickEndsAt != nil
-                ? roomString("Ends your active Quick focus session right away.")
-                : model.safetyReleaseDescription) {
+            SafetyReleaseView(detail: model.quickEndsAt != nil ? nil : model.safetyReleaseDescription) {
                 if model.quickEndsAt != nil {
                     model.endQuickFocus()
                 }
@@ -211,15 +271,20 @@ struct ContentView: View {
             }
             let arguments = ProcessInfo.processInfo.arguments
             if arguments.contains("-offzonePreviewQuick") { quickFocusPresented = true }
+            if arguments.contains("-offzonePreviewAccount") { accountPresented = true }
             if arguments.contains("-offzonePreviewPlace") {
                 model.beginNewRuleDraft()
                 placeMode = .gps
+                setupIncludesPermission = !model.screenTimeAuthorized || (!onboardingCompleted && model.rules.isEmpty)
+                permissionDestination = .targets
                 screen = .schedule
             }
             if arguments.contains("-offzonePreviewSchedule") {
                 model.beginNewRuleDraft()
                 placeMode = .anywhere
                 model.days = RestrictionPolicy.weekdays
+                setupIncludesPermission = !model.screenTimeAuthorized || (!onboardingCompleted && model.rules.isEmpty)
+                permissionDestination = .targets
                 screen = .schedule
             }
 #endif
@@ -259,10 +324,6 @@ struct ContentView: View {
                     .frame(maxWidth: .infinity)
                     .background(Color.roomButter)
                     .clipShape(RoundedRectangle(cornerRadius: 24))
-                Label("You choose the boundaries. You can always restore access.", systemImage: "checkmark.shield")
-                    .font(.suit(.subheadline))
-                    .foregroundStyle(Color.roomInkSecondary)
-                    .fixedSize(horizontal: false, vertical: true)
             }
             .frame(maxWidth: 560, alignment: .leading)
             .padding(.horizontal, 24).padding(.vertical, 32)
@@ -277,7 +338,6 @@ struct ContentView: View {
                     } else {
                         model.beginNewRuleDraft()
                         placeMode = .anywhere
-                        showsSaveError = false
                         setupIncludesPermission = !model.screenTimeAuthorized
                         permissionDestination = .targets
                         screen = model.screenTimeAuthorized ? .targets : .permission
@@ -300,7 +360,7 @@ struct ContentView: View {
     private var permissionScreen: some View {
         setupScreen(
             title: model.screenTimeAuthorized ? roomString("You’re connected.") : roomString("Connect Screen Time"),
-            detail: roomString("Allow Screen Time to block your selected apps."),
+            detail: model.screenTimeAuthorized ? nil : roomString("Allow Screen Time to block your selected apps."),
             actionTitle: permissionActionTitle,
             actionEnabled: !isRequestingPermission,
             action: handlePermissionAction
@@ -310,18 +370,12 @@ struct ContentView: View {
                     .font(.suit(.title2))
                     .foregroundStyle(Color.roomAction)
                     .accessibilityHidden(true)
-                VStack(alignment: .leading, spacing: 6) {
-                    Text(model.screenTimeAuthorized ? roomString("Connected") : model.screenTimeStatusText)
-                        .font(.suit(.headline)).foregroundStyle(Color.roomInk)
-                    Text("Required to apply restrictions")
-                        .font(.suit(.subheadline)).foregroundStyle(Color.roomInkSecondary)
-                }
+                Text(model.screenTimeAuthorized ? roomString("Connected") : model.screenTimeStatusText)
+                    .font(.suit(.headline)).foregroundStyle(Color.roomInk)
             }
             .frame(maxWidth: .infinity, alignment: .leading)
             .padding(22)
             .editorialPanel(model.screenTimeAuthorized ? .roomMint : .roomButter, outlined: false)
-            Text("You’ll choose the apps in Apple’s picker.")
-                .font(.suit(.subheadline)).foregroundStyle(Color.roomInkSecondary)
             actionFeedback
         }
     }
@@ -533,7 +587,6 @@ struct ContentView: View {
     private var scheduleScreen: some View {
         setupScreen(
             title: roomString("Choose your schedule"),
-            detail: roomString("Pick the days, times, and rule details."),
             actionTitle: roomString("Save rule"),
             actionEnabled: scheduleIsValid && (placeMode == .anywhere || model.placeConfigured),
             action: saveAndFinish
@@ -571,7 +624,7 @@ struct ContentView: View {
                     .font(.suit(.subheadline))
                     .foregroundStyle(Color.roomWarning)
             }
-            if minutes(from: model.endTime) < minutes(from: model.startTime) {
+            if AppModel.minutes(from: model.endTime) < AppModel.minutes(from: model.startTime) {
                 Text("Ends the next day.")
                     .font(.suit(.subheadline))
                     .foregroundStyle(Color.roomInkSecondary)
@@ -586,24 +639,20 @@ struct ContentView: View {
                 .padding(18)
                 .editorialPanel(placeMode == .gps ? .roomMint : .roomCard, cornerRadius: 16)
 
-                if placeMode == .anywhere {
-                    Text("A time-only rule never uses Location. Tap Start focus during its schedule.")
-                        .font(.suit(.subheadline))
-                        .foregroundStyle(Color.roomInkSecondary)
-                        .fixedSize(horizontal: false, vertical: true)
-                } else {
+                if placeMode == .gps {
                     placeMapPicker
-                    Text("Choose a place, then start focus when you arrive during your schedule. The 150 m area is approximate, not room-level accuracy.")
-                        .font(.suit(.subheadline))
-                        .foregroundStyle(Color.roomInkSecondary)
-                        .fixedSize(horizontal: false, vertical: true)
-                    Text("Requires Always and Precise Location. Detection timing varies.")
-                        .font(.suit(.subheadline))
-                        .foregroundStyle(Color.roomInkSecondary)
+                    if !model.hasRequiredLocationPermission {
+                        Text("Requires Always and Precise Location. Detection timing varies.")
+                            .font(.suit(.subheadline))
+                            .foregroundStyle(Color.roomInkSecondary)
+                            .fixedSize(horizontal: false, vertical: true)
+                    }
                     if model.placeConfigured && !model.gpsPlaceReady {
                         Button(model.gpsNeedsSettings ? roomString("Open Location Settings") : roomString("Allow location")) {
                             if model.gpsNeedsSettings {
-                                UIApplication.shared.open(URL(string: UIApplication.openSettingsURLString)!)
+                                if let url = URL(string: UIApplication.openSettingsURLString) {
+                                    UIApplication.shared.open(url)
+                                }
                             } else {
                                 model.requestPlaceAuthorization()
                             }
@@ -616,20 +665,15 @@ struct ContentView: View {
             VStack(alignment: .leading, spacing: 10) {
                 Toggle("Prevent app deletion during blocking", isOn: $model.preventAppRemoval)
                     .font(.suit(.body, weight: .semibold))
-                Text("Restricts deleting any app while this rule is blocking. This does not lock your iPhone. You can revoke Screen Time access in Settings. Emergency recovery is free.")
-                    .font(.suit(.subheadline)).foregroundStyle(Color.roomInkSecondary)
-                    .fixedSize(horizontal: false, vertical: true)
+                if model.preventAppRemoval {
+                    Text("Restricts deleting any app while this rule is blocking. This does not lock your iPhone. You can revoke Screen Time access in Settings. Emergency recovery is free.")
+                        .font(.suit(.subheadline)).foregroundStyle(Color.roomInkSecondary)
+                        .fixedSize(horizontal: false, vertical: true)
+                }
             }
             .padding(18).editorialPanel(Color.roomButter, outlined: false)
 
             actionFeedback
-
-            if showsSaveError && model.errorMessage == nil {
-                Text(model.message)
-                    .font(.suit(.subheadline))
-                    .foregroundStyle(Color.roomWarning)
-                    .fixedSize(horizontal: false, vertical: true)
-            }
         }
     }
 
@@ -718,22 +762,21 @@ struct ContentView: View {
                     quickFocusSection
                     if SharedState.ruleEnabled && model.activeRule?.placeMode == .gps && !model.isFocused {
                         VStack(alignment: .leading, spacing: 12) {
-                            Text(model.placeArrivalText)
-                                .font(.suit(.subheadline)).foregroundStyle(Color.roomInkSecondary)
-                                .fixedSize(horizontal: false, vertical: true)
+                            if let arrivalText = model.placeArrivalText {
+                                Text(arrivalText)
+                                    .font(.suit(.subheadline)).foregroundStyle(Color.roomInkSecondary)
+                                    .fixedSize(horizontal: false, vertical: true)
+                            }
                             Button { model.checkPlaceArrival() } label: {
                                 Label(model.isCheckingPlace ? roomString("Checking location…") : roomString("Check location"), systemImage: "location")
                                     .frame(minHeight: 44)
                             }.disabled(model.isCheckingPlace)
                         }
+                        .frame(maxWidth: .infinity, alignment: .leading)
                     }
-                    if SharedState.ruleEnabled && model.activeRule?.placeMode == .anywhere && !model.isFocused {
-                        Text("Time-only rule: tap Start focus during its schedule. No Location needed.")
-                            .font(.suit(.subheadline)).foregroundStyle(Color.roomInkSecondary)
-                            .fixedSize(horizontal: false, vertical: true)
-                    }
-                    if model.activeRule?.placeMode == .gps && (model.locationStatus == .denied || model.locationStatus == .restricted || model.placeMonitoringNeedsAttention) {
-                        Link("Open Location Settings", destination: URL(string: UIApplication.openSettingsURLString)!)
+                    if model.activeRule?.placeMode == .gps && (model.locationStatus == .denied || model.locationStatus == .restricted || model.placeMonitoringNeedsAttention),
+                       let settingsURL = URL(string: UIApplication.openSettingsURLString) {
+                        Link("Open Location Settings", destination: settingsURL)
                             .font(.suit(.subheadline, weight: .semibold)).foregroundStyle(Color.roomWarning).frame(minHeight: 44)
                     }
                     VStack(alignment: .leading, spacing: 12) {
@@ -743,7 +786,7 @@ struct ContentView: View {
                                 .foregroundStyle(Color.roomInk).accessibilityAddTraits(.isHeader)
                             Spacer()
                             Text(roomString("%d saved", model.rules.count))
-                                .font(.suit(.caption)).foregroundStyle(Color.roomInkSecondary)
+                                .font(.suit(.subheadline)).foregroundStyle(Color.roomInkSecondary)
                         }
                         if model.rules.isEmpty {
                             Text("No rules yet").font(.suit(.body))
@@ -840,7 +883,7 @@ struct ContentView: View {
                     Label("Quick focus", systemImage: "timer")
                     if !ProAccessGate.canQuickFocus(hasProAccess: account.hasProAccess) {
                         Image(systemName: "lock.fill")
-                            .font(.suit(.caption))
+                            .font(.suit(.subheadline))
                             .accessibilityHidden(true)
                     }
                 }
@@ -853,11 +896,21 @@ struct ContentView: View {
         model.rules.first(where: { $0.id == model.activeRuleID }) ?? model.rules.first
     }
 
+    private var cardSuggestedRuleID: UUID? {
+        HomeViewPolicy.cardSuggestedRuleID(
+            screenTimeAuthorized: model.screenTimeAuthorized,
+            rulesEmpty: model.rules.isEmpty,
+            ruleEnabled: SharedState.ruleEnabled,
+            safetyReleased: SharedState.safetyReleased,
+            suggestedRuleID: suggestedRule?.id
+        )
+    }
+
     private var homeSpiritState: RoomSpiritState {
         if model.errorMessage != nil { return .failed }
         if model.isCheckingPlace { return .working }
         return .home(focused: model.isFocused, needsAction: homeNeedsAction,
-              recovered: SharedState.safetyReleased, reaction: roomieReaction)
+              recovered: SharedState.safetyReleased && SharedState.appliedRule != nil, reaction: roomieReaction)
     }
 
     private var homeStatusTint: Color {
@@ -934,7 +987,7 @@ struct ContentView: View {
                                 .fixedSize(horizontal: false, vertical: true)
                             if isLocked {
                                 Image(systemName: "lock.fill")
-                                    .font(.suit(.caption))
+                                    .font(.suit(.subheadline))
                                     .foregroundStyle(Color.roomInkSecondary)
                                     .accessibilityLabel(roomString("Unlock Offzone Pro"))
                             }
@@ -957,7 +1010,7 @@ struct ContentView: View {
 
                     Spacer(minLength: 4)
                     Image(systemName: "chevron.right")
-                        .font(.suit(.caption, weight: .bold))
+                        .font(.suit(.subheadline, weight: .bold))
                         .foregroundStyle(Color.roomInkTertiary)
                         .accessibilityHidden(true)
                 }
@@ -968,7 +1021,13 @@ struct ContentView: View {
             .accessibilityHint("Edit this saved rule. Changes are applied separately.")
 
             HStack(spacing: 16) {
-                if !isActive || hasChanges || canResume {
+                if HomeViewPolicy.showsRowActivateAction(
+                    ruleID: rule.id,
+                    isActive: isActive,
+                    hasUnappliedChanges: hasChanges,
+                    canResume: canResume,
+                    cardSuggestedRuleID: cardSuggestedRuleID
+                ) {
                     Button {
                         activate(rule)
                     } label: {
@@ -1058,8 +1117,8 @@ struct ContentView: View {
                         if onboardingCompleted || !model.rules.isEmpty { cancelEditing() }
                         else { screen = .welcome }
                     case .targets:
-                        if onboardingCompleted || !model.rules.isEmpty { cancelEditing() }
-                        else if setupIncludesPermission { screen = .permission }
+                        if setupIncludesPermission { screen = .permission }
+                        else if onboardingCompleted || !model.rules.isEmpty { cancelEditing() }
                         else { screen = .welcome }
                     case .schedule:
                         screen = .targets
@@ -1076,14 +1135,13 @@ struct ContentView: View {
 
                 Spacer()
 
-                if let progress = setupProgress {
+                if dynamicTypeSize.isAccessibilitySize, let progress = setupProgress {
                     Text("\(progress.current) / \(progress.total)")
-                        .font(.suit(.caption, weight: .bold))
+                        .font(.suit(.subheadline, weight: .bold))
                         .monospacedDigit()
                         .foregroundStyle(Color.roomInkSecondary)
+                    Spacer()
                 }
-
-                Spacer()
 
                 if onboardingCompleted || !model.rules.isEmpty {
                     Button("Cancel") { cancelEditing() }
@@ -1092,6 +1150,14 @@ struct ContentView: View {
                         .frame(minWidth: 44, minHeight: 44)
                 } else {
                     Color.clear.frame(width: 44, height: 44)
+                }
+            }
+            .overlay {
+                if !dynamicTypeSize.isAccessibilitySize, let progress = setupProgress {
+                    Text("\(progress.current) / \(progress.total)")
+                        .font(.suit(.subheadline, weight: .bold))
+                        .monospacedDigit()
+                        .foregroundStyle(Color.roomInkSecondary)
                 }
             }
 
@@ -1105,14 +1171,18 @@ struct ContentView: View {
     }
 
     private var setupProgress: (current: Int, total: Int)? {
-        if screen == .permission && permissionDestination == .home { return nil }
-        let total = setupIncludesPermission ? 3 : 2
+        let step: SetupStep
         switch screen {
-        case .permission: return (1, total)
-        case .targets: return (setupIncludesPermission ? 2 : 1, total)
-        case .schedule: return (setupIncludesPermission ? 3 : 2, total)
+        case .permission: step = .permission
+        case .targets: step = .targets
+        case .schedule: step = .schedule
         default: return nil
         }
+        return SetupFlowPolicy.progress(
+            step: step,
+            includesPermission: setupIncludesPermission,
+            permissionOnly: permissionDestination == .home
+        )
     }
 
     private func primaryButton(_ title: String, enabled: Bool = true, inverted: Bool = false, action: @escaping () -> Void) -> some View {
@@ -1140,7 +1210,9 @@ struct ContentView: View {
         }
 #if !targetEnvironment(simulator)
         if model.screenTimeStatus == .denied {
-            UIApplication.shared.open(URL(string: UIApplication.openSettingsURLString)!)
+            if let url = URL(string: UIApplication.openSettingsURLString) {
+                UIApplication.shared.open(url)
+            }
             return
         }
 #endif
@@ -1157,8 +1229,8 @@ struct ContentView: View {
 
     private var scheduleIsValid: Bool {
         RestrictionPolicy.intervalMinutes(
-            start: minutes(from: model.startTime),
-            end: minutes(from: model.endTime)
+            start: AppModel.minutes(from: model.startTime),
+            end: AppModel.minutes(from: model.endTime)
         ) >= 15 && model.days != 0
     }
 
@@ -1174,25 +1246,13 @@ struct ContentView: View {
     private var setupSpiritState: RoomSpiritState {
         if model.errorMessage != nil { return .needsAction }
         if isRequestingPermission { return .working }
-        switch screen {
-        case .permission:
-            return model.screenTimeAuthorized ? .confirmed : .attentive
-        case .targets:
-            return model.selectionCount == 0 ? .guiding : .confirmed
-        case .schedule:
-            if placeMode == .gps { return model.gpsPlaceReady ? .confirmed : .working }
-            return .attentive
-        default:
-            return .idle
-        }
+        return model.screenTimeAuthorized ? .confirmed : .attentive
     }
 
     private func saveAndFinish() {
         let firstSetup = !onboardingCompleted && model.rules.isEmpty
-        showsSaveError = !model.saveRule(placeMode: placeMode)
-        if !showsSaveError {
+        if model.saveRule(placeMode: placeMode) {
             onboardingCompleted = true
-            OnboardingProfile.markCompleted()
             setupIncludesPermission = false
             roomieReaction = .celebrating
             screen = .home
@@ -1203,16 +1263,8 @@ struct ContentView: View {
     }
 
     private func ruleScheduleSummary(_ rule: FocusRule) -> String {
-        let start = Calendar.current.date(
-            byAdding: .minute,
-            value: rule.startMinutes,
-            to: Calendar.current.startOfDay(for: .now)
-        ) ?? .now
-        let end = Calendar.current.date(
-            byAdding: .minute,
-            value: rule.endMinutes,
-            to: Calendar.current.startOfDay(for: .now)
-        ) ?? .now
+        let start = AppModel.date(minutes: rule.startMinutes)
+        let end = AppModel.date(minutes: rule.endMinutes)
         let timeRange = "\(start.formatted(date: .omitted, time: .shortened))–\(end.formatted(date: .omitted, time: .shortened))"
         let range = rule.endMinutes < rule.startMinutes ? roomString("%@ (+1 day)", timeRange) : timeRange
         return "\(range) · \(daysSummary(rule.activeDays))"
@@ -1221,7 +1273,6 @@ struct ContentView: View {
     private func addRule() {
         model.beginNewRuleDraft()
         placeMode = .anywhere
-        showsSaveError = false
         setupIncludesPermission = !model.screenTimeAuthorized
         permissionDestination = .targets
         screen = model.screenTimeAuthorized ? .targets : .permission
@@ -1230,7 +1281,6 @@ struct ContentView: View {
     private func editRule(_ rule: FocusRule) {
         model.loadRuleForEditing(rule.id)
         placeMode = rule.placeMode == .anywhere ? .anywhere : .gps
-        showsSaveError = false
         setupIncludesPermission = !model.screenTimeAuthorized
         permissionDestination = .targets
         screen = model.screenTimeAuthorized ? .targets : .permission
@@ -1242,15 +1292,10 @@ struct ContentView: View {
         setupIncludesPermission = false
         screen = .home
     }
-
-    private func minutes(from date: Date) -> Int {
-        let components = Calendar.current.dateComponents([.hour, .minute], from: date)
-        return (components.hour ?? 0) * 60 + (components.minute ?? 0)
-    }
 }
 
 private struct SafetyReleaseView: View {
-    let detail: String
+    let detail: String?
     let release: () -> Void
     @Environment(\.dismiss) private var dismiss
     @Environment(\.dynamicTypeSize) private var dynamicTypeSize
@@ -1260,19 +1305,16 @@ private struct SafetyReleaseView: View {
             VStack(alignment: .leading, spacing: 22) {
                 Button { dismiss() } label: { Label("Back", systemImage: "chevron.left") }
                     .font(.suit(.subheadline, weight: .semibold)).foregroundStyle(Color.roomAccent).frame(minHeight: 44)
-                Text("You’re in control")
-                    .font(.suit(.subheadline)).foregroundStyle(Color.roomInkSecondary)
                 Text("Need your apps back?")
                     .font(.suit(.largeTitle, weight: .bold))
                     .foregroundStyle(Color.roomInk).accessibilityAddTraits(.isHeader)
-                Text("Restore access now. Your saved rules will stay here.")
-                    .font(.suit(.body))
-                    .foregroundStyle(Color.roomInkSecondary).fixedSize(horizontal: false, vertical: true)
                 RoomSpirit(state: .attentive)
                     .frame(height: dynamicTypeSize.isAccessibilitySize ? 120 : 180)
-                Label(detail, systemImage: "arrow.counterclockwise")
-                    .font(.suit(.body))
-                    .foregroundStyle(Color.roomInkSecondary).fixedSize(horizontal: false, vertical: true)
+                if let detail {
+                    Label(detail, systemImage: "arrow.counterclockwise")
+                        .font(.suit(.body))
+                        .foregroundStyle(Color.roomInkSecondary).fixedSize(horizontal: false, vertical: true)
+                }
             }
             .frame(maxWidth: 560, alignment: .leading)
             .padding(24).frame(maxWidth: .infinity)
@@ -1306,8 +1348,6 @@ private struct QuickFocusView: View {
                         LabeledContent("Choose apps", value: roomString("%d selected", model.quickSelectionCount))
                             .frame(minHeight: 44)
                     }
-                } footer: {
-                    Text("Choose a duration and apps. Quick focus works anywhere, without a saved place.")
                 }
                 .listRowBackground(Color.roomCard)
                 Section {
@@ -1321,8 +1361,6 @@ private struct QuickFocusView: View {
                     if let error = model.errorMessage {
                         Text(error).font(.suit(.subheadline)).foregroundStyle(Color.roomWarning)
                     }
-                } footer: {
-                    Text("It ends automatically when time is up. You can end a running session anytime.")
                 }
                 .listRowBackground(Color.roomCard)
             }
@@ -1361,12 +1399,11 @@ private struct ZoneNotificationSettingsView: View {
                         }
                     )).disabled(updating)
                     Text(model.notificationStatusText).font(.suit(.subheadline))
-                    if model.notificationStatus == .denied {
-                        Link("Open Notification Settings", destination: URL(string: UIApplication.openSettingsURLString)!)
+                    if model.notificationStatus == .denied,
+                       let settingsURL = URL(string: UIApplication.openSettingsURLString) {
+                        Link("Open Notification Settings", destination: settingsURL)
                             .foregroundStyle(Color.roomAccent).frame(minHeight: 44)
                     }
-                } footer: {
-                    Text("Get updates when your active GPS zone is entered or left, and when blocking starts or ends. Only one rule is active at a time.")
                 }
                 .listRowBackground(Color.roomCard)
                 Section {
@@ -1374,8 +1411,15 @@ private struct ZoneNotificationSettingsView: View {
                     Label("Blocking started or ended", systemImage: "shield")
                 } header: {
                     Text("What you’ll receive")
+                        .font(.suit(.subheadline, weight: .semibold))
+                        .foregroundStyle(Color.roomInkSecondary)
+                        .textCase(nil)
                 } footer: {
-                    Text("Alerts follow detected changes and may be delayed by iOS or Focus settings. Rule names may appear on your Lock Screen.")
+                    if model.zoneNotificationsEnabled {
+                        Text("Alerts follow detected changes and may be delayed by iOS or Focus settings. Rule names may appear on your Lock Screen.")
+                            .font(.suit(.subheadline))
+                            .foregroundStyle(Color.roomInkSecondary)
+                    }
                 }
                 .listRowBackground(Color.roomCard)
             }
@@ -1425,14 +1469,12 @@ enum OffzoneNookFullBody: String, CaseIterable {
 
 struct RoomSpiritMotion: Equatable {
     let breath: CGFloat
-    let eyeScale: CGFloat
 
-    static let still = RoomSpiritMotion(breath: 0, eyeScale: 1)
+    static let still = Self(breath: 0)
 
     static func sample(at elapsed: TimeInterval) -> Self {
-        .init(breath: CGFloat(sin(elapsed * 2 * .pi / 2.8)), eyeScale: 1)
+        .init(breath: CGFloat(sin(elapsed * 2 * .pi / 2.8)))
     }
-
 }
 
 struct RoomSpiritReaction: Equatable {
@@ -1547,19 +1589,6 @@ struct RoomSpirit: View {
             return body.assetName
         }
         return OffzoneNookExpression.expression(for: state).assetName
-    }
-}
-
-// Selection mark shared by choice rows and plan rows: filled Pine disc with a Butter check, or a Pine 28% ring.
-struct RoomRadio: View {
-    let selected: Bool
-    var font: Font = .suit(.title2)
-
-    var body: some View {
-        Image(systemName: selected ? "checkmark.circle.fill" : "circle")
-            .symbolRenderingMode(.palette)
-            .foregroundStyle(selected ? Color.roomCanvas : Color.roomOutline, Color.roomAccent)
-            .font(font)
     }
 }
 

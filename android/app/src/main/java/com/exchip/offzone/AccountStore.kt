@@ -2,9 +2,8 @@ package com.exchip.offzone
 
 import android.app.Activity
 import android.content.Context
-import android.content.Intent
-import android.net.Uri
 import androidx.annotation.StringRes
+import androidx.core.net.toUri
 import androidx.credentials.ClearCredentialStateRequest
 import androidx.credentials.CredentialManager
 import androidx.credentials.CustomCredential
@@ -412,7 +411,7 @@ class AccountStore(context: Context, firebaseApp: FirebaseApp? = null) {
     }
 
     fun manageSubscription(activity: Activity) {
-        activity.startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(state.value.managementURL ?: "https://play.google.com/store/account/subscriptions")))
+        activity.openExternalUrl(state.value.managementURL ?: "https://play.google.com/store/account/subscriptions")
     }
 
     fun close() {
@@ -422,6 +421,6 @@ class AccountStore(context: Context, firebaseApp: FirebaseApp? = null) {
     }
 
     companion object {
-        fun https(value: String) = runCatching { Uri.parse(value).let { it.scheme == "https" && !it.host.isNullOrBlank() } }.getOrDefault(false)
+        fun https(value: String) = runCatching { value.toUri().let { it.scheme == "https" && !it.host.isNullOrBlank() } }.getOrDefault(false)
     }
 }

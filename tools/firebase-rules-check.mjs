@@ -1,72 +1,189 @@
-// Run with the isolated Firebase emulator config in _workspace/firebase-rules-check.
-import { readFile, writeFile } from 'node:fs/promises';
+// Run against the local Firestore emulator (no external packages required):
+// firebase emulators:exec --project demo-roomdns --config firebase.auth-test.json --only firestore 'node tools/firebase-rules-check.mjs'
 import { createHash } from 'node:crypto';
-import { createRequire } from 'node:module';
+import { mkdir, readFile, writeFile } from 'node:fs/promises';
+import { dirname, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
-const require = createRequire(new URL('../_workspace/firebase-rules-check/package.json', import.meta.url));
-const { initializeTestEnvironment, assertSucceeds, assertFails } = require('@firebase/rules-unit-testing');
-const { doc, getDoc, setDoc, updateDoc, deleteDoc, serverTimestamp, Timestamp } = require('firebase/firestore');
-if (!process.env.FIRESTORE_EMULATOR_HOST) throw new Error('Local Firestore emulator required; refusing to run without it.');
-const [host, port] = process.env.FIRESTORE_EMULATOR_HOST.split(':');
-if (!['127.0.0.1', 'localhost', '::1'].includes(host)) throw new Error('Only a loopback emulator is allowed.');
+const emulatorHost = process.env.FIRESTORE_EMULATOR_HOST;
+if (!emulatorHost) {
+  throw new Error('Local Firestore emulator required; refusing to run without FIRESTORE_EMULATOR_HOST.');
+}
+const [host, port] = emulatorHost.split(':');
+if (!['127.0.0.1', 'localhost', '::1'].includes(host) || !/^\d+$/.test(port ?? '')) {
+  throw new Error(`Only a loopback emulator host:port is allowed (got ${emulatorHost}).`);
+}
 
-const rules = await readFile(fileURLToPath(new URL('../firestore.rules', import.meta.url)), 'utf8');
-const env = await initializeTestEnvironment({
-  projectId: 'demo-roomdns',
-  firestore: {
-    host, port: Number(port),
-    rules,
-  },
-});
+const projectId = process.env.GCLOUD_PROJECT || 'demo-roomdns';
+if (!projectId.startsWith('demo-')) {
+  throw new Error(`Refusing to run against non-demo project '${projectId}'.`);
+}
+
+const baseURL = `http://${emulatorHost}`;
+const docsRoot = `projects/${projectId}/databases/(default)/documents`;
+const dbURL = `${baseURL}/v1/${docsRoot}`;
+const rulesPath = fileURLToPath(new URL('../firestore.rules', import.meta.url));
+const rules = await readFile(rulesPath, 'utf8');
+
+function fakeToken({ uid, emailVerified = false, providers = ['password'] }) {
+  const now = Math.floor(Date.now() / 1000);
+  const identities = Object.fromEntries(providers.map(p => [p, [`${p}-${uid}`]]));
+  const payload = {
+    iss: `https://securetoken.google.com/${projectId}`,
+    aud: projectId,
+    auth_time: now,
+    user_id: uid,
+    sub: uid,
+    iat: now,
+    exp: now + 3600,
+    email: `${uid}@example.test`,
+    email_verified: emailVerified,
+    firebase: { identities, sign_in_provider: providers[0] ?? 'password' },
+  };
+  const header = Buffer.from(JSON.stringify({ alg: 'none', typ: 'JWT' })).toString('base64url');
+  const body = Buffer.from(JSON.stringify(payload)).toString('base64url');
+  return `${header}.${body}.`;
+}
+
+function authHeaders(token) {
+  return token ? { Authorization: `Bearer ${token}` } : {};
+}
+
+async function clearFirestore() {
+  const res = await fetch(`${baseURL}/emulator/v1/projects/${projectId}/databases/(default)/documents`, {
+    method: 'DELETE',
+  });
+  if (!res.ok) throw new Error(`Failed to clear Firestore emulator: ${res.status} ${await res.text()}`);
+}
+
+async function commit(token, write) {
+  return fetch(`${dbURL}:commit`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json', ...authHeaders(token) },
+    body: JSON.stringify({ writes: [write] }),
+  });
+}
+
+function goalWrite(path, fields, withServerTime = true) {
+  const write = { update: { name: `${docsRoot}/${path}`, fields } };
+  if (withServerTime) {
+    write.updateTransforms = [{ fieldPath: 'updatedAt', setToServerValue: 'REQUEST_TIME' }];
+  }
+  return write;
+}
+
+function docGet(token, path) {
+  return fetch(`${dbURL}/${path}`, { headers: authHeaders(token) });
+}
+
+function docDelete(token, path) {
+  return fetch(`${dbURL}/${path}`, { method: 'DELETE', headers: authHeaders(token) });
+}
+
 let passed = 0;
 const checks = [];
 async function check(name, action, allowed = false) {
-  await (allowed ? assertSucceeds(action()) : assertFails(action()));
+  const res = await action();
+  const ok = allowed ? res.status === 200 : res.status === 403;
+  if (!ok) {
+    throw new Error(`FAIL ${name}: expected ${allowed ? 200 : 403}, got ${res.status} (${await res.text()})`);
+  }
   passed++;
   checks.push(name);
   console.log(`PASS ${name}`);
 }
-const profile = (goal = 'work') => ({ goal, updatedAt: serverTimestamp() });
-try {
-  await env.clearFirestore();
-  const owner = doc(env.authenticatedContext('owner').firestore(), 'users/owner');
-  const stranger = doc(env.authenticatedContext('stranger').firestore(), 'users/owner');
-  const anonymous = doc(env.unauthenticatedContext().firestore(), 'users/owner');
-  await check('owner creates a valid profile with server timestamp', () => setDoc(owner, profile()), true);
-  await check('owner reads profile', () => getDoc(owner), true);
-  for (const goal of ['rest', 'presence', 'personal']) {
-    await check(`owner updates goal to ${goal}`, () => updateDoc(owner, profile(goal)), true);
-  }
-  for (const [name, ref] of [['unauthenticated', anonymous], ['another UID', stranger]]) {
-    await check(`${name} cannot read`, () => getDoc(ref));
-    await check(`${name} cannot overwrite`, () => setDoc(ref, profile()));
-    await check(`${name} cannot delete`, () => deleteDoc(ref));
-  }
-  await check('invalid goal rejected', () => updateDoc(owner, profile('anything')));
-  await check('arbitrary client timestamp rejected', () => updateDoc(owner, { goal: 'work', updatedAt: Timestamp.fromMillis(0) }));
-  await check('missing required timestamp rejected', () => setDoc(owner, { goal: 'work' }));
-  for (const [field, value] of [['isPro', true], ['location', { latitude: 37.5, longitude: 127 }], ['tokens', ['private-app-token']]]) {
-    await check(`extra ${field} field rejected`, () => setDoc(owner, { ...profile(), [field]: value }));
-  }
-  await check('unlisted collection rejected', () => setDoc(doc(env.authenticatedContext('owner').firestore(), 'purchases/owner'), profile()));
-  const purchaseAccount = doc(env.authenticatedContext('owner').firestore(), 'purchaseAccounts/owner');
-  const spendReceipt = doc(env.authenticatedContext('owner').firestore(), 'purchaseAccounts/owner/spends/test-session');
-  await env.withSecurityRulesDisabled(async context => {
-    await setDoc(doc(context.firestore(), 'purchaseAccounts/owner'), { deleted: false });
-    await setDoc(doc(context.firestore(), 'purchaseAccounts/owner/spends/test-session'), { status: 'spent' });
-  });
-  for (const [name, ref] of [['purchase account', purchaseAccount], ['spend receipt', spendReceipt]]) {
-    await check(`owner cannot read server-only ${name}`, () => getDoc(ref));
-    await check(`owner cannot forge server-only ${name}`, () => setDoc(ref, { status: 'spent', deleted: false }));
-    await check(`owner cannot erase server-only ${name}`, () => deleteDoc(ref));
-  }
-  await check('owner deletes profile', () => deleteDoc(owner), true);
-  await writeFile(new URL('../_workspace/firebase-rules-check/verification.json', import.meta.url), JSON.stringify({
-    checkedAt: new Date().toISOString(), project: 'demo-roomdns', emulator: `${host}:${port}`,
-    rulesSHA256: createHash('sha256').update(rules).digest('hex'), passed, failed: 0, checks,
-  }, null, 2) + '\n');
-  console.log(`Firestore rules: ${passed} checks passed, 0 failed (demo-roomdns local emulator).`);
-} finally {
-  await env.cleanup();
+
+const verifiedOwner = fakeToken({ uid: 'owner', emailVerified: true });
+const unverifiedOwner = fakeToken({ uid: 'owner', emailVerified: false });
+const googleOwner = fakeToken({ uid: 'owner', emailVerified: false, providers: ['google.com'] });
+const appleOwner = fakeToken({ uid: 'owner', emailVerified: false, providers: ['apple.com'] });
+const stranger = fakeToken({ uid: 'stranger', emailVerified: true });
+const anonymous = null;
+const adminToken = 'owner'; // Firestore emulator bypass token for seeding server-only data.
+
+await clearFirestore();
+
+await check('unverified email owner cannot create profile', () =>
+  commit(unverifiedOwner, goalWrite('users/owner', { goal: { stringValue: 'work' } })), false);
+await check('verified email owner creates valid profile with server timestamp', () =>
+  commit(verifiedOwner, goalWrite('users/owner', { goal: { stringValue: 'work' } })), true);
+await check('owner reads profile', () => docGet(verifiedOwner, 'users/owner'), true);
+await check('unverified owner retains read access', () => docGet(unverifiedOwner, 'users/owner'), true);
+
+for (const goal of ['rest', 'presence', 'personal']) {
+  await check(`verified owner updates goal to ${goal}`, () =>
+    commit(verifiedOwner, goalWrite('users/owner', { goal: { stringValue: goal } })), true);
 }
+await check('linked google.com owner updates goal even with email_verified=false', () =>
+  commit(googleOwner, goalWrite('users/owner', { goal: { stringValue: 'work' } })), true);
+await check('linked apple.com owner updates goal even with email_verified=false', () =>
+  commit(appleOwner, goalWrite('users/owner', { goal: { stringValue: 'rest' } })), true);
+await check('unverified email owner cannot update profile', () =>
+  commit(unverifiedOwner, goalWrite('users/owner', { goal: { stringValue: 'presence' } })), false);
+
+for (const [name, token] of [['unauthenticated', anonymous], ['another UID', stranger]]) {
+  await check(`${name} cannot read`, () => docGet(token, 'users/owner'), false);
+  await check(`${name} cannot overwrite`, () =>
+    commit(token, goalWrite('users/owner', { goal: { stringValue: 'work' } })), false);
+  await check(`${name} cannot delete`, () => docDelete(token, 'users/owner'), false);
+}
+
+await check('invalid goal rejected', () =>
+  commit(verifiedOwner, goalWrite('users/owner', { goal: { stringValue: 'anything' } })), false);
+await check('arbitrary client timestamp rejected', () =>
+  commit(verifiedOwner, goalWrite('users/owner', {
+    goal: { stringValue: 'work' },
+    updatedAt: { timestampValue: '1970-01-01T00:00:00Z' },
+  }, false)), false);
+await check('missing required timestamp rejected', () =>
+  commit(verifiedOwner, goalWrite('users/owner', { goal: { stringValue: 'work' } }, false)), false);
+
+for (const [field, value] of [
+  ['isPro', { booleanValue: true }],
+  ['location', { mapValue: { fields: { latitude: { doubleValue: 37.5 }, longitude: { doubleValue: 127 } } } }],
+  ['tokens', { arrayValue: { values: [{ stringValue: 'private-app-token' }] } }],
+]) {
+  await check(`extra ${field} field rejected`, () =>
+    commit(verifiedOwner, goalWrite('users/owner', { goal: { stringValue: 'work' }, [field]: value })), false);
+}
+
+await check('unlisted collection rejected', () =>
+  commit(verifiedOwner, goalWrite('purchases/owner', { goal: { stringValue: 'work' } })), false);
+
+// Seed server-only purchaseAccounts documents using the emulator admin token.
+for (const [path, fields] of [
+  ['purchaseAccounts/owner', { deleted: { booleanValue: false } }],
+  ['purchaseAccounts/owner/spends/test-session', { status: { stringValue: 'spent' } }],
+]) {
+  const seed = await commit(adminToken, goalWrite(path, fields, false));
+  if (!seed.ok) throw new Error(`Failed to seed ${path}: ${seed.status} ${await seed.text()}`);
+}
+
+for (const [name, path] of [
+  ['purchase account', 'purchaseAccounts/owner'],
+  ['spend receipt', 'purchaseAccounts/owner/spends/test-session'],
+]) {
+  await check(`owner cannot read server-only ${name}`, () => docGet(verifiedOwner, path), false);
+  await check(`owner cannot forge server-only ${name}`, () =>
+    commit(verifiedOwner, goalWrite(path, { status: { stringValue: 'spent' }, deleted: { booleanValue: false } }, false)), false);
+  await check(`owner cannot delete server-only ${name}`, () => docDelete(verifiedOwner, path), false);
+}
+
+await check('unverified owner retains delete access', () => docDelete(unverifiedOwner, 'users/owner'), true);
+
+const outIdx = process.argv.indexOf('--out');
+if (outIdx !== -1 && process.argv[outIdx + 1]) {
+  const outPath = resolve(process.argv[outIdx + 1]);
+  await mkdir(dirname(outPath), { recursive: true });
+  await writeFile(outPath, JSON.stringify({
+    checkedAt: new Date().toISOString(),
+    project: projectId,
+    emulator: emulatorHost,
+    rulesSHA256: createHash('sha256').update(rules).digest('hex'),
+    passed,
+    failed: 0,
+    checks,
+  }, null, 2) + '\n');
+}
+
+console.log(`Firestore rules: ${passed} checks passed, 0 failed (${projectId} local emulator).`);

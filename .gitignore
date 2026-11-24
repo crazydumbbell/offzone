@@ -31,6 +31,8 @@ xcuserdata/
 
 # Local dependencies, build products, and signing material
 **/node_modules/
+**/__pycache__/
+*.py[cod]
 **/.gradle/
 **/.kotlin/
 **/.idea/

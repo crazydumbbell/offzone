@@ -6,7 +6,6 @@
     <string name="choose_apps">アプリを選択</string>
     <string name="apps_selected">%1$d件選択中</string>
     <string name="select_hint">開始するにはアプリを1つ以上選択してください。</string>
-    <string name="protected_hint">必須のシステムアプリ、通話、キーボード、ホーム画面はそのまま利用できます。</string>
     <string name="empty_apps">対象となるアプリが見つかりませんでした。制限したいアプリをインストールしてから、この一覧を再度開いてください。</string>
     <string name="search_apps">アプリを検索</string>
     <string name="done">完了</string>

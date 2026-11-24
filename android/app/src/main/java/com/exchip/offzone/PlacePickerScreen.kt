@@ -185,7 +185,7 @@ fun PlacePickerScreen(initialLat: Double?, initialLon: Double?, initialLabel: St
                         settings.javaScriptEnabled = true
                         settings.allowFileAccess = false; settings.allowContentAccess = false
                         settings.cacheMode = WebSettings.LOAD_DEFAULT
-                        settings.userAgentString = "OffzoneAndroid/0.1 (+https://crazydumbbell.github.io/offzone/privacy/) " + settings.userAgentString
+                        settings.userAgentString = "OffzoneAndroid/${BuildConfig.VERSION_NAME} (+${BuildConfig.PRIVACY_URL}) " + settings.userAgentString
                         addJavascriptInterface(OffzoneMapBridge { a, b ->
                             if (a.isFinite() && b.isFinite() && a in -90.0..90.0 && b in -180.0..180.0) post {
                                 if (lat == null || lon == null || abs(lat!! - a) > 0.000001 || abs(lon!! - b) > 0.000001) label = ""
@@ -229,7 +229,6 @@ fun PlacePickerScreen(initialLat: Double?, initialLon: Double?, initialLabel: St
                 Text(summary, style = MaterialTheme.typography.bodyMedium, color = Ink, modifier = Modifier.fillMaxWidth().padding(14.dp))
             }
         }
-        Text(stringResource(R.string.m_place_note), style = MaterialTheme.typography.bodyMedium, color = InkMuted)
-        Text(stringResource(R.string.m_map_privacy), style = MaterialTheme.typography.bodySmall, color = InkMuted)
+        Text(stringResource(R.string.m_map_privacy), style = MaterialTheme.typography.bodyMedium, color = InkMuted)
     }
 }

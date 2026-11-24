@@ -11,6 +11,19 @@ const db = getFirestore();
 const secret = defineSecret('REVENUECAT_SECRET_KEY');
 const project = 'projb8a02e7b';
 
+async function requireActiveUser(uid) {
+  let user;
+  try {
+    user = await getAuth().getUser(uid);
+  } catch (error) {
+    if (error?.code === 'auth/user-not-found' || error?.code === 'auth/user-disabled') {
+      throw new HttpsError('unauthenticated', 'Sign in again.');
+    }
+    throw error;
+  }
+  if (user.disabled) throw new HttpsError('unauthenticated', 'Sign in again.');
+}
+
 export const spendUnlockPass = onCall({
   region: 'us-central1', secrets: [secret], timeoutSeconds: 30,
   maxInstances: 3, concurrency: 10, memory: '256MiB'
@@ -20,8 +33,7 @@ export const spendUnlockPass = onCall({
     const { key, sessionID } = spendRequest(uid, request.data);
     // Callable authentication verifies the token; also reject deleted/disabled
     // accounts whose otherwise-valid token has not expired yet.
-    const user = await getAuth().getUser(uid);
-    if (user.disabled) throw new HttpsError('unauthenticated', 'Sign in again.');
+    await requireActiveUser(uid);
     const account = db.collection('purchaseAccounts').doc(uid);
     const receipt = account.collection('spends').doc(key);
     const state = await db.runTransaction(async tx => {
@@ -45,7 +57,7 @@ export const spendUnlockPass = onCall({
     return { sessionID, spent: true };
   } catch (error) {
     if (error instanceof HttpsError) throw error;
-    const code = ['unauthenticated', 'invalid-argument', 'failed-precondition'].includes(error.code)
+    const code = ['unauthenticated', 'invalid-argument', 'failed-precondition'].includes(error?.code)
       ? error.code : 'unavailable';
     throw new HttpsError(code, code === 'failed-precondition'
       ? 'No unlock pass is available. Refresh your balance.' : 'Please retry the same request.');
@@ -63,8 +75,7 @@ export const reconcileUnlockPass = onCall({
   try {
     const uid = request.auth?.uid;
     const { key, sessionID } = spendRequest(uid, request.data);
-    const user = await getAuth().getUser(uid);
-    if (user.disabled) throw new HttpsError('unauthenticated', 'Sign in again.');
+    await requireActiveUser(uid);
     const account = db.collection('purchaseAccounts').doc(uid);
     const receipt = account.collection('spends').doc(key);
     const status = await db.runTransaction(async tx => {
@@ -84,7 +95,7 @@ export const reconcileUnlockPass = onCall({
     return { sessionID, status };
   } catch (error) {
     if (error instanceof HttpsError) throw error;
-    const code = ['unauthenticated', 'invalid-argument'].includes(error.code) ? error.code : 'unavailable';
+    const code = ['unauthenticated', 'invalid-argument'].includes(error?.code) ? error.code : 'unavailable';
     throw new HttpsError(code, 'Could not check the previous pass. Please retry.');
   }
 });

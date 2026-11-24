@@ -5,19 +5,14 @@
     <string name="editor_name_personal">나만의 시간</string>
     <string name="editor_cancel">취소</string>
     <string name="editor_apps_title">잠시 내려놓을 앱 선택</string>
-    <string name="editor_apps_detail">전화, 지도, 은행, 인증 앱처럼 꼭 필요한 앱은 계속 쓸 수 있게 남겨 두세요.</string>
     <string name="editor_apps_choose">앱 선택</string>
     <string name="editor_apps_choose_again">다시 선택</string>
     <string name="editor_apps_empty">선택한 앱이 없어요</string>
     <string name="editor_place_optional">장소 (선택)</string>
-    <string name="editor_place_optional_note">비워 두면 정한 시간에 어디서나 시작할 수 있어요. 장소를 고르면 그곳에 있을 때만 시작할 수 있어요.</string>
     <string name="editor_place_empty">장소 제한 없음 (시간만)</string>
-    <string name="editor_place_hint">도착 판단 범위는 약 150m이며 방 단위의 정확도는 아니에요.</string>
     <string name="editor_clear_place">장소 지우기</string>
     <string name="editor_schedule_title">시간과 세부 설정</string>
-    <string name="editor_schedule_detail">반복할 요일과 시간, 선택 장소, 규칙 이름을 정하세요.</string>
     <string name="editor_schedule_warning">집중 시간을 15분 이상 선택해 주세요.</string>
-    <string name="editor_schedule_overnight">다음 날 종료돼요.</string>
     <string name="editor_next_day_badge">(+1일)</string>
     <string name="editor_name_placeholder">예: 일할 시간, 휴식 시간</string>
     <string name="editor_days">요일</string>
@@ -27,5 +22,4 @@
     <string name="days_weekends">주말</string>
     <string name="home_starts_on">%1$s %2$s에 시작</string>
     <string name="editor_time_only_place">장소 없음, 시간만</string>
-    <string name="audit_start_time_only">시간만 쓰는 규칙이에요. 정해진 시간에 집중 시작을 누르세요. 위치는 필요 없어요.</string>
 </resources>

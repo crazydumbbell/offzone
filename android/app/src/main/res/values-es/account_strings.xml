@@ -13,7 +13,6 @@
     <string name="account_verified">Correo verificado.</string>
     <string name="account_linked">Método de acceso vinculado a esta cuenta.</string>
     <string name="account_reset_sent">Si existe una cuenta para esta dirección, se ha enviado un enlace para restablecer la contraseña.</string>
-    <string name="account_signin_intro">Inicia sesión para gestionar tu suscripción a Offzone Pro.</string>
     <string name="account_apple">Continuar con Apple</string>
     <string name="account_google">Continuar con Google</string>
     <string name="account_email">Correo electrónico</string>
@@ -22,11 +21,11 @@
     <string name="account_password_mismatch">Las contraseñas no coinciden.</string>
     <string name="account_create">Crear cuenta</string>
     <string name="account_signin">Iniciar sesión con correo</string>
+    <string name="account_signin_options">Iniciar sesión en Offzone</string>
     <string name="account_reset">Restablecer contraseña</string>
     <string name="account_resend">Reenviar correo de verificación</string>
     <string name="account_check_verification">Ya verifiqué mi correo</string>
     <string name="account_link_methods">Métodos de acceso vinculados</string>
-    <string name="account_link_intro">Vincula otro método para conservar esta cuenta y sus compras.</string>
     <string name="account_provider_linked">Vinculado: %1$s</string>
     <string name="account_link_apple">Vincular Apple</string>
     <string name="account_link_google">Vincular Google</string>

@@ -104,4 +104,15 @@ final class ProPlansTests: XCTestCase {
         XCTAssertFalse(ProAccessGate.canRestoreActiveSession(hasActiveSession: false))
         XCTAssertTrue(ProAccessGate.canRestoreActiveSession(hasActiveSession: true))
     }
+
+    func testPaywallLegalNoticeCombinesParagraphsVerbatimIntoSingleBlock() {
+        let storage = "Stored only on this iPhone, excluded from backup."
+        let legal = "Cancel anytime in your App Store subscriptions. Renews automatically until cancelled."
+        let combined = ProPlansLegalNotice.combined(storage: storage, intro: nil, legal: legal)
+        XCTAssertEqual(combined, "\(storage) \(legal)")
+        XCTAssertFalse(combined.contains("\n"))
+
+        let withIntro = ProPlansLegalNotice.combined(storage: storage, intro: "Intro offer.", legal: legal)
+        XCTAssertEqual(withIntro, "\(storage) Intro offer. \(legal)")
+    }
 }

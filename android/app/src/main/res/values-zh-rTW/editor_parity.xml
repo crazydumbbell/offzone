@@ -6,19 +6,14 @@
     <string name="editor_name_personal">我的時間</string>
     <string name="editor_cancel">取消</string>
     <string name="editor_apps_title">選取要暫時放下的 App</string>
-    <string name="editor_apps_detail">請保留通話、地圖、銀行和驗證等必需 App 可用。</string>
     <string name="editor_apps_choose">選取 App</string>
     <string name="editor_apps_choose_again">重新選取</string>
     <string name="editor_apps_empty">尚未選取任何 App</string>
     <string name="editor_place_optional">地點（選填）</string>
-    <string name="editor_place_optional_note">留空即可於排程時段內在任何地方開始；若指定地點，則需位於該地點才能開始。</string>
     <string name="editor_place_empty">不限地點（僅限時間）</string>
-    <string name="editor_place_hint">抵達判斷使用約 150 公尺的大致範圍，並非房間層級的精確度。</string>
     <string name="editor_clear_place">移除地點</string>
     <string name="editor_schedule_title">排程與詳情</string>
-    <string name="editor_schedule_detail">設定重複時間、選填地點與規則名稱。</string>
     <string name="editor_schedule_warning">請選擇至少 15 分鐘的專注時段。</string>
-    <string name="editor_schedule_overnight">將於隔天結束。</string>
     <string name="editor_next_day_badge">（隔天）</string>
     <string name="editor_name_placeholder">例如：工作時間或放鬆時間</string>
     <string name="editor_days">星期</string>
@@ -28,5 +23,4 @@
     <string name="days_weekends">週末</string>
     <string name="home_starts_on">%1$s %2$s 開始</string>
     <string name="editor_time_only_place">無地點，僅限時間</string>
-    <string name="audit_start_time_only">純時間規則：於排程時段內輕點「開始專注」，不需要位置權限。</string>
 </resources>

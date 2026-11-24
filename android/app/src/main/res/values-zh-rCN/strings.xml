@@ -6,7 +6,6 @@
     <string name="choose_apps">选择应用</string>
     <string name="apps_selected">已选 %1$d 项</string>
     <string name="select_hint">请至少选择一个应用以开始。</string>
-    <string name="protected_hint">必需的系统应用、电话、输入法和主屏幕将始终保持可用。</string>
     <string name="empty_apps">未找到符合条件的应用。请安装你想暂停的应用，然后重新打开此列表。</string>
     <string name="search_apps">搜索应用</string>
     <string name="done">完成</string>

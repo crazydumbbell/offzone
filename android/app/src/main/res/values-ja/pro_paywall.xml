@@ -19,7 +19,6 @@
     </plurals>
     <string name="pro_preview_note">プレビュー · サンプルプランのため課金されません</string>
     <string name="pro_try_title">Offzone Proを%1$s無料でお試し。</string>
-    <string name="pro_no_payment">今すぐのお支払いは不要です。</string>
     <string name="pro_start_trial">無料トライアルを開始</string>
     <string name="pro_see_plans">プランを見る</string>
     <string name="pro_continue">続ける</string>
@@ -38,7 +37,6 @@
     <string name="pro_how_free_body">無料トライアル期間が続きます。</string>
     <string name="pro_how_end_body">事前に解約しない限り、プランが開始されます。</string>
     <string name="pro_plans_title">プランを選択</string>
-    <string name="pro_plans_sub">集中ルール、クイック集中、週間計画、プライベートジャーナルがすべて使えます。</string>
     <string name="pro_yearly">年額</string>
     <string name="pro_monthly">月額</string>
     <string name="pro_best_value">一番お得</string>
@@ -47,8 +45,6 @@
     <string name="pro_per_month">%s / 月</string>
     <string name="pro_due_today">本日のお支払い：%s</string>
     <string name="pro_free_then">%1$s無料、その後%2$s</string>
-    <string name="pro_cta_trial_sub">本日の請求なし · その後%s</string>
-    <string name="pro_cta_sub">%s · いつでも解約可能</string>
     <string name="pro_legal">Google Playからいつでも解約できます。解約するまで自動更新されます。</string>
     <string name="pro_done_title">Proが有効になりました。</string>
     <string name="pro_done_trial">無料トライアルを開始しました。</string>

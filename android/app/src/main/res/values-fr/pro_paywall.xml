@@ -20,7 +20,6 @@
     </plurals>
     <string name="pro_preview_note">Aperçu · forfaits d’exemple, rien n’est facturé</string>
     <string name="pro_try_title">Essayez Offzone Pro gratuitement pendant %1$s.</string>
-    <string name="pro_no_payment">Aucun paiement dû maintenant.</string>
     <string name="pro_start_trial">Démarrer l’essai gratuit</string>
     <string name="pro_see_plans">Voir les forfaits</string>
     <string name="pro_continue">Continuer</string>
@@ -39,7 +38,6 @@
     <string name="pro_how_free_body">Toujours dans votre essai gratuit.</string>
     <string name="pro_how_end_body">Votre forfait démarre sauf si vous annulez avant.</string>
     <string name="pro_plans_title">Choisissez votre forfait.</string>
-    <string name="pro_plans_sub">Règles de concentration, concentration rapide, planification hebdomadaire et journal privé.</string>
     <string name="pro_yearly">Annuel</string>
     <string name="pro_monthly">Mensuel</string>
     <string name="pro_best_value">Meilleure offre</string>
@@ -48,8 +46,6 @@
     <string name="pro_per_month">%s / mois</string>
     <string name="pro_due_today">Dû aujourd’hui : %s</string>
     <string name="pro_free_then">%1$s gratuits, puis %2$s</string>
-    <string name="pro_cta_trial_sub">Aucun frais aujourd’hui · puis %s</string>
-    <string name="pro_cta_sub">%s · annulable à tout moment</string>
     <string name="pro_legal">Annulable à tout moment dans Google Play. Renouvellement automatique sauf résiliation.</string>
     <string name="pro_done_title">Pro est activé.</string>
     <string name="pro_done_trial">Votre essai gratuit a commencé.</string>

@@ -5,7 +5,6 @@
     <string name="choose_apps">Choose apps</string>
     <string name="apps_selected">%1$d selected</string>
     <string name="select_hint">Choose at least one app to begin.</string>
-    <string name="protected_hint">Essential system apps, calls, your keyboard and home screen stay available.</string>
     <string name="empty_apps">No eligible apps found. Install an app you want to pause, then reopen this list.</string>
     <string name="search_apps">Search apps</string>
     <string name="done">Done</string>

@@ -11,6 +11,7 @@ import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.os.Build
+import androidx.core.content.edit
 
 /** One local notification, 24 hours before a free trial ends. Scheduled only after a trial purchase the user opted in to (D-49). */
 object TrialReminder {
@@ -26,7 +27,7 @@ object TrialReminder {
 
     fun scheduleAt(context: Context, at: Long): Boolean {
         if (at <= System.currentTimeMillis()) return false
-        context.getSharedPreferences(PREFS, Context.MODE_PRIVATE).edit().putLong("at", at).apply()
+        context.getSharedPreferences(PREFS, Context.MODE_PRIVATE).edit { putLong("at", at) }
         // Inexact on purpose: a reminder a few minutes late needs no exact-alarm permission.
         context.getSystemService(AlarmManager::class.java).setAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, at, pending(context))
         return true
@@ -38,7 +39,7 @@ object TrialReminder {
     }
 
     internal fun post(context: Context) {
-        context.getSharedPreferences(PREFS, Context.MODE_PRIVATE).edit().remove("at").apply()
+        context.getSharedPreferences(PREFS, Context.MODE_PRIVATE).edit { remove("at") }
         if (Build.VERSION.SDK_INT >= 33 && context.checkSelfPermission(Manifest.permission.POST_NOTIFICATIONS) != PackageManager.PERMISSION_GRANTED) return
         val localized = EngineNotifications.localizedContext(context)
         val manager = localized.getSystemService(NotificationManager::class.java)

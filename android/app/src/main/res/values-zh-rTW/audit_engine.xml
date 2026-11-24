@@ -1,5 +1,4 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="engine_reconnected">應用程式封鎖已就緒。先前的專注階段不會自動恢復，準備好後請開始新的專注階段。</string>
-    <string name="engine_restart_note">若 Android 系統停止了 Offzone 或其封鎖服務，專注即會結束。先前的階段與地點監測不會自動重啟，準備好後請重新開始。</string>
 </resources>

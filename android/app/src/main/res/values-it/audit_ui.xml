@@ -1,6 +1,4 @@
 <resources>
     <string name="audit_settings">Impostazioni</string>
-    <string name="audit_start_location">La tua posizione viene verificata all’avvio.</string>
-    <string name="audit_monitoring">Il monitoraggio della posizione è attivo</string>
     <string name="audit_saved_place">Luogo salvato</string>
 </resources>

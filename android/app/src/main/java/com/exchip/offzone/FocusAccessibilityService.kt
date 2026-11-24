@@ -104,17 +104,18 @@ class FocusAccessibilityService : AccessibilityService() {
             setPadding(pad, pad, pad, pad)
             setBackgroundColor(BUTTER)
         }
+        val overlayFont = resources.getFont(appFontRes(this))
         fun label(text: String, size: Float) = TextView(this).apply {
             this.text = text
             textSize = size
             gravity = Gravity.CENTER
             setTextColor(INK)
-            typeface = resources.getFont(R.font.suit_regular)
+            setTypeface(overlayFont, Typeface.NORMAL)
             setPadding(0, pad / 2, 0, pad / 2)
             layout.addView(this, LinearLayout.LayoutParams(-1, -2))
         }
         label(getString(R.string.app_name), 18f)
-        label(getString(R.string.blocked_title), 30f).setTypeface(resources.getFont(R.font.suit_bold), Typeface.NORMAL)
+        label(getString(R.string.blocked_title), 30f)
         label(getString(R.string.blocked_body), 17f)
         timeLabel = label("", 22f)
         fun button(text: Int, primary: Boolean, action: () -> Unit) {
@@ -128,7 +129,7 @@ class FocusAccessibilityService : AccessibilityService() {
                 setText(text)
                 isAllCaps = false
                 textSize = 17f
-                typeface = resources.getFont(R.font.suit_medium)
+                setTypeface(overlayFont, Typeface.NORMAL)
                 setTextColor(if (primary) BUTTER else INK)
                 stateListAnimator = null
                 background = RippleDrawable(ColorStateList.valueOf(if (primary) Color.argb(60, 247, 240, 199) else Color.argb(40, 61, 91, 63)), shape, null)

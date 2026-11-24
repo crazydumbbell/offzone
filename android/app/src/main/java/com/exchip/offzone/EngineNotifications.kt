@@ -14,6 +14,7 @@ import android.os.Build
 
 object EngineNotifications {
     const val MONITOR_ID = 410
+    const val EVENT_ID = 411
 
     /** Returns a configuration context matching the app's active locale on API 33+. */
     internal fun localizedContext(context: Context): Context {
@@ -53,7 +54,7 @@ object EngineNotifications {
         if (Build.VERSION.SDK_INT >= 33 && context.checkSelfPermission(Manifest.permission.POST_NOTIFICATIONS) != PackageManager.PERMISSION_GRANTED) return
         val localized = localizedContext(context)
         runCatching {
-            manager(localized).notify(411, Notification.Builder(localized, "focus_events")
+            manager(localized).notify(EVENT_ID, Notification.Builder(localized, "focus_events")
                 .setSmallIcon(android.R.drawable.ic_lock_idle_lock).setContentTitle(localized.getString(R.string.app_name))
                 .setContentText(localized.getString(message)).setContentIntent(open(context)).setAutoCancel(true).build())
         }

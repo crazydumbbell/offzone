@@ -5,19 +5,14 @@
     <string name="editor_name_personal">Il mio tempo</string>
     <string name="editor_cancel">Annulla</string>
     <string name="editor_apps_title">Scegli le app da mettere da parte</string>
-    <string name="editor_apps_detail">Lascia disponibili le app essenziali come chiamate, mappe, banca e autenticazione.</string>
     <string name="editor_apps_choose">Scegli app</string>
     <string name="editor_apps_choose_again">Scegli di nuovo</string>
     <string name="editor_apps_empty">Ancora nulla selezionato</string>
     <string name="editor_place_optional">Luogo (opzionale)</string>
-    <string name="editor_place_optional_note">Lascia vuoto per avviare in qualsiasi momento nel tuo orario, oppure scegli un luogo per richiedere di trovarti lì.</string>
     <string name="editor_place_empty">Ovunque (solo orario)</string>
-    <string name="editor_place_hint">L’arrivo usa un’area approssimativa di 150 m, senza precisione a livello di stanza.</string>
     <string name="editor_clear_place">Rimuovi luogo</string>
     <string name="editor_schedule_title">Orario e dettagli</string>
-    <string name="editor_schedule_detail">Imposta quando si ripete, un luogo opzionale e un nome.</string>
     <string name="editor_schedule_warning">Scegli una fascia di concentrazione di almeno 15 minuti.</string>
-    <string name="editor_schedule_overnight">Termina il giorno successivo.</string>
     <string name="editor_next_day_badge">(+1 giorno)</string>
     <string name="editor_name_placeholder">es. Lavoro o Relax serale</string>
     <string name="editor_days">Giorni</string>
@@ -27,5 +22,4 @@
     <string name="days_weekends">Fine settimana</string>
     <string name="home_starts_on">Inizia %1$s alle %2$s</string>
     <string name="editor_time_only_place">Nessun luogo, solo orario</string>
-    <string name="audit_start_time_only">Regola solo oraria: tocca Avvia concentrazione durante l’orario. Posizione non necessaria.</string>
 </resources>

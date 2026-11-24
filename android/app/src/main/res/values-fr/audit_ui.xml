@@ -1,6 +1,4 @@
 <resources>
     <string name="audit_settings">Paramètres</string>
-    <string name="audit_start_location">Votre position est vérifiée au démarrage.</string>
-    <string name="audit_monitoring">La surveillance de position est activée</string>
     <string name="audit_saved_place">Lieu enregistré</string>
 </resources>

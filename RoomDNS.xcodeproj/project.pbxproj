@@ -14,22 +14,18 @@
 		A10C00000000000000000001 /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = A10C00000000000000000011 /* Localizable.strings */; };
 		A10C00000000000000000002 /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = A10C00000000000000000011 /* Localizable.strings */; };
 		A10C00000000000000000003 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = A10C00000000000000000012 /* InfoPlist.strings */; };
+		A10C00000000000000000004 /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = A10C00000000000000000011 /* Localizable.strings */; };
 		1933F230DFFCA2A72D536624 /* RestrictionState.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF7761FAFD979DFDFF4CD1C1 /* RestrictionState.swift */; };
 		19A90B792DA6487EBC2E8F01 /* PrivacyInfo.xcprivacy in Resources */ = {isa = PBXBuildFile; fileRef = 8464AEDE04E848E0A052AF54 /* PrivacyInfo.xcprivacy */; };
-		1C1593A658AE97F98C30E082 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1087AB21DFECA399F264B551 /* Foundation.framework */; };
 		233D4EAE0CFFC877A971E5E1 /* RoomDNSMonitor.appex in Embed App Extensions */ = {isa = PBXBuildFile; fileRef = 46A735DA1AD3701B6BBDA498 /* RoomDNSMonitor.appex */; };
 		287BF9E2125318BFCCD45E99 /* ShieldActionExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 71D4707908B8DD71B2778683 /* ShieldActionExtension.swift */; };
-		346C36A1CE0FCABE1AD8A35F /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1087AB21DFECA399F264B551 /* Foundation.framework */; };
 		39B01724D5610B64C9790864 /* AppModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = F8250C908EA1209E09C7C045 /* AppModel.swift */; };
 		436D2617E1AEBF9134283ECB /* DeviceActivityMonitorExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = E2D8DBF2198A196C4C4638CA /* DeviceActivityMonitorExtension.swift */; };
 		493003AA0C722897503FB5D9 /* RestrictionState.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF7761FAFD979DFDFF4CD1C1 /* RestrictionState.swift */; };
 		4DE89F96711C4460A2EB92F2 /* PrivacyInfo.xcprivacy in Resources */ = {isa = PBXBuildFile; fileRef = 8464AEDE04E848E0A052AF54 /* PrivacyInfo.xcprivacy */; };
 		55F7BD6A3E8D35E9EC01DCEC /* RestrictionPolicyTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6838EE98ED8756EE6BE34903 /* RestrictionPolicyTests.swift */; };
-		5DE067C955A54109450DD77E /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1087AB21DFECA399F264B551 /* Foundation.framework */; };
 		807949B9D7BF395A71730587 /* RoomDNSShieldConfiguration.appex in Embed App Extensions */ = {isa = PBXBuildFile; fileRef = 70F1782D5A400B36F01EE36B /* RoomDNSShieldConfiguration.appex */; };
 		886D7A047F4D31AE0E42C76F /* RoomDNSShieldAction.appex in Embed App Extensions */ = {isa = PBXBuildFile; fileRef = 4718132686598AA57D677726 /* RoomDNSShieldAction.appex */; };
-		8888C6D0DCF24EA4BAC9C2C9 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1087AB21DFECA399F264B551 /* Foundation.framework */; };
-		A3F86EB452F87C4C99B9EFA2 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1087AB21DFECA399F264B551 /* Foundation.framework */; };
 		CCD7DCE4DA8D1EA4B9C02E91 /* ShieldConfigurationExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = C4091B6D0ED0185AD10FB3C8 /* ShieldConfigurationExtension.swift */; };
 		E14573051220E3635645AD1F /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9B9CF4E6150C78EB4FDC15E7 /* ContentView.swift */; };
 		EBBC5723EF2F43430BACBEE2 /* RoomDNSApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 73CE663F252B84BB247A6827 /* RoomDNSApp.swift */; };
@@ -128,7 +124,6 @@
 		A10C00000000000000000033 /* InfoPlist.strings */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "pt-BR"; path = "pt-BR.lproj/InfoPlist.strings"; sourceTree = "<group>"; };
 		A10C00000000000000000034 /* InfoPlist.strings */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = it; path = it.lproj/InfoPlist.strings; sourceTree = "<group>"; };
 		0B234F5F48381CD335E5176C /* ShieldConfiguration.entitlements */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.plist.entitlements; path = ShieldConfiguration.entitlements; sourceTree = "<group>"; };
-		1087AB21DFECA399F264B551 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS18.0.sdk/System/Library/Frameworks/Foundation.framework; sourceTree = DEVELOPER_DIR; };
 		2D1EB6798C4533D713B91849 /* Info.plist */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		33F3BAAFE142D844B84E9C9E /* Info.plist */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		46A735DA1AD3701B6BBDA498 /* RoomDNSMonitor.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = RoomDNSMonitor.appex; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -169,7 +164,6 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				5DE067C955A54109450DD77E /* Foundation.framework in Frameworks */,
 				A11000000000000000000024 /* RevenueCat in Frameworks */,
 				A11000000000000000000026 /* GoogleSignIn in Frameworks */,
 				A11000000000000000000027 /* GoogleSignInSwift in Frameworks */,
@@ -185,7 +179,6 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				A3F86EB452F87C4C99B9EFA2 /* Foundation.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -193,7 +186,6 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				1C1593A658AE97F98C30E082 /* Foundation.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -201,7 +193,6 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				8888C6D0DCF24EA4BAC9C2C9 /* Foundation.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -209,7 +200,6 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				346C36A1CE0FCABE1AD8A35F /* Foundation.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -248,7 +238,6 @@
 		2566545E307E805E2225B864 /* iOS */ = {
 			isa = PBXGroup;
 			children = (
-				1087AB21DFECA399F264B551 /* Foundation.framework */,
 			);
 			name = iOS;
 			sourceTree = "<group>";
@@ -502,6 +491,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				4DE89F96711C4460A2EB92F2 /* PrivacyInfo.xcprivacy in Resources */,
+				A10C00000000000000000004 /* Localizable.strings in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -674,7 +664,7 @@
 				CLANG_ENABLE_OBJC_WEAK = NO;
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = GS2FF7X539;
-				CURRENT_PROJECT_VERSION = 7;
+				CURRENT_PROJECT_VERSION = 8;
 				ENABLE_USER_SCRIPT_SANDBOXING = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				IPHONEOS_DEPLOYMENT_TARGET = 18.0;
@@ -695,7 +685,7 @@
 				CODE_SIGN_ENTITLEMENTS = Extensions/ShieldConfiguration/ShieldConfiguration.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = GS2FF7X539;
-				CURRENT_PROJECT_VERSION = 7;
+				CURRENT_PROJECT_VERSION = 8;
 				ENABLE_USER_SCRIPT_SANDBOXING = YES;
 				GENERATE_INFOPLIST_FILE = NO;
 				INFOPLIST_FILE = Extensions/ShieldConfiguration/Info.plist;
@@ -718,7 +708,7 @@
 				CODE_SIGN_ENTITLEMENTS = Extensions/ShieldAction/ShieldAction.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = GS2FF7X539;
-				CURRENT_PROJECT_VERSION = 7;
+				CURRENT_PROJECT_VERSION = 8;
 				ENABLE_USER_SCRIPT_SANDBOXING = YES;
 				GENERATE_INFOPLIST_FILE = NO;
 				INFOPLIST_FILE = Extensions/ShieldAction/Info.plist;
@@ -742,7 +732,7 @@
 				CODE_SIGN_ENTITLEMENTS = Extensions/DeviceActivityMonitor/DeviceActivityMonitor.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = GS2FF7X539;
-				CURRENT_PROJECT_VERSION = 7;
+				CURRENT_PROJECT_VERSION = 8;
 				ENABLE_USER_SCRIPT_SANDBOXING = YES;
 				GENERATE_INFOPLIST_FILE = NO;
 				INFOPLIST_FILE = Extensions/DeviceActivityMonitor/Info.plist;
@@ -764,7 +754,7 @@
 				CLANG_ENABLE_OBJC_WEAK = NO;
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = GS2FF7X539;
-				CURRENT_PROJECT_VERSION = 7;
+				CURRENT_PROJECT_VERSION = 8;
 				ENABLE_USER_SCRIPT_SANDBOXING = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				IPHONEOS_DEPLOYMENT_TARGET = 18.0;
@@ -902,7 +892,7 @@
 				CODE_SIGN_ENTITLEMENTS = RoomDNS/RoomDNS.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = GS2FF7X539;
-				CURRENT_PROJECT_VERSION = 7;
+				CURRENT_PROJECT_VERSION = 8;
 				ENABLE_USER_SCRIPT_SANDBOXING = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = RoomDNS/Info.plist;
@@ -932,7 +922,7 @@
 				CODE_SIGN_ENTITLEMENTS = Extensions/DeviceActivityMonitor/DeviceActivityMonitor.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = GS2FF7X539;
-				CURRENT_PROJECT_VERSION = 7;
+				CURRENT_PROJECT_VERSION = 8;
 				ENABLE_USER_SCRIPT_SANDBOXING = YES;
 				GENERATE_INFOPLIST_FILE = NO;
 				INFOPLIST_FILE = Extensions/DeviceActivityMonitor/Info.plist;
@@ -956,7 +946,7 @@
 				CODE_SIGN_ENTITLEMENTS = Extensions/ShieldConfiguration/ShieldConfiguration.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = GS2FF7X539;
-				CURRENT_PROJECT_VERSION = 7;
+				CURRENT_PROJECT_VERSION = 8;
 				ENABLE_USER_SCRIPT_SANDBOXING = YES;
 				GENERATE_INFOPLIST_FILE = NO;
 				INFOPLIST_FILE = Extensions/ShieldConfiguration/Info.plist;
@@ -980,7 +970,7 @@
 				CODE_SIGN_ENTITLEMENTS = Extensions/ShieldAction/ShieldAction.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = GS2FF7X539;
-				CURRENT_PROJECT_VERSION = 7;
+				CURRENT_PROJECT_VERSION = 8;
 				ENABLE_USER_SCRIPT_SANDBOXING = YES;
 				GENERATE_INFOPLIST_FILE = NO;
 				INFOPLIST_FILE = Extensions/ShieldAction/Info.plist;
@@ -1004,7 +994,7 @@
 				CODE_SIGN_ENTITLEMENTS = RoomDNS/RoomDNS.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = GS2FF7X539;
-				CURRENT_PROJECT_VERSION = 7;
+				CURRENT_PROJECT_VERSION = 8;
 				ENABLE_USER_SCRIPT_SANDBOXING = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = RoomDNS/Info.plist;

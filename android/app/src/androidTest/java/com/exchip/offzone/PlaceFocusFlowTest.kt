@@ -4,7 +4,6 @@ import android.app.UiAutomation
 import android.content.ComponentName
 import android.content.Context
 import android.content.Intent
-import android.location.Criteria
 import android.location.Location
 import android.location.LocationManager
 import android.os.Build
@@ -81,9 +80,9 @@ class PlaceFocusFlowTest {
             preferences.edit().putBoolean("disclosure", true).commit()
             onboarding.edit().putBoolean("completed", true).commit()
             device.executeShellCommand("appops set ${context.packageName} android:mock_location allow")
-            manager.addTestProvider(LocationManager.GPS_PROVIDER, false, false, false, false, true, true, true, Criteria.POWER_LOW, Criteria.ACCURACY_FINE)
+            manager.addTestProvider(LocationManager.GPS_PROVIDER, false, false, false, false, true, true, true, android.location.Criteria.POWER_LOW, android.location.Criteria.ACCURACY_FINE)
             manager.setTestProviderEnabled(LocationManager.GPS_PROVIDER, true)
-            manager.addTestProvider(LocationManager.NETWORK_PROVIDER, false, false, false, false, true, true, true, Criteria.POWER_LOW, Criteria.ACCURACY_COARSE)
+            manager.addTestProvider(LocationManager.NETWORK_PROVIDER, false, false, false, false, true, true, true, android.location.Criteria.POWER_LOW, android.location.Criteria.ACCURACY_COARSE)
             manager.setTestProviderEnabled(LocationManager.NETWORK_PROVIDER, false)
             device.executeShellCommand("settings put secure enabled_accessibility_services ${(services.split(':').filter { it.isNotBlank() } + service).distinct().joinToString(":")}")
             device.executeShellCommand("settings put secure accessibility_enabled 1")

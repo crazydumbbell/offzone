@@ -38,8 +38,17 @@ struct ProInviteHero: View {
     @Environment(\.scenePhase) private var scenePhase
     @State private var entered = false
     @State private var start = Date()
-    private let tiles: [(CGFloat, CGFloat, Double, CGFloat)] = [
-        (-112, -64, -10, 68), (112, -88, 8, 60), (-104, 56, 6, 64), (116, 72, -7, 72)
+    private struct TileSpec {
+        let x: CGFloat
+        let y: CGFloat
+        let rotation: Double
+        let size: CGFloat
+    }
+    private let tiles: [TileSpec] = [
+        .init(x: -112, y: -64, rotation: -10, size: 68),
+        .init(x: 112, y: -88, rotation: 8, size: 60),
+        .init(x: -104, y: 56, rotation: 6, size: 64),
+        .init(x: 116, y: 72, rotation: -7, size: 72)
     ]
     var body: some View {
         GeometryReader { geo in
@@ -68,8 +77,8 @@ struct ProInviteHero: View {
         let spec = tiles[i]
         let phase = Double(i) * Double.pi / 2
         let drift: CGFloat = reduceMotion ? 0 : CGFloat(sin(elapsed * 2 * Double.pi / 4.4 + phase) * 3)
-        return ProFloatingTile(index: i, x: spec.0 * scale, y: spec.1 * scale + drift,
-                               rotation: spec.2, size: spec.3 * scale)
+        return ProFloatingTile(index: i, x: spec.x * scale, y: spec.y * scale + drift,
+                               rotation: spec.rotation, size: spec.size * scale)
     }
 }
 
@@ -111,7 +120,7 @@ struct ProRemindHero: View {
                     .accessibilityHidden(true)
                 VStack(alignment: .leading, spacing: 4) {
                     Text(roomString("pro_banner_title")).font(.suit(.subheadline, weight: .semibold))
-                    Text(roomString("pro_banner_body")).font(.suit(.caption)).foregroundStyle(Color.roomInkSecondary)
+                    Text(roomString("pro_banner_body")).font(.suit(.subheadline)).foregroundStyle(Color.roomInkSecondary)
                         .fixedSize(horizontal: false, vertical: true)
                 }.frame(maxWidth: .infinity, alignment: .leading)
             }.padding(12).editorialPanel()
@@ -229,25 +238,26 @@ struct ProPlanCard: View {
     let burst: Int
     let action: () -> Void
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
+    @Environment(\.dynamicTypeSize) private var dynamicTypeSize
     @State private var scale: CGFloat = 1
     var body: some View {
         Button(action: action) {
             HStack(alignment: .center, spacing: 12) {
-                VStack(alignment: .leading, spacing: 6) {
+                VStack(alignment: .leading, spacing: 4) {
                     Text(roomString(plan.annual ? "pro_yearly" : "pro_monthly")).font(.suit(.headline, weight: .semibold))
                     if let savings {
-                        ViewThatFits(in: .horizontal) { badges(savings, horizontal: true); badges(savings, horizontal: false) }
+                        badges(savings)
                     }
                     Text(plan.trialDays.map { roomString("pro_free_then", ProPlanMath.dayLabel($0), plan.cadence) } ?? plan.cadence)
                         .font(.suit(.subheadline)).fixedSize(horizontal: false, vertical: true)
-                    if let perMonth { Text(roomString("pro_per_month", perMonth)).font(.suit(.caption)).foregroundStyle(Color.roomInkSecondary) }
+                    if let perMonth { Text(roomString("pro_per_month", perMonth)).font(.suit(.subheadline)).foregroundStyle(Color.roomInkSecondary) }
                 }.frame(maxWidth: .infinity, alignment: .leading)
                 ZStack {
                     Circle().strokeBorder(selected ? Color.roomAccent : Color.roomInkSecondary, lineWidth: 1.5)
                     Circle().fill(Color.roomAccent).frame(width: 14, height: 14).scaleEffect(selected ? 1 : 0)
                         .animation(reduceMotion ? .linear(duration: 0.1) : ProMotion.spring, value: selected)
                 }.frame(width: 24, height: 24).accessibilityHidden(true)
-            }.padding(18).frame(maxWidth: .infinity, minHeight: 84, alignment: .leading)
+            }.padding(.horizontal, 16).padding(.vertical, 12).frame(maxWidth: .infinity, minHeight: 72, alignment: .leading)
                 .foregroundStyle(Color.roomInk).multilineTextAlignment(.leading)
                 .background(selected ? Color.roomMint : Color.roomCard, in: RoundedRectangle(cornerRadius: 24))
                 .overlay { RoundedRectangle(cornerRadius: 24).strokeBorder(selected ? Color.roomAccent : Color.roomOutline, lineWidth: selected ? 2 : 1) }
@@ -261,13 +271,24 @@ struct ProPlanCard: View {
                 do { try await Task.sleep(for: .milliseconds(110)); withAnimation(ProMotion.spring) { scale = 1 } } catch { }
             }
     }
-    @ViewBuilder private func badges(_ savings: Int, horizontal: Bool) -> some View {
+    @ViewBuilder private func badges(_ savings: Int) -> some View {
         let content = Group {
-            Text(roomString("pro_best_value")).padding(.horizontal, 8).padding(.vertical, 4).foregroundStyle(Color.roomCanvas).background(Color.roomAccent, in: Capsule())
-            Text(roomString("pro_save", savings)).padding(.horizontal, 8).padding(.vertical, 4).background(Color.roomButter, in: Capsule())
-        }.font(.suit(.caption, weight: .bold)).fixedSize(horizontal: false, vertical: true)
-        if horizontal { HStack(spacing: 6) { content }.fixedSize(horizontal: true, vertical: true) }
-        else { VStack(alignment: .leading, spacing: 6) { content } }
+            Text(roomString("pro_best_value"))
+                .padding(.horizontal, 8).padding(.vertical, 3)
+                .foregroundStyle(Color.roomCanvas)
+                .background(Color.roomAccent, in: Capsule())
+            Text(roomString("pro_save", savings))
+                .padding(.horizontal, 8).padding(.vertical, 3)
+                .background(Color.roomButter, in: Capsule())
+        }
+        .font(.custom(Font.suitFace(.bold), size: 12, relativeTo: .caption2))
+        .lineLimit(1)
+        .minimumScaleFactor(0.8)
+        if dynamicTypeSize.isAccessibilitySize {
+            VStack(alignment: .leading, spacing: 4) { content }
+        } else {
+            HStack(spacing: 6) { content }
+        }
     }
 }
 
@@ -336,9 +357,10 @@ private struct ProShimmer: ViewModifier {
             do {
                 try await Task.sleep(for: .seconds(2))
                 while !Task.isCancelled {
-                    progress = 0
                     withAnimation(ProMotion.state(duration: 0.6)) { progress = 1 }
-                    try await Task.sleep(for: .seconds(5))
+                    try await Task.sleep(for: .milliseconds(650))
+                    progress = 0
+                    try await Task.sleep(for: .milliseconds(4350))
                 }
             } catch { progress = 0 }
         }

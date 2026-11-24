@@ -88,6 +88,8 @@ final class AccountStore: ObservableObject {
     private var purchaseGeneration = UUID()
 
     deinit {
+        if let authListener { Auth.auth().removeStateDidChangeListener(authListener) }
+        identityTask?.cancel()
         customerInfoTask?.cancel()
         proExpiryTask?.cancel()
     }

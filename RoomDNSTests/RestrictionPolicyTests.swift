@@ -35,11 +35,22 @@ final class RestrictionPolicyTests: XCTestCase {
     }
 
     @MainActor
-    func testSUITBundledFacesAndReadableSizes() {
-        for weight: Font.Weight in [.regular, .medium, .semibold, .bold] {
-            let font = UIFont(name: Font.suitFace(weight), size: 16)
-            XCTAssertNotNil(font)
-            XCTAssertTrue(font?.familyName.contains("SUIT") == true)
+    func testBundledFacesAndReadableSizes() {
+        let expected = Font.suitFace(forLanguage: Bundle.main.preferredLocalizations.first)
+        for weight: Font.Weight in [.ultraLight, .thin, .light, .regular, .medium, .semibold, .bold, .heavy, .black] {
+            XCTAssertEqual(Font.suitFace(weight), expected)
+        }
+        let jua = UIFont(name: "Jua-Regular", size: 16)
+        XCTAssertNotNil(jua)
+        XCTAssertTrue(jua?.familyName.contains("Jua") == true)
+        let fredoka = UIFont(name: "Fredoka-SemiBold", size: 16)
+        XCTAssertNotNil(fredoka)
+        XCTAssertTrue(fredoka?.familyName.contains("Fredoka") == true)
+        for lang in ["de", "de-DE", "es", "fr", "it", "pt", "pt-BR"] {
+            XCTAssertEqual(Font.suitFace(forLanguage: lang), "Fredoka-SemiBold", lang)
+        }
+        for lang in ["en", "en-US", "ko", "ko-KR", "ja", "zh-Hans", "zh-Hant", nil] {
+            XCTAssertEqual(Font.suitFace(forLanguage: lang), "Jua-Regular", lang ?? "nil")
         }
         for style: Font.TextStyle in [.caption2, .caption, .footnote, .subheadline, .body, .headline, .title, .largeTitle] {
             XCTAssertGreaterThanOrEqual(Font.suitSize(style), 14)
@@ -210,7 +221,7 @@ final class RestrictionPolicyTests: XCTestCase {
     }
 
     @MainActor
-    func testDeletionProtectionOptInSurvivesEditingWithoutChangingActiveRule() async throws {
+    func testDeletionProtectionOptInSurvivesEditingWithoutChangingActiveRule() throws {
         let legacy = sampleRule()
         var encoded = try XCTUnwrap(JSONSerialization.jsonObject(with: JSONEncoder().encode(legacy)) as? [String: Any])
         encoded.removeValue(forKey: "preventAppRemoval")
@@ -244,7 +255,7 @@ final class RestrictionPolicyTests: XCTestCase {
     }
 
     @MainActor
-    func testFeedbackShowsErrorsWithoutNormalStatusMessages() async throws {
+    func testFeedbackShowsErrorsWithoutNormalStatusMessages() {
         let model = AppModel()
         XCTAssertNil(model.errorMessage)
         XCTAssertFalse(model.saveRule(placeMode: .gps))
@@ -679,4 +690,115 @@ final class RestrictionPolicyTests: XCTestCase {
         XCTAssertEqual(sessionID, RestrictionPolicy.unlockSessionID(generation: generation, occurrenceStart: earlyStart))
         XCTAssertNotEqual(sessionID, RestrictionPolicy.unlockSessionID(generation: UUID(), occurrenceStart: earlyStart))
     }
+
+    func testHomeViewPolicyHidesCardSuggestedRowActionAndKeepsSingleRestorePath() {
+        let first = UUID()
+        let second = UUID()
+        let suggested = HomeViewPolicy.cardSuggestedRuleID(
+            screenTimeAuthorized: true, rulesEmpty: false,
+            ruleEnabled: false, safetyReleased: false, suggestedRuleID: first
+        )
+        XCTAssertEqual(suggested, first)
+        // Row already suggested by the top card hides its Activate/Apply button; other rows keep theirs.
+        XCTAssertFalse(HomeViewPolicy.showsRowActivateAction(
+            ruleID: first, isActive: false, hasUnappliedChanges: false, canResume: false, cardSuggestedRuleID: suggested
+        ))
+        XCTAssertTrue(HomeViewPolicy.showsRowActivateAction(
+            ruleID: second, isActive: false, hasUnappliedChanges: false, canResume: false, cardSuggestedRuleID: suggested
+        ))
+
+        // After recovery, top card suggests the active rule; row Resume button is hidden while other rows keep Activate.
+        let recoveredSuggested = HomeViewPolicy.cardSuggestedRuleID(
+            screenTimeAuthorized: true, rulesEmpty: false,
+            ruleEnabled: true, safetyReleased: true, suggestedRuleID: first
+        )
+        XCTAssertEqual(recoveredSuggested, first)
+        XCTAssertFalse(HomeViewPolicy.showsRowActivateAction(
+            ruleID: first, isActive: true, hasUnappliedChanges: false, canResume: true, cardSuggestedRuleID: recoveredSuggested
+        ))
+        XCTAssertTrue(HomeViewPolicy.showsRowActivateAction(
+            ruleID: second, isActive: false, hasUnappliedChanges: false, canResume: false, cardSuggestedRuleID: recoveredSuggested
+        ))
+
+        // When rule is active and not safety-released, top card does not suggest Activate, so Apply changes stays on row.
+        let activeCardSuggested = HomeViewPolicy.cardSuggestedRuleID(
+            screenTimeAuthorized: true, rulesEmpty: false,
+            ruleEnabled: true, safetyReleased: false, suggestedRuleID: first
+        )
+        XCTAssertNil(activeCardSuggested)
+        XCTAssertTrue(HomeViewPolicy.showsRowActivateAction(
+            ruleID: first, isActive: true, hasUnappliedChanges: true, canResume: false, cardSuggestedRuleID: activeCardSuggested
+        ))
+
+        // Restore access: on Home during Quick focus, card owns the single Restore button (top bar hidden).
+        XCTAssertFalse(HomeViewPolicy.showsTopBarRestoreAccess(
+            onHomeScreen: true, hasActiveSession: true, quickFocusActive: true, ruleFocused: false, shouldShield: false
+        ))
+        // Away from Home during Quick focus, top bar restores access so at least one recovery path remains.
+        XCTAssertTrue(HomeViewPolicy.showsTopBarRestoreAccess(
+            onHomeScreen: false, hasActiveSession: true, quickFocusActive: true, ruleFocused: false, shouldShield: false
+        ))
+        // During rule focus on Home (no Quick focus card), top bar shows Restore access.
+        XCTAssertTrue(HomeViewPolicy.showsTopBarRestoreAccess(
+            onHomeScreen: true, hasActiveSession: true, quickFocusActive: false, ruleFocused: true, shouldShield: true
+        ))
+        // No active session: no top bar Restore access.
+        XCTAssertFalse(HomeViewPolicy.showsTopBarRestoreAccess(
+            onHomeScreen: true, hasActiveSession: false, quickFocusActive: false, ruleFocused: false, shouldShield: false
+        ))
+    }
+
+    func testSetupFlowPolicyKeepsStepCountConsistentPerFlow() {
+        // 3-step flow (permission -> targets -> schedule) keeps total == 3 throughout.
+        XCTAssertEqual(SetupFlowPolicy.progress(step: .permission, includesPermission: true, permissionOnly: false)?.current, 1)
+        XCTAssertEqual(SetupFlowPolicy.progress(step: .permission, includesPermission: true, permissionOnly: false)?.total, 3)
+        XCTAssertEqual(SetupFlowPolicy.progress(step: .targets, includesPermission: true, permissionOnly: false)?.current, 2)
+        XCTAssertEqual(SetupFlowPolicy.progress(step: .targets, includesPermission: true, permissionOnly: false)?.total, 3)
+        XCTAssertEqual(SetupFlowPolicy.progress(step: .schedule, includesPermission: true, permissionOnly: false)?.current, 3)
+        XCTAssertEqual(SetupFlowPolicy.progress(step: .schedule, includesPermission: true, permissionOnly: false)?.total, 3)
+
+        // 2-step flow (targets -> schedule) keeps total == 2 throughout.
+        XCTAssertEqual(SetupFlowPolicy.progress(step: .targets, includesPermission: false, permissionOnly: false)?.current, 1)
+        XCTAssertEqual(SetupFlowPolicy.progress(step: .targets, includesPermission: false, permissionOnly: false)?.total, 2)
+        XCTAssertEqual(SetupFlowPolicy.progress(step: .schedule, includesPermission: false, permissionOnly: false)?.current, 2)
+        XCTAssertEqual(SetupFlowPolicy.progress(step: .schedule, includesPermission: false, permissionOnly: false)?.total, 2)
+
+        // Standalone Screen Time check from Home hides progress.
+        XCTAssertNil(SetupFlowPolicy.progress(step: .permission, includesPermission: false, permissionOnly: true))
+    }
+
+#if targetEnvironment(simulator)
+    @MainActor
+    func testSafetyReleaseAndPlaceArrivalHideRedundantIdleCopy() async throws {
+        let model = AppModel()
+        _ = await model.requestScreenTimeAuthorization()
+        model.requestTargetSelection()
+        model.startTime = .now.addingTimeInterval(-60)
+        model.endTime = .now.addingTimeInterval(60 * 60)
+        model.days = RestrictionPolicy.everyDay
+        model.preventAppRemoval = false
+        XCTAssertTrue(model.saveRule(placeMode: .anywhere))
+        let id = try XCTUnwrap(model.editingRuleID)
+        XCTAssertTrue(model.activateRule(id))
+
+        // Active schedule without preventAppRemoval: safety release has no redundant extra paragraph.
+        XCTAssertNil(model.safetyReleaseDescription)
+
+        // Enabling preventAppRemoval surfaces the deletion restriction notice.
+        model.preventAppRemoval = true
+        XCTAssertTrue(model.saveRule(placeMode: .anywhere))
+        XCTAssertTrue(model.activateRule(id))
+        XCTAssertEqual(model.safetyReleaseDescription, roomString("This also removes this rule’s app deletion restriction."))
+
+        // Idle GPS rule without a fresh observation hides redundant idle prompt text.
+        let gpsRule = sampleRule(mode: .gps)
+        try SharedState.activate(gpsRule)
+        model.refresh()
+        XCTAssertNil(model.placeArrivalText)
+
+        // Fresh observation surfaces status text conditionally.
+        SharedState.setInsidePlace(true, generation: SharedState.runtime.generation, confirmed: true, observedAt: .now)
+        XCTAssertNotNil(model.placeArrivalText)
+    }
+#endif
 }

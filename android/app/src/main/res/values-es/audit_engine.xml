@@ -1,4 +1,3 @@
 <resources>
     <string name="engine_reconnected">El bloqueo de apps está listo. Las sesiones de concentración anteriores no se reanudan; inicia una nueva cuando quieras.</string>
-    <string name="engine_restart_note">Si Android detiene Offzone o su servicio de bloqueo, la concentración termina. Las sesiones anteriores y la supervisión del lugar no se reinician automáticamente; vuelve a iniciarlas cuando quieras.</string>
 </resources>

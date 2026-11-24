@@ -1,6 +1,6 @@
 import { createHash } from 'node:crypto';
 
-export class PurchaseError extends Error {
+class PurchaseError extends Error {
   constructor(code) { super(code); this.code = code; }
 }
 

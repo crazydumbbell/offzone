@@ -19,7 +19,6 @@
     </plurals>
     <string name="pro_preview_note">預覽 · 範例方案，不會實際收費</string>
     <string name="pro_try_title">免費試用 Offzone Pro %1$s。</string>
-    <string name="pro_no_payment">現在無須付款。</string>
     <string name="pro_start_trial">開始免費試用</string>
     <string name="pro_see_plans">檢視方案</string>
     <string name="pro_continue">繼續</string>
@@ -38,7 +37,6 @@
     <string name="pro_how_free_body">仍處於免費試用期間。</string>
     <string name="pro_how_end_body">除非提前取消，否則訂閱方案將自動開始。</string>
     <string name="pro_plans_title">選擇你的方案</string>
-    <string name="pro_plans_sub">解鎖專注規則、快速專注、每週計畫與私密日誌。</string>
     <string name="pro_yearly">年繳</string>
     <string name="pro_monthly">月繳</string>
     <string name="pro_best_value">最超值</string>
@@ -47,8 +45,6 @@
     <string name="pro_per_month">%s / 月</string>
     <string name="pro_due_today">今日應付：%s</string>
     <string name="pro_free_then">%1$s 免費，之後 %2$s</string>
-    <string name="pro_cta_trial_sub">今日不扣款 · 之後 %s</string>
-    <string name="pro_cta_sub">%s · 隨時可取消</string>
     <string name="pro_legal">隨時可於 Google Play 中取消。取消前將會自動續訂。</string>
     <string name="pro_done_title">Pro 已開啟。</string>
     <string name="pro_done_trial">你的免費試用已開始。</string>

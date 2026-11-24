@@ -7,7 +7,6 @@
     <string name="journal_back">Zurück</string>
     <string name="journal_previous">Vorherige Woche</string>
     <string name="journal_next">Nächste Woche</string>
-    <string name="journal_summary_note">Selbst erfasste Reflexionen, keine gemessene Fokuszeit. Ein Wochenplan plant keine App-Sperren.</string>
     <string name="journal_intention">Wofür möchtest du Raum schaffen?</string>
     <string name="journal_plan_save">Wochenvorsatz speichern</string>
     <string name="journal_plan_delete">Diesen Plan löschen</string>
@@ -22,7 +21,6 @@
     <string name="journal_export">Journal als JSON exportieren</string>
     <string name="journal_share">Journal-Kopie teilen</string>
     <string name="journal_import">Journal-JSON importieren</string>
-    <string name="journal_import_note">Importiere einen Offzone-Export von iOS oder Android. Passende Einträge werden zusammengeführt; widersprüchliche werden ohne Änderung deines Journals abgelehnt.</string>
     <string name="journal_private">Diese Kopie enthält deine privaten Vorsätze und Reflexionen.</string>
     <string name="journal_delete_all">Alle lokalen Journaldaten löschen</string>
     <string name="journal_confirm">Alle Pläne und Reflexionen auf diesem Gerät löschen? Dies kann nicht rückgängig gemacht werden.</string>
@@ -39,7 +37,6 @@
     <string name="goal_personal">Zeit für mich</string>
     <string name="onboarding_title">Schaff Raum für das Wesentliche.</string>
     <string name="onboarding_detail">Wähle, wann und wo Ablenkungen blockiert werden.</string>
-    <string name="onboarding_safe">Du setzt die Grenzen. Aktive Sitzungen lassen sich jederzeit freigeben.</string>
     <string name="onboarding_start">Loslegen</string>
     <string name="onboarding_continue">Weiter</string>
     <string name="nook_description">Nook Cat, dein Fokus-Begleiter</string>

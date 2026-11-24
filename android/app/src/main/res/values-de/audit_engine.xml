@@ -1,4 +1,3 @@
 <resources>
     <string name="engine_reconnected">App-Sperre ist bereit. Vorherige Fokussitzungen werden nicht fortgesetzt; starte eine neue Sitzung, wenn du bereit bist.</string>
-    <string name="engine_restart_note">Wenn Android Offzone oder seinen Sperrdienst beendet, endet der Fokus. Vorherige Sitzungen und die Ortsüberwachung starten nicht automatisch neu. Starte sie erneut, wenn du bereit bist.</string>
 </resources>

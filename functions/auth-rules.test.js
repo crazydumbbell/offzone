@@ -42,6 +42,25 @@ test('email verification, password reset, linked identity and goal ownership', {
   await goal(user);
   await goal(user, 'someone-else', 403);
   await goal(user, user.localId, 403, 'invalid-goal');
+  // Client timestamp, missing timestamp, extra fields and server-only paths must be denied.
+  for (const [label, body] of [
+    ['client timestamp', { writes: [{ update: { name: `projects/demo-roomdns/databases/(default)/documents/users/${user.localId}`, fields: { goal: { stringValue: 'work' }, updatedAt: { timestampValue: '1970-01-01T00:00:00Z' } } } }] }],
+    ['missing timestamp', { writes: [{ update: { name: `projects/demo-roomdns/databases/(default)/documents/users/${user.localId}`, fields: { goal: { stringValue: 'work' } } } }] }],
+    ['extra field', { writes: [{ update: { name: `projects/demo-roomdns/databases/(default)/documents/users/${user.localId}`, fields: { goal: { stringValue: 'work' }, isPro: { booleanValue: true } } }, updateTransforms: [{ fieldPath: 'updatedAt', setToServerValue: 'REQUEST_TIME' }] }] }],
+    ['unlisted collection', { writes: [{ update: { name: `projects/demo-roomdns/databases/(default)/documents/purchases/${user.localId}`, fields: { goal: { stringValue: 'work' } } }, updateTransforms: [{ fieldPath: 'updatedAt', setToServerValue: 'REQUEST_TIME' }] }] }],
+    ['purchaseAccounts write', { writes: [{ update: { name: `projects/demo-roomdns/databases/(default)/documents/purchaseAccounts/${user.localId}`, fields: { deleted: { booleanValue: false } } } }] }],
+    ['spend receipt write', { writes: [{ update: { name: `projects/demo-roomdns/databases/(default)/documents/purchaseAccounts/${user.localId}/spends/test-session`, fields: { status: { stringValue: 'spent' } } } }] }],
+  ]) {
+    const res = await fetch(`${dbURL}:commit`, {
+      method: 'POST', headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${user.idToken}` },
+      body: JSON.stringify(body)
+    });
+    assert.equal(res.status, 403, `${label} must be rejected`);
+  }
+  for (const path of [`purchaseAccounts/${user.localId}`, `purchaseAccounts/${user.localId}/spends/test-session`]) {
+    const read = await fetch(`${dbURL}/${path}`, { headers: { Authorization: `Bearer ${user.idToken}` } });
+    assert.equal(read.status, 403, `client must not read ${path}`);
+  }
   await auth('sendOobCode', { requestType: 'PASSWORD_RESET', email });
   const newPassword = `${password}2`;
   await auth('resetPassword', { oobCode: await code(email, 'PASSWORD_RESET'), newPassword });

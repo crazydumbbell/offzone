@@ -47,10 +47,13 @@
 	</array>
 	<key>UIAppFonts</key>
 	<array>
-		<string>Fonts/SUIT-Regular.ttf</string>
-		<string>Fonts/SUIT-Medium.ttf</string>
-		<string>Fonts/SUIT-SemiBold.ttf</string>
-		<string>Fonts/SUIT-Bold.ttf</string>
+		<string>Fonts/Jua-Regular.ttf</string>
+		<string>Fonts/Fredoka-SemiBold.ttf</string>
 	</array>
+	<key>UILaunchScreen</key>
+	<dict>
+		<key>UIColorName</key>
+		<string>LaunchBackground</string>
+	</dict>
 </dict>
 </plist>

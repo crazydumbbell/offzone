@@ -1,5 +1,15 @@
 import SwiftUI
 
+enum JournalSummaryPolicy {
+    static func shouldShowSummary(planned: Int, reflected: Int, kept: Int) -> Bool {
+        planned > 0 || reflected > 0 || kept > 0
+    }
+
+    static func shouldShowCharacterCount(_ count: Int) -> Bool {
+        count >= 1600
+    }
+}
+
 struct JournalDraftBaseline {
     var plan: ProJournalData.Plan?
     var reflection: ProJournalData.Reflection?
@@ -48,16 +58,14 @@ struct ProJournalView: View {
     var body: some View {
         List {
             Section {
-                Text("A little intention. A little reflection.")
-                    .font(.suit(.title2, weight: .bold))
                 Text("Stored only on this iPhone, excluded from backup. Export before changing phones or deleting Offzone.")
-                    .font(.suit(.footnote)).foregroundStyle(Color.roomInkSecondary)
+                    .font(.suit(.subheadline)).foregroundStyle(Color.roomInkSecondary)
                 if !hasAccess {
                     Text("Pro lets you write plans and reflections. Your existing entries remain readable, exportable and deletable.")
                     if account.offersEnabled {
                         Button("Explore Pro") { paywall = true }
                     } else {
-                        Text("Pro purchases are currently unavailable.").font(.suit(.footnote))
+                        Text("Pro purchases are currently unavailable.").font(.suit(.subheadline))
                     }
                 }
             }
@@ -79,23 +87,25 @@ struct ProJournalView: View {
                         Button { moveWeek(1) } label: { Image(systemName: "chevron.right").frame(width: 44, height: 44) }
                             .accessibilityLabel("Next week")
                     }.buttonStyle(.borderless)
+                        .alignmentGuide(.listRowSeparatorLeading) { _ in 0 }
                     let summary = store.summary(week: week)
-                    LabeledContent("Planned days", value: String(summary.planned))
-                    LabeledContent("Days with a reflection", value: String(summary.reflected))
-                    LabeledContent("Intention kept (self-reported)", value: String(summary.kept))
-                    Text("Your own reflections, not measured focus time. A weekly plan does not schedule app blocking.")
-                        .font(.suit(.footnote)).foregroundStyle(Color.roomInkSecondary)
-                } header: { Text("Weekly overview") }
+                    if JournalSummaryPolicy.shouldShowSummary(planned: summary.planned, reflected: summary.reflected, kept: summary.kept) {
+                        LabeledContent("Planned days", value: String(summary.planned))
+                        LabeledContent("Days with a reflection", value: String(summary.reflected))
+                        LabeledContent("Intention kept (self-reported)", value: String(summary.kept))
+                        Text("Your own reflections, not measured focus time. A weekly plan does not schedule app blocking.")
+                            .font(.suit(.subheadline)).foregroundStyle(Color.roomInkSecondary)
+                    }
+                } header: { sectionHeader("Weekly overview") }
                 .listRowBackground(Color.roomCard)
 
                 if hasAccess {
                 Section {
                     TextField("What do you want to make room for?", text: $intention, axis: .vertical)
                         .lineLimit(2...4).onChange(of: intention) { _, value in intention = String(value.prefix(160)); saved = false }
-                        .disabled(!hasAccess)
                     Picker("Context", selection: $context) {
                         ForEach(FocusGoal.allCases) { item in Text(roomString(item.title)).tag(item.rawValue) }
-                    }.disabled(!hasAccess)
+                    }
                     ScrollView(.horizontal) {
                         HStack(spacing: 4) {
                             ForEach(Self.mondayFirstWeekdays, id: \.self) { day in
@@ -103,7 +113,7 @@ struct ProJournalView: View {
                                     if weekdays.contains(day) { weekdays.remove(day) } else { weekdays.insert(day) }
                                 } label: {
                                     Text(ProJournalStore.calendar.shortWeekdaySymbols[day - 1])
-                                        .font(.suit(.caption)).foregroundStyle(Color.roomInk).frame(minWidth: 44, minHeight: 44)
+                                        .font(.suit(.subheadline, weight: .medium)).foregroundStyle(Color.roomInk).frame(minWidth: 44, minHeight: 44)
                                         .background(weekdays.contains(day) ? Color.roomMint : Color.roomCard)
                                         .clipShape(RoundedRectangle(cornerRadius: 16))
                                         .overlay {
@@ -115,7 +125,6 @@ struct ProJournalView: View {
                                 .buttonStyle(.borderless)
                                 .accessibilityLabel(ProJournalStore.calendar.weekdaySymbols[day - 1])
                                 .accessibilityAddTraits(weekdays.contains(day) ? .isSelected : [])
-                                .disabled(!hasAccess)
                             }
                         }
                     }
@@ -124,14 +133,14 @@ struct ProJournalView: View {
                             try store.setPlan(.init(intention: intention.trimmingCharacters(in: .whitespacesAndNewlines), context: context, weekdays: weekdays), week: week, hasAccess: account.hasProAccess)
                             baseline.plan = planDraft
                         }
-                    }.disabled(!hasAccess || intention.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty || weekdays.isEmpty)
+                    }.disabled(intention.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty || weekdays.isEmpty)
                     if let planFeedback { Text(planFeedback).font(.suit(.subheadline)).accessibilityAddTraits(.updatesFrequently) }
                     if store.data.plans[weekKey] != nil {
                         Button("Delete this plan", role: .destructive) {
                             perform { try store.deletePlan(week: week); loadPlan() }
                         }
                     }
-                } header: { Text("Weekly intention") }
+                } header: { sectionHeader("Weekly intention") }
                 .listRowBackground(Color.roomCard)
 
                 Section {
@@ -151,21 +160,22 @@ struct ProJournalView: View {
                     }), in: ...Date.now, displayedComponents: .date)
                     .environment(\.calendar, ProJournalStore.calendar)
                     Picker("How did it go?", selection: $outcome) {
-                        ForEach(ProJournalStore.outcomes, id: \.self) { Text(roomString($0)).tag($0) }
-                    }.disabled(!hasAccess)
+                        ForEach(ProJournalStore.outcomes, id: \.self) { Text(roomString(ProJournalStore.outcomeKey($0))).tag($0) }
+                    }
                     TextField("What helped? What would you change?", text: $note, axis: .vertical)
-                        .lineLimit(3...8).disabled(!hasAccess)
+                        .lineLimit(3...8)
                         .onChange(of: note) { _, value in note = String(value.prefix(2000)); saved = false }
-                    Text(roomString("%d / 2000 characters", note.count)).font(.suit(.caption)).foregroundStyle(Color.roomInkSecondary)
+                    if JournalSummaryPolicy.shouldShowCharacterCount(note.count) {
+                        Text(roomString("%d / 2000 characters", note.count)).font(.suit(.subheadline)).foregroundStyle(Color.roomInkSecondary)
+                    }
                     Button("Save reflection") {
                         perform(section: "reflection") {
                             try store.reflect(.init(note: note.trimmingCharacters(in: .whitespacesAndNewlines), outcome: outcome), date: reflectionDate, hasAccess: account.hasProAccess)
                             baseline.reflection = reflectionDraft
                         }
-                    }.disabled(!hasAccess || note.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty)
+                    }.disabled(note.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty)
                     if let reflectionFeedback { Text(reflectionFeedback).font(.suit(.subheadline)).accessibilityAddTraits(.updatesFrequently) }
-                    Text("One reflection per day. Saving again updates that day’s entry.").font(.suit(.footnote))
-                } header: { Text("Daily reflection") }
+                } header: { sectionHeader("Daily reflection") }
                 .listRowBackground(Color.roomCard)
                 } else if let plan = store.data.plans[weekKey] {
                     Section {
@@ -175,7 +185,7 @@ struct ProJournalView: View {
                         Button("Delete this plan", role: .destructive) {
                             perform { try store.deletePlan(week: week); loadPlan() }
                         }
-                    } header: { Text("Weekly intention") }
+                    } header: { sectionHeader("Weekly intention") }
                     .listRowBackground(Color.roomCard)
                 }
 
@@ -183,8 +193,8 @@ struct ProJournalView: View {
                     if weeklyEntries.isEmpty { Text("No reflections this week yet.").foregroundStyle(Color.roomInkSecondary) }
                     ForEach(weeklyEntries, id: \.0) { key, reflection in
                         VStack(alignment: .leading, spacing: 8) {
-                            Text(formattedEntryDate(key)).font(.suit(.caption)).foregroundStyle(Color.roomInkSecondary)
-                            Text(roomString(reflection.outcome)).font(.suit(.headline))
+                            Text(formattedEntryDate(key)).font(.suit(.subheadline)).foregroundStyle(Color.roomInkSecondary)
+                            Text(roomString(ProJournalStore.outcomeKey(reflection.outcome))).font(.suit(.headline))
                             Text(reflection.note).textSelection(.enabled)
                             Button("Delete reflection", role: .destructive) {
                                 perform {
@@ -194,7 +204,7 @@ struct ProJournalView: View {
                             }.buttonStyle(.borderless).frame(minHeight: 44)
                         }.padding(.vertical, 4)
                     }
-                } header: { Text("This week’s reflections") }
+                } header: { sectionHeader("This week’s reflections") }
                 .listRowBackground(Color.roomCard)
             }
             if let error { Section { Text(error).foregroundStyle(Color.roomWarning) }.listRowBackground(Color.roomCard) }
@@ -210,17 +220,17 @@ struct ProJournalView: View {
                 }
                 if let exportText {
                     ShareLink(item: exportText) { Label("Share journal copy", systemImage: "square.and.arrow.up") }
-                    Text("This copy contains your private intentions and reflections.").font(.suit(.footnote))
                 }
                 Button("Delete all local journal data", role: .destructive) { confirmDelete = true }
-            } header: { Text("Your data") }
+            } header: { sectionHeader("Your data") }
             .listRowBackground(Color.roomCard)
         }
+        .font(.suit(.body))
         .listStyle(.insetGrouped).scrollContentBackground(.hidden).background(Color.roomCanvas)
         .tint(Color.roomAction)
         .navigationTitle("Plans & reflections").navigationBarTitleDisplayMode(.inline)
         .toolbar { ToolbarItem(placement: .confirmationAction) {
-            Button("Done") { navigate { dismiss() } }
+            Button("Done") { navigate { loadPlan(); loadReflection(); dismiss() } }
         } }
         .interactiveDismissDisabled(hasUnsavedChanges)
         .onChange(of: planDraft) { _, _ in planFeedback = nil }
@@ -229,12 +239,9 @@ struct ProJournalView: View {
             Button("Discard changes", role: .destructive) {
                 let action = pendingNavigation
                 pendingNavigation = nil
-                loadPlan(); loadReflection()
                 action?()
             }
             Button("Continue editing", role: .cancel) { pendingNavigation = nil }
-        } message: {
-            Text("Save your plan or reflection before leaving to keep your changes.")
         }
         .sheet(isPresented: $paywall) { RoomPaywallView(goal: goal).presentationCornerRadius(24) }
         .confirmationDialog("Delete all plans and reflections from this iPhone? This cannot be undone.", isPresented: $confirmDelete, titleVisibility: .visible) {
@@ -258,6 +265,12 @@ struct ProJournalView: View {
         if shouldConfirm ?? hasUnsavedChanges { pendingNavigation = action; confirmDiscard = true }
         else { action() }
     }
+    private func sectionHeader(_ title: LocalizedStringKey) -> some View {
+        Text(title)
+            .font(.suit(.subheadline, weight: .semibold))
+            .foregroundStyle(Color.roomInkSecondary)
+            .textCase(nil)
+    }
     private func formattedEntryDate(_ key: String) -> String {
         guard let date = ProJournalStore.date(fromKey: key) else { return key }
         return date.formatted(.dateTime.weekday(.abbreviated).month(.abbreviated).day().year())
@@ -280,7 +293,14 @@ struct ProJournalView: View {
         } catch {
             self.error = roomString("The journal could not be saved. Your previous data is unchanged. Try again.")
         }
-        if section == "plan" { planFeedback = error ?? roomString("Saved on this iPhone."); saved = false; error = nil }
-        if section == "reflection" { reflectionFeedback = error ?? roomString("Saved on this iPhone."); saved = false; error = nil }
+        if section == "plan" {
+            planFeedback = error ?? roomString("Saved on this iPhone.")
+            reflectionFeedback = nil; saved = false; error = nil
+        } else if section == "reflection" {
+            reflectionFeedback = error ?? roomString("Saved on this iPhone.")
+            planFeedback = nil; saved = false; error = nil
+        } else {
+            planFeedback = nil; reflectionFeedback = nil
+        }
     }
 }

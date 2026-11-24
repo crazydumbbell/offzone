@@ -5,7 +5,6 @@
     <string name="choose_apps">Scegli app</string>
     <string name="apps_selected">%1$d selezionate</string>
     <string name="select_hint">Scegli almeno un’app per iniziare.</string>
-    <string name="protected_hint">Le app essenziali di sistema, le chiamate, la tastiera e la schermata Home restano disponibili.</string>
     <string name="empty_apps">Nessuna app idonea trovata. Installa un’app che desideri mettere in pausa, poi riapri questo elenco.</string>
     <string name="search_apps">Cerca app</string>
     <string name="done">Fine</string>

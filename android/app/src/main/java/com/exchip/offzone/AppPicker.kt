@@ -1,8 +1,8 @@
 package com.exchip.offzone
 
-import android.graphics.Bitmap
 import android.graphics.Canvas
 import android.graphics.drawable.Drawable
+import androidx.core.graphics.createBitmap
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
@@ -38,7 +38,7 @@ import kotlinx.coroutines.withContext
 
 private fun Drawable.toComposeBitmap(sizePx: Int): ImageBitmap {
     val safeSize = sizePx.coerceAtLeast(1)
-    val bitmap = Bitmap.createBitmap(safeSize, safeSize, Bitmap.Config.ARGB_8888)
+    val bitmap = createBitmap(safeSize, safeSize)
     val canvas = Canvas(bitmap)
     setBounds(0, 0, safeSize, safeSize)
     draw(canvas)
@@ -84,14 +84,13 @@ fun AppPicker(selected: Set<String>, onClose: () -> Unit, onSave: (Set<String>) 
                     Surface(color = Mint, shape = CircleShape) {
                         Text(
                             stringResource(R.string.apps_selected, draft.size),
-                            style = MaterialTheme.typography.bodySmall,
+                            style = MaterialTheme.typography.bodyMedium,
                             fontWeight = FontWeight.SemiBold,
                             color = Ink,
                             modifier = Modifier.padding(horizontal = 12.dp, vertical = 4.dp),
                         )
                     }
                 }
-                Text(stringResource(R.string.protected_hint), style = MaterialTheme.typography.bodyMedium, color = InkMuted, modifier = Modifier.padding(top = 8.dp))
                 OutlinedTextField(
                     value = query,
                     onValueChange = { query = it },
@@ -103,8 +102,9 @@ fun AppPicker(selected: Set<String>, onClose: () -> Unit, onSave: (Set<String>) 
                 if (failed) Text(stringResource(R.string.load_error), color = MaterialTheme.colorScheme.error)
                 else if (apps == null) Text(stringResource(R.string.loading_apps))
                 else if (apps!!.isEmpty()) Text(stringResource(R.string.empty_apps))
+                val filtered = remember(apps, query) { apps.orEmpty().filter { it.label.contains(query, ignoreCase = true) } }
                 LazyColumn(Modifier.weight(1f)) {
-                    items(apps.orEmpty().filter { it.label.contains(query, ignoreCase = true) }, key = { it.packageName }) { app ->
+                    items(filtered, key = { it.packageName }) { app ->
                         val iconBitmap = remember(app.packageName, app.icon) { app.icon?.toComposeBitmap(iconSizePx) }
                         Row(
                             Modifier.fillMaxWidth().heightIn(min = 64.dp).toggleable(

@@ -6,14 +6,12 @@
     <string name="m_schedule">每日時段</string>
     <string name="m_start_time">從 %1$s</string>
     <string name="m_end_time">至 %1$s</string>
-    <string name="m_schedule_note">請至少選擇 15 分鐘。若結束時間早於開始時間，將延續至隔天。</string>
     <string name="m_save_rule">儲存規則</string>
     <string name="m_search_place">地址或地點</string>
     <string name="m_search">搜尋</string>
     <string name="m_current_place">使用目前位置</string>
     <string name="m_place_error">無法取得位置。請檢查準確位置與裝置定位設定，或改用其他關鍵字搜尋。</string>
     <string name="m_map_privacy">搜尋會使用裝置的地理編碼服務。地圖開啟時會將目前檢視區域與 IP 位址傳送至 OpenStreetMap，但你儲存的地點只會保留在這部裝置上。</string>
-    <string name="m_place_note">移動地圖將十字準星對準地點。抵達判定需要約 150 公尺範圍內的最新準確位置。</string>
     <string name="m_account">帳號</string>
     <string name="m_check_arrival">檢查抵達狀態</string>
     <string name="m_distance">上次偵測：距離 %1$d 公尺 · 精確度 ±%2$d 公尺</string>
@@ -24,11 +22,8 @@
     <string name="m_apply">套用</string>
     <string name="m_delete">刪除</string>
     <string name="m_quick">快速專注</string>
-    <string name="m_quick_note">選取時長與 App。無需儲存地點，隨時隨地都能使用快速專注。</string>
     <string name="m_journal">計畫與回顧</string>
     <string name="m_notifications">專注通知</string>
-    <string name="m_notifications_note">開啟地點監測以接收抵達和離開通知。監測期間會顯示常駐通知，不會自動開始專注，並會在你恢復存取時停止。</string>
-    <string name="m_android_limits">你隨時都可以恢復進行中的專注階段。Android 允許你撤銷權限或解除安裝 Offzone。服務停止時專注即會結束；分割畫面和子母畫面可能會限制 App 封鎖效果。</string>
     <string name="m_settings">應用程式權限與設定</string>
     <string name="m_delete_note">要刪除「%1$s」嗎？此規則進行中的專注也將一併結束。</string>
 </resources>

@@ -1,10 +1,5 @@
 package com.exchip.offzone
 
-import android.app.Activity
-import android.content.Context
-import android.content.ContextWrapper
-import android.content.Intent
-import android.net.Uri
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
@@ -31,7 +26,7 @@ fun AccountScreen(
 ) {
     val state by store.state.collectAsState()
     val context = LocalContext.current
-    val activity = context.accountActivity()
+    val activity = context.findActivity()
     val hasPro = store.hasProAccessEffective
     var email by rememberSaveable { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
@@ -39,7 +34,8 @@ fun AccountScreen(
     var mode by rememberSaveable { mutableStateOf("signin") }
     var deleting by remember { mutableStateOf(false) }
     var mismatch by remember { mutableStateOf(false) }
-    LaunchedEffect(state.uid) { deleting = false; password = ""; confirmation = ""; mode = "signin"; store.refresh() }
+    var signInExpanded by rememberSaveable { mutableStateOf(false) }
+    LaunchedEffect(state.uid) { deleting = false; signInExpanded = false; password = ""; confirmation = ""; mode = "signin"; store.refresh() }
     val snackbar = remember { SnackbarHostState() }
     LaunchedEffect(state.notice, state.error) {
         (state.error ?: state.notice)?.let { snackbar.showSnackbar(it) }
@@ -51,10 +47,7 @@ fun AccountScreen(
         ) {
             TextButton(onClick = onBack) { Text(stringResource(R.string.account_done)) }
             Row(Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) {
-                Column(Modifier.weight(1f), verticalArrangement = Arrangement.spacedBy(4.dp)) {
-                    Text(stringResource(R.string.account_title), style = MaterialTheme.typography.headlineSmall)
-                    Text(stringResource(if (hasPro) R.string.account_pro_active else R.string.account_free_space), style = MaterialTheme.typography.bodyLarge, color = InkMuted)
-                }
+                Text(stringResource(R.string.account_title), style = MaterialTheme.typography.headlineSmall, modifier = Modifier.weight(1f))
                 NookCatView(NookExpression.WELCOME_FULL, Modifier.size(72.dp))
             }
             Surface(color = WarmIvory, shape = RoundedCornerShape(24.dp), border = BorderStroke(1.dp, PineHairline)) {
@@ -78,38 +71,46 @@ fun AccountScreen(
                 Surface(color = WarmIvory, shape = RoundedCornerShape(24.dp), border = BorderStroke(1.dp, PineHairline)) {
                     Column(Modifier.fillMaxWidth().padding(20.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
                         Text(stringResource(R.string.account_unavailable), style = MaterialTheme.typography.bodyLarge)
-                        Text(stringResource(R.string.account_local), style = MaterialTheme.typography.bodyMedium, color = InkMuted)
                     }
                 }
             } else if (state.uid == null) {
-                Surface(color = WarmIvory, shape = RoundedCornerShape(24.dp), border = BorderStroke(1.dp, PineHairline)) {
-                    Column(Modifier.fillMaxWidth().padding(20.dp), verticalArrangement = Arrangement.spacedBy(12.dp)) {
-                        Text(stringResource(R.string.account_signin_intro), style = MaterialTheme.typography.bodyLarge)
-                        if (activity != null) {
-                            if (store.googleConfigured) {
-                                SecondaryButton(onClick = { store.google(activity) }, enabled = !state.busy, modifier = Modifier.fillMaxWidth()) {
-                                    Text(stringResource(R.string.account_google))
+                if (hasPro && !signInExpanded) {
+                    SecondaryButton(
+                        onClick = { signInExpanded = true },
+                        enabled = !state.busy,
+                        modifier = Modifier.fillMaxWidth(),
+                    ) {
+                        Text(stringResource(R.string.account_signin_options))
+                    }
+                } else {
+                    Surface(color = WarmIvory, shape = RoundedCornerShape(24.dp), border = BorderStroke(1.dp, PineHairline)) {
+                        Column(Modifier.fillMaxWidth().padding(20.dp), verticalArrangement = Arrangement.spacedBy(12.dp)) {
+                            if (activity != null) {
+                                if (store.googleConfigured) {
+                                    SecondaryButton(onClick = { store.google(activity) }, enabled = !state.busy, modifier = Modifier.fillMaxWidth()) {
+                                        Text(stringResource(R.string.account_google))
+                                    }
+                                }
+                                SecondaryButton(onClick = { store.apple(activity) }, enabled = !state.busy, modifier = Modifier.fillMaxWidth()) {
+                                    Text(stringResource(R.string.account_apple))
                                 }
                             }
-                            SecondaryButton(onClick = { store.apple(activity) }, enabled = !state.busy, modifier = Modifier.fillMaxWidth()) {
-                                Text(stringResource(R.string.account_apple))
+                            AccountEmailFields(email, { email = it }, password, { password = it }, confirmation, { confirmation = it }, mode == "create")
+                            if (mismatch) Text(stringResource(R.string.account_password_mismatch), color = MaterialTheme.colorScheme.error)
+                            PrimaryButton(onClick = {
+                                mismatch = mode == "create" && password != confirmation
+                                if (!mismatch) {
+                                    if (mode == "create") store.createAccount(email, password) else store.signIn(email, password)
+                                    password = ""; confirmation = ""
+                                }
+                            }, enabled = !state.busy, modifier = Modifier.fillMaxWidth()) {
+                                Text(stringResource(if (mode == "create") R.string.account_create else R.string.account_signin))
                             }
-                        }
-                        AccountEmailFields(email, { email = it }, password, { password = it }, confirmation, { confirmation = it }, mode == "create")
-                        if (mismatch) Text(stringResource(R.string.account_password_mismatch), color = MaterialTheme.colorScheme.error)
-                        PrimaryButton(onClick = {
-                            mismatch = mode == "create" && password != confirmation
-                            if (!mismatch) {
-                                if (mode == "create") store.createAccount(email, password) else store.signIn(email, password)
-                                password = ""; confirmation = ""
+                            TextButton(onClick = { mode = if (mode == "create") "signin" else "create"; password = ""; confirmation = ""; mismatch = false }, enabled = !state.busy) {
+                                Text(stringResource(if (mode == "create") R.string.account_signin else R.string.account_create))
                             }
-                        }, enabled = !state.busy, modifier = Modifier.fillMaxWidth()) {
-                            Text(stringResource(if (mode == "create") R.string.account_create else R.string.account_signin))
+                            TextButton(onClick = { store.resetPassword(email) }, enabled = !state.busy) { Text(stringResource(R.string.account_reset)) }
                         }
-                        TextButton(onClick = { mode = if (mode == "create") "signin" else "create"; password = ""; confirmation = ""; mismatch = false }, enabled = !state.busy) {
-                            Text(stringResource(if (mode == "create") R.string.account_signin else R.string.account_create))
-                        }
-                        TextButton(onClick = { store.resetPassword(email) }, enabled = !state.busy) { Text(stringResource(R.string.account_reset)) }
                     }
                 }
             } else {
@@ -123,7 +124,6 @@ fun AccountScreen(
                         }
                         HorizontalDivider(color = PineHairline)
                         Text(stringResource(R.string.account_link_methods), style = MaterialTheme.typography.titleMedium)
-                        Text(stringResource(R.string.account_link_intro), style = MaterialTheme.typography.bodyMedium, color = InkMuted)
                         state.providers.filter { it != "firebase" }.forEach { provider ->
                             Text(stringResource(R.string.account_provider_linked, when (provider) {
                                 "google.com" -> "Google"
@@ -170,7 +170,7 @@ fun AccountScreen(
                     }
                     listOf(R.string.account_terms to BuildConfig.TERMS_URL, R.string.account_privacy to BuildConfig.PRIVACY_URL).forEach { (label, url) ->
                         if (AccountStore.https(url)) {
-                            TextButton(onClick = { context.startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(url))) }) { Text(stringResource(label)) }
+                            TextButton(onClick = { context.openExternalUrl(url) }) { Text(stringResource(label)) }
                         }
                     }
                 }
@@ -220,5 +220,3 @@ private fun AccountEmailFields(
     if (creating) OutlinedTextField(confirmation, onConfirmation, label = { Text(stringResource(R.string.account_confirm_password)) }, singleLine = true,
         visualTransformation = PasswordVisualTransformation(), keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password), modifier = Modifier.fillMaxWidth())
 }
-
-private fun Context.accountActivity(): Activity? = when (this) { is Activity -> this; is ContextWrapper -> baseContext.accountActivity(); else -> null }

@@ -41,14 +41,9 @@ enum FocusWindow: String, CaseIterable, Identifiable {
 enum OnboardingProfile {
     static let completedKey = "onboarding.completed"
     static let goalKey = "onboarding.goal"
-    static let windowKey = "onboarding.window"
 
     static func isCompleted(defaults: UserDefaults = .standard) -> Bool {
         defaults.bool(forKey: completedKey)
-    }
-
-    static func markCompleted(defaults: UserDefaults = .standard) {
-        defaults.set(true, forKey: completedKey)
     }
 
     static func draftMinutes(windowRaw: String, goal: FocusGoal, customStartMinutes: Int) -> (start: Int, end: Int) {

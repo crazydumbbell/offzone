@@ -14,7 +14,6 @@
     <string name="account_verified">電子郵件已完成驗證。</string>
     <string name="account_linked">已將此登入方式連結至本帳號。</string>
     <string name="account_reset_sent">若此地址已註冊帳號，我們已寄出密碼重設連結。</string>
-    <string name="account_signin_intro">請登入以管理你的 Offzone Pro 訂閱。</string>
     <string name="account_apple">透過 Apple 繼續</string>
     <string name="account_google">透過 Google 繼續</string>
     <string name="account_email">電子郵件</string>
@@ -23,11 +22,11 @@
     <string name="account_password_mismatch">兩次輸入的密碼不相符。</string>
     <string name="account_create">建立帳號</string>
     <string name="account_signin">使用電子郵件登入</string>
+    <string name="account_signin_options">登入 Offzone</string>
     <string name="account_reset">重設密碼</string>
     <string name="account_resend">重新寄送驗證信</string>
     <string name="account_check_verification">我已完成電子郵件驗證</string>
     <string name="account_link_methods">已連結的登入方式</string>
-    <string name="account_link_intro">連結其他登入方式，以保留此帳號及購買紀錄。</string>
     <string name="account_provider_linked">已連結：%1$s</string>
     <string name="account_link_apple">連結 Apple</string>
     <string name="account_link_google">連結 Google</string>

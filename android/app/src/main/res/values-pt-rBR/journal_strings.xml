@@ -7,7 +7,6 @@
     <string name="journal_back">Voltar</string>
     <string name="journal_previous">Semana anterior</string>
     <string name="journal_next">Próxima semana</string>
-    <string name="journal_summary_note">Reflexões autorrelatadas, não tempo de foco medido. Um plano semanal não agenda bloqueio de apps.</string>
     <string name="journal_intention">Para que você quer abrir espaço?</string>
     <string name="journal_plan_save">Salvar intenção semanal</string>
     <string name="journal_plan_delete">Excluir este plano</string>
@@ -22,7 +21,6 @@
     <string name="journal_export">Exportar JSON do diário</string>
     <string name="journal_share">Compartilhar cópia do diário</string>
     <string name="journal_import">Importar JSON do diário</string>
-    <string name="journal_import_note">Importe uma exportação do Offzone no iOS ou Android. Entradas iguais são mescladas; entradas conflitantes são rejeitadas sem alterar seu diário.</string>
     <string name="journal_private">Esta cópia contém suas intenções e reflexões privadas.</string>
     <string name="journal_delete_all">Excluir todos os dados locais do diário</string>
     <string name="journal_confirm">Excluir todos os planos e reflexões deste dispositivo? Essa ação não pode ser desfeita.</string>
@@ -39,7 +37,6 @@
     <string name="goal_personal">Tempo pessoal</string>
     <string name="onboarding_title">Abra espaço para o que importa.</string>
     <string name="onboarding_detail">Escolha quando e onde bloquear distrações.</string>
-    <string name="onboarding_safe">Você define os limites. Sessões ativas sempre podem ser restauradas.</string>
     <string name="onboarding_start">Começar</string>
     <string name="onboarding_continue">Continuar</string>
     <string name="nook_description">Nook Cat, seu companheiro de foco</string>

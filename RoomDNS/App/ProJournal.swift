@@ -23,6 +23,9 @@ struct ProJournalStore {
     private(set) var loadFailed = false
     static let contexts = ["work", "rest", "presence", "personal"]
     static let outcomes = ["Kept my intention", "Partly", "Try again"]
+    static func outcomeKey(_ outcome: String) -> String {
+        outcome == outcomes[2] ? "journal_outcome_try_again" : outcome
+    }
     static var calendar: Calendar {
         var calendar = Calendar(identifier: .iso8601)
         calendar.locale = .current

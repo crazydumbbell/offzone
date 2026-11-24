@@ -8,7 +8,6 @@
     <string name="journal_back">返回</string>
     <string name="journal_previous">上一周</string>
     <string name="journal_next">下一周</string>
-    <string name="journal_summary_note">这是自行记录的回顾，而非计时的专注时长。每周计划不会自动设置应用屏蔽排程。</string>
     <string name="journal_intention">你想为哪些事留出空间？</string>
     <string name="journal_plan_save">保存每周目标</string>
     <string name="journal_plan_delete">删除此计划</string>
@@ -23,7 +22,6 @@
     <string name="journal_export">导出日记 JSON</string>
     <string name="journal_share">分享日记副本</string>
     <string name="journal_import">导入日记 JSON</string>
-    <string name="journal_import_note">可导入来自 Offzone iOS 或 Android 的导出文件。一致的记录将会合并；存在冲突的记录将被拒绝，不会更改你的现有日记。</string>
     <string name="journal_private">此副本包含你的私人目标与回顾。</string>
     <string name="journal_delete_all">删除所有本地日记数据</string>
     <string name="journal_confirm">要删除此设备上的所有计划和回顾吗？此操作无法撤销。</string>
@@ -40,7 +38,6 @@
     <string name="goal_personal">个人时间</string>
     <string name="onboarding_title">为重要的事留出空间。</string>
     <string name="onboarding_detail">选择屏蔽干扰的时间和地点。</string>
-    <string name="onboarding_safe">边界由你决定，进行中的会话随时可以恢复。</string>
     <string name="onboarding_start">开始使用</string>
     <string name="onboarding_continue">继续</string>
     <string name="nook_description">Nook 猫咪，你的专注伙伴</string>

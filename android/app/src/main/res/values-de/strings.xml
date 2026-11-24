@@ -5,7 +5,6 @@
     <string name="choose_apps">Apps wählen</string>
     <string name="apps_selected">%1$d ausgewählt</string>
     <string name="select_hint">Wähle zum Starten mindestens eine App.</string>
-    <string name="protected_hint">Wichtige System-Apps, Anrufe, Tastatur und Startbildschirm bleiben verfügbar.</string>
     <string name="empty_apps">Keine passenden Apps gefunden. Installiere eine App, die du pausieren möchtest, und öffne diese Liste erneut.</string>
     <string name="search_apps">Apps suchen</string>
     <string name="done">Fertig</string>

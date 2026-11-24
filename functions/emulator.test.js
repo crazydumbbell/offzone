@@ -19,7 +19,14 @@ test('Firestore receipts survive concurrent retries, response loss and account d
   const request = { auth: { uid }, data };
   let calls = 0, charges = 0, loseResponse = true, failDelete = true;
   const keys = new Set();
-  auth.getUser = async id => ({ uid: id, disabled: id === 'disabled' });
+  auth.getUser = async id => {
+    if (id === 'deleted-auth') {
+      const error = new Error('There is no user record corresponding to the provided identifier.');
+      error.code = 'auth/user-not-found';
+      throw error;
+    }
+    return { uid: id, disabled: id === 'disabled' };
+  };
   globalThis.fetch = async (url, init) => {
     assert.match(url, /^https:\/\/api\.revenuecat\.com\/v2\/projects\/projb8a02e7b\/customers\//);
     if (init.method === 'DELETE') {
@@ -35,6 +42,7 @@ test('Firestore receipts survive concurrent retries, response loss and account d
   try {
     await assert.rejects(spendUnlockPass.run({ data }), { code: 'unauthenticated' });
     await assert.rejects(spendUnlockPass.run({ auth: { uid: 'disabled' }, data }), { code: 'unauthenticated' });
+    await assert.rejects(spendUnlockPass.run({ auth: { uid: 'deleted-auth' }, data }), { code: 'unauthenticated' });
     await assert.rejects(spendUnlockPass.run({ ...request, data: { ...data, uid: 'other' } }), { code: 'invalid-argument' });
     assert.equal(calls, 0);
     await assert.rejects(spendUnlockPass.run(request), { code: 'unavailable' });
@@ -73,6 +81,7 @@ test('Firestore receipts survive concurrent retries, response loss and account d
     }
     await assert.rejects(reconcileUnlockPass.run({ data }), { code: 'unauthenticated' });
     await assert.rejects(reconcileUnlockPass.run({ auth: { uid: 'disabled' }, data }), { code: 'unauthenticated' });
+    await assert.rejects(reconcileUnlockPass.run({ auth: { uid: 'deleted-auth' }, data }), { code: 'unauthenticated' });
     await assert.rejects(reconcileUnlockPass.run({ ...request, data: { ...data, uid: 'other' } }), { code: 'invalid-argument' });
     const corrupt = { ...request, data: { sessionID: 'f'.repeat(64) } };
     await account.collection('spends').doc(spendRequest(uid, corrupt.data).key)

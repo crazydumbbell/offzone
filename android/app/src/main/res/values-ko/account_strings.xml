@@ -13,7 +13,6 @@
     <string name="account_verified">이메일을 인증했어요.</string>
     <string name="account_linked">이 계정에 로그인 방법을 연결했어요.</string>
     <string name="account_reset_sent">해당 주소의 계정이 있다면 비밀번호 재설정 링크를 보냈어요.</string>
-    <string name="account_signin_intro">Offzone Pro 구독을 관리하려면 로그인해 주세요.</string>
     <string name="account_apple">Apple로 계속하기</string>
     <string name="account_google">Google로 계속하기</string>
     <string name="account_email">이메일</string>
@@ -22,11 +21,11 @@
     <string name="account_password_mismatch">비밀번호가 일치하지 않아요.</string>
     <string name="account_create">계정 만들기</string>
     <string name="account_signin">이메일로 로그인</string>
+    <string name="account_signin_options">Offzone 로그인</string>
     <string name="account_reset">비밀번호 재설정</string>
     <string name="account_resend">인증 이메일 다시 보내기</string>
     <string name="account_check_verification">이메일 인증했어요</string>
     <string name="account_link_methods">연결된 로그인 방법</string>
-    <string name="account_link_intro">동일한 계정과 구매를 유지하려면 다른 로그인 방법을 연결해 주세요.</string>
     <string name="account_provider_linked">연결됨: %1$s</string>
     <string name="account_link_apple">Apple 연결</string>
     <string name="account_link_google">Google 연결</string>

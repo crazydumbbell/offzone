@@ -5,19 +5,14 @@
     <string name="editor_name_personal">Meu tempo</string>
     <string name="editor_cancel">Cancelar</string>
     <string name="editor_apps_title">Escolha apps para deixar de lado</string>
-    <string name="editor_apps_detail">Mantenha apps essenciais como chamadas, mapas, bancos e autenticação disponíveis.</string>
     <string name="editor_apps_choose">Escolher apps</string>
     <string name="editor_apps_choose_again">Escolher novamente</string>
     <string name="editor_apps_empty">Nada selecionado ainda</string>
     <string name="editor_place_optional">Local (opcional)</string>
-    <string name="editor_place_optional_note">Deixe vazio para iniciar a qualquer momento no seu horário ou escolha um local para exigir estar lá.</string>
     <string name="editor_place_empty">Qualquer local (apenas horário)</string>
-    <string name="editor_place_hint">A chegada usa uma área aproximada de 150 m, sem precisão por cômodo.</string>
     <string name="editor_clear_place">Remover local</string>
     <string name="editor_schedule_title">Horário e detalhes</string>
-    <string name="editor_schedule_detail">Defina quando se repete, um local opcional e um nome.</string>
     <string name="editor_schedule_warning">Escolha um período de foco de pelo menos 15 minutos.</string>
-    <string name="editor_schedule_overnight">Termina no dia seguinte.</string>
     <string name="editor_next_day_badge">(+1 dia)</string>
     <string name="editor_name_placeholder">ex.: Trabalho ou Desacelerar</string>
     <string name="editor_days">Dias</string>
@@ -27,5 +22,4 @@
     <string name="days_weekends">Fins de semana</string>
     <string name="home_starts_on">Começa %1$s às %2$s</string>
     <string name="editor_time_only_place">Sem local, apenas horário</string>
-    <string name="audit_start_time_only">Regra só de horário: toque em Iniciar foco durante o horário. Sem necessidade de localização.</string>
 </resources>

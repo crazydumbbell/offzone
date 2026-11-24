@@ -13,7 +13,6 @@
     <string name="account_verified">Email verified.</string>
     <string name="account_linked">Sign-in method linked to this account.</string>
     <string name="account_reset_sent">If an account exists for this address, a password reset link has been sent.</string>
-    <string name="account_signin_intro">Sign in to manage your Offzone Pro subscription.</string>
     <string name="account_apple">Continue with Apple</string>
     <string name="account_google">Continue with Google</string>
     <string name="account_email">Email</string>
@@ -22,11 +21,11 @@
     <string name="account_password_mismatch">Passwords do not match.</string>
     <string name="account_create">Create account</string>
     <string name="account_signin">Sign in with email</string>
+    <string name="account_signin_options">Sign in to Offzone</string>
     <string name="account_reset">Reset password</string>
     <string name="account_resend">Resend verification email</string>
     <string name="account_check_verification">I verified my email</string>
     <string name="account_link_methods">Linked sign-in methods</string>
-    <string name="account_link_intro">Link another method to keep this account and its purchases.</string>
     <string name="account_provider_linked">Linked: %1$s</string>
     <string name="account_link_apple">Link Apple</string>
     <string name="account_link_google">Link Google</string>

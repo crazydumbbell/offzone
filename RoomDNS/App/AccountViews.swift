@@ -3,6 +3,17 @@ import RevenueCat
 import GoogleSignInSwift
 import SwiftUI
 
+enum AccountViewPolicy {
+    static func showsSignInMethods(hasProAccess: Bool, signInExpanded: Bool) -> Bool {
+        !hasProAccess || signInExpanded
+    }
+
+    static func showsAccountStatusMessage(_ statusMessage: String?, matching restoreStatusMessage: String?) -> Bool {
+        guard let statusMessage, !statusMessage.isEmpty else { return false }
+        return statusMessage != restoreStatusMessage
+    }
+}
+
 struct RoomAccountView: View {
     let goal: FocusGoal
     @EnvironmentObject private var account: AccountStore
@@ -11,7 +22,15 @@ struct RoomAccountView: View {
     @State private var paywallPresented = false
     @State private var journalPresented = false
     @State private var restored = false
+    @State private var signInExpanded = false
     @State private var emailFlow: EmailAccountFlow?
+
+    private var restoreStatusMessage: String? {
+        guard account.isSignedIn, account.purchasesConfigured, restored else { return nil }
+        return account.hasProAccess
+            ? roomString("Your Pro subscription is active.")
+            : roomString("No active Pro subscription was found.")
+    }
 
     var body: some View {
         NavigationStack {
@@ -40,8 +59,8 @@ struct RoomAccountView: View {
                             Button("Restore purchases") {
                                 Task { await account.restorePurchases(); restored = account.errorMessage == nil }
                             }.frame(minHeight: 44).disabled(account.isBusy)
-                            if restored {
-                                Text(account.hasProAccess ? roomString("Your Pro subscription is active.") : roomString("No active Pro subscription was found."))
+                            if let restoreStatusMessage {
+                                Text(restoreStatusMessage)
                                     .font(.suit(.subheadline))
                             }
                         }
@@ -57,7 +76,7 @@ struct RoomAccountView: View {
                         if !account.needsEmailVerification {
                             DisclosureGroup("Linked sign-in methods") {
                                 Text("Link another sign-in method to keep this account and its purchases.")
-                                    .font(.suit(.footnote)).padding(.vertical, 8)
+                                    .font(.suit(.subheadline)).foregroundStyle(Color.roomInkSecondary).padding(.vertical, 8)
                                 if account.providerIDs.contains("apple.com") {
                                     Label("Apple linked", systemImage: "checkmark")
                                 } else {
@@ -84,8 +103,10 @@ struct RoomAccountView: View {
                         if deleting {
                             Text("Delete your account? Your local rules stay here. Deleting an account does not cancel an App Store subscription.")
                                 .font(.suit(.subheadline))
-                            Link("Manage subscription", destination: URL(string: "https://apps.apple.com/account/subscriptions")!)
-                                .foregroundStyle(Color.roomAccent).frame(minHeight: 44)
+                            if !account.hasProAccess {
+                                Link("Manage subscription", destination: URL(string: "https://apps.apple.com/account/subscriptions")!)
+                                    .foregroundStyle(Color.roomAccent).frame(minHeight: 44)
+                            }
                             if account.providerIDs.contains("apple.com") {
                                 Text("Confirm with Apple to delete your account.").font(.suit(.headline))
                                 appleButton(deleting: true)
@@ -103,23 +124,35 @@ struct RoomAccountView: View {
                                 .frame(minHeight: 44).disabled(account.isBusy)
                         }
                     } else if account.isConfigured {
-                        Text("Sign in to Offzone")
-                            .font(.suit(.title2, weight: .bold))
-                        Text("Sign in to manage your subscription and restore purchases across devices.")
-                        appleButton(deleting: false)
-                        if account.googleSignInConfigured {
-                            GoogleSignInButton { Task { await account.signInWithGoogle() } }
-                                .frame(minHeight: 56).disabled(account.isBusy)
-                        }
-                        Button("Continue with email") { emailFlow = .signIn }
+                        if AccountViewPolicy.showsSignInMethods(hasProAccess: account.hasProAccess, signInExpanded: signInExpanded) {
+                            Text("Sign in to Offzone")
+                                .font(.suit(.title2, weight: .bold))
+                            Text("Sign in to manage your subscription and restore purchases across devices.")
+                            appleButton(deleting: false)
+                            if account.googleSignInConfigured {
+                                GoogleSignInButton { Task { await account.signInWithGoogle() } }
+                                    .frame(minHeight: 56).disabled(account.isBusy)
+                            }
+                            Button("Continue with email") { emailFlow = .signIn }
+                                .roomSecondaryAction()
+                                .disabled(account.isBusy)
+                        } else {
+                            Button("Sign in to Offzone") {
+                                signInExpanded = true
+                            }
                             .roomSecondaryAction()
                             .disabled(account.isBusy)
+                            .accessibilityIdentifier("account.expandSignIn")
+                        }
                     } else {
                         Text("Account sign-in isn’t available right now.")
                             .foregroundStyle(Color.roomInkSecondary)
                     }
                     if account.isBusy { ProgressView().frame(maxWidth: .infinity).accessibilityLabel("Please wait") }
-                    if let message = account.statusMessage { Text(message).font(.suit(.subheadline)).accessibilityAddTraits(.updatesFrequently) }
+                    if AccountViewPolicy.showsAccountStatusMessage(account.statusMessage, matching: restoreStatusMessage),
+                       let message = account.statusMessage {
+                        Text(message).font(.suit(.subheadline)).accessibilityAddTraits(.updatesFrequently)
+                    }
                     if let error = account.errorMessage { Text(error).foregroundStyle(Color.roomWarning).font(.suit(.subheadline)) }
                     if let terms = account.termsURL { Link("Terms of use", destination: terms).foregroundStyle(Color.roomAccent).frame(minHeight: 44) }
                     if let privacy = account.privacyURL { Link("Privacy policy", destination: privacy).foregroundStyle(Color.roomAccent).frame(minHeight: 44) }
@@ -142,7 +175,7 @@ struct RoomAccountView: View {
         }
         .task { await account.refresh(); await account.loadOfferings() }
         .onChange(of: account.isSignedIn) { _, signedIn in
-            deleting = false; restored = false
+            deleting = false; restored = false; signInExpanded = false
             if signedIn { Task { await account.loadOfferings() } }
         }
     }
@@ -198,14 +231,10 @@ private struct EmailAccountView: View {
                         .textContentType(newPassword ? .newPassword : .password)
                     if newPassword {
                         SecureField("Confirm password", text: $confirmation).textContentType(.newPassword)
-                        Text("Use at least 8 characters.").font(.suit(.footnote))
+                        Text("Use at least 8 characters.").font(.suit(.subheadline)).foregroundStyle(Color.roomInkSecondary)
                     }
                 }
                 .listRowBackground(Color.roomCard)
-                if mode == .link {
-                    Text("Link another sign-in method to keep this account and its purchases.")
-                        .listRowBackground(Color.roomCard)
-                }
                 if let message = validation ?? account.errorMessage {
                     Text(message).foregroundStyle(Color.roomWarning).listRowBackground(Color.roomCard)
                 }
@@ -243,6 +272,7 @@ private struct EmailAccountView: View {
                 }
                 .listRowBackground(Color.roomCard)
             }
+            .font(.suit(.body))
             .scrollContentBackground(.hidden).background(Color.roomCanvas)
             .navigationTitle(title).navigationBarTitleDisplayMode(.inline)
             .toolbar { ToolbarItem(placement: .cancellationAction) {

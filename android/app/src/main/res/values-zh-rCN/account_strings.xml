@@ -14,7 +14,6 @@
     <string name="account_verified">邮箱已验证。</string>
     <string name="account_linked">已将该登录方式关联到此账号。</string>
     <string name="account_reset_sent">如果该邮箱地址已注册账号，我们已发送密码重置链接。</string>
-    <string name="account_signin_intro">请登录以管理你的 Offzone Pro 订阅。</string>
     <string name="account_apple">通过 Apple 继续</string>
     <string name="account_google">通过 Google 继续</string>
     <string name="account_email">电子邮箱</string>
@@ -23,11 +22,11 @@
     <string name="account_password_mismatch">两次输入的密码不一致。</string>
     <string name="account_create">创建账号</string>
     <string name="account_signin">使用邮箱登录</string>
+    <string name="account_signin_options">登录 Offzone</string>
     <string name="account_reset">重置密码</string>
     <string name="account_resend">重新发送验证邮件</string>
     <string name="account_check_verification">我已完成邮箱验证</string>
     <string name="account_link_methods">已关联的登录方式</string>
-    <string name="account_link_intro">关联其他登录方式，以保留此账号及其购买记录。</string>
     <string name="account_provider_linked">已关联：%1$s</string>
     <string name="account_link_apple">关联 Apple</string>
     <string name="account_link_google">关联 Google</string>

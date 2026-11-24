@@ -6,7 +6,6 @@
     <string name="choose_apps">選取 App</string>
     <string name="apps_selected">已選取 %1$d 項</string>
     <string name="select_hint">請至少選取一個 App 以開始。</string>
-    <string name="protected_hint">必需的系統應用程式、通話、鍵盤與主畫面將始終保持可用。</string>
     <string name="empty_apps">找不到符合條件的 App。請先安裝你想暫停的 App，再重新開啟此清單。</string>
     <string name="search_apps">搜尋 App</string>
     <string name="done">完成</string>

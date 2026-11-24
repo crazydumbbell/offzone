@@ -14,7 +14,6 @@
     <string name="account_verified">メールアドレスが認証されました。</string>
     <string name="account_linked">このアカウントにログイン方法を連携しました。</string>
     <string name="account_reset_sent">このメールアドレスのアカウントが存在する場合、パスワード再設定用のリンクを送信しました。</string>
-    <string name="account_signin_intro">Offzone Proサブスクリプションを管理するにはサインインしてください。</string>
     <string name="account_apple">Appleで続ける</string>
     <string name="account_google">Googleで続ける</string>
     <string name="account_email">メールアドレス</string>
@@ -23,11 +22,11 @@
     <string name="account_password_mismatch">パスワードが一致しません。</string>
     <string name="account_create">アカウントを作成</string>
     <string name="account_signin">メールでサインイン</string>
+    <string name="account_signin_options">Offzoneにサインイン</string>
     <string name="account_reset">パスワードをリセット</string>
     <string name="account_resend">確認メールを再送信</string>
     <string name="account_check_verification">メール認証を完了した</string>
     <string name="account_link_methods">連携済みのサインイン方法</string>
-    <string name="account_link_intro">このアカウントと購入内容を維持するため、別のサインイン方法を連携してください。</string>
     <string name="account_provider_linked">連携済み: %1$s</string>
     <string name="account_link_apple">Appleを連携</string>
     <string name="account_link_google">Googleを連携</string>

@@ -159,7 +159,7 @@ class AuditHomeUiTest {
             assertNull(FocusController.state.value.session)
             // Quick focus remains directly accessible alongside a configured place rule.
             click(R.string.m_quick)
-            awaitText(R.string.m_quick_note)
+            awaitText(R.string.choose_apps)
             // Exercise actual system text scaling and Activity recreation, without a UI test override.
             changedFontScale = true
             device.executeShellCommand("settings put system font_scale 2.0")

@@ -6,6 +6,7 @@ export OFFZONE_SIGNING_PROPERTIES
 [ -f "$OFFZONE_SIGNING_PROPERTIES" ] || { echo "Missing external Offzone signing properties." >&2; exit 1; }
 cd "$(dirname "$0")/.."
 rtk proxy ./gradlew --no-configuration-cache :app:assembleRelease :app:bundleRelease
+version=$(sed -n 's/^ *versionName = "\(.*\)"/\1/p' app/build.gradle.kts)
 mkdir -p ../output/android-release
-cp app/build/outputs/apk/release/app-release.apk ../output/android-release/offzone-0.1.0-release.apk
-cp app/build/outputs/bundle/release/app-release.aab ../output/android-release/offzone-0.1.0-release.aab
+cp app/build/outputs/apk/release/app-release.apk "../output/android-release/offzone-$version-release.apk"
+cp app/build/outputs/bundle/release/app-release.aab "../output/android-release/offzone-$version-release.aab"

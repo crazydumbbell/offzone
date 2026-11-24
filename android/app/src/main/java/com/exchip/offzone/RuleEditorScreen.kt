@@ -5,9 +5,12 @@ import android.content.Context
 import android.text.format.DateFormat
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.selection.toggleable
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
@@ -17,9 +20,11 @@ import androidx.compose.runtime.saveable.listSaver
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.semantics.clearAndSetSemantics
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
@@ -116,9 +121,11 @@ fun RuleEditorScreen(
     } else {
         label.ifBlank { String.format(locale, "%.5f, %.5f", latitude, longitude) }
     }
-    val overnight = end <= start && end != start
-    val durationValid = RulePolicy.intervalMinutes(start, end) >= 15 && days != 0
+    val overnight = end < start
+    val windowTooShort = RulePolicy.intervalMinutes(start, end) < 15
+    val durationValid = !windowTooShort && days != 0
     val saveValid = name.isNotBlank() && packages.isNotEmpty() && durationValid
+    val compactDays = LocalConfiguration.current.fontScale < 1.3f
     val nextEnabled = if (step == 0) packages.isNotEmpty() else saveValid
     val nextLabel = if (step == 0) R.string.onboarding_continue else R.string.m_save_rule
 
@@ -184,11 +191,6 @@ fun RuleEditorScreen(
                 style = MaterialTheme.typography.headlineMedium,
                 color = Ink,
             )
-            Text(
-                stringResource(if (step == 0) R.string.editor_apps_detail else R.string.editor_schedule_detail),
-                style = MaterialTheme.typography.bodyLarge,
-                color = InkMuted,
-            )
             if (step == 0) {
                 EditorCard(
                     if (packages.isEmpty()) stringResource(R.string.editor_apps_choose) else stringResource(R.string.editor_apps_choose_again),
@@ -218,15 +220,49 @@ fun RuleEditorScreen(
                 ) {
                     Column(Modifier.fillMaxWidth().padding(20.dp), verticalArrangement = Arrangement.spacedBy(14.dp)) {
                         Text(stringResource(R.string.editor_days), style = MaterialTheme.typography.titleMedium, fontWeight = FontWeight.SemiBold, color = Ink)
-                        FlowRow(horizontalArrangement = Arrangement.spacedBy(8.dp), verticalArrangement = Arrangement.spacedBy(6.dp)) {
-                            DayOfWeek.entries.forEach { day ->
-                                val bit = 1 shl (day.value - 1)
-                                val full = dayLabel(day, TextStyle.FULL, locale)
-                                OffzoneChip(
-                                    selected = days and bit != 0,
-                                    onClick = { days = days xor bit },
-                                    modifier = Modifier.heightIn(min = 48.dp).semantics { contentDescription = full },
-                                ) { Text(full) }
+                        if (compactDays) {
+                            Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(4.dp)) {
+                                DayOfWeek.entries.forEach { day ->
+                                    val bit = 1 shl (day.value - 1)
+                                    val selected = days and bit != 0
+                                    val full = dayLabel(day, TextStyle.FULL, locale)
+                                    val narrow = dayLabel(day, TextStyle.NARROW, locale)
+                                    val shape = RoundedCornerShape(12.dp)
+                                    Box(
+                                        modifier = Modifier
+                                            .weight(1f)
+                                            .heightIn(min = 48.dp)
+                                            .clip(shape)
+                                            .background(if (selected) Mint else WarmIvory, shape)
+                                            .border(if (selected) 1.5.dp else 1.dp, if (selected) Pine else PineLine, shape)
+                                            .toggleable(value = selected, role = Role.Checkbox, onValueChange = { days = days xor bit })
+                                            .semantics { contentDescription = full },
+                                        contentAlignment = Alignment.Center,
+                                    ) {
+                                        Text(
+                                            narrow,
+                                            style = MaterialTheme.typography.bodyMedium.copy(
+                                                fontWeight = if (selected) FontWeight.SemiBold else FontWeight.Medium,
+                                            ),
+                                            color = Ink,
+                                            maxLines = 1,
+                                            softWrap = false,
+                                        )
+                                    }
+                                }
+                            }
+                        } else {
+                            FlowRow(horizontalArrangement = Arrangement.spacedBy(6.dp), verticalArrangement = Arrangement.spacedBy(6.dp)) {
+                                DayOfWeek.entries.forEach { day ->
+                                    val bit = 1 shl (day.value - 1)
+                                    val full = dayLabel(day, TextStyle.FULL, locale)
+                                    val short = dayLabel(day, TextStyle.SHORT, locale)
+                                    OffzoneChip(
+                                        selected = days and bit != 0,
+                                        onClick = { days = days xor bit },
+                                        modifier = Modifier.heightIn(min = 48.dp).semantics { contentDescription = full },
+                                    ) { Text(short) }
+                                }
                             }
                         }
                         if (days == 0) Text(stringResource(R.string.editor_days_warning), color = MaterialTheme.colorScheme.error)
@@ -259,9 +295,7 @@ fun RuleEditorScreen(
                                 }
                             }
                         }
-                        if (days != 0 && !durationValid) Text(stringResource(R.string.editor_schedule_warning), color = MaterialTheme.colorScheme.error)
-                        else if (days != 0 && overnight) Text(stringResource(R.string.editor_schedule_overnight), style = MaterialTheme.typography.bodyMedium, color = InkMuted)
-                        Text(stringResource(R.string.m_schedule_note), style = MaterialTheme.typography.bodyMedium, color = InkMuted)
+                        if (windowTooShort) Text(stringResource(R.string.editor_schedule_warning), color = MaterialTheme.colorScheme.error)
                     }
                 }
                 Surface(
@@ -272,11 +306,6 @@ fun RuleEditorScreen(
                     Column(Modifier.fillMaxWidth().padding(20.dp), verticalArrangement = Arrangement.spacedBy(12.dp)) {
                         Text(stringResource(R.string.editor_place_optional), style = MaterialTheme.typography.titleMedium, fontWeight = FontWeight.SemiBold, color = Ink)
                         Text(placeName, style = MaterialTheme.typography.bodyLarge, color = Ink)
-                        Text(
-                            stringResource(if (hasPlace) R.string.editor_place_hint else R.string.editor_place_optional_note),
-                            style = MaterialTheme.typography.bodyMedium,
-                            color = InkMuted,
-                        )
                         FlowRow(horizontalArrangement = Arrangement.spacedBy(8.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
                             SecondaryButton(onClick = { place = true }) { Text(stringResource(R.string.m_choose_place)) }
                             if (hasPlace) {

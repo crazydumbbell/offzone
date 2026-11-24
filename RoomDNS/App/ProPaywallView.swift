@@ -58,7 +58,7 @@ struct RoomPaywallView: View {
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .principal) {
-                    Text(roomString("pro_eyebrow")).font(.suit(.caption, weight: .bold)).tracking(1.4)
+                    Text(roomString("pro_eyebrow")).font(.suit(.subheadline, weight: .bold)).tracking(1.4)
                 }
                 ToolbarItem(placement: .topBarTrailing) {
                     Button { dismiss() } label: { Image(systemName: "xmark") }
@@ -68,7 +68,7 @@ struct RoomPaywallView: View {
             .safeAreaInset(edge: .top, spacing: 0) {
                 if preview != nil {
                     Text(roomString("pro_preview_note"))
-                        .font(.suit(.caption)).foregroundStyle(Color.roomInkSecondary)
+                        .font(.suit(.subheadline)).foregroundStyle(Color.roomInkSecondary)
                         .fixedSize(horizontal: false, vertical: true)
                         .frame(maxWidth: .infinity, alignment: .leading).padding(.horizontal, 24).padding(.bottom, 8)
                         .background(Color.roomCanvas)
@@ -257,10 +257,6 @@ private struct ProFunnelView: View {
                     .proHeading().proReveal(delay: 300)
                 if defaultPlan.trialDays == nil { ProBenefits().proReveal(delay: 370) }
             } footer: {
-                if defaultPlan.trialDays != nil {
-                    Text(roomString("pro_no_payment")).font(.suit(.subheadline)).foregroundStyle(Color.roomInkSecondary)
-                        .proReveal(delay: 370)
-                }
                 Button(roomString(defaultPlan.trialDays != nil ? "pro_start_trial" : "pro_see_plans")) { go(index + 1) }
                     .roomPrimaryAction().accessibilityIdentifier("pro.next").proReveal(delay: 440)
             }
@@ -296,6 +292,7 @@ private struct ProFunnelView: View {
         case .plans:
             ProPlansPage(plans: plans, selected: selected, busy: preview ? false : account.isBusy,
                          signedInForPurchase: verifiedForStoreAction,
+                         showsSummary: defaultPlan.trialDays != nil,
                          select: { selectedID = $0.id }, purchase: purchase, restore: restore, notice: notice)
         case .done:
             ProPage(centered: true) {
@@ -363,31 +360,65 @@ private struct ProFunnelView: View {
     }
 }
 
+enum ProPlansLegalNotice {
+    static func combined(storage: String, intro: String? = nil, legal: String) -> String {
+        [storage, intro, legal]
+            .compactMap { $0?.trimmingCharacters(in: .whitespacesAndNewlines) }
+            .filter { !$0.isEmpty }
+            .joined(separator: " ")
+    }
+}
+
 private struct ProPlansPage: View {
     let plans: [ProPlanDisplay]
     let selected: ProPlanDisplay
     let busy: Bool
     let signedInForPurchase: Bool
+    let showsSummary: Bool
     let select: (ProPlanDisplay) -> Void
     let purchase: () -> Void
     let restore: () -> Void
     let notice: String?
     @EnvironmentObject private var account: AccountStore
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
+    @Environment(\.dynamicTypeSize) private var dynamicTypeSize
     @State private var burst = 0
     private var annual: ProPlanDisplay? { plans.first(where: \.annual) }
     private var monthly: ProPlanDisplay? { plans.first { !$0.annual } }
 
+    private var legalNoticeText: String {
+        let intro: String?
+        if let package = selected.package,
+           account.eligibility[package.storeProduct.productIdentifier]?.status == .eligible,
+           let discount = package.storeProduct.introductoryDiscount,
+           discount.paymentMode != .freeTrial {
+            intro = BillingTerms(package: package, eligibility: .eligible).introduction
+        } else {
+            intro = nil
+        }
+        return ProPlansLegalNotice.combined(
+            storage: roomString("Stored only on this iPhone, excluded from backup. Export before changing phones or deleting Offzone."),
+            intro: intro,
+            legal: roomString("pro_legal")
+        )
+    }
+
     var body: some View {
-        ProPage(spacing: 12) {
-            Image("OffzonePro-nook-peek").resizable().scaledToFit().frame(height: 68)
-                .frame(maxWidth: .infinity).accessibilityHidden(true).proReveal(delay: 0, duration: 420, rise: 24)
-            VStack(alignment: .leading, spacing: 6) {
-                Text(roomString("pro_plans_title")).proHeading().proReveal(delay: 120)
-                Text(roomString("pro_plans_sub")).foregroundStyle(Color.roomInkSecondary)
-                    .fixedSize(horizontal: false, vertical: true).proReveal(delay: 180)
+        ProPage(spacing: 8, verticalPadding: 8) {
+            if !dynamicTypeSize.isAccessibilitySize {
+                Image("OffzonePro-nook-peek").resizable().scaledToFit().frame(height: 52)
+                    .frame(maxWidth: .infinity).accessibilityHidden(true).proReveal(delay: 0, duration: 420, rise: 24)
             }
-            VStack(spacing: 10) {
+            VStack(alignment: .leading, spacing: 4) {
+                Text(roomString("pro_plans_title")).proHeading().proReveal(delay: 120)
+                if showsSummary {
+                    Text(roomString("pro_plans_sub"))
+                        .font(.suit(.subheadline))
+                        .foregroundStyle(Color.roomInkSecondary)
+                        .fixedSize(horizontal: false, vertical: true).proReveal(delay: 180)
+                }
+            }
+            VStack(spacing: 8) {
                 ForEach(Array(plans.enumerated()), id: \.element.id) { i, plan in
                     ProPlanCard(plan: plan, selected: selected.id == plan.id,
                                 savings: plan.annual ? ProPlanMath.savingsPercent(annual: annual, monthly: monthly) : nil,
@@ -399,23 +430,17 @@ private struct ProPlansPage: View {
                     .id(plan.annual ? "pro.plan.annual" : "pro.plan.monthly")
                 }
             }
-            Text("Stored only on this iPhone, excluded from backup. Export before changing phones or deleting Offzone.")
-                .font(.suit(.footnote)).foregroundStyle(Color.roomInkSecondary).fixedSize(horizontal: false, vertical: true)
-            if let package = selected.package,
-               account.eligibility[package.storeProduct.productIdentifier]?.status == .eligible,
-               let discount = package.storeProduct.introductoryDiscount, discount.paymentMode != .freeTrial {
-                Text(BillingTerms(package: package, eligibility: .eligible).introduction)
-                    .font(.suit(.subheadline)).fixedSize(horizontal: false, vertical: true)
-            }
-            Text(roomString("pro_legal")).font(.suit(.footnote)).foregroundStyle(Color.roomInkSecondary)
+            Text(legalNoticeText)
+                .font(.custom(Font.suitFace(.regular), size: 13, relativeTo: .footnote))
+                .foregroundStyle(Color.roomInkSecondary)
                 .fixedSize(horizontal: false, vertical: true)
-            ViewThatFits(in: .horizontal) { links(horizontal: true); links(horizontal: false) }
+            links
             if let error = account.errorMessage { Text(error).font(.suit(.subheadline)).foregroundStyle(Color.roomInkSecondary) }
             if let notice { Text(notice).font(.suit(.subheadline)).foregroundStyle(Color.roomInkSecondary) }
         } footer: {
             if !signedInForPurchase {
                 Text(roomString("pro_sign_in_note"))
-                    .font(.suit(.caption)).foregroundStyle(Color.roomInkSecondary)
+                    .font(.suit(.subheadline)).foregroundStyle(Color.roomInkSecondary)
                     .multilineTextAlignment(.center)
                     .fixedSize(horizontal: false, vertical: true)
             }
@@ -423,14 +448,10 @@ private struct ProPlansPage: View {
                 Text(roomString("pro_due_today", zero)).font(.suit(.subheadline, weight: .semibold))
             }
             Button(action: purchase) {
-                VStack(spacing: 3) {
+                Group {
                     if busy { ProgressView().tint(Color.roomCanvas) }
                     else {
                         Text(roomString(selected.trialDays != nil ? "pro_start_trial" : "Subscribe"))
-                        Text(roomString(selected.trialDays != nil ? "pro_cta_trial_sub" : "pro_cta_sub", selected.cadence))
-                            .font(.suit(.caption)).fixedSize(horizontal: false, vertical: true)
-                            .id(selected.id).transition(reduceMotion ? .opacity : .opacity.combined(with: .offset(y: 8)))
-                            .animation(reduceMotion ? .linear(duration: 0.1) : ProMotion.state(duration: 0.18), value: selected.id)
                     }
                 }.frame(maxWidth: .infinity).multilineTextAlignment(.center)
             }.roomPrimaryAction().disabled(busy).proShimmer(disabled: busy).accessibilityIdentifier("pro.purchase")
@@ -442,20 +463,45 @@ private struct ProPlansPage: View {
         .onChange(of: selected.id) { _, _ in if selected.annual && !reduceMotion { burst += 1 } }
     }
 
-    @ViewBuilder private func links(horizontal: Bool) -> some View {
-        let items = Group {
-            if let terms = account.termsURL { Link("Terms of use", destination: terms) }
-            if let privacy = account.privacyURL { Link("Privacy policy", destination: privacy) }
-            Button("Restore purchases", action: restore).disabled(busy).accessibilityIdentifier("pro.restore")
+    @ViewBuilder private var termsLink: some View {
+        if let terms = account.termsURL { Link("Terms of use", destination: terms).lineLimit(1).frame(minHeight: 44) }
+    }
+
+    @ViewBuilder private var privacyLink: some View {
+        if let privacy = account.privacyURL { Link("Privacy policy", destination: privacy).lineLimit(1).frame(minHeight: 44) }
+    }
+
+    private var restoreButton: some View {
+        Button("Restore purchases", action: restore)
+            .disabled(busy).accessibilityIdentifier("pro.restore")
+            .lineLimit(1).frame(minHeight: 44)
+    }
+
+    @ViewBuilder private var links: some View {
+        if dynamicTypeSize.isAccessibilitySize {
+            VStack(alignment: .leading, spacing: 8) { termsLink; privacyLink; restoreButton }
+                .font(.suit(.body))
+                .foregroundStyle(Color.roomAccent)
+        } else {
+            // One row when it fits; long languages wrap to two rows instead of shrinking the text.
+            ViewThatFits(in: .horizontal) {
+                HStack(spacing: 12) { termsLink; privacyLink; restoreButton }
+                VStack(alignment: .leading, spacing: 0) {
+                    HStack(spacing: 12) { termsLink; privacyLink }
+                    restoreButton
+                }
+            }
+            .font(.suit(.subheadline, weight: .medium))
+            .foregroundStyle(Color.roomAccent)
+            .frame(maxWidth: .infinity, alignment: .leading)
         }
-        if horizontal { HStack(spacing: 16) { items }.font(.suit(.caption)).frame(minHeight: 44).fixedSize(horizontal: true, vertical: true) }
-        else { VStack(alignment: .leading, spacing: 14) { items }.font(.suit(.body)).padding(.vertical, 10) }
     }
 }
 
 struct ProPage<Content: View, Footer: View>: View {
     var centered = false
     var spacing: CGFloat = 16
+    var verticalPadding: CGFloat = 16
     @ViewBuilder let content: () -> Content
     @ViewBuilder let footer: () -> Footer
     var body: some View {
@@ -467,8 +513,8 @@ struct ProPage<Content: View, Footer: View>: View {
                         Color.clear.frame(height: 1).id("pro.page.bottom")
                     }
                     .frame(maxWidth: 560).frame(maxWidth: .infinity)
-                    .frame(minHeight: max(0, proxy.size.height - 32), alignment: centered ? .center : .top)
-                    .padding(.horizontal, 24).padding(.vertical, 16)
+                    .frame(minHeight: max(0, proxy.size.height - verticalPadding * 2), alignment: centered ? .center : .top)
+                    .padding(.horizontal, 24).padding(.vertical, verticalPadding)
                 }
 #if DEBUG
                 .task {
@@ -483,7 +529,7 @@ struct ProPage<Content: View, Footer: View>: View {
         }
         .safeAreaInset(edge: .bottom, spacing: 0) {
             VStack(spacing: 4, content: footer).frame(maxWidth: 560).frame(maxWidth: .infinity)
-                .padding(.horizontal, 24).padding(.top, 12).padding(.bottom, 8).background(Color.roomCanvas)
+                .padding(.horizontal, 24).padding(.top, 8).padding(.bottom, 6).background(Color.roomCanvas)
         }
     }
 }

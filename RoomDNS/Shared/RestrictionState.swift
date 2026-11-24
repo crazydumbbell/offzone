@@ -490,13 +490,8 @@ enum SharedState {
     static var activeRuleID: UUID? { runtime.rule?.id }
     static var appliedRule: FocusRule? { runtime.rule }
     static var ruleEnabled: Bool { let state = runtime; return state.enabled && !state.recoveryPaused }
-    static var selection: FamilyActivitySelection { runtime.rule?.selection ?? FamilyActivitySelection() }
-    static var scheduleStartMinutes: Int { runtime.rule?.startMinutes ?? 540 }
-    static var scheduleEndMinutes: Int { runtime.rule?.endMinutes ?? 1080 }
     static var placeMode: PlaceMode { runtime.rule?.placeMode ?? .gps }
     static var hasPlace: Bool { runtime.rule?.hasPlace ?? false }
-    static var placeLatitude: Double { runtime.rule?.placeLatitude ?? 0 }
-    static var placeLongitude: Double { runtime.rule?.placeLongitude ?? 0 }
     static var insidePlace: Bool { runtime.insidePlace }
     static var safetyReleaseUntil: Date? { runtime.safetyReleaseUntil }
     static var safetyReleased: Bool {

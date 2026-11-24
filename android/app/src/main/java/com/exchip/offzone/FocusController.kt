@@ -4,6 +4,7 @@ import android.content.Context
 import android.content.Intent
 import android.location.Location
 import android.os.SystemClock
+import androidx.core.content.edit
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import java.time.ZonedDateTime
@@ -51,9 +52,9 @@ object FocusController {
         }.onFailure { mutableState.value = state.value.copy(message = R.string.engine_storage_error) }
     }
     fun setNotificationsEnabled(enabled: Boolean) {
-        context?.let { AppSelection.preferences(it).edit().putBoolean("zoneNotifications", enabled).apply() }
+        context?.let { AppSelection.preferences(it).edit { putBoolean("zoneNotifications", enabled) } }
         mutableNotifications.value = enabled
-        if (!enabled) context?.getSystemService(android.app.NotificationManager::class.java)?.cancel(411)
+        if (!enabled) context?.getSystemService(android.app.NotificationManager::class.java)?.cancel(EngineNotifications.EVENT_ID)
     }
     fun connect() {
         val current = state.value

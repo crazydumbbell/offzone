@@ -3,15 +3,16 @@ package com.exchip.offzone
 import android.Manifest
 import android.content.Intent
 import android.content.pm.PackageManager
-import android.net.Uri
 import android.os.Build
 import android.os.Bundle
 import android.os.SystemClock
 import android.provider.Settings
+import androidx.core.net.toUri
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.BackHandler
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.compose.setContent
+import androidx.activity.SystemBarStyle
 import androidx.activity.enableEdgeToEdge
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.BorderStroke
@@ -23,6 +24,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AccountCircle
+import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Notifications
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
@@ -55,7 +57,9 @@ class MainActivity : ComponentActivity() {
             ProAccessGate.debugProOverride = intent.getBooleanExtra(ProAccessGate.EXTRA_DEBUG_PRO, false)
         }
         ProPreview.reminderTest(this, intent)
-        enableEdgeToEdge()
+        // The UI is always light, so keep dark system-bar icons even in system dark mode.
+        val lightBars = SystemBarStyle.light(android.graphics.Color.TRANSPARENT, android.graphics.Color.TRANSPARENT)
+        enableEdgeToEdge(statusBarStyle = lightBars, navigationBarStyle = lightBars)
         setContent {
             OffzoneTheme { App() }
         }
@@ -279,7 +283,7 @@ class MainActivity : ComponentActivity() {
                     },
                     onCheckArrival = { requestPlace(0) },
                     onOpenAppSettings = {
-                        startActivity(Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS, Uri.parse("package:$packageName")))
+                        runCatching { startActivity(Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS, "package:$packageName".toUri())) }
                     },
                     onRestore = { FocusController.stop(); error = null },
                 )
@@ -292,50 +296,46 @@ class MainActivity : ComponentActivity() {
                 else -> {
                     var deleting by remember { mutableStateOf<FocusRule?>(null) }
                     val locale = LocalConfiguration.current.locales[0]
-                    val largeFont = LocalConfiguration.current.fontScale >= 1.4f
+                    val active = state.appliedRule
+                    val focused = state.session != null
+                    val locked = !focused && !hasProAccess
+                    val suggestedRuleId = if (!focused && !locked && state.connected && !storageError && !state.ruleEnabled) {
+                        rules.firstOrNull()?.id
+                    } else null
                     LazyColumn(
                         Modifier.fillMaxSize().safeDrawingPadding(),
                         contentPadding = PaddingValues(24.dp),
                         verticalArrangement = Arrangement.spacedBy(18.dp),
                     ) {
                         item {
-                            Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
-                                Row(Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) {
-                                    Text(stringResource(R.string.home_your_space), style = MaterialTheme.typography.headlineSmall, modifier = Modifier.weight(1f))
-                                    IconButton(onClick = { route = "settings" }) {
-                                        Icon(
-                                            Icons.Filled.Notifications,
-                                            contentDescription = stringResource(R.string.audit_settings),
-                                            tint = if (notifications) Pine else InkMuted,
-                                        )
-                                    }
-                                    IconButton(onClick = { accountReturnRoute = "home"; route = "account" }) {
-                                        Icon(
-                                            Icons.Filled.AccountCircle,
-                                            contentDescription = stringResource(R.string.m_account),
-                                            tint = Ink,
-                                        )
-                                    }
-                                    if (!largeFont) {
-                                        TextButton(onClick = { editing = null; route = "edit" }, enabled = !storageError) {
-                                            Text(stringResource(R.string.home_new_rule))
-                                        }
-                                    }
+                            Row(Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) {
+                                Text(stringResource(R.string.home_your_space), style = MaterialTheme.typography.headlineSmall, modifier = Modifier.weight(1f))
+                                IconButton(onClick = { route = "settings" }) {
+                                    Icon(
+                                        Icons.Filled.Notifications,
+                                        contentDescription = stringResource(R.string.audit_settings),
+                                        tint = if (notifications) Pine else InkMuted,
+                                    )
                                 }
-                                if (largeFont) {
-                                    TextButton(onClick = { editing = null; route = "edit" }, enabled = !storageError) {
-                                        Text(stringResource(R.string.home_new_rule))
-                                    }
+                                IconButton(onClick = { accountReturnRoute = "home"; route = "account" }) {
+                                    Icon(
+                                        Icons.Filled.AccountCircle,
+                                        contentDescription = stringResource(R.string.m_account),
+                                        tint = Ink,
+                                    )
+                                }
+                                IconButton(onClick = { editing = null; route = "edit" }, enabled = !storageError) {
+                                    Icon(
+                                        Icons.Filled.Add,
+                                        contentDescription = stringResource(R.string.home_new_rule),
+                                        tint = if (storageError) InkMuted.copy(alpha = 0.38f) else Pine,
+                                    )
                                 }
                             }
                         }
                         item {
-                            val active = state.appliedRule
-                            val focused = state.session != null
-                            val locked = !focused && !hasProAccess
                             val needsAction = locked || storageError || !state.connected
                             val scheduled = remember(homeClock, state.ruleEnabled, active) { state.ruleEnabled && active != null && !RulePolicy.scheduleActive(active) }
-                            val recentInside = state.insidePlace && state.observedAt?.let { homeClock - it in 0..30_000 } == true
                             val canStart = hasProAccess && active != null && !focused && state.connected && state.ruleEnabled && !scheduled && !state.checkingPlace
                             val cardColor = when {
                                 focused -> Pine
@@ -369,9 +369,7 @@ class MainActivity : ComponentActivity() {
                                             if (focused) {
                                                 val seconds = (state.remaining + 999) / 1000
                                                 Text("%d:%02d".format(seconds / 60, seconds % 60), style = MaterialTheme.typography.headlineLarge.copy(fontSize = 44.sp))
-                                            } else if (locked) {
-                                                Text(stringResource(R.string.home_locked_body), style = MaterialTheme.typography.bodyLarge)
-                                            } else if (scheduled) {
+                                            } else if (scheduled && !locked) {
                                                 RulePolicy.nextStart(active!!)?.let { next ->
                                                     val time = timeLabel(this@MainActivity, next.hour * 60 + next.minute)
                                                     Text(
@@ -390,7 +388,7 @@ class MainActivity : ComponentActivity() {
                                     }
                                     when {
                                         focused -> Button(
-                                            onClick = { FocusController.stop() },
+                                            onClick = { FocusController.stop(); error = null },
                                             colors = ButtonDefaults.buttonColors(containerColor = Butter, contentColor = Ink),
                                             modifier = Modifier.fillMaxWidth().heightIn(min = 56.dp),
                                         ) { Text(stringResource(R.string.restore)) }
@@ -400,6 +398,7 @@ class MainActivity : ComponentActivity() {
                                         !state.connected -> PrimaryButton(onClick = { disclosure = true }, modifier = Modifier.fillMaxWidth()) {
                                             Text(stringResource(R.string.enable))
                                         }
+                                        storageError -> Unit
                                         rules.isEmpty() -> PrimaryButton(onClick = { editing = null; route = "edit" }, modifier = Modifier.fillMaxWidth()) {
                                             Text(stringResource(R.string.home_create_rule))
                                         }
@@ -416,10 +415,13 @@ class MainActivity : ComponentActivity() {
                                             Text(stringResource(R.string.start_focus))
                                         }
                                     }
-                                    if (canStart && active.anywhere) Text(stringResource(R.string.audit_start_time_only), style = MaterialTheme.typography.bodyMedium)
-                                    else if (canStart && !recentInside) Text(stringResource(R.string.audit_start_location), style = MaterialTheme.typography.bodyMedium)
-                                    (error ?: state.message)?.takeUnless { it == R.string.engine_rule_ready || it == R.string.engine_reconnected }
-                                        ?.let { Text(stringResource(it), style = MaterialTheme.typography.bodyMedium) }
+                                    (error ?: state.message)?.takeUnless {
+                                        it == R.string.engine_rule_ready ||
+                                            it == R.string.engine_reconnected ||
+                                            it == R.string.engine_started ||
+                                            it == R.string.engine_paused ||
+                                            it == R.string.access_restored
+                                    }?.let { Text(stringResource(it), style = MaterialTheme.typography.bodyMedium) }
                                     if (state.checkingPlace) LinearProgressIndicator(Modifier.fillMaxWidth(), trackColor = PineHairline)
                                 }
                             }
@@ -434,15 +436,14 @@ class MainActivity : ComponentActivity() {
                             ) { Text(stringResource(R.string.m_quick)) }
                         }
                         item {
-                            Row(Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) {
-                                Text(stringResource(R.string.m_rules), style = MaterialTheme.typography.titleLarge, modifier = Modifier.weight(1f))
-                                Text(stringResource(R.string.home_saved_count, rules.size), style = MaterialTheme.typography.bodySmall)
-                            }
+                            Text(stringResource(R.string.m_rules), style = MaterialTheme.typography.titleLarge)
                         }
                         if (storageError) item { Text(stringResource(R.string.engine_storage_error)) }
                         items(rules, key = { it.id }) { rule ->
                             val applied = state.appliedRule
                             val unapplied = applied?.id == rule.id && applied != rule
+                            val isAppliedAndCurrent = applied?.id == rule.id && !unapplied
+                            val showApplyOrPause = isAppliedAndCurrent || rule.id != suggestedRuleId
                             Card(
                                 Modifier.fillMaxWidth(),
                                 colors = CardDefaults.cardColors(containerColor = WarmIvory),
@@ -453,34 +454,31 @@ class MainActivity : ComponentActivity() {
                                     Text(rule.name, style = MaterialTheme.typography.titleLarge)
                                     Text(scheduleLabel(rule), style = MaterialTheme.typography.bodyLarge)
                                     Text(
-                                        if (rule.anywhere) getString(R.string.editor_time_only_place) else rule.placeLabel.ifBlank { getString(R.string.audit_saved_place) },
+                                        if (rule.anywhere) stringResource(R.string.editor_time_only_place) else rule.placeLabel.ifBlank { stringResource(R.string.audit_saved_place) },
                                         style = MaterialTheme.typography.bodyMedium,
                                     )
                                     Text(stringResource(R.string.apps_selected, rule.packages.size))
                                     if (unapplied) Text(stringResource(R.string.m_unapplied))
                                     FlowRow(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
                                         TextButton(onClick = { editing = rule.id; route = "edit" }) { Text(stringResource(R.string.m_edit)) }
-                                        OutlinedButton(onClick = {
-                                            if (state.appliedRule?.id == rule.id && !unapplied) {
-                                                FocusController.pauseRule()
-                                            } else if (!ProAccessGate.canActivateRule(hasProAccess)) {
-                                                openPaywall("home")
-                                            } else if (!FocusController.activateRule(rule.id)) {
-                                                error = R.string.save_error
+                                        if (showApplyOrPause) {
+                                            OutlinedButton(onClick = {
+                                                if (isAppliedAndCurrent) {
+                                                    FocusController.pauseRule()
+                                                } else if (!ProAccessGate.canActivateRule(hasProAccess)) {
+                                                    openPaywall("home")
+                                                } else if (!FocusController.activateRule(rule.id)) {
+                                                    error = R.string.save_error
+                                                }
+                                            }) {
+                                                Text(stringResource(if (isAppliedAndCurrent) R.string.m_pause else R.string.m_apply))
                                             }
-                                        }) {
-                                            Text(stringResource(if (state.appliedRule?.id == rule.id && !unapplied) R.string.m_pause else R.string.m_apply))
                                         }
                                         TextButton(onClick = { deleting = rule }, colors = ButtonDefaults.textButtonColors(contentColor = MaterialTheme.colorScheme.error)) {
                                             Text(stringResource(R.string.m_delete))
                                         }
                                     }
                                 }
-                            }
-                        }
-                        if (ProAccessGate.canRestoreActiveSession(state.session != null)) {
-                            item {
-                                TextButton(onClick = { FocusController.stop(); error = null }) { Text(stringResource(R.string.restore)) }
                             }
                         }
                     }
@@ -555,7 +553,7 @@ private fun SettingsScreen(
                             Text(stringResource(R.string.m_account), style = MaterialTheme.typography.titleMedium, color = Ink)
                             Text(
                                 stringResource(if (hasProAccess) R.string.account_pro_active else R.string.account_free_space),
-                                style = MaterialTheme.typography.bodySmall,
+                                style = MaterialTheme.typography.bodyMedium,
                                 color = InkMuted,
                             )
                         }
@@ -570,6 +568,7 @@ private fun SettingsScreen(
             }
         }
         Surface(color = WarmIvory, shape = RoundedCornerShape(24.dp), border = BorderStroke(1.dp, PineHairline)) {
+            val hasPlaceRule = state.ruleEnabled && state.appliedRule?.anywhere != true
             Column(Modifier.fillMaxWidth().padding(20.dp), verticalArrangement = Arrangement.spacedBy(12.dp)) {
                 Row(verticalAlignment = Alignment.CenterVertically) {
                     Text(stringResource(R.string.m_notifications), style = MaterialTheme.typography.titleMedium, modifier = Modifier.weight(1f))
@@ -579,8 +578,7 @@ private fun SettingsScreen(
                         onCheckedChange = onToggleNotifications,
                     )
                 }
-                Text(stringResource(R.string.m_notifications_note), style = MaterialTheme.typography.bodyMedium, color = InkMuted)
-                if (state.ruleEnabled && state.appliedRule?.anywhere != true) {
+                if (hasPlaceRule) {
                     HorizontalDivider(color = PineHairline)
                     SecondaryButton(
                         onClick = onToggleMonitor,
@@ -590,11 +588,19 @@ private fun SettingsScreen(
                         Text(stringResource(if (state.monitoringPlace) R.string.engine_monitor_stop else R.string.engine_monitor_start))
                     }
                     if (state.session == null) {
-                        TextButton(onClick = onCheckArrival, enabled = !state.checkingPlace && !state.monitoringPlace) {
-                            Text(stringResource(if (state.monitoringPlace) R.string.audit_monitoring else R.string.m_check_arrival))
+                        if (!state.monitoringPlace) {
+                            TextButton(onClick = onCheckArrival, enabled = !state.checkingPlace) {
+                                Text(stringResource(R.string.m_check_arrival))
+                            }
                         }
                         if (state.checkingPlace) LinearProgressIndicator(Modifier.fillMaxWidth(), trackColor = PineHairline)
-                        state.message?.let { Text(stringResource(it), style = MaterialTheme.typography.bodyMedium) }
+                        state.message?.takeUnless {
+                            it == R.string.engine_rule_ready ||
+                                it == R.string.engine_reconnected ||
+                                it == R.string.engine_started ||
+                                it == R.string.engine_paused ||
+                                it == R.string.access_restored
+                        }?.let { Text(stringResource(it), style = MaterialTheme.typography.bodyMedium) }
                         state.observedAt?.takeIf { homeClock - it in 0..30_000 }?.let {
                             state.distanceMeters?.let { distance ->
                                 Text(stringResource(R.string.m_distance, distance.toInt(), state.accuracyMeters?.toInt() ?: 0))
@@ -606,8 +612,6 @@ private fun SettingsScreen(
         }
         Surface(color = WarmIvory, shape = RoundedCornerShape(24.dp), border = BorderStroke(1.dp, PineHairline)) {
             Column(Modifier.fillMaxWidth().padding(20.dp), verticalArrangement = Arrangement.spacedBy(12.dp)) {
-                Text(stringResource(R.string.m_android_limits), style = MaterialTheme.typography.bodyMedium, color = InkMuted)
-                Text(stringResource(R.string.engine_restart_note), style = MaterialTheme.typography.bodyMedium, color = InkMuted)
                 SecondaryButton(onClick = onOpenAppSettings, modifier = Modifier.fillMaxWidth()) {
                     Text(stringResource(R.string.m_settings))
                 }
@@ -641,7 +645,6 @@ private fun QuickFocus(
     Column(Modifier.fillMaxSize().safeDrawingPadding().verticalScroll(rememberScrollState()).padding(24.dp), verticalArrangement = Arrangement.spacedBy(18.dp)) {
         TextButton(onClick = onBack) { Text(stringResource(R.string.m_back)) }
         Text(stringResource(R.string.m_quick), style = MaterialTheme.typography.headlineLarge)
-        Text(stringResource(R.string.m_quick_note))
         if (!state.connected) PrimaryButton(onClick = onEnable, modifier = Modifier.fillMaxWidth()) { Text(stringResource(R.string.enable)) }
         FlowRow(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
             FocusSession.durations.forEach { value ->

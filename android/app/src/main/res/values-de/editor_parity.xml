@@ -5,19 +5,14 @@
     <string name="editor_name_personal">Meine Zeit</string>
     <string name="editor_cancel">Abbrechen</string>
     <string name="editor_apps_title">Apps zum Pausieren wählen</string>
-    <string name="editor_apps_detail">Lass Wichtiges wie Anrufe, Karten, Banking und Authentifizierung verfügbar.</string>
     <string name="editor_apps_choose">Apps wählen</string>
     <string name="editor_apps_choose_again">Neu wählen</string>
     <string name="editor_apps_empty">Noch nichts ausgewählt</string>
     <string name="editor_place_optional">Ort (optional)</string>
-    <string name="editor_place_optional_note">Leer lassen, um überall nach Zeitplan zu starten, oder einen Ort wählen, an dem du sein musst.</string>
     <string name="editor_place_empty">Beliebiger Ort (nur Zeit)</string>
-    <string name="editor_place_hint">Die Ankunft nutzt einen Bereich von ca. 150 m, nicht raumgenau.</string>
     <string name="editor_clear_place">Ort entfernen</string>
     <string name="editor_schedule_title">Zeitplan &amp; Details</string>
-    <string name="editor_schedule_detail">Lege Wiederholungstage, einen optionalen Ort und einen Namen fest.</string>
     <string name="editor_schedule_warning">Wähle ein Fokusfenster von mindestens 15 Minuten.</string>
-    <string name="editor_schedule_overnight">Endet am nächsten Tag.</string>
     <string name="editor_next_day_badge">(+1 Tag)</string>
     <string name="editor_name_placeholder">z. B. Arbeitszeit oder Auszeit</string>
     <string name="editor_days">Tage</string>
@@ -27,5 +22,4 @@
     <string name="days_weekends">Wochenenden</string>
     <string name="home_starts_on">Startet am %1$s um %2$s</string>
     <string name="editor_time_only_place">Kein Ort, nur Zeit</string>
-    <string name="audit_start_time_only">Reine Zeitregel: Tippe während des Zeitplans auf Fokus starten. Kein Standort nötig.</string>
 </resources>

@@ -83,12 +83,6 @@ fun OnboardingScreen(onGetStarted: () -> Unit, onSignIn: () -> Unit) {
                 color = InkMuted,
                 textAlign = TextAlign.Center,
             )
-            Text(
-                stringResource(R.string.onboarding_safe),
-                style = MaterialTheme.typography.bodyMedium,
-                color = InkMuted,
-                textAlign = TextAlign.Center,
-            )
         }
     }
 }

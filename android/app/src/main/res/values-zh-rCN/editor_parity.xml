@@ -6,19 +6,14 @@
     <string name="editor_name_personal">我的时间</string>
     <string name="editor_cancel">取消</string>
     <string name="editor_apps_title">选择要暂搁的应用</string>
-    <string name="editor_apps_detail">请保留电话、地图、银行和身份验证等必需应用可用。</string>
     <string name="editor_apps_choose">选择应用</string>
     <string name="editor_apps_choose_again">重新选择</string>
     <string name="editor_apps_empty">尚未选择应用</string>
     <string name="editor_place_optional">地点（可选）</string>
-    <string name="editor_place_optional_note">留空即可在计划时段内随时随地开始；若选择地点，则仅在到达该地点时才能开始。</string>
     <string name="editor_place_empty">不限地点（仅限时间）</string>
-    <string name="editor_place_hint">到达判定基于约 150 米的大致范围，无法精确到房间级别。</string>
     <string name="editor_clear_place">清除地点</string>
     <string name="editor_schedule_title">时间表与详情</string>
-    <string name="editor_schedule_detail">设置重复周期、可选地点和规则名称。</string>
     <string name="editor_schedule_warning">请选择至少 15 分钟的专注时段。</string>
-    <string name="editor_schedule_overnight">将于次日结束。</string>
     <string name="editor_next_day_badge">（次日）</string>
     <string name="editor_name_placeholder">例如：工作时间或放松时间</string>
     <string name="editor_days">星期</string>
@@ -28,5 +23,4 @@
     <string name="days_weekends">周末</string>
     <string name="home_starts_on">%1$s %2$s 开始</string>
     <string name="editor_time_only_place">无地点，仅限时间</string>
-    <string name="audit_start_time_only">仅限时间规则：请在计划时段内点击“开始专注”，无需位置权限。</string>
 </resources>

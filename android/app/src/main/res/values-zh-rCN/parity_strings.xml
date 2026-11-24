@@ -13,9 +13,7 @@
     <string name="home_access_restored">已恢复访问</string>
     <string name="home_check_rules">检查你的规则</string>
     <string name="home_create_rule">创建规则</string>
-    <string name="home_saved_count">已保存 %1$d 条</string>
     <string name="home_activate_rule">启用 %1$s</string>
     <string name="home_locked_title">需要 Offzone Pro</string>
-    <string name="home_locked_body">订阅后即可启用你的规则并开始专注会话。</string>
     <string name="home_unlock_pro">解锁 Offzone Pro</string>
 </resources>

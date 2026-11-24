@@ -1,12 +1,7 @@
 package com.exchip.offzone
 
 import android.Manifest
-import android.app.Activity
-import android.content.Context
-import android.content.ContextWrapper
-import android.content.Intent
 import android.content.pm.PackageManager
-import android.net.Uri
 import android.os.Build
 import android.provider.Settings
 import androidx.activity.compose.BackHandler
@@ -31,9 +26,7 @@ import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.slideInHorizontally
-import androidx.compose.animation.slideInVertically
 import androidx.compose.animation.slideOutHorizontally
-import androidx.compose.animation.slideOutVertically
 import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Canvas
@@ -177,11 +170,10 @@ private fun ProFunnel(
     var selectedId by rememberSaveable { mutableStateOf(if (resumed) resumePlanId!! else default.id) }
     var purchasing by rememberSaveable { mutableStateOf(false) }
     var previewDone by remember { mutableStateOf(false) }
-    var forward by remember { mutableStateOf(true) }
     val selected = plans.firstOrNull { it.id == selectedId } ?: default
     val done = account.pro || previewDone || (!preview && store.hasProAccessEffective)
     val step = if (done) Step.DONE else steps[index.coerceIn(0, steps.lastIndex)]
-    fun go(to: Int) { forward = to > index; index = to.coerceIn(0, steps.lastIndex) }
+    fun go(to: Int) { index = to.coerceIn(0, steps.lastIndex) }
     BackHandler(index > 0 && !done) { go(index - 1) }
     LaunchedEffect(account.busy) { if (!account.busy && !account.pro) purchasing = false }
     LaunchedEffect(done) {
@@ -209,7 +201,7 @@ private fun ProFunnel(
             if (steps.size > 1 && step != Step.DONE) StepDots(steps.size, index, Modifier.weight(1f)) else Spacer(Modifier.weight(1f))
             PaywallCloseButton { if (step == Step.DONE) onDone() else onContinue() }
         }
-        if (preview) Text(stringResource(R.string.pro_preview_note), style = MaterialTheme.typography.bodySmall, color = InkMuted,
+        if (preview) Text(stringResource(R.string.pro_preview_note), style = MaterialTheme.typography.bodyMedium, color = InkMuted,
             modifier = Modifier.padding(horizontal = 24.dp))
         AnimatedContent(
             targetState = step, modifier = Modifier.weight(1f), label = "pro-step",
@@ -227,8 +219,6 @@ private fun ProFunnel(
                     StepScaffold(
                         center = true,
                         bottom = {
-                            if (trial != null) Text(stringResource(R.string.pro_no_payment), style = MaterialTheme.typography.bodyMedium, color = InkMuted,
-                                textAlign = TextAlign.Center, modifier = Modifier.fillMaxWidth().reveal(rememberReveal(560)))
                             PrimaryButton(onClick = { go(index + 1) }, modifier = Modifier.fillMaxWidth().reveal(rememberReveal(620))) {
                                 Text(stringResource(if (trial != null) R.string.pro_start_trial else R.string.pro_see_plans))
                             }
@@ -305,22 +295,36 @@ private fun ProFunnel(
 }
 
 @Composable
-private fun StepScaffold(bottom: @Composable ColumnScope.() -> Unit, center: Boolean = false, content: @Composable ColumnScope.() -> Unit) {
+private fun StepScaffold(
+    bottom: @Composable ColumnScope.() -> Unit,
+    center: Boolean = false,
+    spacing: Dp = 16.dp,
+    bottomPadding: Dp = 12.dp,
+    content: @Composable ColumnScope.() -> Unit,
+) {
     Column(Modifier.fillMaxSize()) {
         BoxWithConstraints(Modifier.weight(1f)) {
             val viewport = maxHeight
             Column(Modifier.fillMaxWidth().verticalScroll(rememberScrollState()).padding(horizontal = 24.dp)) {
-                Column(Modifier.heightIn(min = viewport), verticalArrangement = Arrangement.spacedBy(16.dp, if (center) Alignment.CenterVertically else Alignment.Top), content = content)
+                Column(
+                    Modifier.heightIn(min = viewport),
+                    verticalArrangement = Arrangement.spacedBy(spacing, if (center) Alignment.CenterVertically else Alignment.Top),
+                    content = content,
+                )
             }
         }
-        Column(Modifier.fillMaxWidth().padding(horizontal = 24.dp, vertical = 12.dp), verticalArrangement = Arrangement.spacedBy(6.dp), content = bottom)
+        Column(Modifier.fillMaxWidth().padding(horizontal = 24.dp, vertical = bottomPadding), verticalArrangement = Arrangement.spacedBy(6.dp), content = bottom)
     }
 }
 
 @Composable
 private fun StepDots(count: Int, current: Int, modifier: Modifier = Modifier) {
     val label = stringResource(R.string.pro_step_of, current + 1, count)
-    Row(modifier.semantics(mergeDescendants = true) { contentDescription = label }, horizontalArrangement = Arrangement.spacedBy(6.dp), verticalAlignment = Alignment.CenterVertically) {
+    Row(
+        modifier.semantics(mergeDescendants = true) { contentDescription = label },
+        horizontalArrangement = Arrangement.spacedBy(6.dp, Alignment.CenterHorizontally),
+        verticalAlignment = Alignment.CenterVertically,
+    ) {
         repeat(count) { i ->
             val width by animateDpAsState(if (i == current) 24.dp else 8.dp, tween(220, easing = Standard), label = "dot")
             Box(Modifier.height(8.dp).width(width).background(if (i == current) Pine else PineLine, CircleShape))
@@ -364,7 +368,7 @@ private fun goalHeadline(goal: String) = when (goal) {
     "personal" -> R.string.pro_headline_personal; else -> R.string.pro_headline_work
 }
 
-private class TileSpec(@DrawableRes val res: Int, val dx: Int, val dy: Int, val rotation: Float, val size: Int, val phase: Float)
+private class TileSpec(@param:DrawableRes val res: Int, val dx: Int, val dy: Int, val rotation: Float, val size: Int, val phase: Float)
 
 private val inviteTiles = listOf(
     TileSpec(R.drawable.pro_tile_1, -94, -56, -10f, 64, 0f), TileSpec(R.drawable.pro_tile_2, 94, -72, 8f, 58, .25f),
@@ -432,7 +436,7 @@ private fun RemindHero() {
                 Image(painterResource(R.drawable.offzone_icon), null, Modifier.size(40.dp).clip(RoundedCornerShape(10.dp)))
                 Column(Modifier.weight(1f)) {
                     Text(stringResource(R.string.pro_banner_title), style = MaterialTheme.typography.bodyMedium, fontWeight = FontWeight.SemiBold)
-                    Text(stringResource(R.string.pro_banner_body), style = MaterialTheme.typography.bodySmall, color = InkMuted)
+                    Text(stringResource(R.string.pro_banner_body), style = MaterialTheme.typography.bodyMedium, color = InkMuted)
                 }
             }
         }
@@ -516,7 +520,9 @@ private fun PlansStep(
     onPurchase: () -> Unit, onRestore: () -> Unit,
 ) {
     val context = LocalContext.current
-    val locale = LocalConfiguration.current.locales[0]
+    val config = LocalConfiguration.current
+    val locale = config.locales[0]
+    val largeFont = config.fontScale >= 1.3f
     val motion = LocalMotion.current
     val yearly = plans.firstOrNull { it.annual }
     val monthly = plans.firstOrNull { !it.annual }
@@ -529,34 +535,31 @@ private fun PlansStep(
     }
     val trial = selected.trialDays
     val zero = remember(selected, locale) { ProPlans.money(0, selected.currency, locale) ?: NumberFormat.getNumberInstance(locale).format(0) }
-    val cadence = stringResource(if (selected.annual) R.string.pro_per_year else R.string.pro_per_month, selected.price)
     StepScaffold(
+        spacing = if (largeFont) 10.dp else 12.dp,
+        bottomPadding = if (largeFont) 8.dp else 12.dp,
         bottom = {
             if (trial != null) Text(stringResource(R.string.pro_due_today, zero), style = MaterialTheme.typography.bodyMedium, fontWeight = FontWeight.SemiBold,
                 textAlign = TextAlign.Center, modifier = Modifier.fillMaxWidth().reveal(rememberReveal(520)))
-            if (!signedIn) Text(stringResource(R.string.pro_sign_in_note), style = MaterialTheme.typography.bodySmall, color = InkMuted,
+            if (!signedIn) Text(stringResource(R.string.pro_sign_in_note), style = MaterialTheme.typography.bodyMedium, color = InkMuted,
                 textAlign = TextAlign.Center, modifier = Modifier.fillMaxWidth())
             PrimaryButton(onClick = onPurchase, enabled = !account.busy, modifier = Modifier.fillMaxWidth().reveal(rememberReveal(560)).shimmer(shimmer)) {
                 if (account.busy) CircularProgressIndicator(Modifier.size(24.dp), color = Butter, strokeWidth = 2.dp)
-                else Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                    Text(stringResource(if (trial != null) R.string.pro_start_trial else R.string.account_subscribe))
-                    AnimatedContent(
-                        targetState = stringResource(if (trial != null) R.string.pro_cta_trial_sub else R.string.pro_cta_sub, cadence), label = "cta-sub",
-                        transitionSpec = {
-                            if (motion) (fadeIn(tween(180)) + slideInVertically(tween(180)) { it / 2 }) togetherWith (fadeOut(tween(120)) + slideOutVertically(tween(120)) { -it / 2 })
-                            else fadeIn(tween(100)) togetherWith fadeOut(tween(100))
-                        },
-                    ) { Text(it, style = MaterialTheme.typography.bodySmall) }
-                }
+                else Text(stringResource(if (trial != null) R.string.pro_start_trial else R.string.account_subscribe))
             }
         },
     ) {
-        val peek = rememberReveal(0, 420)
-        Box(Modifier.fillMaxWidth().height(88.dp).graphicsLayer { translationY = (1f - peek.value) * 24.dp.toPx(); alpha = peek.value }, contentAlignment = Alignment.BottomCenter) {
-            Image(painterResource(R.drawable.pro_nook_peek), null, Modifier.height(112.dp).offset(y = 24.dp), contentScale = ContentScale.Fit)
+        if (!largeFont) {
+            val peek = rememberReveal(0, 420)
+            Box(Modifier.fillMaxWidth().height(76.dp).graphicsLayer { translationY = (1f - peek.value) * 24.dp.toPx(); alpha = peek.value }, contentAlignment = Alignment.BottomCenter) {
+                Image(painterResource(R.drawable.pro_nook_peek), null, Modifier.height(76.dp), contentScale = ContentScale.Fit)
+            }
         }
-        Text(stringResource(R.string.pro_plans_title), style = headline(), modifier = Modifier.reveal(rememberReveal(120)))
-        Text(stringResource(R.string.pro_plans_sub), style = MaterialTheme.typography.bodyLarge, color = InkMuted, modifier = Modifier.reveal(rememberReveal(180)))
+        Text(
+            stringResource(R.string.pro_plans_title),
+            style = if (largeFont) MaterialTheme.typography.headlineSmall.copy(lineBreak = LineBreak.Heading) else headline(),
+            modifier = Modifier.reveal(rememberReveal(120)),
+        )
         plans.forEachIndexed { i, plan ->
             val badges = buildList {
                 if (plan.annual && save != null) { add(stringResource(R.string.pro_best_value)); add(stringResource(R.string.pro_save, save)) }
@@ -568,24 +571,51 @@ private fun PlansStep(
                     stringResource(if (plan.annual) R.string.pro_per_year else R.string.pro_per_month, plan.price))
                 else stringResource(if (plan.annual) R.string.pro_per_year else R.string.pro_per_month, plan.price),
                 extra = if (plan.annual) ProPlans.perMonth(plan, locale)?.let { stringResource(R.string.pro_per_month, it) } else null,
+                compact = largeFont,
                 modifier = Modifier.reveal(rememberReveal(240 + 90 * i), 24.dp),
                 onClick = { onSelect(plan); if (plan.annual && plan.id != selected.id) burst++ },
             )
         }
-        // D-23: before paying, say where Pro data lives; and that the store, not this screen, confirms eligibility and the final price.
-        Text(stringResource(R.string.account_journal_local), style = MaterialTheme.typography.bodySmall, color = InkMuted)
-        Text(stringResource(R.string.account_play_confirms), style = MaterialTheme.typography.bodySmall, color = InkMuted)
         account.error?.let { Text(it, color = MaterialTheme.colorScheme.error) }
         account.notice?.let { Text(it) }
-        Text(stringResource(R.string.pro_legal), style = MaterialTheme.typography.bodySmall, color = InkMuted, textAlign = TextAlign.Center,
-            modifier = Modifier.fillMaxWidth().padding(top = 4.dp))
-        FlowRow(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.Center, verticalArrangement = Arrangement.Center) {
-            if (AccountStore.https(BuildConfig.TERMS_URL)) TextButton(onClick = { context.startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(BuildConfig.TERMS_URL))) },
-                modifier = Modifier.heightIn(min = 48.dp)) { Text(stringResource(R.string.account_terms), style = MaterialTheme.typography.bodySmall) }
-            if (AccountStore.https(BuildConfig.PRIVACY_URL)) TextButton(onClick = { context.startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(BuildConfig.PRIVACY_URL))) },
-                modifier = Modifier.heightIn(min = 48.dp)) { Text(stringResource(R.string.account_privacy), style = MaterialTheme.typography.bodySmall) }
-            TextButton(onClick = onRestore, enabled = !account.busy, modifier = Modifier.heightIn(min = 48.dp)) {
-                Text(stringResource(R.string.account_restore), style = MaterialTheme.typography.bodySmall)
+        // D-23: before paying, say where Pro data lives; and that the store, not this screen, confirms eligibility and the final price.
+        Text(
+            listOf(
+                stringResource(R.string.pro_legal),
+                stringResource(R.string.account_play_confirms),
+                stringResource(R.string.account_journal_local),
+            ).joinToString(" "),
+            style = MaterialTheme.typography.bodySmall,
+            color = InkMuted,
+        )
+        val linkStyle = MaterialTheme.typography.bodyMedium
+        val linkPadding = PaddingValues(horizontal = 6.dp, vertical = 8.dp)
+        FlowRow(
+            Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.spacedBy(8.dp, Alignment.CenterHorizontally),
+            verticalArrangement = Arrangement.Center,
+        ) {
+            if (AccountStore.https(BuildConfig.TERMS_URL)) {
+                TextButton(
+                    onClick = { context.openExternalUrl(BuildConfig.TERMS_URL) },
+                    contentPadding = linkPadding,
+                    modifier = Modifier.heightIn(min = 48.dp),
+                ) { Text(stringResource(R.string.account_terms), style = linkStyle, maxLines = 1, softWrap = false) }
+            }
+            if (AccountStore.https(BuildConfig.PRIVACY_URL)) {
+                TextButton(
+                    onClick = { context.openExternalUrl(BuildConfig.PRIVACY_URL) },
+                    contentPadding = linkPadding,
+                    modifier = Modifier.heightIn(min = 48.dp),
+                ) { Text(stringResource(R.string.account_privacy), style = linkStyle, maxLines = 1, softWrap = false) }
+            }
+            TextButton(
+                onClick = onRestore,
+                enabled = !account.busy,
+                contentPadding = linkPadding,
+                modifier = Modifier.heightIn(min = 48.dp),
+            ) {
+                Text(stringResource(R.string.account_restore), style = linkStyle, maxLines = 1, softWrap = false)
             }
         }
     }
@@ -595,19 +625,20 @@ private fun PlansStep(
 @Composable
 private fun PlanCard(
     selected: Boolean, title: String, detail: String, extra: String?, badges: List<String>, burst: Int,
+    compact: Boolean = false,
     modifier: Modifier = Modifier, onClick: () -> Unit,
 ) {
     val shape = RoundedCornerShape(24.dp)
     val width by animateDpAsState(if (selected) 2.dp else 1.dp, tween(220, easing = Standard), label = "card-border")
     val line by animateColorAsState(if (selected) Pine else PineLine, tween(220, easing = Standard), label = "card-line")
     val fill by animateColorAsState(if (selected) Mint else WarmIvory, tween(220, easing = Standard), label = "card-fill")
-    val scale by animateFloatAsState(if (selected) 1.02f else 1f, spring(dampingRatio = 0.55f, stiffness = 380f), label = "card-scale")
     val check by animateFloatAsState(if (selected) 1f else 0f, spring(dampingRatio = 0.5f, stiffness = 500f), label = "card-check")
-    Box(modifier.fillMaxWidth().graphicsLayer { scaleX = scale; scaleY = scale }) {
-        Row(Modifier.fillMaxWidth().heightIn(min = 84.dp).clip(shape).background(fill, shape).border(width, line, shape)
-            .selectable(selected = selected, role = Role.RadioButton, onClick = onClick).padding(horizontal = 18.dp, vertical = 14.dp),
+    Box(modifier.fillMaxWidth()) {
+        Row(Modifier.fillMaxWidth().heightIn(min = if (compact) 60.dp else 80.dp).clip(shape).background(fill, shape).border(width, line, shape)
+            .selectable(selected = selected, role = Role.RadioButton, onClick = onClick)
+            .padding(horizontal = if (compact) 14.dp else 18.dp, vertical = if (compact) 10.dp else 14.dp),
             verticalAlignment = Alignment.CenterVertically) {
-            Column(Modifier.weight(1f).padding(end = 12.dp), verticalArrangement = Arrangement.spacedBy(4.dp)) {
+            Column(Modifier.weight(1f).padding(end = 12.dp), verticalArrangement = Arrangement.spacedBy(if (compact) 2.dp else 4.dp)) {
                 FlowRow(horizontalArrangement = Arrangement.spacedBy(6.dp), verticalArrangement = Arrangement.spacedBy(4.dp), itemVerticalAlignment = Alignment.CenterVertically) {
                     Text(title, style = MaterialTheme.typography.titleMedium, fontWeight = FontWeight.SemiBold)
                     badges.forEachIndexed { i, label ->
@@ -618,7 +649,7 @@ private fun PlanCard(
                     }
                 }
                 Text(detail, style = MaterialTheme.typography.bodyMedium)
-                extra?.let { Text(it, style = MaterialTheme.typography.bodySmall, color = InkMuted) }
+                extra?.let { Text(it, style = MaterialTheme.typography.bodyMedium, color = InkMuted) }
             }
             Box(Modifier.size(24.dp).border(1.5.dp, if (selected) Pine else InkMuted, CircleShape), contentAlignment = Alignment.Center) {
                 Box(Modifier.size(14.dp).graphicsLayer { scaleX = check; scaleY = check }.background(Pine, CircleShape))
@@ -686,12 +717,7 @@ private fun ProLoading(onContinue: () -> Unit) {
 private fun ProInfoScreen(store: AccountStore, account: AccountState, onContinue: () -> Unit, onOpenAccount: () -> Unit) {
     val context = LocalContext.current
     val hasPro = store.hasProAccessEffective
-    val heading = when (OnboardingProfile.goal(context)) {
-        "rest" -> R.string.pro_headline_rest
-        "presence" -> R.string.pro_headline_presence
-        "personal" -> R.string.pro_headline_personal
-        else -> R.string.pro_headline_work
-    }
+    val heading = goalHeadline(OnboardingProfile.goal(context))
     Column(Modifier.fillMaxSize().background(Butter).safeDrawingPadding()) {
         Row(Modifier.fillMaxWidth().padding(start = 24.dp, end = 12.dp, top = 8.dp, bottom = 8.dp), verticalAlignment = Alignment.CenterVertically) {
             Text(stringResource(R.string.pro_eyebrow), style = MaterialTheme.typography.labelLarge,
@@ -704,9 +730,11 @@ private fun ProInfoScreen(store: AccountStore, account: AccountState, onContinue
             Text(stringResource(if (store.offersEnabled || hasPro) heading else R.string.audit_pro_unavailable_title), style = MaterialTheme.typography.headlineLarge)
             if (!store.offersEnabled && !hasPro) Text(stringResource(R.string.audit_pro_unavailable_body), style = MaterialTheme.typography.bodyLarge)
             if (store.offersEnabled || hasPro) BenefitList()
-            Surface(color = Mint, shape = RoundedCornerShape(16.dp)) {
-                Text(stringResource(if (hasPro) R.string.account_pro_active else R.string.account_plans_unavailable),
-                    modifier = Modifier.fillMaxWidth().padding(18.dp), style = MaterialTheme.typography.bodyMedium)
+            if (store.offersEnabled || hasPro) {
+                Surface(color = Mint, shape = RoundedCornerShape(16.dp)) {
+                    Text(stringResource(if (hasPro) R.string.account_pro_active else R.string.account_plans_unavailable),
+                        modifier = Modifier.fillMaxWidth().padding(18.dp), style = MaterialTheme.typography.bodyMedium)
+                }
             }
             if (store.offersEnabled && !hasPro) {
                 PrimaryButton(onClick = onOpenAccount, modifier = Modifier.fillMaxWidth()) {
@@ -721,16 +749,14 @@ private fun ProInfoScreen(store: AccountStore, account: AccountState, onContinue
                 Text(stringResource(R.string.account_restore))
             }
             if (AccountStore.https(BuildConfig.TERMS_URL)) {
-                TextButton(onClick = { context.startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(BuildConfig.TERMS_URL))) },
+                TextButton(onClick = { context.openExternalUrl(BuildConfig.TERMS_URL) },
                     modifier = Modifier.heightIn(min = 48.dp)) { Text(stringResource(R.string.account_terms)) }
             }
             if (AccountStore.https(BuildConfig.PRIVACY_URL)) {
-                TextButton(onClick = { context.startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(BuildConfig.PRIVACY_URL))) },
+                TextButton(onClick = { context.openExternalUrl(BuildConfig.PRIVACY_URL) },
                     modifier = Modifier.heightIn(min = 48.dp)) { Text(stringResource(R.string.account_privacy)) }
             }
             Spacer(Modifier.height(16.dp))
         }
     }
 }
-
-private fun Context.findActivity(): Activity? = when (this) { is Activity -> this; is ContextWrapper -> baseContext.findActivity(); else -> null }

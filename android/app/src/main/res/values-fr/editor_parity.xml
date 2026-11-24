@@ -5,19 +5,14 @@
     <string name="editor_name_personal">Mon temps</string>
     <string name="editor_cancel">Annuler</string>
     <string name="editor_apps_title">Choisissez les apps à mettre de côté</string>
-    <string name="editor_apps_detail">Gardez l’essentiel accessible : appels, cartes, banque et authentification.</string>
     <string name="editor_apps_choose">Choisir des apps</string>
     <string name="editor_apps_choose_again">Choisir à nouveau</string>
     <string name="editor_apps_empty">Aucune sélection</string>
     <string name="editor_place_optional">Lieu (facultatif)</string>
-    <string name="editor_place_optional_note">Laissez vide pour démarrer n’importe où selon votre horaire, ou choisissez un lieu pour exiger d’y être.</string>
     <string name="editor_place_empty">Tout lieu (horaire seul)</string>
-    <string name="editor_place_hint">L’arrivée utilise une zone approximative de 150 m, sans précision au niveau d’une pièce.</string>
     <string name="editor_clear_place">Retirer le lieu</string>
     <string name="editor_schedule_title">Horaire et détails</string>
-    <string name="editor_schedule_detail">Définissez les jours de répétition, un lieu facultatif et un nom.</string>
     <string name="editor_schedule_warning">Choisissez une plage de concentration d’au moins 15 minutes.</string>
-    <string name="editor_schedule_overnight">Se termine le lendemain.</string>
     <string name="editor_next_day_badge">(+1 jour)</string>
     <string name="editor_name_placeholder">Ex. : Temps de travail ou Détente</string>
     <string name="editor_days">Jours</string>
@@ -27,5 +22,4 @@
     <string name="days_weekends">Week-ends</string>
     <string name="home_starts_on">Commence %1$s à %2$s</string>
     <string name="editor_time_only_place">Aucun lieu, horaire seul</string>
-    <string name="audit_start_time_only">Règle horaire : touchez Lancer la concentration pendant son horaire. Aucune localisation requise.</string>
 </resources>

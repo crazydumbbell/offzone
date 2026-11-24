@@ -12,9 +12,7 @@
     <string name="home_access_restored">Zugriff freigegeben</string>
     <string name="home_check_rules">Regeln prüfen</string>
     <string name="home_create_rule">Regel erstellen</string>
-    <string name="home_saved_count">%1$d gespeichert</string>
     <string name="home_activate_rule">%1$s aktivieren</string>
     <string name="home_locked_title">Offzone Pro erforderlich</string>
-    <string name="home_locked_body">Abonniere, um deine Regeln zu aktivieren und Fokussitzungen zu starten.</string>
     <string name="home_unlock_pro">Offzone Pro freischalten</string>
 </resources>

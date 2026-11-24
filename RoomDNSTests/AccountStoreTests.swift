@@ -132,4 +132,33 @@ final class AccountStoreTests: XCTestCase {
         XCTAssertNil(ProJournalStore.date(fromKey: "2026-02-30"))
         XCTAssertNil(ProJournalStore.date(fromKey: "not-a-date"))
     }
+
+    func testJournalOutcomeLocalizationKeySeparatesTryAgainWithoutChangingStoredValues() {
+        XCTAssertEqual(ProJournalStore.outcomes, ["Kept my intention", "Partly", "Try again"])
+        XCTAssertEqual(ProJournalStore.outcomeKey("Kept my intention"), "Kept my intention")
+        XCTAssertEqual(ProJournalStore.outcomeKey("Partly"), "Partly")
+        XCTAssertEqual(ProJournalStore.outcomeKey("Try again"), "journal_outcome_try_again")
+    }
+
+    func testAccountViewPolicyCollapsesSignInWhenProIsActiveAndDeduplicatesStatus() {
+        XCTAssertTrue(AccountViewPolicy.showsSignInMethods(hasProAccess: false, signInExpanded: false))
+        XCTAssertFalse(AccountViewPolicy.showsSignInMethods(hasProAccess: true, signInExpanded: false))
+        XCTAssertTrue(AccountViewPolicy.showsSignInMethods(hasProAccess: true, signInExpanded: true))
+
+        let status = "Your Pro subscription is active."
+        XCTAssertFalse(AccountViewPolicy.showsAccountStatusMessage(status, matching: status))
+        XCTAssertTrue(AccountViewPolicy.showsAccountStatusMessage("Email verified.", matching: status))
+        XCTAssertFalse(AccountViewPolicy.showsAccountStatusMessage(nil, matching: status))
+    }
+
+    func testJournalSummaryPolicyHidesZeroTilesWhenEmpty() {
+        XCTAssertFalse(JournalSummaryPolicy.shouldShowSummary(planned: 0, reflected: 0, kept: 0))
+        XCTAssertTrue(JournalSummaryPolicy.shouldShowSummary(planned: 3, reflected: 0, kept: 0))
+        XCTAssertTrue(JournalSummaryPolicy.shouldShowSummary(planned: 0, reflected: 1, kept: 0))
+        XCTAssertTrue(JournalSummaryPolicy.shouldShowSummary(planned: 5, reflected: 2, kept: 1))
+        XCTAssertFalse(JournalSummaryPolicy.shouldShowCharacterCount(0))
+        XCTAssertFalse(JournalSummaryPolicy.shouldShowCharacterCount(1599))
+        XCTAssertTrue(JournalSummaryPolicy.shouldShowCharacterCount(1600))
+        XCTAssertTrue(JournalSummaryPolicy.shouldShowCharacterCount(2000))
+    }
 }

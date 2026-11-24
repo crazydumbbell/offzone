@@ -7,7 +7,6 @@
     <string name="journal_back">Retour</string>
     <string name="journal_previous">Semaine précédente</string>
     <string name="journal_next">Semaine suivante</string>
-    <string name="journal_summary_note">Réflexions personnelles, pas un temps de concentration mesuré. Un plan hebdomadaire ne programme aucun blocage d’apps.</string>
     <string name="journal_intention">À quoi souhaitez-vous faire de la place ?</string>
     <string name="journal_plan_save">Enregistrer l’intention hebdomadaire</string>
     <string name="journal_plan_delete">Supprimer ce plan</string>
@@ -22,7 +21,6 @@
     <string name="journal_export">Exporter le journal JSON</string>
     <string name="journal_share">Partager une copie du journal</string>
     <string name="journal_import">Importer le journal JSON</string>
-    <string name="journal_import_note">Importez un export Offzone iOS ou Android. Les entrées correspondantes fusionnent ; les entrées en conflit sont rejetées sans modifier votre journal.</string>
     <string name="journal_private">Cette copie contient vos intentions et réflexions privées.</string>
     <string name="journal_delete_all">Supprimer toutes les données locales du journal</string>
     <string name="journal_confirm">Supprimer tous les plans et réflexions de cet appareil ? Cette action est irréversible.</string>
@@ -39,7 +37,6 @@
     <string name="goal_personal">Temps pour soi</string>
     <string name="onboarding_title">Faites de la place pour l’essentiel.</string>
     <string name="onboarding_detail">Choisissez quand et où bloquer les distractions.</string>
-    <string name="onboarding_safe">Vous fixez les limites. Les sessions actives peuvent toujours être rétablies.</string>
     <string name="onboarding_start">Commencer</string>
     <string name="onboarding_continue">Continuer</string>
     <string name="nook_description">Nook Cat, votre compagnon de concentration</string>

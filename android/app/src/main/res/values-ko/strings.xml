@@ -5,7 +5,6 @@
     <string name="choose_apps">앱 선택</string>
     <string name="apps_selected">%1$d개 선택됨</string>
     <string name="select_hint">시작하려면 앱을 하나 이상 선택해 주세요.</string>
-    <string name="protected_hint">필수 시스템 앱, 전화, 키보드와 홈 화면은 항상 사용할 수 있어요.</string>
     <string name="empty_apps">선택할 수 있는 앱이 없어요. 잠시 멈출 앱을 설치한 뒤 목록을 다시 열어 주세요.</string>
     <string name="search_apps">앱 검색</string>
     <string name="done">완료</string>

@@ -7,7 +7,6 @@
     <string name="journal_back">뒤로</string>
     <string name="journal_previous">지난주</string>
     <string name="journal_next">다음 주</string>
-    <string name="journal_summary_note">직접 작성한 회고이며 측정된 집중 시간이 아니에요. 주간 계획은 앱 차단을 예약하지 않아요.</string>
     <string name="journal_intention">무엇을 위한 시간을 만들까요?</string>
     <string name="journal_plan_save">주간 다짐 저장</string>
     <string name="journal_plan_delete">계획 삭제</string>
@@ -22,7 +21,6 @@
     <string name="journal_export">기록 JSON 내보내기</string>
     <string name="journal_share">기록 사본 공유</string>
     <string name="journal_import">기록 JSON 가져오기</string>
-    <string name="journal_import_note">Offzone iOS 또는 Android의 내보낸 기록을 가져와요. 동일한 기록은 병합하고 충돌하는 기록이 있으면 기존 자료를 변경하지 않아요.</string>
     <string name="journal_private">사본에는 개인적인 다짐과 회고가 포함돼요.</string>
     <string name="journal_delete_all">기기의 모든 기록 삭제</string>
     <string name="journal_confirm">이 기기의 모든 계획과 회고를 삭제할까요? 되돌릴 수 없어요.</string>
@@ -39,7 +37,6 @@
     <string name="goal_personal">나만의 시간</string>
     <string name="onboarding_title">소중한 것을 위한 시간을 만들어요.</string>
     <string name="onboarding_detail">방해를 차단할 시간과 장소를 선택해요.</string>
-    <string name="onboarding_safe">범위는 직접 정해요. 진행 중인 세션은 언제든 해제할 수 있어요.</string>
     <string name="onboarding_start">시작하기</string>
     <string name="onboarding_continue">계속</string>
     <string name="nook_description">집중을 함께하는 누크 고양이</string>

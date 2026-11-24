@@ -6,14 +6,12 @@
     <string name="m_schedule">每日时段</string>
     <string name="m_start_time">从 %1$s</string>
     <string name="m_end_time">至 %1$s</string>
-    <string name="m_schedule_note">请至少选择 15 分钟。若结束时间早于开始时间，则会延续至次日。</string>
     <string name="m_save_rule">保存规则</string>
     <string name="m_search_place">地址或地点</string>
     <string name="m_search">搜索</string>
     <string name="m_current_place">使用我的位置</string>
     <string name="m_place_error">位置不可用。请检查精确位置和设备定位设置，或尝试其他搜索词。</string>
     <string name="m_map_privacy">搜索使用设备的地理编码服务。地图会向 OpenStreetMap 发送当前查看区域和 IP 地址，而你保存的地点仅留在此设备上。</string>
-    <string name="m_place_note">移动地图将十字准星对准地点。到达判定需要约 150 米范围内的最新精确位置。</string>
     <string name="m_account">账号</string>
     <string name="m_check_arrival">检查到达状态</string>
     <string name="m_distance">上次检测：距离 %1$d 米 · 精度 ±%2$d 米</string>
@@ -24,11 +22,8 @@
     <string name="m_apply">应用</string>
     <string name="m_delete">删除</string>
     <string name="m_quick">快速专注</string>
-    <string name="m_quick_note">选择时长和应用。无需保存地点，随时随地都能使用快速专注。</string>
     <string name="m_journal">计划与回顾</string>
     <string name="m_notifications">专注通知</string>
-    <string name="m_notifications_note">开启地点监测以接收到达和离开提醒。监测期间会显示常驻通知，不会自动开始专注，并在恢复访问时停止。</string>
-    <string name="m_android_limits">你随时可以恢复进行中的会话。Android 允许你随时撤销权限或卸载 Offzone。服务停止后专注即会结束；分屏和画中画模式可能会限制应用屏蔽效果。</string>
     <string name="m_settings">应用权限与设置</string>
     <string name="m_delete_note">要删除“%1$s”吗？其正在进行的专注也将结束。</string>
 </resources>

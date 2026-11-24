@@ -16,7 +16,6 @@ class RuleStore(context: Context) {
         if (key == "saved" || key == null) reload()
     }
     init { reload(); preferences.registerOnSharedPreferenceChangeListener(listener) }
-    fun close() { preferences.unregisterOnSharedPreferenceChangeListener(listener) }
     private fun reload() {
         runCatching {
             val array = JSONArray(preferences.getString("saved", "[]"))

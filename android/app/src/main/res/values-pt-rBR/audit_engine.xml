@@ -1,4 +1,3 @@
 <resources>
     <string name="engine_reconnected">O bloqueio de apps está pronto. Sessões de foco anteriores não são retomadas; inicie uma nova sessão quando estiver pronto.</string>
-    <string name="engine_restart_note">Se o Android interromper o Offzone ou o serviço de bloqueio, o foco termina. Sessões anteriores e o monitoramento do local não reiniciam automaticamente. Inicie-os novamente quando estiver pronto.</string>
 </resources>

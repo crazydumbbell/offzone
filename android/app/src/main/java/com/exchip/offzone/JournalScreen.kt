@@ -101,6 +101,9 @@ fun JournalScreen(hasPro: Boolean, onOffer: () -> Unit, onBack: () -> Unit, acce
         note = entry?.note ?: ""; outcome = entry?.outcome ?: JournalStore.outcomes.first()
     }
     val data = remember(store, revision) { store?.data ?: JournalData() }
+    val entries = remember(data.reflections, week) {
+        data.reflections.filterKeys { it >= week.toString() && it < week.plusDays(7).toString() }.toSortedMap(reverseOrder()).toList()
+    }
 
     fun action(reloadPlan: Boolean = false, reloadReflection: Boolean = false, block: () -> Unit) {
         if (busy) return
@@ -165,12 +168,9 @@ fun JournalScreen(hasPro: Boolean, onOffer: () -> Unit, onBack: () -> Unit, acce
                 }
                 item {
                     Surface(color = WarmIvory, shape = RoundedCornerShape(24.dp), border = BorderStroke(1.dp, PineHairline)) {
-                        Column(Modifier.fillMaxWidth().padding(20.dp), verticalArrangement = Arrangement.spacedBy(10.dp)) {
-                            Row(Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) {
-                                Text(stringResource(R.string.journal_intro), style = MaterialTheme.typography.titleLarge, modifier = Modifier.weight(1f))
-                                NookCatView(NookExpression.REFLECTION, Modifier.size(96.dp))
-                            }
-                            Text(stringResource(R.string.journal_local), style = MaterialTheme.typography.bodyMedium, color = InkMuted)
+                        Row(Modifier.fillMaxWidth().padding(20.dp), verticalAlignment = Alignment.CenterVertically) {
+                            Text(stringResource(R.string.journal_intro), style = MaterialTheme.typography.titleLarge, modifier = Modifier.weight(1f))
+                            NookCatView(NookExpression.REFLECTION, Modifier.size(96.dp))
                         }
                     }
                 }
@@ -199,24 +199,25 @@ fun JournalScreen(hasPro: Boolean, onOffer: () -> Unit, onBack: () -> Unit, acce
                                 Text(week.format(dateFormat), style = MaterialTheme.typography.titleMedium, modifier = Modifier.weight(1f), textAlign = TextAlign.Center)
                                 IconButton(onClick = { navigate { selectWeek(week.plusWeeks(1)) } }, enabled = !busy, modifier = Modifier.semantics { contentDescription = next }) { Text("›", fontSize = 30.sp) }
                             }
-                            val summary = store!!.summary(week)
-                            if (largeFont) {
-                                Column(verticalArrangement = Arrangement.spacedBy(10.dp)) {
-                                    JournalMetric(summary.first, stringResource(R.string.journal_planned_days), Modifier.fillMaxWidth())
-                                    JournalMetric(summary.second, stringResource(R.string.journal_reflected_days), Modifier.fillMaxWidth())
-                                    JournalMetric(summary.third, stringResource(R.string.journal_kept_days), Modifier.fillMaxWidth())
-                                }
-                            } else {
-                                Column(verticalArrangement = Arrangement.spacedBy(10.dp)) {
-                                    Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(10.dp)) {
-                                        JournalMetric(summary.first, stringResource(R.string.journal_planned_days), Modifier.weight(1f))
-                                        JournalMetric(summary.second, stringResource(R.string.journal_reflected_days), Modifier.weight(1f))
+                            val summary = remember(store, revision, week) { store!!.summary(week) }
+                            val hasWeekData = summary.first > 0 || summary.second > 0 || summary.third > 0
+                            if (hasWeekData) {
+                                if (largeFont) {
+                                    Column(verticalArrangement = Arrangement.spacedBy(10.dp)) {
+                                        JournalMetric(summary.first, stringResource(R.string.journal_planned_days), Modifier.fillMaxWidth())
+                                        JournalMetric(summary.second, stringResource(R.string.journal_reflected_days), Modifier.fillMaxWidth())
+                                        JournalMetric(summary.third, stringResource(R.string.journal_kept_days), Modifier.fillMaxWidth())
                                     }
-                                    JournalMetric(summary.third, stringResource(R.string.journal_kept_days), Modifier.fillMaxWidth())
+                                } else {
+                                    Column(verticalArrangement = Arrangement.spacedBy(10.dp)) {
+                                        Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(10.dp)) {
+                                            JournalMetric(summary.first, stringResource(R.string.journal_planned_days), Modifier.weight(1f))
+                                            JournalMetric(summary.second, stringResource(R.string.journal_reflected_days), Modifier.weight(1f))
+                                        }
+                                        JournalMetric(summary.third, stringResource(R.string.journal_kept_days), Modifier.fillMaxWidth())
+                                    }
                                 }
                             }
-                            HorizontalDivider(color = PineHairline)
-                            Text(stringResource(R.string.journal_summary_note), style = MaterialTheme.typography.bodyMedium, color = InkMuted)
                         }
                     }
                     item {
@@ -273,7 +274,7 @@ fun JournalScreen(hasPro: Boolean, onOffer: () -> Unit, onBack: () -> Unit, acce
                     if (hasPro) item {
                         JournalPanel(stringResource(R.string.journal_daily_reflection)) {
                             Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(6.dp)) {
-                                (0L..6L).forEach { offset ->
+                                for (offset in 0L..6L) {
                                     val day = week.plusDays(offset)
                                     val selectedDay = day == date
                                     val selectable = day <= today
@@ -289,7 +290,7 @@ fun JournalScreen(hasPro: Boolean, onOffer: () -> Unit, onBack: () -> Unit, acce
                                     ) {
                                         Text(
                                             day.dayOfWeek.getDisplayName(TextStyle.NARROW, locale),
-                                            style = MaterialTheme.typography.bodySmall,
+                                            style = MaterialTheme.typography.bodyMedium,
                                             color = if (selectedDay) Butter else if (selectable) InkMuted else InkMuted.copy(alpha = 0.45f),
                                         )
                                         Text(
@@ -322,24 +323,27 @@ fun JournalScreen(hasPro: Boolean, onOffer: () -> Unit, onBack: () -> Unit, acce
                                 label = { Text(stringResource(R.string.journal_note)) },
                                 minLines = 3,
                                 modifier = Modifier.fillMaxWidth(),
-                                supportingText = { Text("${JournalStore.characterCount(note)} / 2000") },
+                                supportingText = if (note.isNotEmpty()) {
+                                    { Text("${JournalStore.characterCount(note)} / 2000", style = MaterialTheme.typography.bodyMedium) }
+                                } else null,
                             )
                             PrimaryButton(
                                 onClick = { val reflection = JournalReflection(note.trim(), outcome); val selectedDate = date; action(reloadReflection = true) { store!!.reflect(reflection, selectedDate) } },
                                 enabled = !busy && note.isNotBlank(),
                                 modifier = Modifier.fillMaxWidth(),
                             ) { Text(stringResource(R.string.journal_reflect_save)) }
-                            Text(stringResource(R.string.journal_once), style = MaterialTheme.typography.bodyMedium, color = InkMuted)
+                            if (data.reflections.containsKey(date.toString())) {
+                                Text(stringResource(R.string.journal_once), style = MaterialTheme.typography.bodyMedium, color = InkMuted)
+                            }
                         }
                     }
                     item { Text(stringResource(R.string.journal_entries), style = MaterialTheme.typography.titleLarge) }
-                    val entries = data.reflections.filterKeys { it >= week.toString() && it < week.plusDays(7).toString() }.toSortedMap(reverseOrder())
                     if (entries.isEmpty()) item {
                         Surface(color = WarmIvory, shape = RoundedCornerShape(24.dp), border = BorderStroke(1.dp, PineHairline)) {
                             Text(stringResource(R.string.journal_empty), modifier = Modifier.fillMaxWidth().padding(20.dp), style = MaterialTheme.typography.bodyMedium, color = InkMuted)
                         }
                     }
-                    items(entries.toList(), key = { it.first }) { (key, reflection) ->
+                    items(entries, key = { it.first }) { (key, reflection) ->
                         val formattedDate = remember(key, dateFormat) {
                             runCatching { LocalDate.parse(key).format(dateFormat) }.getOrDefault(key)
                         }
@@ -360,6 +364,7 @@ fun JournalScreen(hasPro: Boolean, onOffer: () -> Unit, onBack: () -> Unit, acce
                 item {
                     JournalPanel(stringResource(R.string.journal_your_data)) {
                         if (busy) LinearProgressIndicator(Modifier.fillMaxWidth(), trackColor = PineHairline)
+                        Text(stringResource(R.string.journal_local), style = MaterialTheme.typography.bodyMedium, color = InkMuted)
                         PrimaryButton(
                             onClick = { export.launch("offzone-journal-${LocalDate.now()}.json") },
                             enabled = store != null && !busy,
@@ -373,15 +378,14 @@ fun JournalScreen(hasPro: Boolean, onOffer: () -> Unit, onBack: () -> Unit, acce
                                         .apply { clipData = android.content.ClipData.newRawUri("Journal", uri) }, null))
                                 } catch (_: Exception) { message = R.string.journal_error }
                             }, modifier = Modifier.heightIn(min = 48.dp)) { Text(stringResource(R.string.journal_share)) }
+                            Text(stringResource(R.string.journal_private), style = MaterialTheme.typography.bodyMedium, color = InkMuted)
                         }
-                        Text(stringResource(R.string.journal_private), style = MaterialTheme.typography.bodyMedium, color = InkMuted)
                         if (hasPro) {
                             SecondaryButton(
                                 onClick = { navigate { import.launch(arrayOf("application/json", "text/plain", "application/octet-stream")) } },
                                 enabled = store != null && store?.loadFailed == false && !busy,
                                 modifier = Modifier.fillMaxWidth(),
                             ) { Text(stringResource(R.string.journal_import)) }
-                            Text(stringResource(R.string.journal_import_note), style = MaterialTheme.typography.bodyLarge, color = InkMuted)
                         }
                         HorizontalDivider(color = PineHairline)
                         TextButton(

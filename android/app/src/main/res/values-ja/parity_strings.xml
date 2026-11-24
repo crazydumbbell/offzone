@@ -13,9 +13,7 @@
     <string name="home_access_restored">アクセス復元済み</string>
     <string name="home_check_rules">ルールを確認</string>
     <string name="home_create_rule">ルールを作成</string>
-    <string name="home_saved_count">%1$d件保存済み</string>
     <string name="home_activate_rule">%1$sを有効化</string>
     <string name="home_locked_title">Offzone Proが必要です</string>
-    <string name="home_locked_body">登録すると、ルールを有効化して集中セッションを開始できます。</string>
     <string name="home_unlock_pro">Offzone Proを解除</string>
 </resources>
