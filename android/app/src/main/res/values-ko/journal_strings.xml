@@ -2,7 +2,6 @@
     <string name="journal_title">계획과 회고</string>
     <string name="journal_intro">작은 다짐, 짧은 회고.</string>
     <string name="journal_local">이 기기에만 저장되며 백업되지 않아요. 기기를 바꾸거나 Offzone을 삭제하기 전에 내보내 주세요.</string>
-    <string name="journal_offer">Pro 알아보기</string>
     <string name="journal_corrupt">기록을 읽지 못했어요. 원본은 그대로 보존돼요. 사본을 내보내거나 전체 기록을 삭제해 다시 시작해 주세요.</string>
     <string name="journal_back">뒤로</string>
     <string name="journal_previous">지난주</string>

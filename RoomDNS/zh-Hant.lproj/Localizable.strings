@@ -125,9 +125,7 @@
 "Make room for calmer evenings." = "為平靜的夜晚留出空間。";
 "Make room for being here." = "為當下此刻留出空間。";
 "Make room for yourself." = "為自己留出空間。";
-"Go to home" = "前往首頁";
 "Account & plan" = "帳號與方案";
-"Explore Pro" = "探索 Pro";
 "Offzone Pro" = "Offzone Pro";
 "Manage subscription" = "管理訂閱";
 "Restore purchases" = "回復購買";
@@ -200,8 +198,6 @@
 "Plans & reflections" = "計畫與回顧";
 "Prepare journal export" = "準備匯出日誌";
 "Previous week" = "上一週";
-"Pro lets you write plans and reflections. Your existing entries remain readable, exportable and deletable." = "訂閱 Pro 即可撰寫計畫與回顧。現有紀錄仍可繼續閱讀、匯出與刪除。";
-"Pro purchases are currently unavailable." = "目前無法購買 Pro。";
 "Reflection date" = "回顧日期";
 "Save reflection" = "儲存回顧";
 "Save weekly intention" = "儲存每週目標";
@@ -281,7 +277,6 @@
 "Nook Cat gives you a quiet hello." = "Nook 貓咪輕聲向你問好。";
 "Nook Cat says hello." = "Nook 貓咪向你問好。";
 "pro_eyebrow" = "OFFZONE PRO";
-"pro_close" = "關閉";
 "pro_headline_work" = "為專注留出空間。";
 "pro_headline_rest" = "為平靜的夜晚留出空間。";
 "pro_headline_presence" = "為當下此刻留出空間。";
@@ -346,12 +341,8 @@
 "Rule ready. Tap Start focus when you are ready." = "規則已就緒，準備好後輕點「開始專注」。";
 "Account" = "帳號";
 "Already subscribed? Sign in" = "已經訂閱了嗎？登入";
-"Unlock Offzone Pro" = "解鎖 Offzone Pro";
-"Subscribe to activate rules, focus sessions, and Quick focus." = "訂閱即可啟用規則、專注階段與快速專注。";
-"See plans" = "檢視方案";
 "Trigger at a place (optional)" = "於指定地點觸發（選填）";
 "Plans aren’t available right now. Try again in a moment." = "目前無法載入方案，請稍後再試。";
-"Your rules stay on this iPhone." = "你的規則僅儲存在這部 iPhone 上。";
 "Verify your email to manage your account and purchases." = "請驗證你的電子郵件以管理帳號與購買項目。";
 "Delete your account? Your local rules stay here. Deleting an account does not cancel an App Store subscription." = "要刪除帳號嗎？本機上的規則仍會保留。刪除帳號並不會取消 App Store 訂閱。";
 "Sign in to Offzone" = "登入 Offzone";
@@ -388,3 +379,5 @@
 "This subscription is already linked to another account. Restore purchases on the original account." = "此訂閱已連結至另一個帳號，請在原帳號中進行回復購買。";
 "Subscription service is unavailable right now. Please try again." = "訂閱服務目前無法使用，請稍後再試。";
 "journal_outcome_try_again" = "再試一次";
+"Manage account" = "管理帳號";
+"No active subscription." = "目前沒有生效中的訂閱。";

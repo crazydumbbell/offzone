@@ -1,6 +1,4 @@
 <resources>
-    <string name="pro_eyebrow">OFFZONE PRO</string>
-    <string name="pro_close">Cerrar</string>
     <string name="pro_headline_work">Haz espacio para tu concentración.</string>
     <string name="pro_headline_rest">Haz espacio para tardes más tranquilas.</string>
     <string name="pro_headline_presence">Haz espacio para estar presente.</string>
@@ -8,7 +6,6 @@
     <string name="pro_benefit_plan">Reglas de concentración por horario y lugar opcional de 150 m.</string>
     <string name="pro_benefit_journal">Concentración rápida de 15, 25 o 50 min cuando la necesites.</string>
     <string name="pro_benefit_review">Planes semanales y reflexiones diarias guardados solo en tu dispositivo.</string>
-    <string name="pro_view_plans">Ver planes y cuenta</string>
     <string name="pro_tomorrow">Mañana</string>
     <string name="pro_preview_note">Vista previa · planes de muestra, no se cobra nada</string>
     <string name="pro_try_title">Prueba Offzone Pro gratis durante %1$s.</string>

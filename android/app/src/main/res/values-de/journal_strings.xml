@@ -2,7 +2,6 @@
     <string name="journal_title">Pläne &amp; Reflexionen</string>
     <string name="journal_intro">Ein kleiner Vorsatz. Eine kurze Reflexion.</string>
     <string name="journal_local">Nur auf diesem Gerät gespeichert und vom Backup ausgeschlossen. Exportiere deine Daten vor einem Gerätewechsel oder dem Löschen von Offzone.</string>
-    <string name="journal_offer">Pro entdecken</string>
     <string name="journal_corrupt">Dein Journal konnte nicht gelesen werden. Die Originaldatei ist unberührt. Exportiere eine Kopie oder lösche lokale Daten, um neu zu beginnen.</string>
     <string name="journal_back">Zurück</string>
     <string name="journal_previous">Vorherige Woche</string>

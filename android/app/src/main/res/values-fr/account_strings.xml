@@ -2,7 +2,6 @@
     <string name="account_title">Compte et forfait</string>
     <string name="account_done">Terminé</string>
     <string name="account_free_space">Aucun abonnement Pro actif</string>
-    <string name="account_local">Les règles, les sélections d’apps et les lieux restent sur cet appareil.</string>
     <string name="account_unavailable">Les services de compte sont indisponibles pour le moment.</string>
     <string name="account_identity_error">Impossible de vérifier ce compte. Veuillez réessayer.</string>
     <string name="account_verify_required">Vérifiez votre e-mail pour gérer votre compte et vos achats.</string>
@@ -30,7 +29,6 @@
     <string name="account_link_apple">Associer Apple</string>
     <string name="account_link_google">Associer Google</string>
     <string name="account_link_email">Associer e-mail et mot de passe</string>
-    <string name="account_plan">Votre forfait</string>
     <string name="account_journal_local">Les entrées du journal restent sur cet appareil et sont exclues des sauvegardes. Exportez-les avant de changer de téléphone ou de supprimer Offzone.</string>
     <string name="account_pro_active">Votre abonnement Pro est actif.</string>
     <string name="account_no_purchase">Aucun abonnement Pro actif n’a été trouvé.</string>
@@ -39,7 +37,7 @@
     <string name="account_subscribe">S’abonner</string>
     <string name="account_restore">Restaurer les achats</string>
     <string name="account_manage">Gérer l’abonnement</string>
-    <string name="account_upgrade_pro">Passer à Offzone Pro</string>
+    <string name="account_manage_account">Gérer le compte</string>
     <string name="account_signout">Se déconnecter</string>
     <string name="account_delete">Supprimer le compte</string>
     <string name="account_delete_warning">Supprimer votre compte ? Les règles et entrées du journal locales restent ici. La suppression du compte n’annule pas les abonnements. Résiliez séparément sur le store utilisé lors de l’abonnement. Confirmez votre identité pour supprimer.</string>

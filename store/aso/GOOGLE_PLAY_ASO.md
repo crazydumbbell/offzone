@@ -3,27 +3,25 @@
 ## `en-US`
 
 - **Title (28/30)**: `Offzone: App Blocker & Focus`
-- **Short Description (79/80)**: Block distracting apps by schedule or place. Quick focus timer & daily journal.
-- **Release Notes (160/500)**: Two-step rule setup, embedded map with 150 m zone, 15/25/50 min Quick focus timer, unified Offzone Pro flow with free active-session recovery, and 10 languages.
+- **Short Description (77/80)**: Limit screen time & block apps by schedule + optional place. Timer & journal.
+- **Release Notes (192/500)**: Two-step rule setup, embedded map for optional 150 m zones, 15/25/50 min Quick focus timer, unified Offzone Pro flow with no-charge active-session Restore access, and support for 10 languages.
 
-### Full Description (1361/4000)
+### Full Description (1748/4000)
 
-Make room for what matters.
+Block distracting apps and limit screen time with Offzone, an app blocker for study and work. Set two-step rules with a schedule and optional 150 m zone, then tap Start focus when you are ready.
 
-Offzone helps you pause distracting apps with a clean two-step setup designed around your schedule and optional places.
+What Offzone Pro includes
+• Step 1: pick installed apps with real icons and live selection counts. Step 2: set your time window and weekdays, and optionally pick a 150 m map zone.
+• Tap Start focus during your scheduled window (and inside your saved 150 m zone if added), or run a 15, 25, or 50 minute Quick focus timer anywhere for deep work, study, or Pomodoro routines.
+• Keep weekly plans and daily focus reflections stored locally on your device.
+• Restore access remains available at no extra charge whenever a session is active.
 
-FEATURES WITH OFFZONE PRO
-• Pick installed apps with real icons and live selection counts, set your time window and weekdays, and optionally add a 150 m map zone.
-• Start a scheduled focus block or launch Quick focus anywhere for 15, 25, or 50 minutes.
-• Keep weekly intentions and daily focus reflections privately on your device.
-• Restore access remains available at no charge whenever a session or block is active.
+Android permissions and disclosures
+• AccessibilityService API: Offzone uses Android AccessibilityService solely to detect when apps you selected open during a focus session you start and display the Offzone pause screen over them. Offzone uses app package names only, does not read screen contents, messages, passwords, or typed text, and does not change device settings without your action.
+• Location permission (optional): Used only when you add a 150 m zone to a rule. Radius detection is approximate and does not identify individual rooms. Arrival never starts blocking automatically. Opening the place picker loads map tiles from OpenStreetMap.
 
-ANDROID PERMISSIONS & DISCLOSURES
-• AccessibilityService API: Offzone uses Android AccessibilityService solely to detect when apps you selected are opened during an active focus session or rule and display the Offzone shield screen. Offzone does not read screen text, messages, passwords, or keystrokes, and does not change device settings without your action.
-• Location permission (optional): Used only when you add a 150 m zone to a rule. Radius detection is approximate and does not distinguish individual rooms.
-
-SUBSCRIPTIONS
-Offzone Pro is required to activate rules, start scheduled focus, and launch Quick focus. Subscriptions bill through Google Play and renew automatically until cancelled in Google Play Settings.
+Subscriptions
+An Offzone account sign-in and an Offzone Pro subscription are required to activate rules, start scheduled focus, launch Quick focus, and write weekly plans or daily reflections. Subscriptions bill through Google Play and renew automatically until cancelled in Google Play Settings.
 
 Privacy Policy: https://crazydumbbell.github.io/offzone/privacy/
 
@@ -32,27 +30,25 @@ Privacy Policy: https://crazydumbbell.github.io/offzone/privacy/
 ## `ko-KR`
 
 - **Title (22/30)**: `Offzone: 앱 차단 · 집중 타이머`
-- **Short Description (41/80)**: 일정과 장소에 맞춰 앱을 가리고 15·25·50분 바로 집중으로 몰입해요.
-- **Release Notes (80/500)**: 2단계 규칙 설정, 150m 반경 지도, 15·25·50분 바로 집중 타이머, 집중 중 무료 차단 해제와 Pro 안내 통합, 10개 언어 지원.
+- **Short Description (69/80)**: 일정과 선택 장소(150m)로 앱을 차단해 스크린타임을 줄여요. 15·25·50분 공부 집중 타이머와 회고도 있어요.
+- **Release Notes (109/500)**: 2단계 규칙 설정과 선택형 150m 반경 지도, 15·25·50분 바로 집중 타이머를 담았어요. 집중 중 추가 비용 없는 차단 해제와 Offzone Pro 안내를 정리했고 10개 언어를 지원해요.
 
-### Full Description (771/4000)
+### Full Description (995/4000)
 
-중요한 시간을 위해 산만한 앱을 잠시 내려놓아요.
-
-Offzone은 2단계 설정만으로 내 일정과 장소에 맞춰 집중 규칙을 만드는 앱 차단 도우미예요.
+정한 일정과 선택형 150m 장소 조건으로 산만한 앱을 차단해 스크린타임과 스마트폰 사용 습관을 관리해요. 2단계로 앱 잠금 규칙을 만들고 직접 집중을 시작하거나 15·25·50분 바로 집중 타이머로 공부와 업무에 몰입할 수 있어요.
 
 Offzone Pro 주요 기능
-• 앱 아이콘과 실시간 선택 수를 보며 가릴 앱을 고르고, 시간·요일과 선택형 150m 지도 구역을 한 화면에서 설정해요.
-• 일정 안에서 집중을 시작하거나 장소 설정 없이 15·25·50분 바로 집중 타이머를 켤 수 있어요.
+• 1단계에서 앱 아이콘과 실시간 선택 수를 보며 가릴 앱을 고르고 2단계에서 요일·시간표와 선택형 150m 지도 구역을 설정해요.
+• 정한 일정 안에서(장소를 넣었다면 150m 구역 안에서) 직접 집중 시작을 눌러 차단을 켜요. 장소 설정 없이 어디서나 15·25·50분 바로 집중 타이머로 공부나 뽀모도로 루틴을 이어 갈 수도 있어요.
 • 기기에만 저장되는 주간 계획과 일간 회고를 남겨 한 주를 돌아봐요.
-• 집중 세션이나 차단이 켜진 동안에는 언제든 무료로 차단 해제(접근 복구)를 쓸 수 있어요.
+• 집중 세션이 켜진 동안에는 언제든 추가 비용 없이 차단 해제(접근 복구)를 쓸 수 있어요.
 
 권한 및 서비스 고지
-• AccessibilityService API: Offzone은 활성 집중 세션이나 규칙이 켜진 상태에서 사용자가 직접 고른 앱이 실행되는지 확인하고 차단 화면을 띄우는 목적에만 AccessibilityService를 사용해요. 화면 내용, 메시지, 비밀번호, 키 입력을 읽거나 수집하지 않아요.
-• 위치 권한(선택): 장소 조건을 추가한 규칙에서만 사용해요. 반경 150m 주변 감지는 대략적인 범위이며 실내 방 단위로는 구분하지 않아요.
+• AccessibilityService API: Offzone은 사용자가 직접 시작한 집중 세션 동안 고른 앱이 열리면 차단 화면을 띄우는 데만 Android AccessibilityService를 사용해요. 앱 패키지 이름만 확인하며 화면 내용, 메시지, 비밀번호, 키 입력은 읽거나 수집하지 않아요. 사용자 조작 없이 기기 설정을 바꾸지도 않아요.
+• 위치 권한(선택): 150m 장소 조건을 추가한 규칙에서만 사용해요. 반경 150m 감지는 대략적인 범위이며 실내 방 단위로는 구분하지 않아요. 장소에 도착해도 차단이 자동으로 시작되지 않으며 지도 선택 화면을 열면 OpenStreetMap 지도를 불러와요.
 
 구독 안내
-규칙 활성화, 집중 시작, 바로 집중에는 Offzone Pro 구독이 필요해요. 구독은 Google Play를 통해 청구되며 해지하기 전까지 자동 갱신돼요. Google Play 설정에서 언제든 해지할 수 있어요.
+규칙 활성화, 예정 집중 시작, 바로 집중, 주간 계획·일간 회고 작성에는 Offzone 계정 로그인과 Offzone Pro 구독이 필요해요. 구독은 Google Play로 청구되고 Google Play 설정에서 해지하기 전까지 자동 갱신돼요.
 
 개인정보 처리방침: https://crazydumbbell.github.io/offzone/privacy/
 
@@ -61,27 +57,25 @@ Offzone Pro 주요 기능
 ## `ja-JP`
 
 - **Title (21/30)**: `Offzone: アプリ制限・集中タイマー`
-- **Short Description (58/80)**: アプリと時間・任意の場所を2ステップで設定。15・25・50分のクイック集中と毎日のふりかえりで集中を続けられます。
-- **Release Notes (101/500)**: 2ステップのルール設定、150mエリア対応の埋め込みマップ、15・25・50分のクイック集中タイマー、セッション中の無料アクセス復元を含むOffzone Proフローの統一、10言語対応を追加しました。
+- **Short Description (68/80)**: 予定と任意の150m場所でアプリ制限・スマホ依存対策。15・25・50分集中タイマーで勉強やスクリーンタイム管理、毎日のふりかえりまで。
+- **Release Notes (107/500)**: 2ステップのルール設定、任意の150 mエリア用マップ、15・25・50分のクイック集中タイマー、セッション中に追加料金なしで使えるアクセス復元を含むOffzone Proフローを整理し、10言語に対応しています。
 
-### Full Description (833/4000)
+### Full Description (996/4000)
 
-大切なことに、余白を。
-
-Offzoneは、スケジュールと任意の場所に合わせて気になるアプリを一時停止できる、シンプルな2ステップ設定のアプリ制限ツールです。
+スケジュールと任意の150 mの場所でアプリを制限し、スクリーンタイムやスマホ依存を見直すアプリ制限ツールです。2ステップでアプリロックのルールを作り、手動で集中を開始できるほか、15分・25分・50分のクイック集中タイマーで勉強や作業に取り組めます。
 
 Offzone Proの主な機能
-• ステップ1：アプリアイコンとリアルタイムの選択件数を確認しながら、一時停止したいインストール済みアプリを選択。ステップ2：時間帯・曜日と任意の半径150 mの地図エリアを設定。
-• スケジュール内での「集中を開始」に加え、場所の設定なしでどこでも使える15分・25分・50分の「クイック集中」タイマーを起動可能。
-• 週間計画と毎日のふりかえりを端末内のみにプライベート保存。
-• 集中セッションや制限が有効な間は、いつでも無料で「アクセスを復元」できます。
+• ステップ1でアプリアイコンとリアルタイムの選択件数を見ながら一時停止したいインストール済みアプリを選び、ステップ2で時間帯・曜日と任意の半径150 mの地図エリアを設定します。
+• スケジュール時間内（150 mエリアを設定した場合はそのエリア内）で手動で「集中を開始」します。場所を設定せず、どこでも15分・25分・50分の「クイック集中」タイマーで勉強やポモドーロ習慣に活用できます。
+• 週間計画と毎日のふりかえりを端末内のみに保存します。
+• 集中セッションが有効な間は、追加料金なしでいつでも「アクセスを復元」できます。
 
 Androidの権限と開示事項
-• AccessibilityService API：OffzoneはAndroid AccessibilityService APIを、有効な集中セッションまたはルールが動作している間に、ユーザーが選択したアプリが開かれたことだけを検知してOffzoneの一時停止オーバーレイ画面を表示する目的でのみ使用します。画面上のテキスト、メッセージ、パスワード、キー入力を読み取ることはなく、ユーザーの操作なしに端末設定を変更することもありません。
-• 位置情報権限（任意）：半径150 mのエリアを追加したルールでのみ使用します。半径検知はおおよその範囲であり、室内の部屋単位では識別しません。
+• AccessibilityService API：OffzoneはAndroid AccessibilityServiceを、ユーザーが開始した集中セッション中に選択したアプリが開かれたことを検知し、一時停止画面を表示する目的でのみ使用します。アプリのパッケージ名のみを確認し、画面の内容、メッセージ、パスワード、入力文字は読み取りません。ユーザーの操作なしに端末設定を変更することもありません。
+• 位置情報権限（任意）：半径150 mのエリアを追加したルールでのみ使用します。半径検知はおおよその範囲であり、室内の部屋単位では識別しません。場所に到着しただけで自動的に制限が開始されることはありません。場所選択の地図を開くとOpenStreetMapの地図を読み込みます。
 
 サブスクリプションについて
-ルールの有効化、集中セッションの開始、クイック集中の利用にはOffzone Proのサブスクリプションが必要です。お支払いはGoogle Playを通じて請求され、Google Playの設定から解約するまで自動更新されます。
+ルールの有効化、スケジュール集中の開始、クイック集中、週間計画・毎日のふりかえりの作成には、OffzoneアカウントでのログインとOffzone Proのサブスクリプションが必要です。お支払いはGoogle Playを通じて請求され、Google Playの設定から解約するまで自動更新されます。
 
 プライバシーポリシー: https://crazydumbbell.github.io/offzone/privacy/
 
@@ -90,27 +84,25 @@ Androidの権限と開示事項
 ## `zh-CN`
 
 - **Title (18/30)**: `Offzone: 应用屏蔽与专注计时`
-- **Short Description (41/80)**: 两步按日程与可选地点屏蔽分心应用，支持 15/25/50 分钟快速专注与每日回顾。
-- **Release Notes (89/500)**: 新增两步规则设置、支持 150 米地点范围的嵌入式地图、15/25/50 分钟快速专注计时器、统一 Offzone Pro 流程（含会话期间免费恢复访问）以及 10 种语言支持。
+- **Short Description (65/80)**: 按日程与可选 150 米地点屏蔽分心应用，管理屏幕使用时间与戒手机自律。内置 15/25/50 分钟学习专注计时器与本地每日回顾。
+- **Release Notes (87/500)**: 两步规则设置、可选 150 米地点范围地图、15/25/50 分钟快速专注计时器、统一 Offzone Pro 流程（含会话期间无需额外付费的恢复访问），支持 10 种语言。
 
-### Full Description (670/4000)
+### Full Description (769/4000)
 
-为重要的事留出空间。
-
-Offzone 通过简洁的两步设置，结合你的日程安排与可选地点，帮助你暂搁让人分心的应用。
+按你的日程与可选 150 米地点屏蔽分心应用，管理屏幕使用时间与手机使用习惯。通过两步规则设置配置应用锁，手动开始专注，或随时用 15、25、50 分钟快速专注计时器投入学习与工作。
 
 Offzone Pro 主要功能
-• 两步轻松配置：第一步从已安装应用列表（带真实图标与实时已选数量统计）中挑选应用；第二步设置时间段、星期几以及可选的 150 米地图地点范围。
-• 在计划时段内手动开始专注，或无需地点设置随时随地启动 15、25 或 50 分钟“快速专注”计时器。
-• 将每周目标与每日专注回顾私密保存在本机设备上。
-• 当专注会话或屏蔽规则生效时，随时可免费使用“恢复访问”。
+• 第一步从带真实图标与实时已选数量的已安装应用列表中勾选应用；第二步设置时间段、星期几与可选的 150 米地图地点范围。
+• 在计划时段内（添加了 150 米地点范围时，需位于该范围内）手动点击“开始专注”。无需地点设置，随时随地也能启动 15、25 或 50 分钟“快速专注”计时器，适合学习、备考与番茄钟自律。
+• 在本机设备上私密记录每周目标与每日专注回顾。
+• 专注会话生效期间，无需额外付费即可随时使用“恢复访问”。
 
 Android 权限与服务说明
-• AccessibilityService API：Offzone 仅使用 Android AccessibilityService API 在你主动开启的专注会话或屏蔽规则生效期间，检测你所选的应用何时被打开，并在其上显示 Offzone 暂停遮罩界面。Offzone 绝不会读取屏幕文字内容、消息、密码或按键输入，也不会在未经你操作的情况下更改设备设置。
-• 位置权限（可选）：仅在你为规则添加 150 米地点范围时使用。约 150 米半径检测为大致范围，无法区分室内单个房间。
+• AccessibilityService API：Offzone 仅在你手动开始的专注会话期间，使用 Android AccessibilityService 检测所选应用何时打开并在其上显示暂停界面。仅使用应用包名，不会读取屏幕内容、消息、密码或输入文字，也不会未经你操作更改设备设置。
+• 位置权限（可选）：仅在规则添加了 150 米地点范围时使用。约 150 米半径检测为大致范围，无法区分室内单个房间。到达地点不会自动开始屏蔽。打开地点选择地图时会加载 OpenStreetMap 地图。
 
 订阅说明
-启用屏蔽规则、开始定时专注及使用快速专注需要订阅 Offzone Pro。订阅通过 Google Play 结算，并将自动续订，直到你在 Google Play 设置中取消为止。
+启用屏蔽规则、开始定时专注、使用快速专注，以及编写每周目标与每日回顾，需登录 Offzone 账户并订阅 Offzone Pro。订阅通过 Google Play 结算并自动续订，你可随时在 Google Play 设置中取消。
 
 隐私政策: https://crazydumbbell.github.io/offzone/privacy/
 
@@ -119,56 +111,52 @@ Android 权限与服务说明
 ## `zh-TW`
 
 - **Title (19/30)**: `Offzone: App封鎖與專注計時`
-- **Short Description (44/80)**: 兩步驟依排程與選填地點封鎖分心 App，內建 15/25/50 分鐘快速專注與每日回顧。
-- **Release Notes (89/500)**: 新增兩步驟規則設定、支援 150 公尺地點範圍的內嵌地圖、15/25/50 分鐘快速專注計時器、整合 Offzone Pro 流程（含專注期間免費恢復存取）及 10 種語言支援。
+- **Short Description (66/80)**: 依排程與選填 150 公尺地點封鎖分心 App，鎖手機並管理螢幕使用時間。內建 15/25/50 分鐘讀書專注計時器與本機每日回顧。
+- **Release Notes (90/500)**: 2 步驟規則設定、選填 150 公尺地點範圍地圖、15/25/50 分鐘快速專注計時器、整合 Offzone Pro 流程（含專注期間無需額外付費的恢復存取），支援 10 種語言。
 
-### Full Description (688/4000)
+### Full Description (801/4000)
 
-為重要的事留出空間。
-
-Offzone 透過簡潔的兩步驟設定，搭配你的時間排程與選填地點，幫助你暫時放下容易分心的應用程式。
+依你的排程與選填 150 公尺地點封鎖分心 App，幫助你管理螢幕使用時間與戒手機自律。透過 2 步驟設定規則並手動開始專注，或隨時啟動 15、25、50 分鐘快速專注計時器投入讀書與工作。
 
 Offzone Pro 主要功能
-• 兩步驟輕鬆完成：第一步從已安裝應用程式清單（附真實圖示與即時已選數量）中挑選 App；第二步設定時間區間、星期幾與選填的 150 公尺地圖地點範圍。
-• 在排程時段內手動開始專注，或不需設定地點隨時隨地啟動 15、25 或 50 分鐘「快速專注」計時器。
-• 將每週目標與每日專注回顧私密儲存在本機裝置上。
-• 當專注階段或封鎖規則生效時，隨時都可免費使用「恢復存取」。
+• 第一步從附真實圖示與即時已選數量的已安裝 App 清單中挑選項目；第二步設定時間區間、星期幾與選填的 150 公尺地圖地點範圍。
+• 在排程時段內（若加入了 150 公尺地點範圍，須同時位於該範圍內）手動點擊「開始專注」。不需設定地點，隨時隨地也能啟動 15、25 或 50 分鐘「快速專注」計時器，適合讀書、備考與番茄鐘習慣。
+• 在本機裝置上私密保存每週目標與每日專注回顧。
+• 專注階段生效期間，無需額外付費即可隨時使用「恢復存取」。
 
 Android 權限與服務揭露
-• AccessibilityService API：Offzone 僅會使用 Android AccessibilityService API，在你主動啟動的專注階段或規則生效期間，偵測你所選取的 App 何時被開啟，藉此顯示 Offzone 的暫停遮罩畫面。Offzone 絕不會讀取螢幕文字內容、訊息、密碼或按鍵輸入，也不會在未經你操作的情況下變更裝置設定。
-• 位置權限（選填）：僅在你為規則加入 150 公尺地點範圍時使用。約 150 公尺的半徑偵測僅為大致範圍，無法區分室內單一房間。
+• AccessibilityService API：Offzone 僅於你手動開始的專注階段期間，使用 Android AccessibilityService 偵測所選取的 App 何時開啟並在其上顯示暫停畫面。僅使用 App 套件名稱，不會讀取螢幕內容、訊息、密碼或輸入文字，也不會在未經你操作的情況下變更裝置設定。
+• 位置權限（選填）：僅在你為規則加入 150 公尺地點範圍時使用。約 150 公尺的半徑偵測僅為大致範圍，無法區分室內單一房間。抵達地點不會自動開始封鎖。開啟地點選取地圖時會載入 OpenStreetMap 地圖。
 
 訂閱說明
-啟用封鎖規則、開始排程專注及使用快速專注需要訂閱 Offzone Pro。訂閱將透過 Google Play 計費，並會自動續訂，直到你在 Google Play 設定中取消為止。
+啟用封鎖規則、開始排程專注、使用快速專注，以及撰寫每週目標與每日回顧，須登入 Offzone 帳號並訂閱 Offzone Pro。訂閱透過 Google Play 計費並自動續訂，你隨時可在 Google Play 設定中取消。
 
-隱私權政策: https://crazydumbbell.github.io/offzone/privacy/
+隱私權政策：https://crazydumbbell.github.io/offzone/privacy/
 
 ---
 
 ## `es-ES`
 
 - **Title (27/30)**: `Offzone: Bloqueador de Apps`
-- **Short Description (69/80)**: Bloquea apps por horario o lugar. Temporizador 15/25/50 min y diario.
-- **Release Notes (204/500)**: Configuración de reglas en 2 pasos, mapa integrado con zona de 150 m, Concentración rápida de 15/25/50 min, acceso unificado a Offzone Pro con restauración sin coste durante sesiones activas y 10 idiomas.
+- **Short Description (79/80)**: Bloquea apps y tiempo de uso por horario y lugar opcional. Temporizador y foco.
+- **Release Notes (232/500)**: Creación de reglas en 2 pasos, mapa integrado para zonas opcionales de 150 m, Concentración rápida de 15/25/50 min, acceso unificado a Offzone Pro con Restaurar acceso sin coste adicional en sesiones activas y soporte en 10 idiomas.
 
-### Full Description (1549/4000)
+### Full Description (2021/4000)
 
-Haz espacio para lo que importa.
+Bloquea apps que distraen y controla tu tiempo de uso con Offzone, un bloqueador de apps para estudiar y trabajar. Crea reglas en dos pasos con horario y una zona opcional de 150 m, y pulsa Iniciar concentración cuando estés listo.
 
-Offzone te ayuda a pausar apps que distraen con una configuración clara en dos pasos adaptada a tus horarios y lugares opcionales.
-
-FUNCIONES CON OFFZONE PRO
-• Elige apps instaladas con sus iconos reales y conteo en vivo, fija tu franja horaria y días de la semana y añade opcionalmente una zona de 150 m en el mapa.
-• Inicia una sesión programada o activa Concentración rápida en cualquier lugar durante 15, 25 o 50 minutos.
+Qué incluye Offzone Pro
+• Paso 1: selecciona apps instaladas con sus iconos reales y conteo en vivo. Paso 2: fija tu franja horaria y días de la semana y añade de forma opcional una zona de 150 m en el mapa.
+• Pulsa Iniciar concentración dentro de tu franja horaria (y dentro de tu zona de 150 m si añadiste una), o activa Concentración rápida de 15, 25 o 50 minutos en cualquier sitio para estudiar, trabajar o seguir rutinas Pomodoro.
 • Guarda propósitos semanales y reflexiones diarias de forma privada en tu dispositivo.
-• Restaurar acceso permanece disponible sin coste siempre que haya una sesión o bloqueo activo.
+• Restaurar acceso permanece disponible sin coste adicional siempre que haya una sesión activa.
 
-PERMISOS Y AVISOS EN ANDROID
-• API AccessibilityService: Offzone utiliza Android AccessibilityService únicamente para detectar cuándo se abren las apps que has elegido durante una sesión de concentración o regla activa y mostrar la pantalla de pausa de Offzone. Offzone no lee el contenido de la pantalla, mensajes, contraseñas ni pulsaciones de teclado, y no cambia ajustes del dispositivo sin tu acción.
-• Permiso de ubicación (opcional): Solo se usa si añades una zona de 150 m a una regla. La detección por radio es aproximada y no distingue habitaciones concretas.
+Permisos y avisos en Android
+• API AccessibilityService: Offzone utiliza Android AccessibilityService únicamente para detectar cuándo se abren las apps que has elegido durante una sesión de concentración que tú inicies y mostrar la pantalla de pausa de Offzone. Solo usa nombres de paquete de las apps; no lee el contenido de la pantalla, mensajes, contraseñas ni el texto que escribes, y no cambia ajustes del dispositivo sin tu acción.
+• Permiso de ubicación (opcional): Solo se usa cuando añades una zona de 150 m a una regla. La detección por radio es aproximada y no distingue habitaciones concretas. Llegar a un lugar nunca inicia el bloqueo automáticamente. Al abrir el mapa selector de lugar se cargan mapas de OpenStreetMap.
 
-SUSCRIPCIONES
-Offzone Pro es necesario para activar reglas, iniciar la concentración programada y lanzar Concentración rápida. Las suscripciones se cobran mediante Google Play y se renuevan automáticamente hasta que las canceles en los ajustes de Google Play.
+Suscripciones
+Para activar reglas, iniciar sesiones programadas, usar Concentración rápida y escribir propósitos semanales o reflexiones diarias necesitas iniciar sesión con una cuenta de Offzone y suscribirte a Offzone Pro. Las suscripciones se cobran mediante Google Play y se renuevan automáticamente hasta que las canceles en los ajustes de Google Play.
 
 Política de privacidad: https://crazydumbbell.github.io/offzone/privacy/
 
@@ -177,27 +165,25 @@ Política de privacidad: https://crazydumbbell.github.io/offzone/privacy/
 ## `fr-FR`
 
 - **Title (25/30)**: `Offzone : Bloqueur d’apps`
-- **Short Description (77/80)**: Bloquez des apps par horaire ou lieu. Minuteur 15/25/50 min et journal privé.
-- **Release Notes (208/500)**: Configuration des règles en 2 étapes, carte intégrée avec zone de 150 m, minuteur Concentration rapide 15/25/50 min, parcours Offzone Pro unifié avec rétablissement sans frais en session active et 10 langues.
+- **Short Description (80/80)**: Bloquez vos apps et temps d’écran par horaire et lieu optionnel. Minuteur focus.
+- **Release Notes (253/500)**: Création de règles en 2 étapes, carte intégrée pour zones facultatives de 150 m, minuteur Concentration rapide 15/25/50 min, parcours Offzone Pro unifié avec Rétablir l’accès sans frais supplémentaires en session active et prise en charge de 10 langues.
 
-### Full Description (1700/4000)
+### Full Description (2171/4000)
 
-Faites de la place pour ce qui compte.
+Bloquez les apps distrayantes et maîtrisez votre temps d’écran avec Offzone, un bloqueur d’apps pour les études et le travail. Créez des règles en deux étapes avec un horaire et une zone de 150 m facultative, puis appuyez sur Lancer la concentration.
 
-Offzone vous aide à mettre en pause les apps distrayantes grâce à une configuration claire en deux étapes pensée autour de votre emploi du temps et de vos lieux optionnels.
-
-FONCTIONNALITÉS AVEC OFFZONE PRO
-• Sélectionnez les apps installées avec leurs vraies icônes et un compteur en direct, définissez votre plage horaire et vos jours de la semaine, et ajoutez si besoin une zone de 150 m sur la carte.
-• Lancez une session planifiée ou démarrez une Concentration rapide partout pendant 15, 25 ou 50 minutes.
+Ce qu’inclut Offzone Pro
+• Étape 1 : sélectionnez vos apps installées avec leurs vraies icônes et un compteur en direct. Étape 2 : définissez votre plage horaire et vos jours de la semaine, puis ajoutez si besoin une zone de 150 m sur la carte.
+• Appuyez sur Lancer la concentration pendant votre créneau prévu (et dans votre zone de 150 m si vous en avez ajouté une), ou démarrez une Concentration rapide de 15, 25 ou 50 minutes partout pour étudier, travailler ou suivre un rythme Pomodoro.
 • Conservez vos intentions de la semaine et réflexions du jour localement sur votre appareil.
-• Rétablir l’accès reste disponible sans frais tant qu’une session ou un blocage est actif.
+• Rétablir l’accès reste disponible sans frais supplémentaires tant qu’une session est active.
 
-AUTORISATIONS ET MENTIONS ANDROID
-• API AccessibilityService : Offzone utilise Android AccessibilityService uniquement pour détecter l’ouverture des apps que vous avez sélectionnées pendant une session de concentration ou une règle active afin d’afficher l’écran de pause Offzone. Offzone ne lit jamais le contenu de l’écran, les messages, les mots de passe ni les frappes au clavier, et ne modifie aucun réglage sans votre action.
-• Autorisation de localisation (facultative) : Utilisée uniquement lorsque vous ajoutez une zone de 150 m à une règle. La détection de rayon est approximative et ne distingue pas les pièces.
+Autorisations et mentions Android
+• API AccessibilityService : Offzone utilise Android AccessibilityService uniquement pour détecter l’ouverture des apps sélectionnées pendant une session de concentration que vous lancez et afficher l’écran de pause Offzone. Il utilise uniquement les noms de paquets des apps, ne lit ni le contenu de l’écran, ni les messages, ni les mots de passe, ni les frappes au clavier, et ne modifie aucun réglage sans votre action.
+• Autorisation de localisation (facultative) : Utilisée uniquement lorsque vous ajoutez une zone de 150 m à une règle. La détection de rayon est approximative et ne distingue pas les pièces. L’arrivée sur place ne déclenche jamais le blocage automatiquement. L’ouverture de la carte de sélection charge les tuiles OpenStreetMap.
 
-ABONNEMENTS
-Offzone Pro est requis pour activer les règles, démarrer une concentration planifiée et lancer la Concentration rapide. L’abonnement est facturé via Google Play et renouvelé automatiquement jusqu’à son annulation dans les paramètres Google Play.
+Abonnements
+La connexion à un compte Offzone et un abonnement Offzone Pro sont requis pour activer les règles, démarrer une concentration planifiée, lancer la Concentration rapide et rédiger des intentions hebdomadaires ou réflexions du jour. L’abonnement est facturé via Google Play et renouvelé automatiquement jusqu’à son annulation dans les paramètres Google Play.
 
 Politique de confidentialité : https://crazydumbbell.github.io/offzone/privacy/
 
@@ -206,27 +192,25 @@ Politique de confidentialité : https://crazydumbbell.github.io/offzone/privacy/
 ## `de-DE`
 
 - **Title (28/30)**: `Offzone: App-Blocker & Fokus`
-- **Short Description (75/80)**: Apps nach Zeitplan oder Ort pausieren. 15/25/50-Min-Fokus & Tagesreflexion.
-- **Release Notes (210/500)**: Regel-Einrichtung in 2 Schritten, integrierte Karte mit 150-m-Zone, Schnellfokus-Timer (15/25/50 Min.), einheitlicher Offzone-Pro-Ablauf mit kostenfreiem Zugriff freigeben bei aktiven Sitzungen und 10 Sprachen.
+- **Short Description (80/80)**: Bildschirmzeit & Apps nach Zeitplan + optionalem Ort sperren. Timer & Reflexion.
+- **Release Notes (244/500)**: Regel-Einrichtung in 2 Schritten, integrierte Karte für optionale 150-m-Zonen, Schnellfokus-Timer (15/25/50 Min.), einheitlicher Offzone Pro Ablauf mit Zugriff freigeben ohne Zusatzkosten bei aktiven Sitzungen und Unterstützung für 10 Sprachen.
 
-### Full Description (1551/4000)
+### Full Description (2050/4000)
 
-Schaffe Raum für das, was zählt.
+Sperre ablenkende Apps und begrenze deine Bildschirmzeit mit Offzone, dem App-Blocker für Lernen und Arbeit. Erstelle Regeln in zwei Schritten mit Zeitplan und optionaler 150-m-Zone und tippe auf Fokus starten, sobald du bereit bist.
 
-Offzone hilft dir, ablenkende Apps mit einer klaren Einrichtung in zwei Schritten rund um deinen Zeitplan und optionale Orte zu pausieren.
-
-FUNKTIONEN MIT OFFZONE PRO
-• Wähle installierte Apps mit echten Symbolen und Live-Zähler, lege Zeitfenster sowie Wochentage fest und ergänze optional eine 150-m-Zone auf der Karte.
-• Starte eine geplante Fokussitzung oder aktiviere Schnellfokus überall für 15, 25 oder 50 Minuten.
+Funktionen mit Offzone Pro
+• Schritt 1: Wähle installierte Apps mit echten Symbolen und Live-Zähler. Schritt 2: Lege Zeitfenster sowie Wochentage fest und ergänze optional eine 150-m-Zone auf der Karte.
+• Tippe während deines Zeitfensters (und innerhalb der gespeicherten 150-m-Zone, falls hinzugefügt) auf Fokus starten, oder nutze den Schnellfokus-Timer überall für 15, 25 oder 50 Minuten beim Lernen, Arbeiten oder für Pomodoro-Phasen.
 • Speichere Wochenvorsätze und Tagesreflexionen privat auf deinem Gerät.
-• Zugriff freigeben bleibt jederzeit kostenfrei verfügbar, solange eine Sitzung oder Sperre aktiv ist.
+• Zugriff freigeben bleibt jederzeit ohne Zusatzkosten verfügbar, solange eine Sitzung aktiv ist.
 
-ANDROID-BERECHTIGUNGEN & HINWEISE
-• AccessibilityService API: Offzone verwendet den Android AccessibilityService ausschließlich, um während einer aktiven Fokussitzung oder Regel das Öffnen deiner ausgewählten Apps zu erkennen und den Offzone-Pausenbildschirm anzuzeigen. Offzone liest keine Bildschirminhalte, Nachrichten, Passwörter oder Tastatureingaben und ändert keine Geräteeinstellungen ohne dein Zutun.
-• Standortberechtigung (optional): Wird nur verwendet, wenn du einer Regel einen 150-m-Ort hinzufügst. Die Radiuserkennung ist ungefähr und unterscheidet keine einzelnen Räume.
+Android-Berechtigungen und Hinweise
+• AccessibilityService API: Offzone verwendet den Android AccessibilityService ausschließlich, um während einer von dir gestarteten Fokussitzung das Öffnen deiner ausgewählten Apps zu erkennen und den Offzone-Pausenbildschirm anzuzeigen. Es werden nur App-Paketnamen verwendet; Bildschirminhalte, Nachrichten, Passwörter oder Tastatureingaben werden nicht gelesen, und Geräteeinstellungen werden nicht ohne dein Zutun geändert.
+• Standortberechtigung (optional): Wird nur verwendet, wenn du einer Regel eine 150-m-Zone hinzufügst. Die Radiuserkennung ist ungefähr und unterscheidet keine einzelnen Räume. Die Ankunft startet nie automatisch eine Sperre. Beim Öffnen der Ortsauswahl werden Karten von OpenStreetMap geladen.
 
-ABONNEMENTS
-Für das Aktivieren von Regeln, den Start geplanter Fokussitzungen und Schnellfokus ist Offzone Pro erforderlich. Abonnements werden über Google Play abgerechnet und automatisch verlängert, bis sie in den Google-Play-Einstellungen gekündigt werden.
+Abonnements
+Für das Aktivieren von Regeln, den Start geplanter Fokussitzungen, den Schnellfokus sowie das Schreiben von Wochenvorsätzen und Tagesreflexionen sind die Anmeldung bei einem Offzone-Konto und ein Offzone Pro Abo erforderlich. Abonnements werden über Google Play abgerechnet und automatisch verlängert, bis sie in den Google-Play-Einstellungen gekündigt werden.
 
 Datenschutzerklärung: https://crazydumbbell.github.io/offzone/privacy/
 
@@ -235,27 +219,25 @@ Datenschutzerklärung: https://crazydumbbell.github.io/offzone/privacy/
 ## `pt-BR`
 
 - **Title (27/30)**: `Offzone: Bloqueador de Apps`
-- **Short Description (77/80)**: Bloqueie apps por horário ou local. Foco rápido de 15, 25 ou 50 min e diário.
-- **Release Notes (191/500)**: Configuração de regras em 2 etapas, mapa integrado com zona de 150 m, timer Foco rápido de 15/25/50 min, fluxo unificado do Offzone Pro com restauração sem custo em sessão ativa e 10 idiomas.
+- **Short Description (79/80)**: Bloqueie apps e tempo de uso por horário + local opcional. Timer foco e diário.
+- **Release Notes (225/500)**: Criação de regras em 2 etapas, mapa integrado para zonas opcionais de 150 m, timer Foco rápido de 15/25/50 min, fluxo unificado do Offzone Pro com Restaurar acesso sem custo adicional em sessões ativas e suporte a 10 idiomas.
 
-### Full Description (1490/4000)
+### Full Description (1965/4000)
 
-Abra espaço para o que importa.
+Bloqueie apps que distraem e controle seu tempo de uso e tempo de tela com o Offzone, um bloqueador de aplicativos para estudo e trabalho. Crie regras em duas etapas com horário e zona opcional de 150 m e toque em Iniciar foco quando estiver pronto.
 
-O Offzone ajuda você a pausar apps que distraem com uma configuração direta em duas etapas feita para os seus horários e locais opcionais.
-
-RECURSOS COM O OFFZONE PRO
-• Selecione apps instalados com ícones reais e contagem ao vivo, defina seu horário e dias da semana e adicione opcionalmente uma zona de 150 m no mapa.
-• Inicie um bloco de foco agendado ou abra o Foco rápido em qualquer lugar por 15, 25 ou 50 minutos.
+Recursos com o Offzone Pro
+• Etapa 1: selecione apps instalados com ícones reais e contagem ao vivo. Etapa 2: defina seu horário e dias da semana e adicione opcionalmente uma zona de 150 m no mapa.
+• Toque em Iniciar foco dentro da sua faixa horária (e dentro da zona de 150 m salva, se houver), ou use o timer Foco rápido em qualquer lugar por 15, 25 ou 50 minutos para estudo, trabalho ou rotina Pomodoro.
 • Guarde intenções semanais e reflexões diárias com privacidade no seu aparelho.
-• Restaurar acesso continua disponível sem custo sempre que uma sessão ou bloqueio estiver ativo.
+• Restaurar acesso continua disponível sem custo adicional sempre que uma sessão estiver ativa.
 
-PERMISSÕES E AVISOS NO ANDROID
-• API AccessibilityService: O Offzone usa o Android AccessibilityService apenas para detectar quando os apps escolhidos por você são abertos durante uma sessão de foco ou regra ativa e exibir a tela de bloqueio do Offzone. O Offzone não lê conteúdo da tela, mensagens, senhas nem digitação e não altera configurações do aparelho sem sua ação.
-• Permissão de localização (opcional): Usada apenas quando você adiciona uma zona de 150 m a uma regra. A detecção por raio é aproximada e não distingue cômodos individuais.
+Permissões e avisos no Android
+• API AccessibilityService: O Offzone usa o Android AccessibilityService apenas para detectar quando os apps escolhidos por você são abertos durante uma sessão de foco iniciada por você e exibir a tela de pausa do Offzone. Ele usa apenas nomes de pacotes dos apps; não lê conteúdo da tela, mensagens, senhas nem texto digitado e não altera configurações do aparelho sem sua ação.
+• Permissão de localização (opcional): Usada apenas quando você adiciona uma zona de 150 m a uma regra. A detecção por raio é aproximada e não distingue cômodos individuais. Chegar ao local nunca inicia o bloqueio automaticamente. Ao abrir o mapa de seleção de local, são carregados mapas do OpenStreetMap.
 
-ASSINATURAS
-O Offzone Pro é necessário para ativar regras, iniciar o foco agendado e usar o Foco rápido. As assinaturas são cobradas pelo Google Play e renovadas automaticamente até serem canceladas nas configurações do Google Play.
+Assinaturas
+É necessário fazer login em uma conta Offzone e ter uma assinatura Offzone Pro para ativar regras, iniciar o foco agendado, usar o Foco rápido e escrever intenções semanais ou reflexões diárias. As assinaturas são cobradas pelo Google Play e renovadas automaticamente até serem canceladas nas configurações do Google Play.
 
 Política de Privacidade: https://crazydumbbell.github.io/offzone/privacy/
 
@@ -264,29 +246,26 @@ Política de Privacidade: https://crazydumbbell.github.io/offzone/privacy/
 ## `it-IT`
 
 - **Title (27/30)**: `Offzone: Blocca App e Focus`
-- **Short Description (73/80)**: Blocca app per orario o luogo. Timer 15, 25 o 50 min e diario quotidiano.
-- **Release Notes (203/500)**: Configurazione regole in 2 passaggi, mappa integrata con zona di 150 m, timer Concentrazione rapida da 15/25/50 min, flusso Offzone Pro unificato con ripristino senza costi a sessione attiva e 10 lingue.
+- **Short Description (76/80)**: Blocca app e tempo di utilizzo per orario e luogo opzionale. Timer e diario.
+- **Release Notes (240/500)**: Creazione regole in 2 passaggi, mappa integrata per zone opzionali di 150 m, timer Concentrazione rapida da 15/25/50 min, flusso Offzone Pro unificato con Ripristina accesso senza costi aggiuntivi a sessione attiva e supporto per 10 lingue.
 
-### Full Description (1640/4000)
+### Full Description (2083/4000)
 
-Fai spazio a ciò che conta.
+Blocca le app che distraggono e gestisci il tempo di utilizzo con Offzone, un blocco app per studio e lavoro. Crea regole in due passaggi con fascia oraria e zona opzionale di 150 m, poi tocca Avvia concentrazione quando sei pronto.
 
-Offzone ti aiuta a mettere in pausa le app che distraggono con una configurazione semplice in due passaggi progettata intorno ai tuoi orari e ai luoghi opzionali.
-
-FUNZIONI CON OFFZONE PRO
-• Scegli le app installate con icone reali e conteggio in tempo reale, imposta fascia oraria e giorni della settimana e aggiungi facoltativamente una zona di 150 m sulla mappa.
-• Avvia una sessione programmata o lancia la Concentrazione rapida ovunque per 15, 25 o 50 minuti.
+Funzioni con Offzone Pro
+• Passaggio 1: scegli le app installate con icone reali e conteggio in tempo reale. Passaggio 2: imposta fascia oraria e giorni della settimana e aggiungi facoltativamente una zona di 150 m sulla mappa.
+• Tocca Avvia concentrazione nella tua fascia oraria (e dentro la zona di 150 m salvata, se aggiunta), oppure attiva il timer Concentrazione rapida ovunque per 15, 25 o 50 minuti per studio, lavoro o sessioni Pomodoro.
 • Conserva propositi settimanali e riflessioni quotidiane privatamente sul tuo dispositivo.
-• Ripristina accesso resta disponibile senza costi ogni volta che una sessione o un blocco è attivo.
+• Ripristina accesso resta disponibile senza costi aggiuntivi ogni volta che una sessione è attiva.
 
-PERMESSI E INFORMATIVE ANDROID
-• API AccessibilityService: Offzone utilizza Android AccessibilityService esclusivamente per rilevare l’apertura delle app da te selezionate durante una sessione di concentrazione o una regola attiva e mostrare la schermata di pausa di Offzone. Offzone non legge contenuti dello schermo, messaggi, password o digitazioni e non modifica le impostazioni del dispositivo senza un tuo intervento.
-• Permesso posizione (opzionale): Usato solo quando aggiungi una zona di 150 m a una regola. Il rilevamento del raggio è approssimativo e non distingue le singole stanze.
+Permessi e informative Android
+• API AccessibilityService: Offzone utilizza Android AccessibilityService esclusivamente per rilevare l’apertura delle app da te selezionate durante una sessione di concentrazione avviata da te e mostrare la schermata di pausa di Offzone. Usa solo i nomi dei pacchetti delle app; non legge contenuti dello schermo, messaggi, password o testo digitato e non modifica le impostazioni del dispositivo senza un tuo intervento.
+• Permesso posizione (opzionale): Usato solo quando aggiungi una zona di 150 m a una regola. Il rilevamento del raggio è approssimativo e non distingue le singole stanze. L’arrivo nel luogo non avvia mai il blocco in automatico. L’apertura della mappa di selezione carica le mappe di OpenStreetMap.
 
-ABBONAMENTI
-Offzone Pro è necessario per attivare le regole, avviare la concentrazione programmata e utilizzare la Concentrazione rapida. Gli abbonamenti vengono fatturati tramite Google Play e si rinnovano automaticamente fino all’annullamento nelle impostazioni di Google Play.
+Abbonamenti
+Per attivare le regole, avviare la concentrazione programmata, usare Concentrazione rapida e scrivere propositi settimanali o riflessioni quotidiane sono necessari l’accesso a un account Offzone e un abbonamento Offzone Pro. Gli abbonamenti vengono fatturati tramite Google Play e si rinnovano automaticamente fino all’annullamento nelle impostazioni di Google Play.
 
 Informativa sulla privacy: https://crazydumbbell.github.io/offzone/privacy/
 
 ---
-

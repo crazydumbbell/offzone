@@ -40,7 +40,6 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.DateRange
 import androidx.compose.material.icons.filled.Notifications
 import androidx.compose.material.icons.filled.Star
@@ -97,50 +96,150 @@ private enum class Step { INVITE, REMIND, HOW, PLANS, DONE }
 @Composable
 fun ProPaywallScreen(
     store: AccountStore,
-    onContinue: () -> Unit,
-    onOpenAccount: (resumePlanId: String?, remind: Boolean) -> Unit,
+    hasProAccess: Boolean,
+    hasActiveSession: Boolean,
+    remainingMillis: Long,
+    onRestoreSession: () -> Unit,
+    onDone: () -> Unit,
+    onOpenAccount: (resumePlanId: String?, remind: Boolean, manageDirectly: Boolean) -> Unit,
+    onBack: (() -> Unit)? = null,
     resumePlanId: String? = null,
     resumeRemind: Boolean = false,
     preview: String? = null,
-    onDone: () -> Unit = onContinue,
 ) {
     val account by store.state.collectAsState()
     val context = LocalContext.current
     val sample = remember(preview) { ProPreview.plans(preview) }
     val plans = remember(account.packages, sample) { ProPlans.ordered(sample ?: account.packages.map(ProPlans::of)) }
-    val startedPro = remember(preview) { if (preview != null) false else store.hasProAccessEffective }
+    val effectivePro = preview == null && hasProAccess
+    val showRestore = HardPaywallFlow.showRestoreOverPaywall(hasProAccess = effectivePro, hasActiveSession = hasActiveSession)
     // A user with animations switched off in system settings gets still screens (Reduce Motion).
     val motion = remember { Settings.Global.getFloat(context.contentResolver, Settings.Global.ANIMATOR_DURATION_SCALE, 1f) > 0f }
-    // True once the first offerings request has finished, so a failed or empty answer falls through to the plain screen.
+    // True once the first offerings request has finished, so a failed or empty answer shows the hard-paywall fallback.
     var loadedOnce by remember { mutableStateOf(false) }
     // D-50: prices are public, so the funnel reads them signed out too. Sign-in is asked for only when the purchase button is tapped.
     LaunchedEffect(store.offersEnabled) { if (preview == null && store.offersEnabled) { store.loadOfferings().join(); loadedOnce = true } }
     LaunchedEffect(Unit) { delay(6000); loadedOnce = true } // never spin forever
+    LaunchedEffect(effectivePro, plans.isEmpty()) {
+        if (effectivePro && plans.isEmpty()) onDone()
+    }
     CompositionLocalProvider(LocalMotion provides motion) {
         when {
-            plans.isNotEmpty() && !startedPro && (sample != null || store.offersEnabled) ->
+            plans.isNotEmpty() && (sample != null || store.offersEnabled) ->
                 ProFunnel(
                     store = store,
                     account = account,
                     plans = plans,
+                    hasProAccess = effectivePro,
+                    showRestore = showRestore,
+                    remainingMillis = remainingMillis,
+                    onRestoreSession = onRestoreSession,
                     signedIn = preview != "signedout" && (preview != null || account.verified),
                     preview = preview != null,
                     resumePlanId = resumePlanId,
                     resumeRemind = resumeRemind,
-                    onContinue = onContinue,
                     onDone = onDone,
+                    onBack = onBack,
                     onOpenAccount = onOpenAccount,
                 )
-            store.offersEnabled && !startedPro && !loadedOnce && !account.pro -> ProLoading(onContinue)
-            else -> ProInfoScreen(store, account, onContinue) { onOpenAccount(null, false) }
+            store.offersEnabled && !loadedOnce && !effectivePro ->
+                ProLoading(
+                    showRestore = showRestore,
+                    remainingMillis = remainingMillis,
+                    onRestoreSession = onRestoreSession,
+                    onOpenAccount = { onOpenAccount(null, false, account.uid != null) },
+                )
+            else ->
+                PaywallUnavailable(
+                    store = store,
+                    account = account,
+                    showRestore = showRestore,
+                    remainingMillis = remainingMillis,
+                    onRestoreSession = onRestoreSession,
+                    onBack = onBack,
+                    onOpenAccount = onOpenAccount,
+                )
         }
     }
 }
 
 @Composable
-private fun PaywallCloseButton(onClick: () -> Unit) {
-    IconButton(onClick = onClick, modifier = Modifier.sizeIn(minWidth = 48.dp, minHeight = 48.dp)) {
-        Icon(Icons.Filled.Close, contentDescription = stringResource(R.string.pro_close), tint = Ink)
+private fun ActiveSessionRestoreCard(remainingMillis: Long, onRestore: () -> Unit) {
+    val seconds = (remainingMillis + 999) / 1000
+    Surface(
+        color = Pine,
+        contentColor = Butter,
+        shape = RoundedCornerShape(24.dp),
+        modifier = Modifier.fillMaxWidth().padding(horizontal = 24.dp, vertical = 8.dp),
+    ) {
+        Column(Modifier.fillMaxWidth().padding(16.dp), verticalArrangement = Arrangement.spacedBy(12.dp)) {
+            Row(Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) {
+                Text(stringResource(R.string.home_in_focus), style = MaterialTheme.typography.titleLarge, modifier = Modifier.weight(1f))
+                Text("%d:%02d".format(seconds / 60, seconds % 60), style = MaterialTheme.typography.headlineSmall)
+            }
+            Button(
+                onClick = onRestore,
+                colors = ButtonDefaults.buttonColors(containerColor = Butter, contentColor = Ink),
+                modifier = Modifier.fillMaxWidth().heightIn(min = 56.dp),
+            ) { Text(stringResource(R.string.restore)) }
+        }
+    }
+}
+
+@OptIn(ExperimentalLayoutApi::class)
+@Composable
+private fun PaywallLinksRow(onOpenAccount: () -> Unit) {
+    val context = LocalContext.current
+    val linkStyle = MaterialTheme.typography.bodySmall
+    val linkPadding = PaddingValues(horizontal = 6.dp, vertical = 2.dp)
+    FlowRow(
+        Modifier.fillMaxWidth(),
+        horizontalArrangement = Arrangement.spacedBy(4.dp, Alignment.CenterHorizontally),
+        verticalArrangement = Arrangement.Center,
+    ) {
+        if (AccountStore.https(BuildConfig.TERMS_URL)) {
+            TextButton(
+                onClick = { context.openExternalUrl(BuildConfig.TERMS_URL) },
+                contentPadding = linkPadding,
+                modifier = Modifier.heightIn(min = 36.dp),
+            ) { Text(stringResource(R.string.account_terms), style = linkStyle, color = InkMuted, maxLines = 1, softWrap = false) }
+        }
+        if (AccountStore.https(BuildConfig.PRIVACY_URL)) {
+            TextButton(
+                onClick = { context.openExternalUrl(BuildConfig.PRIVACY_URL) },
+                contentPadding = linkPadding,
+                modifier = Modifier.heightIn(min = 36.dp),
+            ) { Text(stringResource(R.string.account_privacy), style = linkStyle, color = InkMuted, maxLines = 1, softWrap = false) }
+        }
+        TextButton(
+            onClick = onOpenAccount,
+            contentPadding = linkPadding,
+            modifier = Modifier.heightIn(min = 36.dp),
+        ) { Text(stringResource(R.string.m_account), style = linkStyle, color = InkMuted, maxLines = 1, softWrap = false) }
+    }
+}
+
+@Composable
+private fun PaywallSecondaryActions(
+    busy: Boolean,
+    onRestore: () -> Unit,
+    onSignIn: () -> Unit,
+    onOpenAccount: () -> Unit,
+) {
+    Column(Modifier.fillMaxWidth(), horizontalAlignment = Alignment.CenterHorizontally) {
+        TextButton(
+            onClick = onRestore,
+            enabled = !busy,
+            contentPadding = PaddingValues(horizontal = 12.dp, vertical = 2.dp),
+            modifier = Modifier.heightIn(min = 38.dp),
+        ) { Text(stringResource(R.string.account_restore), style = MaterialTheme.typography.bodyMedium, color = Pine) }
+        TextButton(
+            onClick = onSignIn,
+            enabled = !busy,
+            contentPadding = PaddingValues(horizontal = 12.dp, vertical = 2.dp),
+            modifier = Modifier.heightIn(min = 38.dp),
+        ) { Text(stringResource(R.string.onboarding_sign_in), style = MaterialTheme.typography.bodyMedium, color = Ink) }
+        PaywallLinksRow(onOpenAccount)
     }
 }
 
@@ -149,13 +248,17 @@ private fun ProFunnel(
     store: AccountStore,
     account: AccountState,
     plans: List<ProPlan>,
+    hasProAccess: Boolean,
+    showRestore: Boolean,
+    remainingMillis: Long,
+    onRestoreSession: () -> Unit,
     signedIn: Boolean,
     preview: Boolean,
     resumePlanId: String?,
     resumeRemind: Boolean,
-    onContinue: () -> Unit,
     onDone: () -> Unit,
-    onOpenAccount: (String?, Boolean) -> Unit,
+    onBack: (() -> Unit)?,
+    onOpenAccount: (String?, Boolean, Boolean) -> Unit,
 ) {
     val context = LocalContext.current
     val activity = remember(context) { context.findActivity() }
@@ -171,9 +274,13 @@ private fun ProFunnel(
     var purchasing by rememberSaveable { mutableStateOf(false) }
     var previewDone by remember { mutableStateOf(false) }
     val selected = plans.firstOrNull { it.id == selectedId } ?: default
-    val done = account.pro || previewDone || (!preview && store.hasProAccessEffective)
+    val done = previewDone || hasProAccess || (!preview && account.pro)
     val step = if (done) Step.DONE else steps[index.coerceIn(0, steps.lastIndex)]
     fun go(to: Int) { index = to.coerceIn(0, steps.lastIndex) }
+    fun restorePurchases() {
+        if (signedIn && account.purchasesConfigured) store.restorePurchases()
+        else onOpenAccount(selected.id, remind, false)
+    }
     BackHandler(index > 0 && !done) { go(index - 1) }
     LaunchedEffect(account.busy) { if (!account.busy && !account.pro) purchasing = false }
     LaunchedEffect(done) {
@@ -190,16 +297,22 @@ private fun ProFunnel(
     val motion = LocalMotion.current
 
     Column(Modifier.fillMaxSize().background(Butter).safeDrawingPadding()) {
-        Row(Modifier.fillMaxWidth().padding(start = 16.dp, end = 12.dp).heightIn(min = 56.dp), verticalAlignment = Alignment.CenterVertically) {
-            if (index > 0 && step != Step.DONE) {
-                TextButton(onClick = { go(index - 1) }, modifier = Modifier.heightIn(min = 48.dp)) {
-                    Text(stringResource(R.string.m_back))
+        if (showRestore) {
+            ActiveSessionRestoreCard(remainingMillis = remainingMillis, onRestore = onRestoreSession)
+        }
+        val showBack = (index > 0 || onBack != null) && step != Step.DONE
+        if (showBack || (steps.size > 1 && step != Step.DONE)) {
+            Box(Modifier.fillMaxWidth().padding(horizontal = 16.dp).heightIn(min = if (showBack) 52.dp else 36.dp)) {
+                if (showBack) {
+                    TextButton(
+                        onClick = { if (index > 0) go(index - 1) else onBack?.invoke() },
+                        modifier = Modifier.align(Alignment.CenterStart).heightIn(min = 48.dp),
+                    ) { Text(stringResource(R.string.m_back)) }
                 }
-            } else {
-                Spacer(Modifier.width(8.dp))
+                if (steps.size > 1 && step != Step.DONE) {
+                    StepDots(steps.size, index, Modifier.align(Alignment.Center))
+                }
             }
-            if (steps.size > 1 && step != Step.DONE) StepDots(steps.size, index, Modifier.weight(1f)) else Spacer(Modifier.weight(1f))
-            PaywallCloseButton { if (step == Step.DONE) onDone() else onContinue() }
         }
         if (preview) Text(stringResource(R.string.pro_preview_note), style = MaterialTheme.typography.bodyMedium, color = InkMuted,
             modifier = Modifier.padding(horizontal = 24.dp))
@@ -218,18 +331,27 @@ private fun ProFunnel(
                     val trial = default.trialDays
                     StepScaffold(
                         center = true,
+                        bottomPadding = 8.dp,
                         bottom = {
                             PrimaryButton(onClick = { go(index + 1) }, modifier = Modifier.fillMaxWidth().reveal(rememberReveal(620))) {
                                 Text(stringResource(if (trial != null) R.string.pro_start_trial else R.string.pro_see_plans))
                             }
+                            PaywallSecondaryActions(
+                                busy = account.busy,
+                                onRestore = ::restorePurchases,
+                                onSignIn = { onOpenAccount(null, false, false) },
+                                onOpenAccount = { onOpenAccount(null, false, account.uid != null) },
+                            )
                         },
                     ) {
-                        InviteHero(compact = trial == null)
+                        InviteHero(compact = trial == null || showRestore)
                         Text(
                             if (trial != null) stringResource(R.string.pro_try_title, pluralStringResource(R.plurals.pro_days, trial, trial)) else stringResource(goalHeadline(goal)),
                             style = headline(), modifier = Modifier.reveal(rememberReveal(300)),
                         )
                         if (trial == null) BenefitList(Modifier.reveal(rememberReveal(380)))
+                        account.error?.let { Text(it, color = MaterialTheme.colorScheme.error) }
+                        account.notice?.let { Text(it) }
                     }
                 }
                 Step.REMIND -> StepScaffold(
@@ -261,15 +383,22 @@ private fun ProFunnel(
                     TrialTimeline(ProPlans.timelineDays(default.trialDays ?: 1), remind)
                 }
                 Step.PLANS -> PlansStep(
-                    plans = plans, selected = selected, onSelect = { selectedId = it.id }, account = account, signedIn = signedIn,
+                    plans = plans,
+                    selected = selected,
+                    onSelect = { selectedId = it.id },
+                    account = account,
+                    signedIn = signedIn,
+                    compactHeader = showRestore,
                     onPurchase = {
                         when {
-                            !signedIn -> onOpenAccount(selected.id, remind)
+                            !signedIn -> onOpenAccount(selected.id, remind, false)
                             preview -> { purchasing = true; previewDone = true }
                             else -> selected.pkg?.let { pkg -> activity?.let { purchasing = true; store.purchase(it, pkg) } }
                         }
                     },
-                    onRestore = { if (signedIn && account.purchasesConfigured) store.restorePurchases() else onOpenAccount(selected.id, remind) },
+                    onRestore = ::restorePurchases,
+                    onSignIn = { onOpenAccount(selected.id, remind, false) },
+                    onOpenAccount = { onOpenAccount(null, false, account.uid != null) },
                 )
                 Step.DONE -> StepScaffold(
                     center = true,
@@ -384,8 +513,8 @@ private fun InviteHero(compact: Boolean = false) {
     val float: State<Float>? = if (motion) rememberInfiniteTransition(label = "nook").animateFloat(
         -1f, 1f, infiniteRepeatable(tween(3200, easing = FastOutSlowInEasing), RepeatMode.Reverse), label = "float") else null
     BoxWithConstraints(Modifier.fillMaxWidth()) {
-        val k = (maxWidth.value / 280f).coerceIn(0.75f, 1.05f) * if (compact) 0.85f else 1f
-        Box(Modifier.fillMaxWidth().height((280 * k).dp), contentAlignment = Alignment.Center) {
+        val k = (maxWidth.value / 280f).coerceIn(0.75f, 1.05f) * if (compact) 0.78f else 1f
+        Box(Modifier.fillMaxWidth().height((260 * k).dp), contentAlignment = Alignment.Center) {
             Box(Modifier.size((216 * k).dp).graphicsLayer { val s = 0.6f + 0.4f * room.value; scaleX = s; scaleY = s; alpha = room.value }.background(Mint, CircleShape))
             inviteTiles.forEachIndexed { i, tile -> FloatingTile(tile, 120 + 80 * i, k) }
             Image(painterResource(NookExpression.WELCOME_FULL.asset), stringResource(R.string.nook_description), Modifier.height((184 * k).dp).graphicsLayer {
@@ -513,13 +642,19 @@ private fun TimelineNode(icon: ImageVector, fill: Animatable<Float, AnimationVec
     }
 }
 
-@OptIn(ExperimentalLayoutApi::class)
 @Composable
 private fun PlansStep(
-    plans: List<ProPlan>, selected: ProPlan, onSelect: (ProPlan) -> Unit, account: AccountState, signedIn: Boolean,
-    onPurchase: () -> Unit, onRestore: () -> Unit,
+    plans: List<ProPlan>,
+    selected: ProPlan,
+    onSelect: (ProPlan) -> Unit,
+    account: AccountState,
+    signedIn: Boolean,
+    compactHeader: Boolean,
+    onPurchase: () -> Unit,
+    onRestore: () -> Unit,
+    onSignIn: () -> Unit,
+    onOpenAccount: () -> Unit,
 ) {
-    val context = LocalContext.current
     val config = LocalConfiguration.current
     val locale = config.locales[0]
     val largeFont = config.fontScale >= 1.3f
@@ -536,8 +671,8 @@ private fun PlansStep(
     val trial = selected.trialDays
     val zero = remember(selected, locale) { ProPlans.money(0, selected.currency, locale) ?: NumberFormat.getNumberInstance(locale).format(0) }
     StepScaffold(
-        spacing = if (largeFont) 10.dp else 12.dp,
-        bottomPadding = if (largeFont) 8.dp else 12.dp,
+        spacing = if (largeFont) 8.dp else 10.dp,
+        bottomPadding = if (largeFont) 8.dp else 10.dp,
         bottom = {
             if (trial != null) Text(stringResource(R.string.pro_due_today, zero), style = MaterialTheme.typography.bodyMedium, fontWeight = FontWeight.SemiBold,
                 textAlign = TextAlign.Center, modifier = Modifier.fillMaxWidth().reveal(rememberReveal(520)))
@@ -549,10 +684,10 @@ private fun PlansStep(
             }
         },
     ) {
-        if (!largeFont) {
+        if (!largeFont && !compactHeader) {
             val peek = rememberReveal(0, 420)
-            Box(Modifier.fillMaxWidth().height(76.dp).graphicsLayer { translationY = (1f - peek.value) * 24.dp.toPx(); alpha = peek.value }, contentAlignment = Alignment.BottomCenter) {
-                Image(painterResource(R.drawable.pro_nook_peek), null, Modifier.height(76.dp), contentScale = ContentScale.Fit)
+            Box(Modifier.fillMaxWidth().height(54.dp).graphicsLayer { translationY = (1f - peek.value) * 20.dp.toPx(); alpha = peek.value }, contentAlignment = Alignment.BottomCenter) {
+                Image(painterResource(R.drawable.pro_nook_peek), null, Modifier.height(54.dp), contentScale = ContentScale.Fit)
             }
         }
         Text(
@@ -588,36 +723,12 @@ private fun PlansStep(
             style = MaterialTheme.typography.bodySmall,
             color = InkMuted,
         )
-        val linkStyle = MaterialTheme.typography.bodyMedium
-        val linkPadding = PaddingValues(horizontal = 6.dp, vertical = 8.dp)
-        FlowRow(
-            Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.spacedBy(8.dp, Alignment.CenterHorizontally),
-            verticalArrangement = Arrangement.Center,
-        ) {
-            if (AccountStore.https(BuildConfig.TERMS_URL)) {
-                TextButton(
-                    onClick = { context.openExternalUrl(BuildConfig.TERMS_URL) },
-                    contentPadding = linkPadding,
-                    modifier = Modifier.heightIn(min = 48.dp),
-                ) { Text(stringResource(R.string.account_terms), style = linkStyle, maxLines = 1, softWrap = false) }
-            }
-            if (AccountStore.https(BuildConfig.PRIVACY_URL)) {
-                TextButton(
-                    onClick = { context.openExternalUrl(BuildConfig.PRIVACY_URL) },
-                    contentPadding = linkPadding,
-                    modifier = Modifier.heightIn(min = 48.dp),
-                ) { Text(stringResource(R.string.account_privacy), style = linkStyle, maxLines = 1, softWrap = false) }
-            }
-            TextButton(
-                onClick = onRestore,
-                enabled = !account.busy,
-                contentPadding = linkPadding,
-                modifier = Modifier.heightIn(min = 48.dp),
-            ) {
-                Text(stringResource(R.string.account_restore), style = linkStyle, maxLines = 1, softWrap = false)
-            }
-        }
+        PaywallSecondaryActions(
+            busy = account.busy,
+            onRestore = onRestore,
+            onSignIn = onSignIn,
+            onOpenAccount = onOpenAccount,
+        )
     }
 }
 
@@ -634,9 +745,9 @@ private fun PlanCard(
     val fill by animateColorAsState(if (selected) Mint else WarmIvory, tween(220, easing = Standard), label = "card-fill")
     val check by animateFloatAsState(if (selected) 1f else 0f, spring(dampingRatio = 0.5f, stiffness = 500f), label = "card-check")
     Box(modifier.fillMaxWidth()) {
-        Row(Modifier.fillMaxWidth().heightIn(min = if (compact) 60.dp else 80.dp).clip(shape).background(fill, shape).border(width, line, shape)
+        Row(Modifier.fillMaxWidth().heightIn(min = if (compact) 58.dp else 72.dp).clip(shape).background(fill, shape).border(width, line, shape)
             .selectable(selected = selected, role = Role.RadioButton, onClick = onClick)
-            .padding(horizontal = if (compact) 14.dp else 18.dp, vertical = if (compact) 10.dp else 14.dp),
+            .padding(horizontal = if (compact) 14.dp else 18.dp, vertical = if (compact) 8.dp else 12.dp),
             verticalAlignment = Alignment.CenterVertically) {
             Column(Modifier.weight(1f).padding(end = 12.dp), verticalArrangement = Arrangement.spacedBy(if (compact) 2.dp else 4.dp)) {
                 FlowRow(horizontalArrangement = Arrangement.spacedBy(6.dp), verticalArrangement = Arrangement.spacedBy(4.dp), itemVerticalAlignment = Alignment.CenterVertically) {
@@ -702,61 +813,95 @@ private fun Modifier.shimmer(progress: Animatable<Float, AnimationVector1D>) = d
 }
 
 @Composable
-private fun ProLoading(onContinue: () -> Unit) {
+private fun ProLoading(
+    showRestore: Boolean,
+    remainingMillis: Long,
+    onRestoreSession: () -> Unit,
+    onOpenAccount: () -> Unit,
+) {
     Column(Modifier.fillMaxSize().background(Butter).safeDrawingPadding()) {
-        Row(Modifier.fillMaxWidth().padding(start = 24.dp, end = 12.dp).heightIn(min = 56.dp), verticalAlignment = Alignment.CenterVertically) {
-            Spacer(Modifier.weight(1f))
-            PaywallCloseButton(onContinue)
-        }
+        if (showRestore) ActiveSessionRestoreCard(remainingMillis = remainingMillis, onRestore = onRestoreSession)
         Box(Modifier.weight(1f).fillMaxWidth(), contentAlignment = Alignment.Center) { CircularProgressIndicator(color = Pine) }
+        Box(Modifier.fillMaxWidth().padding(horizontal = 24.dp, vertical = 12.dp)) {
+            PaywallLinksRow(onOpenAccount)
+        }
     }
 }
 
-/** Sales off, or Pro already active: plain screen with Restore / Account access and Close (X). */
+/** Hard-paywall fallback when store offerings are unavailable: stays gated with Restore, Sign in, and Account links. */
 @Composable
-private fun ProInfoScreen(store: AccountStore, account: AccountState, onContinue: () -> Unit, onOpenAccount: () -> Unit) {
+private fun PaywallUnavailable(
+    store: AccountStore,
+    account: AccountState,
+    showRestore: Boolean,
+    remainingMillis: Long,
+    onRestoreSession: () -> Unit,
+    onBack: (() -> Unit)?,
+    onOpenAccount: (String?, Boolean, Boolean) -> Unit,
+) {
     val context = LocalContext.current
-    val hasPro = store.hasProAccessEffective
     val heading = goalHeadline(OnboardingProfile.goal(context))
+    fun restorePurchases() {
+        if (account.verified && account.purchasesConfigured) store.restorePurchases()
+        else onOpenAccount(null, false, false)
+    }
     Column(Modifier.fillMaxSize().background(Butter).safeDrawingPadding()) {
-        Row(Modifier.fillMaxWidth().padding(start = 24.dp, end = 12.dp, top = 8.dp, bottom = 8.dp), verticalAlignment = Alignment.CenterVertically) {
-            Text(stringResource(R.string.pro_eyebrow), style = MaterialTheme.typography.labelLarge,
-                fontWeight = FontWeight.Bold, letterSpacing = 1.5.sp, modifier = Modifier.weight(1f))
-            PaywallCloseButton(onContinue)
+        if (showRestore) ActiveSessionRestoreCard(remainingMillis = remainingMillis, onRestore = onRestoreSession)
+        if (onBack != null) {
+            Box(Modifier.fillMaxWidth().padding(horizontal = 16.dp).heightIn(min = 52.dp)) {
+                TextButton(onClick = onBack, modifier = Modifier.align(Alignment.CenterStart).heightIn(min = 48.dp)) {
+                    Text(stringResource(R.string.m_back))
+                }
+            }
         }
-        Column(Modifier.weight(1f).verticalScroll(rememberScrollState()).padding(horizontal = 24.dp),
-            verticalArrangement = Arrangement.spacedBy(22.dp)) {
-            NookCatView(NookExpression.WELCOME_FULL, Modifier.fillMaxWidth().height(184.dp))
-            Text(stringResource(if (store.offersEnabled || hasPro) heading else R.string.audit_pro_unavailable_title), style = MaterialTheme.typography.headlineLarge)
-            if (!store.offersEnabled && !hasPro) Text(stringResource(R.string.audit_pro_unavailable_body), style = MaterialTheme.typography.bodyLarge)
-            if (store.offersEnabled || hasPro) BenefitList()
-            if (store.offersEnabled || hasPro) {
-                Surface(color = Mint, shape = RoundedCornerShape(16.dp)) {
-                    Text(stringResource(if (hasPro) R.string.account_pro_active else R.string.account_plans_unavailable),
-                        modifier = Modifier.fillMaxWidth().padding(18.dp), style = MaterialTheme.typography.bodyMedium)
+        StepScaffold(
+            center = true,
+            bottomPadding = 8.dp,
+            bottom = {
+                if (store.offersEnabled) {
+                    PrimaryButton(
+                        onClick = { store.loadOfferings() },
+                        enabled = !account.busy,
+                        modifier = Modifier.fillMaxWidth(),
+                    ) { Text(stringResource(R.string.account_subscribe)) }
+                    PaywallSecondaryActions(
+                        busy = account.busy,
+                        onRestore = ::restorePurchases,
+                        onSignIn = { onOpenAccount(null, false, false) },
+                        onOpenAccount = { onOpenAccount(null, false, account.uid != null) },
+                    )
+                } else {
+                    PrimaryButton(
+                        onClick = ::restorePurchases,
+                        enabled = !account.busy,
+                        modifier = Modifier.fillMaxWidth(),
+                    ) { Text(stringResource(R.string.account_restore)) }
+                    TextButton(
+                        onClick = { onOpenAccount(null, false, false) },
+                        enabled = !account.busy,
+                        contentPadding = PaddingValues(horizontal = 12.dp, vertical = 2.dp),
+                        modifier = Modifier.fillMaxWidth().heightIn(min = 48.dp),
+                    ) { Text(stringResource(R.string.onboarding_sign_in), style = MaterialTheme.typography.bodyMedium, color = Ink) }
+                    PaywallLinksRow { onOpenAccount(null, false, account.uid != null) }
                 }
-            }
-            if (store.offersEnabled && !hasPro) {
-                PrimaryButton(onClick = onOpenAccount, modifier = Modifier.fillMaxWidth()) {
-                    Text(stringResource(R.string.pro_view_plans))
-                }
-            }
-            account.error?.let { Text(it, color = MaterialTheme.colorScheme.error) }
-            account.notice?.let { Text(it) }
-            TextButton(onClick = {
-                if (account.verified && account.purchasesConfigured) store.restorePurchases() else onOpenAccount()
-            }, enabled = !account.busy, modifier = Modifier.heightIn(min = 48.dp)) {
-                Text(stringResource(R.string.account_restore))
-            }
-            if (AccountStore.https(BuildConfig.TERMS_URL)) {
-                TextButton(onClick = { context.openExternalUrl(BuildConfig.TERMS_URL) },
-                    modifier = Modifier.heightIn(min = 48.dp)) { Text(stringResource(R.string.account_terms)) }
-            }
-            if (AccountStore.https(BuildConfig.PRIVACY_URL)) {
-                TextButton(onClick = { context.openExternalUrl(BuildConfig.PRIVACY_URL) },
-                    modifier = Modifier.heightIn(min = 48.dp)) { Text(stringResource(R.string.account_privacy)) }
-            }
-            Spacer(Modifier.height(16.dp))
+            },
+        ) {
+            NookCatView(NookExpression.WELCOME_FULL, Modifier.fillMaxWidth().height(if (showRestore) 136.dp else 184.dp))
+            Text(
+                stringResource(heading),
+                style = headline(),
+                textAlign = TextAlign.Center,
+                modifier = Modifier.fillMaxWidth(),
+            )
+            Text(
+                stringResource(R.string.account_plans_unavailable),
+                style = MaterialTheme.typography.bodyLarge,
+                color = InkMuted,
+                textAlign = TextAlign.Center,
+                modifier = Modifier.fillMaxWidth(),
+            )
+            account.error?.let { Text(it, color = MaterialTheme.colorScheme.error, textAlign = TextAlign.Center, modifier = Modifier.fillMaxWidth()) }
+            account.notice?.let { Text(it, textAlign = TextAlign.Center, modifier = Modifier.fillMaxWidth()) }
         }
     }
 }

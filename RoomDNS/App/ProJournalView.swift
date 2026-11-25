@@ -34,7 +34,6 @@ struct ProJournalView: View {
     @State private var error: String?
     @State private var saved = false
     @State private var didLoad = false
-    @State private var paywall = false
     @State private var confirmDelete = false
     @State private var exportText: String?
     @State private var baseline = JournalDraftBaseline()
@@ -60,14 +59,6 @@ struct ProJournalView: View {
             Section {
                 Text("Stored only on this iPhone, excluded from backup. Export before changing phones or deleting Offzone.")
                     .font(.suit(.subheadline)).foregroundStyle(Color.roomInkSecondary)
-                if !hasAccess {
-                    Text("Pro lets you write plans and reflections. Your existing entries remain readable, exportable and deletable.")
-                    if account.offersEnabled {
-                        Button("Explore Pro") { paywall = true }
-                    } else {
-                        Text("Pro purchases are currently unavailable.").font(.suit(.subheadline))
-                    }
-                }
             }
             .listRowBackground(Color.roomCard)
             if store.loadFailed {
@@ -243,7 +234,6 @@ struct ProJournalView: View {
             }
             Button("Continue editing", role: .cancel) { pendingNavigation = nil }
         }
-        .sheet(isPresented: $paywall) { RoomPaywallView(goal: goal).presentationCornerRadius(24) }
         .confirmationDialog("Delete all plans and reflections from this iPhone? This cannot be undone.", isPresented: $confirmDelete, titleVisibility: .visible) {
             Button("Delete all local journal data", role: .destructive) {
                 perform { try store.deleteAll(); exportText = nil; loadPlan(); loadReflection() }

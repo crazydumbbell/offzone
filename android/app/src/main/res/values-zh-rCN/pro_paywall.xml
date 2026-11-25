@@ -1,7 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="pro_eyebrow">OFFZONE PRO</string>
-    <string name="pro_close">关闭</string>
     <string name="pro_headline_work">为专注留出空间。</string>
     <string name="pro_headline_rest">为宁静的夜晚留出空间。</string>
     <string name="pro_headline_presence">为当下此刻留出空间。</string>
@@ -9,7 +7,6 @@
     <string name="pro_benefit_plan">按日程与可选 150 米地点启用专注规则。</string>
     <string name="pro_benefit_journal">随时开启 15、25 或 50 分钟快速专注。</string>
     <string name="pro_benefit_review">仅保存在本机的每周计划与每日回顾。</string>
-    <string name="pro_view_plans">查看方案与账号</string>
     <string name="pro_tomorrow">明天</string>
     <plurals name="pro_days">
         <item quantity="other">%d 天</item>

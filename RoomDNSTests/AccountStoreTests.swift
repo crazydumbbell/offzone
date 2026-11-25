@@ -151,6 +151,17 @@ final class AccountStoreTests: XCTestCase {
         XCTAssertFalse(AccountViewPolicy.showsAccountStatusMessage(nil, matching: status))
     }
 
+    func testAccountOverviewAndManageSubscreenPolicies() {
+        XCTAssertTrue(AccountViewPolicy.showsManageSubscriptionOnOverview(hasProAccess: true))
+        XCTAssertFalse(AccountViewPolicy.showsManageSubscriptionOnOverview(hasProAccess: false))
+        XCTAssertEqual(AccountViewPolicy.subscriptionStatusKey(hasProAccess: true), "Your Pro subscription is active.")
+        XCTAssertEqual(AccountViewPolicy.subscriptionStatusKey(hasProAccess: false), "No active subscription.")
+
+        XCTAssertTrue(AccountViewPolicy.showsJournalLink(hasProAccess: true, hasLocalJournalFile: false))
+        XCTAssertTrue(AccountViewPolicy.showsJournalLink(hasProAccess: false, hasLocalJournalFile: true))
+        XCTAssertFalse(AccountViewPolicy.showsJournalLink(hasProAccess: false, hasLocalJournalFile: false))
+    }
+
     func testJournalSummaryPolicyHidesZeroTilesWhenEmpty() {
         XCTAssertFalse(JournalSummaryPolicy.shouldShowSummary(planned: 0, reflected: 0, kept: 0))
         XCTAssertTrue(JournalSummaryPolicy.shouldShowSummary(planned: 3, reflected: 0, kept: 0))

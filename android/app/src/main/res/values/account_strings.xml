@@ -2,7 +2,6 @@
     <string name="account_title">Account &amp; plan</string>
     <string name="account_done">Done</string>
     <string name="account_free_space">No active Pro subscription</string>
-    <string name="account_local">Rules, app selections, and places stay on this device.</string>
     <string name="account_unavailable">Account services are not available right now.</string>
     <string name="account_identity_error">We could not verify this account. Please try again.</string>
     <string name="account_verify_required">Verify your email to manage your account and purchases.</string>
@@ -30,7 +29,6 @@
     <string name="account_link_apple">Link Apple</string>
     <string name="account_link_google">Link Google</string>
     <string name="account_link_email">Link email and password</string>
-    <string name="account_plan">Your plan</string>
     <string name="account_journal_local">Journal entries stay on this device and are excluded from backup. Export before changing phones or deleting Offzone.</string>
     <string name="account_pro_active">Your Pro subscription is active.</string>
     <string name="account_no_purchase">No active Pro subscription was found.</string>
@@ -39,7 +37,7 @@
     <string name="account_subscribe">Subscribe</string>
     <string name="account_restore">Restore purchases</string>
     <string name="account_manage">Manage subscription</string>
-    <string name="account_upgrade_pro">Upgrade to Offzone Pro</string>
+    <string name="account_manage_account">Manage account</string>
     <string name="account_signout">Sign out</string>
     <string name="account_delete">Delete account</string>
     <string name="account_delete_warning">Delete your account? Local rules and journal entries stay here. Deleting your account does not cancel subscriptions. Cancel separately in the store where you subscribed. Confirm your identity to delete.</string>

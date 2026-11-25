@@ -1,6 +1,4 @@
 <resources>
-    <string name="pro_eyebrow">OFFZONE PRO</string>
-    <string name="pro_close">Fermer</string>
     <string name="pro_headline_work">Faites de la place pour votre concentration.</string>
     <string name="pro_headline_rest">Faites de la place pour des soirées apaisées.</string>
     <string name="pro_headline_presence">Faites de la place pour l’instant présent.</string>
@@ -8,7 +6,6 @@
     <string name="pro_benefit_plan">Règles de concentration par horaire et lieu optionnel de 150 m.</string>
     <string name="pro_benefit_journal">Concentration rapide de 15, 25 ou 50 min à tout moment.</string>
     <string name="pro_benefit_review">Plans hebdomadaires et réflexions quotidiennes stockés uniquement sur votre appareil.</string>
-    <string name="pro_view_plans">Voir les forfaits et le compte</string>
     <string name="pro_tomorrow">Demain</string>
     <plurals name="pro_days">
         <item quantity="one">%d jour</item>

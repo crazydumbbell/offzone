@@ -1,6 +1,4 @@
 <resources>
-    <string name="pro_eyebrow">OFFZONE PRO</string>
-    <string name="pro_close">닫기</string>
     <string name="pro_headline_work">집중할 시간을 만들어요.</string>
     <string name="pro_headline_rest">차분한 저녁을 만들어요.</string>
     <string name="pro_headline_presence">지금 이 순간에 머물러요.</string>
@@ -8,7 +6,6 @@
     <string name="pro_benefit_plan">일정과 선택형 150m 장소 집중 규칙을 켜요.</string>
     <string name="pro_benefit_journal">필요할 때 15·25·50분 바로 집중을 시작해요.</string>
     <string name="pro_benefit_review">기기에만 남는 주간 계획과 일간 회고를 기록해요.</string>
-    <string name="pro_view_plans">요금제와 계정 보기</string>
     <string name="pro_tomorrow">내일</string>
     <plurals name="pro_days">
         <item quantity="other">%d일</item>

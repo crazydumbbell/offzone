@@ -2,7 +2,6 @@
     <string name="account_title">Cuenta y plan</string>
     <string name="account_done">Listo</string>
     <string name="account_free_space">Sin suscripción Pro activa</string>
-    <string name="account_local">Las reglas, las apps seleccionadas y los lugares se quedan en este dispositivo.</string>
     <string name="account_unavailable">Los servicios de cuenta no están disponibles ahora mismo.</string>
     <string name="account_identity_error">No pudimos verificar esta cuenta. Inténtalo de nuevo.</string>
     <string name="account_verify_required">Verifica tu correo para gestionar tu cuenta y tus compras.</string>
@@ -30,7 +29,6 @@
     <string name="account_link_apple">Vincular Apple</string>
     <string name="account_link_google">Vincular Google</string>
     <string name="account_link_email">Vincular correo y contraseña</string>
-    <string name="account_plan">Tu plan</string>
     <string name="account_journal_local">Las entradas del diario se quedan en este dispositivo y están excluidas de la copia de seguridad. Exporta antes de cambiar de teléfono o eliminar Offzone.</string>
     <string name="account_pro_active">Tu suscripción Pro está activa.</string>
     <string name="account_no_purchase">No se encontró ninguna suscripción Pro activa.</string>
@@ -39,7 +37,7 @@
     <string name="account_subscribe">Suscribirse</string>
     <string name="account_restore">Restaurar compras</string>
     <string name="account_manage">Gestionar suscripción</string>
-    <string name="account_upgrade_pro">Pasar a Offzone Pro</string>
+    <string name="account_manage_account">Gestionar cuenta</string>
     <string name="account_signout">Cerrar sesión</string>
     <string name="account_delete">Eliminar cuenta</string>
     <string name="account_delete_warning">¿Eliminar tu cuenta? Las reglas locales y el diario se quedan aquí. Eliminar tu cuenta no cancela las suscripciones; cancélalas por separado en la tienda donde te suscribiste. Confirma tu identidad para eliminarla.</string>

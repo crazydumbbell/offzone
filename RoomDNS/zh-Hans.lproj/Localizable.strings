@@ -125,9 +125,7 @@
 "Make room for calmer evenings." = "为宁静的夜晚留出空间。";
 "Make room for being here." = "为当下此刻留出空间。";
 "Make room for yourself." = "为自己留出空间。";
-"Go to home" = "前往主页";
 "Account & plan" = "账号与方案";
-"Explore Pro" = "了解 Pro";
 "Offzone Pro" = "Offzone Pro";
 "Manage subscription" = "管理订阅";
 "Restore purchases" = "恢复购买";
@@ -200,8 +198,6 @@
 "Plans & reflections" = "计划与回顾";
 "Prepare journal export" = "准备导出日记";
 "Previous week" = "上一周";
-"Pro lets you write plans and reflections. Your existing entries remain readable, exportable and deletable." = "订阅 Pro 后即可撰写计划与回顾。现有记录仍可阅读、导出和删除。";
-"Pro purchases are currently unavailable." = "目前无法购买 Pro。";
 "Reflection date" = "回顾日期";
 "Save reflection" = "保存回顾";
 "Save weekly intention" = "保存每周目标";
@@ -281,7 +277,6 @@
 "Nook Cat gives you a quiet hello." = "Nook 猫咪轻声向你问好。";
 "Nook Cat says hello." = "Nook 猫咪向你问好。";
 "pro_eyebrow" = "OFFZONE PRO";
-"pro_close" = "关闭";
 "pro_headline_work" = "为专注留出空间。";
 "pro_headline_rest" = "为宁静的夜晚留出空间。";
 "pro_headline_presence" = "为当下此刻留出空间。";
@@ -346,12 +341,8 @@
 "Rule ready. Tap Start focus when you are ready." = "规则已就绪，准备好后点击“开始专注”。";
 "Account" = "账号";
 "Already subscribed? Sign in" = "已有订阅？登录";
-"Unlock Offzone Pro" = "解锁 Offzone Pro";
-"Subscribe to activate rules, focus sessions, and Quick focus." = "订阅即可启用规则、专注会话和快速专注。";
-"See plans" = "查看方案";
 "Trigger at a place (optional)" = "在特定地点触发（可选）";
 "Plans aren’t available right now. Try again in a moment." = "暂无法获取方案，请稍后重试。";
-"Your rules stay on this iPhone." = "你的规则仅保存在这部 iPhone 上。";
 "Verify your email to manage your account and purchases." = "请验证你的邮箱以管理账号与购买记录。";
 "Delete your account? Your local rules stay here. Deleting an account does not cancel an App Store subscription." = "要删除账号吗？本地规则仍会保留在此。删除账号不会取消 App Store 订阅。";
 "Sign in to Offzone" = "登录 Offzone";
@@ -388,3 +379,5 @@
 "This subscription is already linked to another account. Restore purchases on the original account." = "此订阅已关联到另一个账号。请在原账号中尝试恢复购买。";
 "Subscription service is unavailable right now. Please try again." = "订阅服务暂不可用，请稍后重试。";
 "journal_outcome_try_again" = "再试一次";
+"Manage account" = "管理账号";
+"No active subscription." = "当前没有生效中的订阅。";

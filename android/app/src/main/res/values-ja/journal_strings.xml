@@ -3,7 +3,6 @@
     <string name="journal_title">計画とふりかえり</string>
     <string name="journal_intro">小さな目標、ちょっとしたふりかえり。</string>
     <string name="journal_local">この端末のみに保存され、バックアップには含まれません。機種変更やOffzone削除の前に書き出してください。</string>
-    <string name="journal_offer">Proを見る</string>
     <string name="journal_corrupt">ジャーナルを読み込めませんでした。元のファイルは変更されていません。コピーを書き出すか、端末内のデータを削除してやり直してください。</string>
     <string name="journal_back">戻る</string>
     <string name="journal_previous">前の週</string>

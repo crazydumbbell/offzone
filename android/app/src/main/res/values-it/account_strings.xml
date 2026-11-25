@@ -2,7 +2,6 @@
     <string name="account_title">Account e piano</string>
     <string name="account_done">Fine</string>
     <string name="account_free_space">Nessun abbonamento Pro attivo</string>
-    <string name="account_local">Regole, selezioni di app e luoghi restano su questo dispositivo.</string>
     <string name="account_unavailable">I servizi dell’account non sono al momento disponibili.</string>
     <string name="account_identity_error">Non siamo riusciti a verificare questo account. Riprova.</string>
     <string name="account_verify_required">Verifica la tua e-mail per gestire account e acquisti.</string>
@@ -30,7 +29,6 @@
     <string name="account_link_apple">Collega Apple</string>
     <string name="account_link_google">Collega Google</string>
     <string name="account_link_email">Collega e-mail e password</string>
-    <string name="account_plan">Il tuo piano</string>
     <string name="account_journal_local">Le voci del diario restano su questo dispositivo e sono escluse dal backup. Esporta prima di cambiare telefono o eliminare Offzone.</string>
     <string name="account_pro_active">Il tuo abbonamento Pro è attivo.</string>
     <string name="account_no_purchase">Nessun abbonamento Pro attivo trovato.</string>
@@ -39,7 +37,7 @@
     <string name="account_subscribe">Abbonati</string>
     <string name="account_restore">Ripristina acquisti</string>
     <string name="account_manage">Gestisci abbonamento</string>
-    <string name="account_upgrade_pro">Passa a Offzone Pro</string>
+    <string name="account_manage_account">Gestisci account</string>
     <string name="account_signout">Esci</string>
     <string name="account_delete">Elimina account</string>
     <string name="account_delete_warning">Eliminare il tuo account? Le regole locali e le voci del diario restano qui. Eliminare l’account non annulla gli abbonamenti: annullali separatamente nello store in cui ti sei abbonato. Conferma la tua identità per eliminare.</string>

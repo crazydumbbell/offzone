@@ -2,7 +2,6 @@
     <string name="journal_title">Plans &amp; reflections</string>
     <string name="journal_intro">A little intention. A little reflection.</string>
     <string name="journal_local">Stored only on this device, excluded from backup. Export before changing phones or deleting Offzone.</string>
-    <string name="journal_offer">Explore Pro</string>
     <string name="journal_corrupt">Your journal could not be read. The original file is untouched. Export a copy or delete local data to start again.</string>
     <string name="journal_back">Back</string>
     <string name="journal_previous">Previous week</string>

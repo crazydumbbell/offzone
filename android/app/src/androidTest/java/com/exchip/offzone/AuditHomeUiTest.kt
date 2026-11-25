@@ -90,27 +90,21 @@ class AuditHomeUiTest {
             assertTrue(visible(R.string.onboarding_sign_in))
             assertFalse(visible(R.string.restore))
             click(R.string.onboarding_start)
-            awaitText(R.string.editor_apps_title)
-            click(R.string.editor_cancel)
+            awaitText(R.string.account_restore)
+            assertFalse(visible(R.string.home_your_space))
+            click(R.string.m_back)
             awaitText(R.string.onboarding_title)
             assertFalse(OnboardingProfile.completed(context))
 
-            // Completed onboarding without Pro lands on Locked Home.
+            // Completed onboarding without Pro is covered by the hard paywall.
             instrumentation.runOnMainSync { assertTrue(OnboardingProfile.complete(context)) }
             openApp(debugPro = false)
-            awaitText(R.string.home_your_space)
-            awaitText(R.string.home_unlock_pro)
-            assertFalse("Idle Home must never show Restore access", visible(R.string.restore))
-            click(R.string.m_quick)
-            awaitSelector(By.desc(context.getString(R.string.pro_close)), context.getString(R.string.pro_close))
-            clickSelector(By.desc(context.getString(R.string.pro_close)), context.getString(R.string.pro_close))
-            awaitText(R.string.home_unlock_pro)
+            awaitText(R.string.onboarding_sign_in)
+            assertFalse(visible(R.string.home_your_space))
+            assertFalse("Idle paywall must never show Restore access", visible(R.string.restore))
 
             // Pro Home flow + Settings + Schedule transition + Large font check.
             openApp(debugPro = true)
-            val unlockDeadline = SystemClock.elapsedRealtime() + 8_000
-            while (visible(R.string.home_unlock_pro) && SystemClock.elapsedRealtime() < unlockDeadline) SystemClock.sleep(200)
-            assertFalse(visible(R.string.home_unlock_pro))
             awaitText(R.string.home_your_space)
             clickSelector(By.desc(context.getString(R.string.audit_settings)), context.getString(R.string.audit_settings))
             awaitText(R.string.m_account)

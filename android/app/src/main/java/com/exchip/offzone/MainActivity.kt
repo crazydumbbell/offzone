@@ -8,12 +8,11 @@ import android.os.Build
 import android.os.Bundle
 import android.os.SystemClock
 import android.provider.Settings
-import androidx.core.net.toUri
 import androidx.activity.ComponentActivity
+import androidx.activity.SystemBarStyle
 import androidx.activity.compose.BackHandler
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.compose.setContent
-import androidx.activity.SystemBarStyle
 import androidx.activity.enableEdgeToEdge
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.BorderStroke
@@ -34,8 +33,10 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.core.net.toUri
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
@@ -48,6 +49,7 @@ class MainActivity : ComponentActivity() {
     private lateinit var account: AccountStore
     private var foreground by mutableStateOf(false)
     private var debugProVersion by mutableIntStateOf(0)
+    private var intentVersion by mutableIntStateOf(0)
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -73,6 +75,8 @@ class MainActivity : ComponentActivity() {
             ProAccessGate.debugProOverride = intent.getBooleanExtra(ProAccessGate.EXTRA_DEBUG_PRO, false)
             debugProVersion++
         }
+        ProPreview.reminderTest(this, intent)
+        intentVersion++
     }
 
     override fun onResume() {
@@ -94,25 +98,48 @@ class MainActivity : ComponentActivity() {
         val identity by account.state.collectAsState()
         val notifications by FocusController.notificationsEnabled.collectAsState()
         val hasProAccess = remember(identity, debugProVersion) { account.hasProAccessEffective }
-        val previewPaywall = remember { ProPreview.variant(intent) }
+        val previewPaywall = remember(intentVersion) { ProPreview.variant(intent) }
+        var onboardingCompleted by rememberSaveable { mutableStateOf(OnboardingProfile.completed(this)) }
         var route by rememberSaveable {
             mutableStateOf(
-                if (previewPaywall != null) "paywall"
-                else if (!OnboardingProfile.completed(this) && rules.isEmpty() && !storageError) "welcome"
-                else "home",
+                HardPaywallFlow.initialRoute(
+                    hasProAccess = hasProAccess,
+                    hasActiveSession = state.session != null,
+                    onboardingCompleted = onboardingCompleted,
+                    hasRules = rules.isNotEmpty(),
+                    storageError = storageError,
+                    hasPreviewPaywall = previewPaywall != null,
+                ),
             )
         }
+        LaunchedEffect(intentVersion) {
+            if (previewPaywall != null) route = HardPaywallFlow.ROUTE_PAYWALL
+        }
+        val activeRoute = HardPaywallFlow.resolveRoute(
+            requestedRoute = route,
+            hasProAccess = hasProAccess,
+            hasActiveSession = state.session != null,
+            onboardingCompleted = onboardingCompleted,
+            hasRules = rules.isNotEmpty(),
+            storageError = storageError,
+            hasPreviewPaywall = previewPaywall != null,
+        )
+        LaunchedEffect(activeRoute) {
+            if (route != activeRoute) route = activeRoute
+        }
         var homeClock by remember { mutableLongStateOf(SystemClock.elapsedRealtime()) }
-        LaunchedEffect(route, foreground) {
-            while (route in setOf("home", "settings") && foreground) {
+        LaunchedEffect(activeRoute, state.session != null, foreground) {
+            while ((activeRoute in setOf(HardPaywallFlow.ROUTE_HOME, HardPaywallFlow.ROUTE_SETTINGS) || state.session != null) && foreground) {
+                if (state.session != null) FocusController.tick()
                 homeClock = SystemClock.elapsedRealtime()
                 delay(1_000)
             }
         }
         var editing by rememberSaveable { mutableStateOf<String?>(null) }
-        var accountReturnRoute by rememberSaveable { mutableStateOf("home") }
-        var journalReturnRoute by rememberSaveable { mutableStateOf("home") }
-        var paywallReturnRoute by rememberSaveable { mutableStateOf("home") }
+        var accountReturnRoute by rememberSaveable { mutableStateOf(HardPaywallFlow.ROUTE_HOME) }
+        var accountInitialManage by rememberSaveable { mutableStateOf(false) }
+        var journalReturnRoute by rememberSaveable { mutableStateOf(HardPaywallFlow.ROUTE_HOME) }
+        var paywallReturnRoute by rememberSaveable { mutableStateOf(HardPaywallFlow.ROUTE_PAYWALL) }
         // D-50: the purchase button sends a signed-out user to the account screen; these bring them back to the same plan.
         var paywallResumePlan by rememberSaveable { mutableStateOf<String?>(null) }
         var paywallResumeRemind by rememberSaveable { mutableStateOf(false) }
@@ -120,23 +147,40 @@ class MainActivity : ComponentActivity() {
         var error by remember { mutableStateOf<Int?>(null) }
         val scope = rememberCoroutineScope()
         var pendingLocationAction by rememberSaveable { mutableIntStateOf(-1) }
-        var pendingLocationRoute by rememberSaveable { mutableStateOf("home") }
+        var pendingLocationRoute by rememberSaveable { mutableStateOf(HardPaywallFlow.ROUTE_HOME) }
         var locationDisclosure by rememberSaveable { mutableStateOf(false) }
         var pendingGeneration by rememberSaveable { mutableLongStateOf(-1L) }
         var pendingMonitorNotification by rememberSaveable { mutableStateOf(false) }
 
-        fun openPaywall(returnTo: String) {
+        fun openPaywall(returnTo: String = HardPaywallFlow.ROUTE_PAYWALL) {
             paywallResumePlan = null
             paywallResumeRemind = false
             paywallReturnRoute = returnTo
-            route = "paywall"
+            route = HardPaywallFlow.ROUTE_PAYWALL
+        }
+
+        fun openAccount(returnTo: String, manageDirectly: Boolean = false) {
+            accountReturnRoute = returnTo
+            accountInitialManage = manageDirectly
+            route = HardPaywallFlow.ROUTE_ACCOUNT
+        }
+
+        fun enterAfterPro() {
+            val destination = HardPaywallFlow.postProRoute(
+                onboardingCompleted = onboardingCompleted,
+                hasRules = rules.isNotEmpty(),
+                storageError = storageError,
+                accessibilityConnected = state.connected,
+            )
+            if (destination == HardPaywallFlow.ROUTE_EDIT) editing = null
+            route = destination
         }
 
         fun dispatchPlace(action: Int) {
             error = null
             when (action) {
                 1 -> {
-                    if (!ProAccessGate.canStartFocus(hasProAccess)) openPaywall("home")
+                    if (!ProAccessGate.canStartFocus(hasProAccess)) openPaywall()
                     else FocusController.startPlaceFocus(this)
                 }
                 2 -> { FocusController.setNotificationsEnabled(true); FocusController.startPlaceMonitoring(this) }
@@ -150,7 +194,7 @@ class MainActivity : ComponentActivity() {
         }
 
         fun placeRequestValid() = pendingLocationAction in 0..2 && pendingGeneration == FocusController.generation &&
-            route == pendingLocationRoute && route in setOf("home", "settings")
+            activeRoute == pendingLocationRoute && activeRoute in setOf(HardPaywallFlow.ROUTE_HOME, HardPaywallFlow.ROUTE_SETTINGS)
 
         fun completePlaceRequest() {
             val action = pendingLocationAction
@@ -189,91 +233,153 @@ class MainActivity : ComponentActivity() {
         fun requestPlace(action: Int) {
             error = null
             if (action == 1 && !ProAccessGate.canStartFocus(hasProAccess)) {
-                openPaywall("home")
+                openPaywall()
                 return
             }
             // A time-only rule never reads location: no disclosure, no permission prompt.
             if (action == 1 && state.appliedRule?.anywhere == true) { dispatchPlace(1); return }
             pendingLocationAction = action; pendingGeneration = FocusController.generation
-            pendingLocationRoute = route
+            pendingLocationRoute = activeRoute
             // Reconfirm every continuous-location start, even when Android permission was granted before.
             if (action == 1 || action == 2) locationDisclosure = true
             else continuePlaceRequest()
         }
 
-        LaunchedEffect(identity.verified, route) {
-            if (route == "account" && accountReturnRoute == "paywall" && paywallResumePlan != null && identity.verified) route = "paywall"
-        }
-        LaunchedEffect(hasProAccess, route) {
-            if (route == "account" && accountReturnRoute == "welcome" && hasProAccess) {
-                withContext(Dispatchers.IO) { OnboardingProfile.complete(this@MainActivity) }
-                route = "home"
+        LaunchedEffect(identity.verified, activeRoute) {
+            if (activeRoute == HardPaywallFlow.ROUTE_ACCOUNT && accountReturnRoute == HardPaywallFlow.ROUTE_PAYWALL && paywallResumePlan != null && identity.verified) {
+                route = HardPaywallFlow.ROUTE_PAYWALL
             }
         }
-        BackHandler(route != "home") {
-            route = when (route) {
-                "edit" -> if (!OnboardingProfile.completed(this) && rules.isEmpty()) "welcome" else "home"
-                "account" -> accountReturnRoute
-                "journal" -> journalReturnRoute
-                "paywall" -> paywallReturnRoute
-                else -> "home"
+        LaunchedEffect(hasProAccess, activeRoute) {
+            if (!hasProAccess) return@LaunchedEffect
+            if (activeRoute == HardPaywallFlow.ROUTE_WELCOME ||
+                (activeRoute == HardPaywallFlow.ROUTE_ACCOUNT && accountReturnRoute in setOf(HardPaywallFlow.ROUTE_WELCOME, HardPaywallFlow.ROUTE_PAYWALL))
+            ) {
+                enterAfterPro()
+            }
+        }
+        val canPaywallBackToWelcome = activeRoute == HardPaywallFlow.ROUTE_PAYWALL &&
+            paywallReturnRoute == HardPaywallFlow.ROUTE_WELCOME &&
+            !hasProAccess &&
+            state.session == null &&
+            previewPaywall == null &&
+            HardPaywallFlow.needsFirstRule(onboardingCompleted, rules.isNotEmpty(), storageError)
+        val interceptBack = when (activeRoute) {
+            HardPaywallFlow.ROUTE_HOME, HardPaywallFlow.ROUTE_WELCOME -> false
+            HardPaywallFlow.ROUTE_PAYWALL -> canPaywallBackToWelcome
+            else -> true
+        }
+        BackHandler(interceptBack) {
+            route = when (activeRoute) {
+                HardPaywallFlow.ROUTE_PAYWALL -> HardPaywallFlow.ROUTE_WELCOME
+                HardPaywallFlow.ROUTE_EDIT -> {
+                    if (HardPaywallFlow.needsFirstRule(onboardingCompleted, rules.isNotEmpty(), storageError)) {
+                        OnboardingProfile.complete(this)
+                        onboardingCompleted = true
+                    }
+                    HardPaywallFlow.ROUTE_HOME
+                }
+                HardPaywallFlow.ROUTE_SETUP -> HardPaywallFlow.ROUTE_HOME
+                HardPaywallFlow.ROUTE_ACCOUNT -> HardPaywallFlow.accountBackRoute(
+                    returnRoute = accountReturnRoute,
+                    hasProAccess = hasProAccess,
+                    hasActiveSession = state.session != null,
+                    onboardingCompleted = onboardingCompleted,
+                    hasRules = rules.isNotEmpty(),
+                    storageError = storageError,
+                )
+                HardPaywallFlow.ROUTE_JOURNAL -> journalReturnRoute
+                else -> HardPaywallFlow.ROUTE_HOME
             }
         }
 
         Surface(Modifier.fillMaxSize()) {
-            when (route) {
-                "welcome" -> OnboardingScreen(
-                    onGetStarted = { editing = null; route = "edit" },
-                    onSignIn = { accountReturnRoute = "welcome"; route = "account" },
+            when (activeRoute) {
+                HardPaywallFlow.ROUTE_WELCOME -> OnboardingScreen(
+                    onGetStarted = { openPaywall(returnTo = HardPaywallFlow.ROUTE_WELCOME) },
+                    onSignIn = { openAccount(returnTo = HardPaywallFlow.ROUTE_WELCOME) },
                 )
-                "edit" -> RuleEditorScreen(
+                HardPaywallFlow.ROUTE_EDIT -> RuleEditorScreen(
                     rule = rules.firstOrNull { it.id == editing },
                     defaultStart = OnboardingProfile.startMinutes(this),
-                    onBack = { route = if (!OnboardingProfile.completed(this) && rules.isEmpty()) "welcome" else "home" },
+                    onBack = {
+                        if (HardPaywallFlow.needsFirstRule(onboardingCompleted, rules.isNotEmpty(), storageError)) {
+                            OnboardingProfile.complete(this)
+                            onboardingCompleted = true
+                        }
+                        route = HardPaywallFlow.ROUTE_HOME
+                    },
                     onSaved = { saved ->
                         error = null
-                        val firstTime = !OnboardingProfile.completed(this)
-                        if (firstTime) OnboardingProfile.complete(this)
+                        val firstTime = !onboardingCompleted
+                        if (firstTime) {
+                            OnboardingProfile.complete(this)
+                            onboardingCompleted = true
+                        }
                         editing = saved.id
-                        if (firstTime && !hasProAccess) openPaywall("home") else route = "home"
+                        route = HardPaywallFlow.afterRuleSavedRoute(firstTime, state.connected)
                     },
                     defaultEnd = OnboardingProfile.endMinutes(this),
                 )
-                "paywall" -> ProPaywallScreen(
+                HardPaywallFlow.ROUTE_SETUP -> AccessibilitySetupScreen(
+                    connected = state.connected,
+                    onEnable = { disclosure = true },
+                    onSkip = { route = HardPaywallFlow.ROUTE_HOME },
+                    onConnected = { route = HardPaywallFlow.ROUTE_HOME },
+                )
+                HardPaywallFlow.ROUTE_PAYWALL -> ProPaywallScreen(
                     store = account,
-                    onContinue = { route = paywallReturnRoute },
+                    hasProAccess = hasProAccess,
+                    hasActiveSession = state.session != null,
+                    remainingMillis = state.remaining,
+                    onRestoreSession = { FocusController.stop(); error = null },
                     onDone = {
-                        if (hasProAccess && state.appliedRule == null) {
+                        if (hasProAccess && rules.isNotEmpty() && state.appliedRule == null) {
                             FocusController.autoArmSavedRule()
                         }
-                        route = "home"
+                        enterAfterPro()
                     },
-                    onOpenAccount = { plan, remind -> paywallResumePlan = plan; paywallResumeRemind = remind; accountReturnRoute = "paywall"; route = "account" },
+                    onOpenAccount = { plan, remind, manageDirectly ->
+                        paywallResumePlan = plan
+                        paywallResumeRemind = remind
+                        openAccount(returnTo = HardPaywallFlow.ROUTE_PAYWALL, manageDirectly = manageDirectly)
+                    },
+                    onBack = if (canPaywallBackToWelcome) ({ route = HardPaywallFlow.ROUTE_WELCOME }) else null,
                     resumePlanId = paywallResumePlan,
                     resumeRemind = paywallResumeRemind,
                     preview = previewPaywall,
                 )
-                "account" -> AccountScreen(
+                HardPaywallFlow.ROUTE_ACCOUNT -> AccountScreen(
                     store = account,
-                    onBack = { route = accountReturnRoute },
-                    onJournal = { journalReturnRoute = "account"; route = "journal" },
-                    onOpenPaywall = { openPaywall("account") },
+                    hasProAccess = hasProAccess,
+                    hasActiveSession = state.session != null,
+                    onRestoreSession = { FocusController.stop(); error = null },
+                    onBack = {
+                        route = HardPaywallFlow.accountBackRoute(
+                            returnRoute = accountReturnRoute,
+                            hasProAccess = hasProAccess,
+                            hasActiveSession = state.session != null,
+                            onboardingCompleted = onboardingCompleted,
+                            hasRules = rules.isNotEmpty(),
+                            storageError = storageError,
+                        )
+                    },
+                    onJournal = if (hasProAccess) ({ journalReturnRoute = HardPaywallFlow.ROUTE_ACCOUNT; route = HardPaywallFlow.ROUTE_JOURNAL }) else null,
+                    initialManage = accountInitialManage,
                 )
-                "journal" -> JournalScreen(
+                HardPaywallFlow.ROUTE_JOURNAL -> JournalScreen(
                     hasPro = hasProAccess,
-                    onOffer = { openPaywall("journal") },
                     onBack = { route = journalReturnRoute },
                     accessCheck = { account.hasProAccessEffective },
                 )
-                "settings" -> SettingsScreen(
+                HardPaywallFlow.ROUTE_SETTINGS -> SettingsScreen(
                     state = state,
-                    hasProAccess = hasProAccess,
                     notifications = notifications,
                     homeClock = homeClock,
                     error = error,
-                    onBack = { route = "home" },
-                    onOpenAccount = { accountReturnRoute = "settings"; route = "account" },
-                    onOpenJournal = { journalReturnRoute = "settings"; route = "journal" },
+                    onBack = { route = HardPaywallFlow.ROUTE_HOME },
+                    onOpenAccount = { openAccount(returnTo = HardPaywallFlow.ROUTE_SETTINGS) },
+                    onOpenJournal = { journalReturnRoute = HardPaywallFlow.ROUTE_SETTINGS; route = HardPaywallFlow.ROUTE_JOURNAL },
                     onToggleNotifications = { enabled ->
                         if (enabled && Build.VERSION.SDK_INT >= 33) notificationPermission.launch(Manifest.permission.POST_NOTIFICATIONS)
                         else FocusController.setNotificationsEnabled(enabled)
@@ -288,19 +394,18 @@ class MainActivity : ComponentActivity() {
                     },
                     onRestore = { FocusController.stop(); error = null },
                 )
-                "quick" -> QuickFocus(
+                HardPaywallFlow.ROUTE_QUICK -> QuickFocus(
                     hasProAccess = hasProAccess,
-                    onBack = { route = "home" },
+                    onBack = { route = HardPaywallFlow.ROUTE_HOME },
                     onEnable = { disclosure = true },
-                    onRequirePro = { openPaywall("home") },
+                    onRequirePro = { openPaywall() },
                 )
                 else -> {
                     var deleting by remember { mutableStateOf<FocusRule?>(null) }
                     val locale = LocalConfiguration.current.locales[0]
                     val active = state.appliedRule
                     val focused = state.session != null
-                    val locked = !focused && !hasProAccess
-                    val suggestedRuleId = if (!focused && !locked && state.connected && !storageError && !state.ruleEnabled) {
+                    val suggestedRuleId = if (!focused && state.connected && !storageError && !state.ruleEnabled) {
                         rules.firstOrNull()?.id
                     } else null
                     LazyColumn(
@@ -311,21 +416,21 @@ class MainActivity : ComponentActivity() {
                         item {
                             Row(Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) {
                                 Text(stringResource(R.string.home_your_space), style = MaterialTheme.typography.headlineSmall, modifier = Modifier.weight(1f))
-                                IconButton(onClick = { route = "settings" }) {
+                                IconButton(onClick = { route = HardPaywallFlow.ROUTE_SETTINGS }) {
                                     Icon(
                                         Icons.Filled.Notifications,
                                         contentDescription = stringResource(R.string.audit_settings),
                                         tint = if (notifications) Pine else InkMuted,
                                     )
                                 }
-                                IconButton(onClick = { accountReturnRoute = "home"; route = "account" }) {
+                                IconButton(onClick = { openAccount(returnTo = HardPaywallFlow.ROUTE_HOME) }) {
                                     Icon(
                                         Icons.Filled.AccountCircle,
                                         contentDescription = stringResource(R.string.m_account),
                                         tint = Ink,
                                     )
                                 }
-                                IconButton(onClick = { editing = null; route = "edit" }, enabled = !storageError) {
+                                IconButton(onClick = { editing = null; route = HardPaywallFlow.ROUTE_EDIT }, enabled = !storageError) {
                                     Icon(
                                         Icons.Filled.Add,
                                         contentDescription = stringResource(R.string.home_new_rule),
@@ -335,7 +440,7 @@ class MainActivity : ComponentActivity() {
                             }
                         }
                         item {
-                            val needsAction = locked || storageError || !state.connected
+                            val needsAction = storageError || !state.connected
                             val scheduled = remember(homeClock, state.ruleEnabled, active) { state.ruleEnabled && active != null && !RulePolicy.scheduleActive(active) }
                             val canStart = hasProAccess && active != null && !focused && state.connected && state.ruleEnabled && !scheduled && !state.checkingPlace
                             val cardColor = when {
@@ -347,7 +452,6 @@ class MainActivity : ComponentActivity() {
                             val foreground = if (focused) Butter else Ink
                             val title = when {
                                 focused -> R.string.home_in_focus
-                                locked -> R.string.home_locked_title
                                 storageError -> R.string.home_check_rules
                                 state.message == R.string.engine_paused -> R.string.home_paused
                                 state.message == R.string.access_restored -> R.string.home_access_restored
@@ -365,12 +469,12 @@ class MainActivity : ComponentActivity() {
                                 Column(Modifier.fillMaxWidth().padding(22.dp), verticalArrangement = Arrangement.spacedBy(16.dp)) {
                                     Row(Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) {
                                         Column(Modifier.weight(1f), verticalArrangement = Arrangement.spacedBy(8.dp)) {
-                                            if (!locked) sessionLabel?.let { Text(it, style = MaterialTheme.typography.bodyLarge) }
+                                            sessionLabel?.let { Text(it, style = MaterialTheme.typography.bodyLarge) }
                                             Text(stringResource(title), style = MaterialTheme.typography.headlineMedium)
                                             if (focused) {
                                                 val seconds = (state.remaining + 999) / 1000
                                                 Text("%d:%02d".format(seconds / 60, seconds % 60), style = MaterialTheme.typography.headlineLarge.copy(fontSize = 44.sp))
-                                            } else if (scheduled && !locked) {
+                                            } else if (scheduled) {
                                                 RulePolicy.nextStart(active!!)?.let { next ->
                                                     val time = timeLabel(this@MainActivity, next.hour * 60 + next.minute)
                                                     Text(
@@ -393,20 +497,17 @@ class MainActivity : ComponentActivity() {
                                             colors = ButtonDefaults.buttonColors(containerColor = Butter, contentColor = Ink),
                                             modifier = Modifier.fillMaxWidth().heightIn(min = 56.dp),
                                         ) { Text(stringResource(R.string.restore)) }
-                                        locked -> PrimaryButton(onClick = { openPaywall("home") }, modifier = Modifier.fillMaxWidth()) {
-                                            Text(stringResource(R.string.home_unlock_pro))
-                                        }
                                         !state.connected -> PrimaryButton(onClick = { disclosure = true }, modifier = Modifier.fillMaxWidth()) {
                                             Text(stringResource(R.string.enable))
                                         }
                                         storageError -> Unit
-                                        rules.isEmpty() -> PrimaryButton(onClick = { editing = null; route = "edit" }, modifier = Modifier.fillMaxWidth()) {
+                                        rules.isEmpty() -> PrimaryButton(onClick = { editing = null; route = HardPaywallFlow.ROUTE_EDIT }, modifier = Modifier.fillMaxWidth()) {
                                             Text(stringResource(R.string.home_create_rule))
                                         }
                                         !state.ruleEnabled -> rules.firstOrNull()?.let { rule ->
                                             PrimaryButton(
                                                 onClick = {
-                                                    if (!ProAccessGate.canActivateRule(hasProAccess)) openPaywall("home")
+                                                    if (!ProAccessGate.canActivateRule(hasProAccess)) openPaywall()
                                                     else if (!FocusController.activateRule(rule.id)) error = R.string.save_error
                                                 },
                                                 modifier = Modifier.fillMaxWidth(),
@@ -430,8 +531,8 @@ class MainActivity : ComponentActivity() {
                         if (state.session == null) item {
                             SecondaryButton(
                                 onClick = {
-                                    if (ProAccessGate.canQuickFocus(hasProAccess)) route = "quick"
-                                    else openPaywall("home")
+                                    if (ProAccessGate.canQuickFocus(hasProAccess)) route = HardPaywallFlow.ROUTE_QUICK
+                                    else openPaywall()
                                 },
                                 modifier = Modifier.fillMaxWidth(),
                             ) { Text(stringResource(R.string.m_quick)) }
@@ -461,13 +562,13 @@ class MainActivity : ComponentActivity() {
                                     Text(stringResource(R.string.apps_selected, rule.packages.size))
                                     if (unapplied) Text(stringResource(R.string.m_unapplied))
                                     FlowRow(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-                                        TextButton(onClick = { editing = rule.id; route = "edit" }) { Text(stringResource(R.string.m_edit)) }
+                                        TextButton(onClick = { editing = rule.id; route = HardPaywallFlow.ROUTE_EDIT }) { Text(stringResource(R.string.m_edit)) }
                                         if (showApplyOrPause) {
                                             OutlinedButton(onClick = {
                                                 if (isAppliedAndCurrent) {
                                                     FocusController.pauseRule()
                                                 } else if (!ProAccessGate.canActivateRule(hasProAccess)) {
-                                                    openPaywall("home")
+                                                    openPaywall()
                                                 } else if (!FocusController.activateRule(rule.id)) {
                                                     error = R.string.save_error
                                                 }
@@ -525,9 +626,51 @@ class MainActivity : ComponentActivity() {
 }
 
 @Composable
+private fun AccessibilitySetupScreen(
+    connected: Boolean,
+    onEnable: () -> Unit,
+    onSkip: () -> Unit,
+    onConnected: () -> Unit,
+) {
+    LaunchedEffect(connected) {
+        if (connected) onConnected()
+    }
+    Scaffold(
+        containerColor = Butter,
+        bottomBar = {
+            Column(
+                Modifier.fillMaxWidth().padding(horizontal = 24.dp, vertical = 12.dp).navigationBarsPadding(),
+                verticalArrangement = Arrangement.spacedBy(6.dp),
+            ) {
+                PrimaryButton(onClick = onEnable, modifier = Modifier.fillMaxWidth()) {
+                    Text(stringResource(R.string.enable))
+                }
+                TextButton(onClick = onSkip, modifier = Modifier.fillMaxWidth().heightIn(min = 48.dp)) {
+                    Text(stringResource(R.string.not_now), color = InkMuted)
+                }
+            }
+        },
+    ) { innerPadding ->
+        Column(
+            Modifier.fillMaxSize().padding(innerPadding).verticalScroll(rememberScrollState())
+                .padding(horizontal = 24.dp, vertical = 32.dp),
+            verticalArrangement = Arrangement.spacedBy(20.dp, Alignment.CenterVertically),
+            horizontalAlignment = Alignment.CenterHorizontally,
+        ) {
+            NookCatView(NookExpression.NEEDS_ACTION, Modifier.size(164.dp))
+            Text(
+                stringResource(R.string.home_setup_needed),
+                style = MaterialTheme.typography.headlineLarge,
+                color = Ink,
+                textAlign = TextAlign.Center,
+            )
+        }
+    }
+}
+
+@Composable
 private fun SettingsScreen(
     state: FocusState,
-    hasProAccess: Boolean,
     notifications: Boolean,
     homeClock: Long,
     error: Int?,
@@ -540,6 +683,7 @@ private fun SettingsScreen(
     onOpenAppSettings: () -> Unit,
     onRestore: () -> Unit,
 ) {
+    val hasPlaceRule = state.ruleEnabled && state.appliedRule?.anywhere != true
     Column(
         Modifier.fillMaxSize().safeDrawingPadding().verticalScroll(rememberScrollState()).padding(24.dp),
         verticalArrangement = Arrangement.spacedBy(16.dp),
@@ -547,29 +691,6 @@ private fun SettingsScreen(
         TextButton(onClick = onBack) { Text(stringResource(R.string.m_back)) }
         Text(stringResource(R.string.audit_settings), style = MaterialTheme.typography.headlineLarge)
         Surface(color = WarmIvory, shape = RoundedCornerShape(24.dp), border = BorderStroke(1.dp, PineHairline)) {
-            Column(Modifier.fillMaxWidth().padding(20.dp), verticalArrangement = Arrangement.spacedBy(10.dp)) {
-                TextButton(onClick = onOpenAccount, modifier = Modifier.fillMaxWidth()) {
-                    Row(Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) {
-                        Column(Modifier.weight(1f)) {
-                            Text(stringResource(R.string.m_account), style = MaterialTheme.typography.titleMedium, color = Ink)
-                            Text(
-                                stringResource(if (hasProAccess) R.string.account_pro_active else R.string.account_free_space),
-                                style = MaterialTheme.typography.bodyMedium,
-                                color = InkMuted,
-                            )
-                        }
-                    }
-                }
-                HorizontalDivider(color = PineHairline)
-                TextButton(onClick = onOpenJournal, modifier = Modifier.fillMaxWidth()) {
-                    Row(Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) {
-                        Text(stringResource(R.string.m_journal), style = MaterialTheme.typography.titleMedium, color = Ink)
-                    }
-                }
-            }
-        }
-        Surface(color = WarmIvory, shape = RoundedCornerShape(24.dp), border = BorderStroke(1.dp, PineHairline)) {
-            val hasPlaceRule = state.ruleEnabled && state.appliedRule?.anywhere != true
             Column(Modifier.fillMaxWidth().padding(20.dp), verticalArrangement = Arrangement.spacedBy(12.dp)) {
                 Row(verticalAlignment = Alignment.CenterVertically) {
                     Text(stringResource(R.string.m_notifications), style = MaterialTheme.typography.titleMedium, modifier = Modifier.weight(1f))
@@ -612,10 +733,12 @@ private fun SettingsScreen(
             }
         }
         Surface(color = WarmIvory, shape = RoundedCornerShape(24.dp), border = BorderStroke(1.dp, PineHairline)) {
-            Column(Modifier.fillMaxWidth().padding(20.dp), verticalArrangement = Arrangement.spacedBy(12.dp)) {
-                SecondaryButton(onClick = onOpenAppSettings, modifier = Modifier.fillMaxWidth()) {
-                    Text(stringResource(R.string.m_settings))
-                }
+            Column(Modifier.fillMaxWidth().padding(horizontal = 12.dp, vertical = 8.dp)) {
+                SettingsLinkRow(R.string.m_account, onOpenAccount)
+                HorizontalDivider(color = PineHairline, modifier = Modifier.padding(horizontal = 8.dp))
+                SettingsLinkRow(R.string.m_journal, onOpenJournal)
+                HorizontalDivider(color = PineHairline, modifier = Modifier.padding(horizontal = 8.dp))
+                SettingsLinkRow(R.string.m_settings, onOpenAppSettings)
             }
         }
         if (ProAccessGate.canRestoreActiveSession(state.session != null)) {
@@ -624,6 +747,22 @@ private fun SettingsScreen(
             }
         }
         error?.let { Text(stringResource(it), color = MaterialTheme.colorScheme.error) }
+    }
+}
+
+@Composable
+private fun SettingsLinkRow(labelRes: Int, onClick: () -> Unit) {
+    TextButton(
+        onClick = onClick,
+        modifier = Modifier.fillMaxWidth().heightIn(min = 52.dp),
+        contentPadding = PaddingValues(horizontal = 8.dp, vertical = 12.dp),
+    ) {
+        Text(
+            stringResource(labelRes),
+            style = MaterialTheme.typography.titleMedium,
+            color = Ink,
+            modifier = Modifier.fillMaxWidth(),
+        )
     }
 }
 

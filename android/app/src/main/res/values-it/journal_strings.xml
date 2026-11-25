@@ -2,7 +2,6 @@
     <string name="journal_title">Piani e riflessioni</string>
     <string name="journal_intro">Un piccolo proposito. Una breve riflessione.</string>
     <string name="journal_local">Archiviato solo su questo dispositivo, escluso dal backup. Esporta prima di cambiare telefono o eliminare Offzone.</string>
-    <string name="journal_offer">Scopri Pro</string>
     <string name="journal_corrupt">Impossibile leggere il tuo diario. Il file originale è intatto. Esporta una copia o elimina i dati locali per ricominciare.</string>
     <string name="journal_back">Indietro</string>
     <string name="journal_previous">Settimana precedente</string>

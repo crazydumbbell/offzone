@@ -2,7 +2,6 @@
     <string name="journal_title">Planos e reflexões</string>
     <string name="journal_intro">Um pouco de intenção. Um pouco de reflexão.</string>
     <string name="journal_local">Armazenado apenas neste dispositivo, fora do backup. Exporte antes de trocar de celular ou excluir o Offzone.</string>
-    <string name="journal_offer">Conhecer o Pro</string>
     <string name="journal_corrupt">Não foi possível ler seu diário. O arquivo original está intacto. Exporte uma cópia ou exclua os dados locais para recomeçar.</string>
     <string name="journal_back">Voltar</string>
     <string name="journal_previous">Semana anterior</string>

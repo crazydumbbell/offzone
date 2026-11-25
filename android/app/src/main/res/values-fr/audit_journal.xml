@@ -1,5 +1,4 @@
 <resources>
-    <string name="audit_journal_read_only">Vos plans et réflexions enregistrés restent disponibles pour être lus, exportés ou supprimés. Les nouvelles entrées nécessitent Pro.</string>
     <string name="audit_journal_unsaved">Modifications non enregistrées</string>
     <string name="audit_journal_discard_message">Enregistrez vos modifications avant de quitter, ou ignorez-les pour continuer.</string>
     <string name="audit_journal_discard">Ignorer les modifications</string>
@@ -7,6 +6,4 @@
     <string name="audit_journal_delete_entry">Supprimer cette entrée ?</string>
     <string name="audit_journal_delete_message">Cette action est irréversible.</string>
     <string name="audit_journal_delete">Supprimer</string>
-    <string name="audit_pro_unavailable_title">Pro n’est pas encore disponible</string>
-    <string name="audit_pro_unavailable_body">Les forfaits sont indisponibles pour le moment. Si vous êtes déjà abonné à Pro, restaurez votre achat ci-dessous.</string>
 </resources>

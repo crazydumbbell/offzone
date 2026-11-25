@@ -13,6 +13,4 @@
     <string name="home_check_rules">Verifique suas regras</string>
     <string name="home_create_rule">Criar regra</string>
     <string name="home_activate_rule">Ativar %1$s</string>
-    <string name="home_locked_title">Offzone Pro necessário</string>
-    <string name="home_unlock_pro">Desbloquear Offzone Pro</string>
 </resources>

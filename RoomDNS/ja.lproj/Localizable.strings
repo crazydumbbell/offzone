@@ -125,9 +125,7 @@
 "Make room for calmer evenings." = "穏やかな夜の余白をつくろう。";
 "Make room for being here." = "今この瞬間の余白をつくろう。";
 "Make room for yourself." = "自分のための余白をつくろう。";
-"Go to home" = "ホームへ移動";
 "Account & plan" = "アカウントとプラン";
-"Explore Pro" = "Proを見る";
 "Offzone Pro" = "Offzone Pro";
 "Manage subscription" = "サブスクリプションを管理";
 "Restore purchases" = "購入を復元";
@@ -200,8 +198,6 @@
 "Plans & reflections" = "計画とふりかえり";
 "Prepare journal export" = "ジャーナルの書き出しを準備";
 "Previous week" = "前の週";
-"Pro lets you write plans and reflections. Your existing entries remain readable, exportable and deletable." = "Proでは計画やふりかえりを新しく記録できます。既存の記録は引き続き閲覧・書き出し・削除が可能です。";
-"Pro purchases are currently unavailable." = "現在、Proの購入は利用できません。";
 "Reflection date" = "ふりかえりの日付";
 "Save reflection" = "ふりかえりを保存";
 "Save weekly intention" = "今週の目標を保存";
@@ -281,7 +277,6 @@
 "Nook Cat gives you a quiet hello." = "ヌーク猫がそっと挨拶しています。";
 "Nook Cat says hello." = "ヌーク猫が挨拶しています。";
 "pro_eyebrow" = "OFFZONE PRO";
-"pro_close" = "閉じる";
 "pro_headline_work" = "集中する余白をつくろう。";
 "pro_headline_rest" = "穏やかな夜の余白をつくろう。";
 "pro_headline_presence" = "今この瞬間の余白をつくろう。";
@@ -346,12 +341,8 @@
 "Rule ready. Tap Start focus when you are ready." = "ルールの準備ができました。準備ができたら「集中を開始」をタップしてください。";
 "Account" = "アカウント";
 "Already subscribed? Sign in" = "すでに登録済みですか？サインイン";
-"Unlock Offzone Pro" = "Offzone Proを解除";
-"Subscribe to activate rules, focus sessions, and Quick focus." = "登録すると、ルールの有効化、集中セッション、クイック集中が利用できます。";
-"See plans" = "プランを見る";
 "Trigger at a place (optional)" = "場所を条件に追加（任意）";
 "Plans aren’t available right now. Try again in a moment." = "現在プランを読み込めません。しばらくしてからもう一度お試しください。";
-"Your rules stay on this iPhone." = "ルールはこのiPhone内のみに保存されます。";
 "Verify your email to manage your account and purchases." = "アカウントと購入内容を管理するにはメールアドレスを認証してください。";
 "Delete your account? Your local rules stay here. Deleting an account does not cancel an App Store subscription." = "アカウントを削除しますか？端末内のルールは残ります。アカウントを削除してもApp Storeのサブスクリプションは解約されません。";
 "Sign in to Offzone" = "Offzoneにサインイン";
@@ -388,3 +379,5 @@
 "This subscription is already linked to another account. Restore purchases on the original account." = "このサブスクリプションはすでに別のアカウントに連携されています。元のアカウントで「購入を復元」を行ってください。";
 "Subscription service is unavailable right now. Please try again." = "現在サブスクリプションサービスを利用できません。しばらくしてからもう一度お試しください。";
 "journal_outcome_try_again" = "もう一度挑戦";
+"Manage account" = "アカウントを管理";
+"No active subscription." = "有効なサブスクリプションはありません。";

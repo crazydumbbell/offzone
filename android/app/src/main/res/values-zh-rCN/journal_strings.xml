@@ -3,7 +3,6 @@
     <string name="journal_title">计划与回顾</string>
     <string name="journal_intro">一点计划，一点回顾。</string>
     <string name="journal_local">仅存储在此设备上，不包含在备份中。更换手机或删除 Offzone 前请先导出。</string>
-    <string name="journal_offer">了解 Pro</string>
     <string name="journal_corrupt">无法读取你的日记，原文件未被改动。请导出副本或删除本地数据以重新开始。</string>
     <string name="journal_back">返回</string>
     <string name="journal_previous">上一周</string>

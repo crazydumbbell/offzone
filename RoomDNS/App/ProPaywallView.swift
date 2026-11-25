@@ -3,11 +3,15 @@ import RevenueCat
 
 struct RoomPaywallView: View {
     let goal: FocusGoal
+    var activeSessionTitle: String? = nil
+    var activeSessionRestore: (() -> Void)? = nil
+    var onHoldDone: (Bool) -> Void = { _ in }
+    var onUnlocked: () -> Void = {}
     @EnvironmentObject private var account: AccountStore
-    @Environment(\.dismiss) private var dismiss
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
     @Environment(\.dynamicTypeSize) private var dynamicTypeSize
     @State private var accountPresented = false
+    @State private var accountStartInManage = false
     @State private var proAtEntry: Bool?
     @State private var displayedPlans: [ProPlanDisplay] = []
     @State private var restored = false
@@ -39,16 +43,52 @@ struct RoomPaywallView: View {
         NavigationStack {
             Group {
                 if funnelAvailable {
-                    ProFunnelView(goal: goal, plans: plans, preview: preview != nil,
-                                  signIn: { accountPresented = true }, close: { dismiss() })
+                    ProFunnelView(
+                        goal: goal,
+                        plans: plans,
+                        preview: preview != nil,
+                        signIn: { openAccount(manage: true) },
+                        openAccount: { openAccount(manage: false) },
+                        onHoldDone: onHoldDone,
+                        onUnlocked: onUnlocked
+                    )
+                } else if preview == nil && plans.isEmpty && account.offersEnabled && account.isBusy {
+                    ProPage(centered: true) {
+                        ProgressView()
+                            .frame(maxWidth: .infinity)
+                            .accessibilityLabel("Please wait")
+                    } footer: {
+                        PaywallSecondaryActions(
+                            showsSignIn: !account.isSignedIn,
+                            busy: true,
+                            restore: restoreFromFallback,
+                            signIn: { openAccount(manage: true) }
+                        )
+                        PaywallUtilityLinks(
+                            termsURL: account.termsURL,
+                            privacyURL: account.privacyURL,
+                            openAccount: { openAccount(manage: false) }
+                        )
+                    }
                 } else if signInPitch {
                     ProPage(centered: true) {
                         ProInviteHero()
                         Text(roomString(goal.proHeadlineKey)).proHeading().proReveal(delay: 300)
                         ProBenefits().proReveal(delay: 370)
                     } footer: {
-                        Button(roomString("pro_sign_in_plans")) { accountPresented = true }
+                        Button(roomString("pro_sign_in_plans")) { openAccount(manage: true) }
                             .roomPrimaryAction().accessibilityIdentifier("pro.signIn")
+                        PaywallSecondaryActions(
+                            showsSignIn: false,
+                            busy: account.isBusy,
+                            restore: restoreFromFallback,
+                            signIn: { openAccount(manage: true) }
+                        )
+                        PaywallUtilityLinks(
+                            termsURL: account.termsURL,
+                            privacyURL: account.privacyURL,
+                            openAccount: { openAccount(manage: false) }
+                        )
                     }
                 } else {
                     unavailable
@@ -60,18 +100,24 @@ struct RoomPaywallView: View {
                 ToolbarItem(placement: .principal) {
                     Text(roomString("pro_eyebrow")).font(.suit(.subheadline, weight: .bold)).tracking(1.4)
                 }
-                ToolbarItem(placement: .topBarTrailing) {
-                    Button { dismiss() } label: { Image(systemName: "xmark") }
-                        .accessibilityLabel(roomString("pro_close")).accessibilityIdentifier("pro.close")
-                }
             }
             .safeAreaInset(edge: .top, spacing: 0) {
-                if preview != nil {
-                    Text(roomString("pro_preview_note"))
-                        .font(.suit(.subheadline)).foregroundStyle(Color.roomInkSecondary)
-                        .fixedSize(horizontal: false, vertical: true)
-                        .frame(maxWidth: .infinity, alignment: .leading).padding(.horizontal, 24).padding(.bottom, 8)
-                        .background(Color.roomCanvas)
+                if activeSessionRestore != nil || preview != nil {
+                    VStack(spacing: 8) {
+                        if let activeSessionRestore {
+                            PaywallActiveSessionBar(
+                                title: activeSessionTitle ?? roomString("In focus"),
+                                restore: activeSessionRestore
+                            )
+                        }
+                        if preview != nil {
+                            Text(roomString("pro_preview_note"))
+                                .font(.suit(.subheadline)).foregroundStyle(Color.roomInkSecondary)
+                                .fixedSize(horizontal: false, vertical: true)
+                                .frame(maxWidth: .infinity, alignment: .leading).padding(.horizontal, 24).padding(.bottom, 8)
+                        }
+                    }
+                    .background(Color.roomCanvas)
                 }
             }
         }
@@ -82,7 +128,7 @@ struct RoomPaywallView: View {
             updateDisplayPlans()
             loadMissingOffer()
         }) {
-            RoomAccountView(goal: goal).presentationCornerRadius(24)
+            RoomAccountView(goal: goal, startInManage: accountStartInManage).presentationCornerRadius(24)
         }
         .onAppear {
             if proAtEntry == nil { proAtEntry = account.hasProAccess }
@@ -102,6 +148,19 @@ struct RoomPaywallView: View {
                 updateDisplayPlans()
                 if awaitingOffer { loadMissingOffer() }
             }
+        }
+    }
+
+    private func openAccount(manage: Bool) {
+        accountStartInManage = manage
+        accountPresented = true
+    }
+
+    private func restoreFromFallback() {
+        guard account.canMakeStorePurchase else { openAccount(manage: true); return }
+        Task {
+            await account.restorePurchases()
+            restored = account.errorMessage == nil
         }
     }
 
@@ -135,26 +194,25 @@ struct RoomPaywallView: View {
             Text(account.hasProAccess ? roomString("Your Pro subscription is active.") : roomString("Plans aren’t available right now. Try again in a moment."))
                 .font(.suit(.subheadline)).padding(18).frame(maxWidth: .infinity, alignment: .leading)
                 .editorialPanel(Color.roomMint, outlined: false)
-            if account.offersEnabled && !account.hasProAccess {
-                Button("Try again") { Task { await account.loadOfferings(forPaywall: true); updateDisplayPlans() } }.frame(minHeight: 44).disabled(account.isBusy)
-            }
             if let error = account.errorMessage { Text(error).font(.suit(.subheadline)).foregroundStyle(Color.roomInkSecondary) }
             if restored && !account.hasProAccess { Text("No active Pro subscription was found.").font(.suit(.subheadline)) }
-            Button("Restore purchases") {
-                guard account.canMakeStorePurchase else { accountPresented = true; return }
-                Task { await account.restorePurchases(); restored = account.errorMessage == nil }
-            }.frame(minHeight: 44).disabled(account.isBusy)
-            legalLinks
         } footer: {
-            Button(roomString("pro_close")) { dismiss() }.roomPrimaryAction().accessibilityIdentifier("pro.close.footer")
+            if account.offersEnabled && !account.hasProAccess {
+                Button("Try again") { Task { await account.loadOfferings(forPaywall: true); updateDisplayPlans() } }
+                    .roomPrimaryAction().disabled(account.isBusy)
+            }
+            PaywallSecondaryActions(
+                showsSignIn: !account.isSignedIn,
+                busy: account.isBusy,
+                restore: restoreFromFallback,
+                signIn: { openAccount(manage: true) }
+            )
+            PaywallUtilityLinks(
+                termsURL: account.termsURL,
+                privacyURL: account.privacyURL,
+                openAccount: { openAccount(manage: false) }
+            )
         }
-    }
-
-    private var legalLinks: some View {
-        VStack(alignment: .leading, spacing: 0) {
-            if let terms = account.termsURL { Link("Terms of use", destination: terms).frame(minHeight: 44) }
-            if let privacy = account.privacyURL { Link("Privacy policy", destination: privacy).frame(minHeight: 44) }
-        }.foregroundStyle(Color.roomAccent)
     }
 }
 
@@ -165,7 +223,9 @@ private struct ProFunnelView: View {
     let plans: [ProPlanDisplay]
     let preview: Bool
     let signIn: () -> Void
-    let close: () -> Void
+    let openAccount: () -> Void
+    let onHoldDone: (Bool) -> Void
+    let onUnlocked: () -> Void
     @EnvironmentObject private var account: AccountStore
     @EnvironmentObject private var model: AppModel
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
@@ -178,8 +238,22 @@ private struct ProFunnelView: View {
     @State private var forward = true
     @State private var notice: String?
 
-    init(goal: FocusGoal, plans: [ProPlanDisplay], preview: Bool, signIn: @escaping () -> Void, close: @escaping () -> Void) {
-        self.goal = goal; self.plans = plans; self.preview = preview; self.signIn = signIn; self.close = close
+    init(
+        goal: FocusGoal,
+        plans: [ProPlanDisplay],
+        preview: Bool,
+        signIn: @escaping () -> Void,
+        openAccount: @escaping () -> Void,
+        onHoldDone: @escaping (Bool) -> Void,
+        onUnlocked: @escaping () -> Void
+    ) {
+        self.goal = goal
+        self.plans = plans
+        self.preview = preview
+        self.signIn = signIn
+        self.openAccount = openAccount
+        self.onHoldDone = onHoldDone
+        self.onUnlocked = onUnlocked
         _selectedID = State(initialValue: ProPlanMath.defaultPlan(plans)?.id ?? "")
 #if DEBUG
         if preview, let initial = ProPaywallPreview.initialStep {
@@ -256,9 +330,22 @@ private struct ProFunnelView: View {
                 Text(defaultPlan.trialDays.map { roomString("pro_try_title", ProPlanMath.dayLabel($0)) } ?? roomString(goal.proHeadlineKey))
                     .proHeading().proReveal(delay: 300)
                 if defaultPlan.trialDays == nil { ProBenefits().proReveal(delay: 370) }
+                if let error = account.errorMessage { Text(error).font(.suit(.subheadline)).foregroundStyle(Color.roomInkSecondary) }
+                if let notice { Text(notice).font(.suit(.subheadline)).foregroundStyle(Color.roomInkSecondary) }
             } footer: {
                 Button(roomString(defaultPlan.trialDays != nil ? "pro_start_trial" : "pro_see_plans")) { go(index + 1) }
                     .roomPrimaryAction().accessibilityIdentifier("pro.next").proReveal(delay: 440)
+                PaywallSecondaryActions(
+                    showsSignIn: !account.isSignedIn,
+                    busy: preview ? false : account.isBusy,
+                    restore: restore,
+                    signIn: signIn
+                )
+                PaywallUtilityLinks(
+                    termsURL: account.termsURL,
+                    privacyURL: account.privacyURL,
+                    openAccount: openAccount
+                )
             }
         case .remind:
             ProPage(centered: true) {
@@ -292,8 +379,10 @@ private struct ProFunnelView: View {
         case .plans:
             ProPlansPage(plans: plans, selected: selected, busy: preview ? false : account.isBusy,
                          signedInForPurchase: verifiedForStoreAction,
+                         showsSignInAction: !account.isSignedIn,
                          showsSummary: defaultPlan.trialDays != nil,
-                         select: { selectedID = $0.id }, purchase: purchase, restore: restore, notice: notice)
+                         select: { selectedID = $0.id }, purchase: purchase, restore: restore,
+                         signIn: signIn, openAccount: openAccount, notice: notice)
         case .done:
             ProPage(centered: true) {
                 ProDoneHero()
@@ -306,7 +395,7 @@ private struct ProFunnelView: View {
                     if !preview && account.hasProAccess {
                         model.autoArmSavedRuleIfNeeded()
                     }
-                    close()
+                    onUnlocked()
                 }.roomPrimaryAction().accessibilityIdentifier("pro.finish")
             }
         }
@@ -333,14 +422,19 @@ private struct ProFunnelView: View {
         }
 #endif
         if account.hasProAccess {
+            onHoldDone(true)
             trialStarted = false
             withAnimation(reduceMotion ? .linear(duration: 0.1) : ProMotion.enter) { done = true }
             return
         }
         let purchasedPlan = selected
         guard let package = purchasedPlan.package else { return }
+        onHoldDone(true)
         Task {
-            guard let result = await account.purchase(package) else { return }
+            guard let result = await account.purchase(package) else {
+                onHoldDone(false)
+                return
+            }
             trialStarted = result.trialEndsAt != nil
             withAnimation(reduceMotion ? .linear(duration: 0.1) : ProMotion.enter) { done = true }
             if reminder, let days = purchasedPlan.trialDays, days > 1, let expiry = result.trialEndsAt {
@@ -352,10 +446,16 @@ private struct ProFunnelView: View {
     private func restore() {
         guard ProPlanMath.storeAction(verifiedAccount: verifiedForStoreAction, restoring: true) == .restore else { signIn(); return }
         guard !preview else { return }
+        onHoldDone(true)
         Task {
             await account.restorePurchases()
-            if account.hasProAccess { trialStarted = false; withAnimation(reduceMotion ? .linear(duration: 0.1) : ProMotion.enter) { done = true } }
-            else if account.errorMessage == nil { notice = roomString("No active Pro subscription was found.") }
+            if account.hasProAccess {
+                trialStarted = false
+                withAnimation(reduceMotion ? .linear(duration: 0.1) : ProMotion.enter) { done = true }
+            } else {
+                onHoldDone(false)
+                if account.errorMessage == nil { notice = roomString("No active Pro subscription was found.") }
+            }
         }
     }
 }
@@ -369,15 +469,158 @@ enum ProPlansLegalNotice {
     }
 }
 
+private struct PaywallActiveSessionBar: View {
+    let title: String
+    let restore: () -> Void
+    @Environment(\.dynamicTypeSize) private var dynamicTypeSize
+
+    var body: some View {
+        let layout = dynamicTypeSize.isAccessibilitySize
+            ? AnyLayout(VStackLayout(alignment: .leading, spacing: 8))
+            : AnyLayout(HStackLayout(spacing: 12))
+        layout {
+            Label(title, systemImage: "shield.lefthalf.filled")
+                .font(.suit(.subheadline, weight: .semibold))
+                .foregroundStyle(Color.roomInk)
+            if !dynamicTypeSize.isAccessibilitySize { Spacer(minLength: 8) }
+            Button(action: restore) {
+                Label(roomString("Restore access"), systemImage: "arrow.counterclockwise")
+                    .font(.suit(.subheadline, weight: .bold))
+                    .foregroundStyle(Color.roomCanvas)
+                    .padding(.horizontal, 14)
+                    .padding(.vertical, 8)
+                    .frame(minHeight: 44)
+                    .background(Color.roomAccent, in: Capsule())
+            }
+            .buttonStyle(.plain)
+            .accessibilityIdentifier("paywall.restoreAccess")
+        }
+        .padding(.horizontal, 16)
+        .padding(.vertical, 8)
+        .frame(maxWidth: 560, alignment: .leading)
+        .editorialPanel(Color.roomButter, cornerRadius: 16, outlined: false)
+        .padding(.horizontal, 24)
+        .padding(.bottom, 4)
+        .frame(maxWidth: .infinity)
+    }
+}
+
+private struct PaywallSecondaryActions: View {
+    let showsSignIn: Bool
+    let busy: Bool
+    let restore: () -> Void
+    let signIn: () -> Void
+    @Environment(\.dynamicTypeSize) private var dynamicTypeSize
+
+    private var restoreButton: some View {
+        Button("Restore purchases", action: restore)
+            .disabled(busy)
+            .lineLimit(1)
+            .frame(minHeight: 44)
+            .accessibilityIdentifier("pro.restore")
+    }
+
+    private var signInButton: some View {
+        Button(roomString("Already subscribed? Sign in"), action: signIn)
+            .disabled(busy)
+            .lineLimit(1)
+            .frame(minHeight: 44)
+            .accessibilityIdentifier("pro.alreadySubscribed")
+    }
+
+    var body: some View {
+        Group {
+            if dynamicTypeSize.isAccessibilitySize {
+                VStack(alignment: .leading, spacing: 4) {
+                    restoreButton
+                    if showsSignIn { signInButton }
+                }
+                .font(.suit(.body, weight: .medium))
+            } else {
+                ViewThatFits(in: .horizontal) {
+                    HStack(spacing: 16) {
+                        restoreButton
+                        if showsSignIn { signInButton }
+                    }
+                    VStack(alignment: .leading, spacing: 0) {
+                        restoreButton
+                        if showsSignIn { signInButton }
+                    }
+                }
+                .font(.suit(.subheadline, weight: .semibold))
+            }
+        }
+        .foregroundStyle(Color.roomAccent)
+        .frame(maxWidth: .infinity, alignment: .leading)
+    }
+}
+
+private struct PaywallUtilityLinks: View {
+    let termsURL: URL?
+    let privacyURL: URL?
+    let openAccount: () -> Void
+    @Environment(\.dynamicTypeSize) private var dynamicTypeSize
+
+    @ViewBuilder private var termsLink: some View {
+        if let termsURL {
+            Link("Terms of use", destination: termsURL)
+                .lineLimit(1)
+                .frame(minHeight: 44)
+        }
+    }
+
+    @ViewBuilder private var privacyLink: some View {
+        if let privacyURL {
+            Link("Privacy policy", destination: privacyURL)
+                .lineLimit(1)
+                .frame(minHeight: 44)
+        }
+    }
+
+    private var accountButton: some View {
+        Button("Account", action: openAccount)
+            .lineLimit(1)
+            .frame(minHeight: 44)
+            .accessibilityIdentifier("pro.account")
+    }
+
+    var body: some View {
+        Group {
+            if dynamicTypeSize.isAccessibilitySize {
+                VStack(alignment: .leading, spacing: 4) {
+                    termsLink
+                    privacyLink
+                    accountButton
+                }
+                .font(.suit(.body))
+            } else {
+                ViewThatFits(in: .horizontal) {
+                    HStack(spacing: 12) { termsLink; privacyLink; accountButton }
+                    VStack(alignment: .leading, spacing: 0) {
+                        HStack(spacing: 12) { termsLink; privacyLink }
+                        accountButton
+                    }
+                }
+                .font(.custom(Font.suitFace(.regular), size: 13, relativeTo: .footnote))
+            }
+        }
+        .foregroundStyle(Color.roomInkSecondary)
+        .frame(maxWidth: .infinity, alignment: .leading)
+    }
+}
+
 private struct ProPlansPage: View {
     let plans: [ProPlanDisplay]
     let selected: ProPlanDisplay
     let busy: Bool
     let signedInForPurchase: Bool
+    let showsSignInAction: Bool
     let showsSummary: Bool
     let select: (ProPlanDisplay) -> Void
     let purchase: () -> Void
     let restore: () -> Void
+    let signIn: () -> Void
+    let openAccount: () -> Void
     let notice: String?
     @EnvironmentObject private var account: AccountStore
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
@@ -434,7 +677,17 @@ private struct ProPlansPage: View {
                 .font(.custom(Font.suitFace(.regular), size: 13, relativeTo: .footnote))
                 .foregroundStyle(Color.roomInkSecondary)
                 .fixedSize(horizontal: false, vertical: true)
-            links
+            PaywallSecondaryActions(
+                showsSignIn: showsSignInAction,
+                busy: busy,
+                restore: restore,
+                signIn: signIn
+            )
+            PaywallUtilityLinks(
+                termsURL: account.termsURL,
+                privacyURL: account.privacyURL,
+                openAccount: openAccount
+            )
             if let error = account.errorMessage { Text(error).font(.suit(.subheadline)).foregroundStyle(Color.roomInkSecondary) }
             if let notice { Text(notice).font(.suit(.subheadline)).foregroundStyle(Color.roomInkSecondary) }
         } footer: {
@@ -461,40 +714,6 @@ private struct ProPlansPage: View {
             do { try await Task.sleep(for: .milliseconds(700)); burst += 1 } catch { }
         }
         .onChange(of: selected.id) { _, _ in if selected.annual && !reduceMotion { burst += 1 } }
-    }
-
-    @ViewBuilder private var termsLink: some View {
-        if let terms = account.termsURL { Link("Terms of use", destination: terms).lineLimit(1).frame(minHeight: 44) }
-    }
-
-    @ViewBuilder private var privacyLink: some View {
-        if let privacy = account.privacyURL { Link("Privacy policy", destination: privacy).lineLimit(1).frame(minHeight: 44) }
-    }
-
-    private var restoreButton: some View {
-        Button("Restore purchases", action: restore)
-            .disabled(busy).accessibilityIdentifier("pro.restore")
-            .lineLimit(1).frame(minHeight: 44)
-    }
-
-    @ViewBuilder private var links: some View {
-        if dynamicTypeSize.isAccessibilitySize {
-            VStack(alignment: .leading, spacing: 8) { termsLink; privacyLink; restoreButton }
-                .font(.suit(.body))
-                .foregroundStyle(Color.roomAccent)
-        } else {
-            // One row when it fits; long languages wrap to two rows instead of shrinking the text.
-            ViewThatFits(in: .horizontal) {
-                HStack(spacing: 12) { termsLink; privacyLink; restoreButton }
-                VStack(alignment: .leading, spacing: 0) {
-                    HStack(spacing: 12) { termsLink; privacyLink }
-                    restoreButton
-                }
-            }
-            .font(.suit(.subheadline, weight: .medium))
-            .foregroundStyle(Color.roomAccent)
-            .frame(maxWidth: .infinity, alignment: .leading)
-        }
     }
 }
 

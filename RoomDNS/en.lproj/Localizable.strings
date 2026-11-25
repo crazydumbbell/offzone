@@ -125,9 +125,7 @@
 "Make room for calmer evenings." = "Make room for calmer evenings.";
 "Make room for being here." = "Make room for being here.";
 "Make room for yourself." = "Make room for yourself.";
-"Go to home" = "Go to home";
 "Account & plan" = "Account & plan";
-"Explore Pro" = "Explore Pro";
 "Offzone Pro" = "Offzone Pro";
 "Manage subscription" = "Manage subscription";
 "Restore purchases" = "Restore purchases";
@@ -200,8 +198,6 @@
 "Plans & reflections" = "Plans & reflections";
 "Prepare journal export" = "Prepare journal export";
 "Previous week" = "Previous week";
-"Pro lets you write plans and reflections. Your existing entries remain readable, exportable and deletable." = "Pro lets you write plans and reflections. Your existing entries remain readable, exportable and deletable.";
-"Pro purchases are currently unavailable." = "Pro purchases are currently unavailable.";
 "Reflection date" = "Reflection date";
 "Save reflection" = "Save reflection";
 "Save weekly intention" = "Save weekly intention";
@@ -281,7 +277,6 @@
 "Nook Cat gives you a quiet hello." = "Nook Cat gives you a quiet hello.";
 "Nook Cat says hello." = "Nook Cat says hello.";
 "pro_eyebrow" = "OFFZONE PRO";
-"pro_close" = "Close";
 "pro_headline_work" = "Make room for your focus.";
 "pro_headline_rest" = "Make room for calmer evenings.";
 "pro_headline_presence" = "Make room for being here.";
@@ -346,12 +341,8 @@
 "Rule ready. Tap Start focus when you are ready." = "Rule ready. Tap Start focus when you are ready.";
 "Account" = "Account";
 "Already subscribed? Sign in" = "Already subscribed? Sign in";
-"Unlock Offzone Pro" = "Unlock Offzone Pro";
-"Subscribe to activate rules, focus sessions, and Quick focus." = "Subscribe to activate rules, focus sessions, and Quick focus.";
-"See plans" = "See plans";
 "Trigger at a place (optional)" = "Trigger at a place (optional)";
 "Plans aren’t available right now. Try again in a moment." = "Plans aren’t available right now. Try again in a moment.";
-"Your rules stay on this iPhone." = "Your rules stay on this iPhone.";
 "Verify your email to manage your account and purchases." = "Verify your email to manage your account and purchases.";
 "Delete your account? Your local rules stay here. Deleting an account does not cancel an App Store subscription." = "Delete your account? Your local rules stay here. Deleting an account does not cancel an App Store subscription.";
 "Sign in to Offzone" = "Sign in to Offzone";
@@ -388,3 +379,5 @@
 "This subscription is already linked to another account. Restore purchases on the original account." = "This subscription is already linked to another account. Restore purchases on the original account.";
 "Subscription service is unavailable right now. Please try again." = "Subscription service is unavailable right now. Please try again.";
 "journal_outcome_try_again" = "Try again";
+"Manage account" = "Manage account";
+"No active subscription." = "No active subscription.";

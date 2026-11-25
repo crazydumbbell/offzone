@@ -98,10 +98,9 @@ class MigrationUiTest {
             waitFor("Cleared rule store") { FocusController.ruleStore.rules.value.isEmpty() }
             context.startActivity(
                 Intent(context, MainActivity::class.java)
-                    .putExtra(ProAccessGate.EXTRA_DEBUG_PRO, false)
+                    .putExtra(ProAccessGate.EXTRA_DEBUG_PRO, true)
                     .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK),
             )
-            click(label(R.string.onboarding_start))
             scrollTo(label(R.string.editor_apps_title))
             click(label(R.string.editor_apps_choose))
             click("Focus test app"); click(label(R.string.done))
@@ -165,16 +164,10 @@ class MigrationUiTest {
             assertEquals(setOf(instrumentation.context.packageName), saved.packages)
             assertEquals(37.5665, saved.latitude, 0.0001); assertEquals(126.9780, saved.longitude, 0.0001)
             assertNull("Saving is not applying", FocusController.state.value.appliedRule)
-            // First-run save sends non-Pro user to paywall; closing lands on Locked Home.
-            clickSelector(By.desc(label(R.string.pro_close)), label(R.string.pro_close))
-            scrollTo(label(R.string.home_unlock_pro))
-
-            // Switch to Pro debug state for apply/edit/unapplied checks.
-            context.startActivity(
-                Intent(context, MainActivity::class.java)
-                    .putExtra(ProAccessGate.EXTRA_DEBUG_PRO, true)
-                    .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK),
-            )
+            // First-run save when accessibility is disconnected lands on setup; Not now continues to Home.
+            if (device.wait(Until.hasObject(By.text(label(R.string.not_now))), 3_000)) {
+                click(label(R.string.not_now))
+            }
             click(label(R.string.m_apply))
             waitFor("Explicit apply") { FocusController.state.value.appliedRule?.id == saved.id }
             assertNull("Applying is not starting focus", FocusController.state.value.session)

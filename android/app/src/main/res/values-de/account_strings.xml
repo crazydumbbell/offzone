@@ -2,7 +2,6 @@
     <string name="account_title">Konto &amp; Abo</string>
     <string name="account_done">Fertig</string>
     <string name="account_free_space">Kein aktives Pro-Abo</string>
-    <string name="account_local">Regeln, App-Auswahl und Orte bleiben auf diesem Gerät.</string>
     <string name="account_unavailable">Kontodienste sind derzeit nicht verfügbar.</string>
     <string name="account_identity_error">Dieses Konto konnte nicht bestätigt werden. Bitte versuche es erneut.</string>
     <string name="account_verify_required">Bestätige deine E-Mail-Adresse, um dein Konto und deine Käufe zu verwalten.</string>
@@ -30,7 +29,6 @@
     <string name="account_link_apple">Apple verknüpfen</string>
     <string name="account_link_google">Google verknüpfen</string>
     <string name="account_link_email">E-Mail und Passwort verknüpfen</string>
-    <string name="account_plan">Dein Plan</string>
     <string name="account_journal_local">Journaleinträge bleiben auf diesem Gerät und sind vom Backup ausgeschlossen. Exportiere sie vor einem Gerätewechsel oder dem Löschen von Offzone.</string>
     <string name="account_pro_active">Dein Pro-Abo ist aktiv.</string>
     <string name="account_no_purchase">Kein aktives Pro-Abo gefunden.</string>
@@ -39,7 +37,7 @@
     <string name="account_subscribe">Abonnieren</string>
     <string name="account_restore">Käufe wiederherstellen</string>
     <string name="account_manage">Abo verwalten</string>
-    <string name="account_upgrade_pro">Auf Offzone Pro upgraden</string>
+    <string name="account_manage_account">Konto verwalten</string>
     <string name="account_signout">Abmelden</string>
     <string name="account_delete">Konto löschen</string>
     <string name="account_delete_warning">Konto löschen? Lokale Regeln und Journaleinträge bleiben erhalten. Das Löschen deines Kontos kündigt keine Abos. Kündige separat im jeweiligen Store. Bestätige zum Löschen deine Identität.</string>

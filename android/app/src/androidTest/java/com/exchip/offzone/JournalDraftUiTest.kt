@@ -33,7 +33,7 @@ class JournalDraftUiTest {
         fun text(id: Int) = context.getString(id)
         ActivityScenario.launch(MainActivity::class.java).use { scenario ->
             scenario.onActivity { activity ->
-                activity.setContent { MaterialTheme { JournalScreen(true, {}, { exited.set(true) }) } }
+                activity.setContent { MaterialTheme { JournalScreen(true, { exited.set(true) }) } }
             }
             assertTrue(device.wait(Until.hasObject(By.text(text(R.string.journal_title))), 5_000))
             repeat(5) {
@@ -75,9 +75,9 @@ class JournalDraftUiTest {
             assertTrue(exited.get())
             if (original == null) assertFalse(journal.exists()) else assertArrayEquals(original, journal.readBytes())
             scenario.onActivity { activity ->
-                activity.setContent { MaterialTheme { JournalScreen(false, {}, {}) } }
+                activity.setContent { MaterialTheme { JournalScreen(false, {}) } }
             }
-            assertTrue(device.wait(Until.hasObject(By.text(text(R.string.audit_journal_read_only))), 3_000))
+            assertTrue(device.wait(Until.hasObject(By.text(text(R.string.journal_plan_empty))), 3_000))
             repeat(4) {
                 assertFalse("Read-only journal must not show disabled editors", device.hasObject(By.clazz("android.widget.EditText")))
                 device.swipe(device.displayWidth / 2, device.displayHeight * 4 / 5, device.displayWidth / 2, device.displayHeight / 3, 40)
@@ -100,7 +100,7 @@ class JournalDraftUiTest {
         val callbacks = object : Application.ActivityLifecycleCallbacks {
             override fun onActivityPostCreated(activity: Activity, state: Bundle?) {
                 if (activity is MainActivity) activity.setContent {
-                    MaterialTheme { JournalScreen(true, {}, {}) }
+                    MaterialTheme { JournalScreen(true, {}) }
                 }
             }
             override fun onActivityCreated(activity: Activity, state: Bundle?) {}

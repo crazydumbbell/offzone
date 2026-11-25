@@ -125,9 +125,7 @@
 "Make room for calmer evenings." = "Haz espacio para tardes más tranquilas.";
 "Make room for being here." = "Haz espacio para estar presente.";
 "Make room for yourself." = "Haz espacio para ti.";
-"Go to home" = "Ir al inicio";
 "Account & plan" = "Cuenta y plan";
-"Explore Pro" = "Explorar Pro";
 "Offzone Pro" = "Offzone Pro";
 "Manage subscription" = "Gestionar suscripción";
 "Restore purchases" = "Restaurar compras";
@@ -200,8 +198,6 @@
 "Plans & reflections" = "Planes y reflexiones";
 "Prepare journal export" = "Preparar exportación del diario";
 "Previous week" = "Semana anterior";
-"Pro lets you write plans and reflections. Your existing entries remain readable, exportable and deletable." = "Pro te permite escribir planes y reflexiones. Tus entradas existentes se pueden seguir leyendo, exportando y eliminando.";
-"Pro purchases are currently unavailable." = "Las compras de Pro no están disponibles ahora mismo.";
 "Reflection date" = "Fecha de la reflexión";
 "Save reflection" = "Guardar reflexión";
 "Save weekly intention" = "Guardar propósito semanal";
@@ -281,7 +277,6 @@
 "Nook Cat gives you a quiet hello." = "Nook Cat te da un saludo tranquilo.";
 "Nook Cat says hello." = "Nook Cat te saluda.";
 "pro_eyebrow" = "OFFZONE PRO";
-"pro_close" = "Cerrar";
 "pro_headline_work" = "Haz espacio para tu concentración.";
 "pro_headline_rest" = "Haz espacio para tardes más tranquilas.";
 "pro_headline_presence" = "Haz espacio para estar presente.";
@@ -346,12 +341,8 @@
 "Rule ready. Tap Start focus when you are ready." = "Regla lista. Toca Iniciar concentración cuando quieras.";
 "Account" = "Cuenta";
 "Already subscribed? Sign in" = "¿Ya tienes suscripción? Inicia sesión";
-"Unlock Offzone Pro" = "Desbloquear Offzone Pro";
-"Subscribe to activate rules, focus sessions, and Quick focus." = "Suscríbete para activar reglas, sesiones de concentración y Concentración rápida.";
-"See plans" = "Ver planes";
 "Trigger at a place (optional)" = "Activar en un lugar (opcional)";
 "Plans aren’t available right now. Try again in a moment." = "Los planes no están disponibles ahora mismo. Inténtalo en un momento.";
-"Your rules stay on this iPhone." = "Tus reglas se quedan en este iPhone.";
 "Verify your email to manage your account and purchases." = "Verifica tu correo para gestionar tu cuenta y tus compras.";
 "Delete your account? Your local rules stay here. Deleting an account does not cancel an App Store subscription." = "¿Eliminar tu cuenta? Tus reglas locales se quedan aquí. Eliminar una cuenta no cancela una suscripción de App Store.";
 "Sign in to Offzone" = "Iniciar sesión en Offzone";
@@ -388,3 +379,5 @@
 "This subscription is already linked to another account. Restore purchases on the original account." = "Esta suscripción ya está vinculada a otra cuenta. Restaura las compras en la cuenta original.";
 "Subscription service is unavailable right now. Please try again." = "El servicio de suscripciones no está disponible ahora mismo. Inténtalo de nuevo.";
 "journal_outcome_try_again" = "Intentar de nuevo";
+"Manage account" = "Gestionar cuenta";
+"No active subscription." = "No hay una suscripción activa.";

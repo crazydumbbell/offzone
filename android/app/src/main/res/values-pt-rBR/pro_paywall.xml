@@ -1,6 +1,4 @@
 <resources>
-    <string name="pro_eyebrow">OFFZONE PRO</string>
-    <string name="pro_close">Fechar</string>
     <string name="pro_headline_work">Abra espaço para o seu foco.</string>
     <string name="pro_headline_rest">Abra espaço para noites mais calmas.</string>
     <string name="pro_headline_presence">Abra espaço para estar presente.</string>
@@ -8,7 +6,6 @@
     <string name="pro_benefit_plan">Regras de foco por horário e local opcional de 150 m.</string>
     <string name="pro_benefit_journal">Foco rápido de 15, 25 ou 50 min sempre que precisar.</string>
     <string name="pro_benefit_review">Planos semanais e reflexões diárias salvos apenas no seu aparelho.</string>
-    <string name="pro_view_plans">Ver planos e conta</string>
     <string name="pro_tomorrow">Amanhã</string>
     <string name="pro_preview_note">Prévia · planos de exemplo, nada é cobrado</string>
     <string name="pro_try_title">Experimente o Offzone Pro grátis por %1$s.</string>

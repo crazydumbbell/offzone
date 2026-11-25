@@ -1,6 +1,4 @@
 <resources>
-    <string name="pro_eyebrow">OFFZONE PRO</string>
-    <string name="pro_close">Schließen</string>
     <string name="pro_headline_work">Schaff Raum für deinen Fokus.</string>
     <string name="pro_headline_rest">Schaff Raum für ruhigere Abende.</string>
     <string name="pro_headline_presence">Schaff Raum für den Moment.</string>
@@ -8,7 +6,6 @@
     <string name="pro_benefit_plan">Fokusregeln nach Zeitplan und optionalem 150-m-Ort.</string>
     <string name="pro_benefit_journal">Schnellfokus für 15, 25 oder 50 Min., wann immer du willst.</string>
     <string name="pro_benefit_review">Private Wochenpläne und tägliche Reflexionen direkt auf deinem Gerät.</string>
-    <string name="pro_view_plans">Pläne und Konto ansehen</string>
     <string name="pro_tomorrow">Morgen</string>
     <plurals name="pro_days">
         <item quantity="one">%d Tag</item>

@@ -104,11 +104,15 @@ class StoreScreenshotTest {
             waitFor("Cleared rule store") { FocusController.ruleStore.rules.value.isEmpty() }
             context.startActivity(
                 Intent(context, MainActivity::class.java)
-                    .putExtra(ProAccessGate.EXTRA_DEBUG_PRO, true)
+                    .putExtra(ProAccessGate.EXTRA_DEBUG_PRO, false)
                     .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK),
             )
             scrollTo(label(R.string.onboarding_start)); screenshot("welcome")
-            click(label(R.string.onboarding_start))
+            context.startActivity(
+                Intent(context, MainActivity::class.java)
+                    .putExtra(ProAccessGate.EXTRA_DEBUG_PRO, true)
+                    .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK),
+            )
             scrollTo(label(R.string.editor_apps_title))
             click(label(R.string.editor_apps_choose))
             click("Chrome"); click(label(R.string.done))

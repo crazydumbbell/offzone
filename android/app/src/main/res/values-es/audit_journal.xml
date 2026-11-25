@@ -1,5 +1,4 @@
 <resources>
-    <string name="audit_journal_read_only">Tus planes y reflexiones guardados siguen disponibles para leer, exportar o eliminar. Las nuevas entradas requieren Pro.</string>
     <string name="audit_journal_unsaved">Cambios sin guardar</string>
     <string name="audit_journal_discard_message">Guarda los cambios antes de salir o descártalos para continuar.</string>
     <string name="audit_journal_discard">Descartar cambios</string>
@@ -7,6 +6,4 @@
     <string name="audit_journal_delete_entry">¿Eliminar esta entrada?</string>
     <string name="audit_journal_delete_message">Esta acción no se puede deshacer.</string>
     <string name="audit_journal_delete">Eliminar</string>
-    <string name="audit_pro_unavailable_title">Pro aún no está disponible</string>
-    <string name="audit_pro_unavailable_body">Los planes no están disponibles ahora mismo. Si ya te suscribiste a Pro, restaura tu compra abajo.</string>
 </resources>

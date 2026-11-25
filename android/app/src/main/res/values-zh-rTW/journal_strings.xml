@@ -3,7 +3,6 @@
     <string name="journal_title">計畫與回顧</string>
     <string name="journal_intro">一點目標，一點回顧。</string>
     <string name="journal_local">僅儲存在此裝置上，且不包含於備份中。更換手機或刪除 Offzone 前請先匯出。</string>
-    <string name="journal_offer">探索 Pro</string>
     <string name="journal_corrupt">無法讀取你的日誌，原始檔案並未變動。請匯出複本或刪除裝置上的資料以重新開始。</string>
     <string name="journal_back">返回</string>
     <string name="journal_previous">上一週</string>

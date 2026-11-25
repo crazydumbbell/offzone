@@ -3,7 +3,6 @@
     <string name="account_title">アカウントとプラン</string>
     <string name="account_done">完了</string>
     <string name="account_free_space">有効なProサブスクリプションはありません</string>
-    <string name="account_local">ルール、Appの選択、場所はすべてこの端末内に保存されます。</string>
     <string name="account_unavailable">現在アカウントサービスを利用できません。</string>
     <string name="account_identity_error">アカウントを確認できませんでした。もう一度お試しください。</string>
     <string name="account_verify_required">アカウントと購入内容を管理するにはメールアドレスを認証してください。</string>
@@ -31,7 +30,6 @@
     <string name="account_link_apple">Appleを連携</string>
     <string name="account_link_google">Googleを連携</string>
     <string name="account_link_email">メールとパスワードを連携</string>
-    <string name="account_plan">現在のプラン</string>
     <string name="account_journal_local">ジャーナルの記録はこの端末のみに保存され、バックアップ対象外です。機種変更やOffzoneのアンインストール前に書き出してください。</string>
     <string name="account_pro_active">Proサブスクリプションは有効です。</string>
     <string name="account_no_purchase">有効なProサブスクリプションが見つかりませんでした。</string>
@@ -40,7 +38,7 @@
     <string name="account_subscribe">登録する</string>
     <string name="account_restore">購入を復元</string>
     <string name="account_manage">サブスクリプションを管理</string>
-    <string name="account_upgrade_pro">Offzone Proにアップグレード</string>
+    <string name="account_manage_account">アカウントを管理</string>
     <string name="account_signout">サインアウト</string>
     <string name="account_delete">アカウントを削除</string>
     <string name="account_delete_warning">アカウントを削除しますか？端末内のルールとジャーナル記録は残ります。アカウントを削除してもサブスクリプションは解約されません。契約したストアで別途解約してください。削除するには本人確認が必要です。</string>

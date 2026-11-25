@@ -1,6 +1,4 @@
 <resources>
-    <string name="pro_eyebrow">OFFZONE PRO</string>
-    <string name="pro_close">Close</string>
     <string name="pro_headline_work">Make room for your focus.</string>
     <string name="pro_headline_rest">Make room for calmer evenings.</string>
     <string name="pro_headline_presence">Make room for being here.</string>
@@ -8,7 +6,6 @@
     <string name="pro_benefit_plan">Schedule and optional 150 m place focus rules.</string>
     <string name="pro_benefit_journal">15, 25, or 50 min Quick focus whenever you need it.</string>
     <string name="pro_benefit_review">Private weekly plans and daily reflections on your device.</string>
-    <string name="pro_view_plans">View plans and account</string>
     <string name="pro_tomorrow">Tomorrow</string>
     <plurals name="pro_days">
         <item quantity="one">%d day</item>

@@ -103,6 +103,59 @@ final class ProPlansTests: XCTestCase {
         // Safety invariant: active session restore must never depend on Pro access.
         XCTAssertFalse(ProAccessGate.canRestoreActiveSession(hasActiveSession: false))
         XCTAssertTrue(ProAccessGate.canRestoreActiveSession(hasActiveSession: true))
+        XCTAssertFalse(HardPaywallPolicy.showsPaywallRestoreAccess(hasActiveSession: false))
+        XCTAssertTrue(HardPaywallPolicy.showsPaywallRestoreAccess(hasActiveSession: true))
+    }
+
+    func testHardPaywallFlowBlocksNonProAndRoutesUnlockedUsers() {
+        // Fresh user without Pro starts on Welcome, then enters Paywall on Get started.
+        XCTAssertEqual(
+            HardPaywallPolicy.rootGate(hasProAccess: false, shouldShowWelcome: true, welcomeDismissed: false),
+            .welcome
+        )
+        XCTAssertEqual(
+            HardPaywallPolicy.rootGate(hasProAccess: false, shouldShowWelcome: true, welcomeDismissed: true),
+            .paywall
+        )
+
+        // Existing user without Pro is covered immediately by Paywall.
+        XCTAssertEqual(
+            HardPaywallPolicy.rootGate(hasProAccess: false, shouldShowWelcome: false, welcomeDismissed: false),
+            .paywall
+        )
+
+        // Pro access unlocks the app unless holding the purchase confirmation or previewing the paywall.
+        XCTAssertEqual(
+            HardPaywallPolicy.rootGate(hasProAccess: true, shouldShowWelcome: true, welcomeDismissed: false),
+            .unlocked
+        )
+        XCTAssertEqual(
+            HardPaywallPolicy.rootGate(hasProAccess: true, shouldShowWelcome: false, welcomeDismissed: true, holdingPaywallDone: true),
+            .paywall
+        )
+        XCTAssertEqual(
+            HardPaywallPolicy.rootGate(hasProAccess: true, shouldShowWelcome: false, welcomeDismissed: false, previewPaywall: true),
+            .paywall
+        )
+
+        // Post-unlock routing: fresh users enter setup (permission -> targets), existing users enter Home.
+        XCTAssertEqual(
+            HardPaywallPolicy.postUnlockStep(onboardingCompleted: false, hasRules: false, storageError: false, screenTimeAuthorized: false),
+            .permission
+        )
+        XCTAssertEqual(
+            HardPaywallPolicy.postUnlockStep(onboardingCompleted: false, hasRules: false, storageError: false, screenTimeAuthorized: true),
+            .targets
+        )
+        XCTAssertNil(
+            HardPaywallPolicy.postUnlockStep(onboardingCompleted: true, hasRules: false, storageError: false, screenTimeAuthorized: false)
+        )
+        XCTAssertNil(
+            HardPaywallPolicy.postUnlockStep(onboardingCompleted: false, hasRules: true, storageError: false, screenTimeAuthorized: false)
+        )
+        XCTAssertNil(
+            HardPaywallPolicy.postUnlockStep(onboardingCompleted: false, hasRules: false, storageError: true, screenTimeAuthorized: false)
+        )
     }
 
     func testPaywallLegalNoticeCombinesParagraphsVerbatimIntoSingleBlock() {

@@ -19,7 +19,7 @@ import org.junit.runner.RunWith
 
 @RunWith(AndroidJUnit4::class)
 class ProPaywallGateUiTest {
-    @Test fun lockedHomeGatesActionsWhileActiveSessionRestoreRemainsFree() {
+    @Test fun hardPaywallCoversAppWhileActiveSessionRestoreRemainsFree() {
         assumeTrue("Isolated emulator only", Build.MODEL.contains("sdk") || Build.FINGERPRINT.contains("generic"))
         val instrumentation = InstrumentationRegistry.getInstrumentation()
         val context = instrumentation.targetContext
@@ -82,35 +82,23 @@ class ProPaywallGateUiTest {
                     .putExtra(ProAccessGate.EXTRA_DEBUG_PRO, false)
                     .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK),
             )
-            awaitSelector(By.text(context.getString(R.string.home_locked_title)), "locked title")
-            awaitSelector(By.text(context.getString(R.string.home_unlock_pro)), "unlock cta")
-            assertFalse("Idle locked home must never show Restore access", visible(By.text(context.getString(R.string.restore))))
+            awaitSelector(By.text(context.getString(R.string.onboarding_sign_in)), "paywall sign in")
+            awaitSelector(By.text(context.getString(R.string.account_restore)), "paywall restore")
+            assertFalse("Non-Pro must never reach Home", visible(By.text(context.getString(R.string.home_your_space))))
+            assertFalse("Idle paywall must never show Restore access", visible(By.text(context.getString(R.string.restore))))
 
-            // Tapping Apply on a saved rule without Pro opens the Paywall instead of activating.
-            click(By.text(context.getString(R.string.m_apply)), "apply")
-            awaitSelector(By.desc(context.getString(R.string.pro_close)), "paywall close")
-            assertNull(FocusController.state.value.appliedRule)
-            click(By.desc(context.getString(R.string.pro_close)), "paywall close")
-            awaitSelector(By.text(context.getString(R.string.home_unlock_pro)), "unlock cta")
-
-            // Safety Invariant: an active focus session ALWAYS shows Restore access even without Pro.
+            // Safety Invariant: an active focus session ALWAYS shows Restore access over the paywall even without Pro.
             instrumentation.runOnMainSync {
                 FocusController.connect()
                 assertTrue(FocusController.start(setOf(instrumentation.context.packageName), 15))
             }
-            repeat(3) {
-                if (!visible(By.text(context.getString(R.string.restore)))) {
-                    device.swipe(device.displayWidth / 2, device.displayHeight / 3,
-                        device.displayWidth / 2, device.displayHeight * 4 / 5, 40)
-                    device.waitForIdle(1_000)
-                }
-            }
             awaitSelector(By.text(context.getString(R.string.home_in_focus)), "in focus")
             awaitSelector(By.text(context.getString(R.string.restore)), "restore access")
             click(By.text(context.getString(R.string.restore)), "restore access")
-            awaitSelector(By.text(context.getString(R.string.home_unlock_pro)), "locked home after restore")
+            awaitSelector(By.text(context.getString(R.string.onboarding_sign_in)), "paywall after restore")
             assertNull(FocusController.state.value.session)
-            assertFalse("Idle home must hide Restore access after stopping", visible(By.text(context.getString(R.string.restore))))
+            assertFalse("Idle paywall must hide Restore access after stopping", visible(By.text(context.getString(R.string.restore))))
+            assertFalse("Stopping session without Pro must remain on paywall", visible(By.text(context.getString(R.string.home_your_space))))
         } finally {
             ProAccessGate.debugProOverride = null
             instrumentation.runOnMainSync {

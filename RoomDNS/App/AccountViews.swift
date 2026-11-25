@@ -12,14 +12,99 @@ enum AccountViewPolicy {
         guard let statusMessage, !statusMessage.isEmpty else { return false }
         return statusMessage != restoreStatusMessage
     }
+
+    static func showsManageSubscriptionOnOverview(hasProAccess: Bool) -> Bool {
+        hasProAccess
+    }
+
+    static func subscriptionStatusKey(hasProAccess: Bool) -> String {
+        hasProAccess ? "Your Pro subscription is active." : "No active subscription."
+    }
+
+    static func showsJournalLink(hasProAccess: Bool, hasLocalJournalFile: Bool) -> Bool {
+        hasProAccess || hasLocalJournalFile
+    }
+}
+
+private enum AccountRoute: Hashable {
+    case manage
 }
 
 struct RoomAccountView: View {
     let goal: FocusGoal
+    var startInManage = false
     @EnvironmentObject private var account: AccountStore
     @Environment(\.dismiss) private var dismiss
+    @State private var path: [AccountRoute]
+
+    init(goal: FocusGoal, startInManage: Bool = false) {
+        self.goal = goal
+        self.startInManage = startInManage
+        _path = State(initialValue: startInManage ? [.manage] : [])
+    }
+
+    var body: some View {
+        NavigationStack(path: $path) {
+            ScrollView {
+                VStack(alignment: .leading, spacing: 24) {
+                    RoomSpirit(state: .welcome)
+                        .frame(height: 132)
+                        .frame(maxWidth: .infinity)
+                        .background(Color.roomButter)
+                        .clipShape(RoundedRectangle(cornerRadius: 24))
+                    VStack(alignment: .leading, spacing: 8) {
+                        Text(account.hasProAccess ? roomString("Offzone Pro") : roomString("Account"))
+                            .font(.suit(.largeTitle, weight: .bold))
+                        Text(roomString(AccountViewPolicy.subscriptionStatusKey(hasProAccess: account.hasProAccess)))
+                            .font(.suit(.body))
+                            .foregroundStyle(Color.roomInkSecondary)
+                            .fixedSize(horizontal: false, vertical: true)
+                            .accessibilityIdentifier("account.subscriptionStatus")
+                    }
+                    if AccountViewPolicy.showsManageSubscriptionOnOverview(hasProAccess: account.hasProAccess) {
+                        Link(destination: URL(string: "https://apps.apple.com/account/subscriptions")!) {
+                            Text("Manage subscription")
+                                .font(.suit(.body, weight: .semibold))
+                                .foregroundStyle(Color.roomCanvas)
+                                .padding(.horizontal, 24).padding(.vertical, 12)
+                                .frame(maxWidth: .infinity, minHeight: 56)
+                                .background(Color.roomAccent, in: Capsule())
+                        }
+                        .accessibilityIdentifier("account.manageSubscription")
+                    }
+                    NavigationLink(value: AccountRoute.manage) {
+                        HStack(spacing: 6) {
+                            Text("Manage account")
+                            Image(systemName: "chevron.right")
+                                .font(.suit(.caption, weight: .semibold))
+                                .accessibilityHidden(true)
+                        }
+                        .font(.suit(.subheadline, weight: .medium))
+                        .foregroundStyle(Color.roomAccent)
+                        .frame(minHeight: 44)
+                    }
+                    .accessibilityIdentifier("account.manageAccount")
+                }
+                .font(.suit(.body)).foregroundStyle(Color.roomInk)
+                .padding(24).frame(maxWidth: 560, alignment: .leading).frame(maxWidth: .infinity)
+            }
+            .background(Color.roomCanvas)
+            .navigationTitle("Account & plan").navigationBarTitleDisplayMode(.inline)
+            .toolbar { ToolbarItem(placement: .confirmationAction) { Button("Done") { dismiss() } } }
+            .navigationDestination(for: AccountRoute.self) { _ in
+                AccountManageView(goal: goal, dismissSheet: { dismiss() })
+            }
+        }
+        .tint(Color.roomAction).preferredColorScheme(.light)
+        .task { await account.refresh(); await account.loadOfferings() }
+    }
+}
+
+private struct AccountManageView: View {
+    let goal: FocusGoal
+    let dismissSheet: () -> Void
+    @EnvironmentObject private var account: AccountStore
     @State private var deleting = false
-    @State private var paywallPresented = false
     @State private var journalPresented = false
     @State private var restored = false
     @State private var signInExpanded = false
@@ -32,148 +117,145 @@ struct RoomAccountView: View {
             : roomString("No active Pro subscription was found.")
     }
 
+    private var showsJournalLink: Bool {
+        AccountViewPolicy.showsJournalLink(
+            hasProAccess: account.hasProAccess,
+            hasLocalJournalFile: FileManager.default.fileExists(atPath: ProJournalStore.defaultURL.path)
+        )
+    }
+
     var body: some View {
-        NavigationStack {
-            ScrollView {
-                VStack(alignment: .leading, spacing: 24) {
-                    RoomSpirit(state: .welcome).frame(height: 132).frame(maxWidth: .infinity)
-                        .background(Color.roomButter).clipShape(RoundedRectangle(cornerRadius: 24))
-                    Text(account.hasProAccess ? roomString("Offzone Pro") : roomString("Account"))
-                        .font(.suit(.largeTitle, weight: .bold))
-                    Text("Your rules stay on this iPhone.")
-                        .foregroundStyle(Color.roomInkSecondary)
+        ScrollView {
+            VStack(alignment: .leading, spacing: 20) {
+                if showsJournalLink {
                     Button { journalPresented = true } label: {
                         Label("Plan & reflect", systemImage: "book.closed")
-                    }.frame(minHeight: 44)
+                    }
+                    .frame(minHeight: 44)
+                    .accessibilityIdentifier("account.manage.journal")
                     Divider().overlay(Color.roomLine)
-                    if account.isSignedIn {
-                        Label(account.accountName, systemImage: "person.crop.circle.fill")
-                            .font(.suit(.headline))
-                        if account.hasProAccess {
-                            Link("Manage subscription", destination: URL(string: "https://apps.apple.com/account/subscriptions")!)
-                                .foregroundStyle(Color.roomAccent).frame(minHeight: 44)
-                        } else if account.offersEnabled {
-                            Button("Explore Pro") { paywallPresented = true }.roomPrimaryAction()
-                        }
-                        if account.purchasesConfigured {
-                            Button("Restore purchases") {
-                                Task { await account.restorePurchases(); restored = account.errorMessage == nil }
-                            }.frame(minHeight: 44).disabled(account.isBusy)
-                            if let restoreStatusMessage {
-                                Text(restoreStatusMessage)
-                                    .font(.suit(.subheadline))
-                            }
-                        }
-                        if account.providerIDs.contains("password") && !account.emailVerified {
-                            Text(account.needsEmailVerification
-                                 ? roomString("Verify your email to manage your account and purchases.")
-                                 : roomString("Verify your linked email address.")).font(.suit(.subheadline))
-                            Button("Resend verification email") { Task { await account.sendEmailVerification() } }
-                                .frame(minHeight: 44).disabled(account.isBusy)
-                            Button("I verified my email") { Task { await account.reloadEmailVerification() } }
-                                .frame(minHeight: 44).disabled(account.isBusy)
-                        }
-                        if !account.needsEmailVerification {
-                            DisclosureGroup("Linked sign-in methods") {
-                                Text("Link another sign-in method to keep this account and its purchases.")
-                                    .font(.suit(.subheadline)).foregroundStyle(Color.roomInkSecondary).padding(.vertical, 8)
-                                if account.providerIDs.contains("apple.com") {
-                                    Label("Apple linked", systemImage: "checkmark")
-                                } else {
-                                    appleButton(deleting: false, linking: true)
-                                }
-                                if account.providerIDs.contains("google.com") {
-                                    Label("Google linked", systemImage: "checkmark")
-                                } else if account.googleSignInConfigured {
-                                    GoogleSignInButton { Task { await account.signInWithGoogle(linking: true) } }
-                                        .disabled(account.isBusy)
-                                }
-                                if account.providerIDs.contains("password") {
-                                    Label("Email linked", systemImage: "checkmark")
-                                    Button("Reset password") { Task { await account.sendPasswordReset(email: account.email) } }
-                                        .frame(minHeight: 44).disabled(account.isBusy)
-                                } else {
-                                    Button("Link email and password") { emailFlow = .link }
-                                        .frame(minHeight: 44).disabled(account.isBusy)
-                                }
-                            }
-                        }
-                        Button("Sign out") { Task { await account.signOut() } }
-                            .frame(minHeight: 44).disabled(account.isBusy)
-                        if deleting {
-                            Text("Delete your account? Your local rules stay here. Deleting an account does not cancel an App Store subscription.")
+                }
+                if account.isSignedIn {
+                    Label(account.accountName, systemImage: "person.crop.circle.fill")
+                        .font(.suit(.headline))
+                    if account.purchasesConfigured {
+                        Button("Restore purchases") {
+                            Task { await account.restorePurchases(); restored = account.errorMessage == nil }
+                        }.frame(minHeight: 44).disabled(account.isBusy)
+                        if let restoreStatusMessage {
+                            Text(restoreStatusMessage)
                                 .font(.suit(.subheadline))
-                            if !account.hasProAccess {
-                                Link("Manage subscription", destination: URL(string: "https://apps.apple.com/account/subscriptions")!)
-                                    .foregroundStyle(Color.roomAccent).frame(minHeight: 44)
-                            }
+                        }
+                    }
+                    if account.providerIDs.contains("password") && !account.emailVerified {
+                        Text(account.needsEmailVerification
+                             ? roomString("Verify your email to manage your account and purchases.")
+                             : roomString("Verify your linked email address.")).font(.suit(.subheadline))
+                        Button("Resend verification email") { Task { await account.sendEmailVerification() } }
+                            .frame(minHeight: 44).disabled(account.isBusy)
+                        Button("I verified my email") { Task { await account.reloadEmailVerification() } }
+                            .frame(minHeight: 44).disabled(account.isBusy)
+                    }
+                    if !account.needsEmailVerification {
+                        DisclosureGroup("Linked sign-in methods") {
+                            Text("Link another sign-in method to keep this account and its purchases.")
+                                .font(.suit(.subheadline)).foregroundStyle(Color.roomInkSecondary).padding(.vertical, 8)
                             if account.providerIDs.contains("apple.com") {
-                                Text("Confirm with Apple to delete your account.").font(.suit(.headline))
-                                appleButton(deleting: true)
-                            } else if account.providerIDs.contains("google.com") {
-                                Text("Confirm with Google to delete your account.").font(.suit(.headline))
-                                GoogleSignInButton { Task { await account.deleteAccountWithGoogle() } }
+                                Label("Apple linked", systemImage: "checkmark")
+                            } else {
+                                appleButton(deleting: false, linking: true)
+                            }
+                            if account.providerIDs.contains("google.com") {
+                                Label("Google linked", systemImage: "checkmark")
+                            } else if account.googleSignInConfigured {
+                                GoogleSignInButton { Task { await account.signInWithGoogle(linking: true) } }
                                     .disabled(account.isBusy)
-                            } else if account.providerIDs.contains("password") {
-                                Button("Confirm with password") { emailFlow = .delete }
+                            }
+                            if account.providerIDs.contains("password") {
+                                Label("Email linked", systemImage: "checkmark")
+                                Button("Reset password") { Task { await account.sendPasswordReset(email: account.email) } }
+                                    .frame(minHeight: 44).disabled(account.isBusy)
+                            } else {
+                                Button("Link email and password") { emailFlow = .link }
                                     .frame(minHeight: 44).disabled(account.isBusy)
                             }
-                            Button("Keep account") { deleting = false }.frame(minHeight: 44)
-                        } else {
-                            Button("Delete account", role: .destructive) { deleting = true }
+                        }
+                    }
+                    Button("Sign out") { Task { await account.signOut() } }
+                        .frame(minHeight: 44).disabled(account.isBusy)
+                    if deleting {
+                        Text("Delete your account? Your local rules stay here. Deleting an account does not cancel an App Store subscription.")
+                            .font(.suit(.subheadline))
+                        Link("Manage subscription", destination: URL(string: "https://apps.apple.com/account/subscriptions")!)
+                            .foregroundStyle(Color.roomAccent).frame(minHeight: 44)
+                        if account.providerIDs.contains("apple.com") {
+                            Text("Confirm with Apple to delete your account.").font(.suit(.headline))
+                            appleButton(deleting: true)
+                        } else if account.providerIDs.contains("google.com") {
+                            Text("Confirm with Google to delete your account.").font(.suit(.headline))
+                            GoogleSignInButton { Task { await account.deleteAccountWithGoogle() } }
+                                .disabled(account.isBusy)
+                        } else if account.providerIDs.contains("password") {
+                            Button("Confirm with password") { emailFlow = .delete }
                                 .frame(minHeight: 44).disabled(account.isBusy)
                         }
-                    } else if account.isConfigured {
-                        if AccountViewPolicy.showsSignInMethods(hasProAccess: account.hasProAccess, signInExpanded: signInExpanded) {
-                            Text("Sign in to Offzone")
-                                .font(.suit(.title2, weight: .bold))
-                            Text("Sign in to manage your subscription and restore purchases across devices.")
-                            appleButton(deleting: false)
-                            if account.googleSignInConfigured {
-                                GoogleSignInButton { Task { await account.signInWithGoogle() } }
-                                    .frame(minHeight: 56).disabled(account.isBusy)
-                            }
-                            Button("Continue with email") { emailFlow = .signIn }
-                                .roomSecondaryAction()
-                                .disabled(account.isBusy)
-                        } else {
-                            Button("Sign in to Offzone") {
-                                signInExpanded = true
-                            }
+                        Button("Keep account") { deleting = false }.frame(minHeight: 44)
+                    } else {
+                        Button("Delete account", role: .destructive) { deleting = true }
+                            .frame(minHeight: 44).disabled(account.isBusy)
+                    }
+                } else if account.isConfigured {
+                    if AccountViewPolicy.showsSignInMethods(hasProAccess: account.hasProAccess, signInExpanded: signInExpanded) {
+                        Text("Sign in to Offzone")
+                            .font(.suit(.title2, weight: .bold))
+                        Text("Sign in to manage your subscription and restore purchases across devices.")
+                        appleButton(deleting: false)
+                        if account.googleSignInConfigured {
+                            GoogleSignInButton { Task { await account.signInWithGoogle() } }
+                                .frame(minHeight: 56).disabled(account.isBusy)
+                        }
+                        Button("Continue with email") { emailFlow = .signIn }
                             .roomSecondaryAction()
                             .disabled(account.isBusy)
-                            .accessibilityIdentifier("account.expandSignIn")
-                        }
                     } else {
-                        Text("Account sign-in isn’t available right now.")
-                            .foregroundStyle(Color.roomInkSecondary)
+                        Button("Sign in to Offzone") {
+                            signInExpanded = true
+                        }
+                        .roomSecondaryAction()
+                        .disabled(account.isBusy)
+                        .accessibilityIdentifier("account.expandSignIn")
                     }
-                    if account.isBusy { ProgressView().frame(maxWidth: .infinity).accessibilityLabel("Please wait") }
-                    if AccountViewPolicy.showsAccountStatusMessage(account.statusMessage, matching: restoreStatusMessage),
-                       let message = account.statusMessage {
-                        Text(message).font(.suit(.subheadline)).accessibilityAddTraits(.updatesFrequently)
-                    }
-                    if let error = account.errorMessage { Text(error).foregroundStyle(Color.roomWarning).font(.suit(.subheadline)) }
-                    if let terms = account.termsURL { Link("Terms of use", destination: terms).foregroundStyle(Color.roomAccent).frame(minHeight: 44) }
-                    if let privacy = account.privacyURL { Link("Privacy policy", destination: privacy).foregroundStyle(Color.roomAccent).frame(minHeight: 44) }
+                } else {
+                    Text("Account sign-in isn’t available right now.")
+                        .foregroundStyle(Color.roomInkSecondary)
                 }
-                .font(.suit(.body)).foregroundStyle(Color.roomInk).roomTextActions()
-                .padding(24).frame(maxWidth: 560).frame(maxWidth: .infinity)
+                if account.isBusy { ProgressView().frame(maxWidth: .infinity).accessibilityLabel("Please wait") }
+                if AccountViewPolicy.showsAccountStatusMessage(account.statusMessage, matching: restoreStatusMessage),
+                   let message = account.statusMessage {
+                    Text(message).font(.suit(.subheadline)).accessibilityAddTraits(.updatesFrequently)
+                }
+                if let error = account.errorMessage { Text(error).foregroundStyle(Color.roomWarning).font(.suit(.subheadline)) }
+                Divider().overlay(Color.roomLine)
+                if let terms = account.termsURL {
+                    Link("Terms of use", destination: terms).foregroundStyle(Color.roomAccent).frame(minHeight: 44)
+                }
+                if let privacy = account.privacyURL {
+                    Link("Privacy policy", destination: privacy).foregroundStyle(Color.roomAccent).frame(minHeight: 44)
+                }
             }
-            .background(Color.roomCanvas).navigationTitle("Account & plan").navigationBarTitleDisplayMode(.inline)
-            .toolbar { ToolbarItem(placement: .confirmationAction) { Button("Done") { dismiss() } } }
+            .font(.suit(.body)).foregroundStyle(Color.roomInk).roomTextActions()
+            .padding(24).frame(maxWidth: 560, alignment: .leading).frame(maxWidth: .infinity)
         }
-        .tint(Color.roomAction).preferredColorScheme(.light)
+        .background(Color.roomCanvas)
+        .navigationTitle("Manage account").navigationBarTitleDisplayMode(.inline)
+        .toolbar { ToolbarItem(placement: .confirmationAction) { Button("Done") { dismissSheet() } } }
         .sheet(item: $emailFlow) { EmailAccountView(mode: $0).presentationCornerRadius(24) }
-        .sheet(isPresented: $paywallPresented) { RoomPaywallView(goal: goal).presentationCornerRadius(24) }
         .sheet(isPresented: $journalPresented) {
             NavigationStack {
                 ProJournalView(goal: goal)
-
             }
             .presentationCornerRadius(24)
         }
-        .task { await account.refresh(); await account.loadOfferings() }
         .onChange(of: account.isSignedIn) { _, signedIn in
             deleting = false; restored = false; signInExpanded = false
             if signedIn { Task { await account.loadOfferings() } }

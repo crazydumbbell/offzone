@@ -1,7 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="pro_eyebrow">OFFZONE PRO</string>
-    <string name="pro_close">閉じる</string>
     <string name="pro_headline_work">集中する余白をつくろう。</string>
     <string name="pro_headline_rest">穏やかな夜の余白をつくろう。</string>
     <string name="pro_headline_presence">今この瞬間の余白をつくろう。</string>
@@ -9,7 +7,6 @@
     <string name="pro_benefit_plan">スケジュールと任意の150 mエリアで集中ルールを設定。</string>
     <string name="pro_benefit_journal">いつでも15分・25分・50分のクイック集中を開始。</string>
     <string name="pro_benefit_review">端末内のみに保存される週間計画と毎日のふりかえり。</string>
-    <string name="pro_view_plans">プランとアカウントを見る</string>
     <string name="pro_tomorrow">明日</string>
     <plurals name="pro_days">
         <item quantity="other">%d日</item>

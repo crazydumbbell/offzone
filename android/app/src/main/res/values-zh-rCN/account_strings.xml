@@ -3,7 +3,6 @@
     <string name="account_title">账号与方案</string>
     <string name="account_done">完成</string>
     <string name="account_free_space">当前无有效的 Pro 订阅</string>
-    <string name="account_local">规则、已选应用和地点均保留在此设备上。</string>
     <string name="account_unavailable">账号服务当前不可用。</string>
     <string name="account_identity_error">无法验证此账号，请重试。</string>
     <string name="account_verify_required">请验证你的邮箱以管理账号与购买记录。</string>
@@ -31,7 +30,6 @@
     <string name="account_link_apple">关联 Apple</string>
     <string name="account_link_google">关联 Google</string>
     <string name="account_link_email">关联邮箱和密码</string>
-    <string name="account_plan">当前方案</string>
     <string name="account_journal_local">日记内容仅保存在此设备上，且不包含在备份中。更换手机或卸载 Offzone 前请先导出。</string>
     <string name="account_pro_active">你的 Pro 订阅已生效。</string>
     <string name="account_no_purchase">未找到有效的 Pro 订阅。</string>
@@ -40,7 +38,7 @@
     <string name="account_subscribe">订阅</string>
     <string name="account_restore">恢复购买</string>
     <string name="account_manage">管理订阅</string>
-    <string name="account_upgrade_pro">升级至 Offzone Pro</string>
+    <string name="account_manage_account">管理账号</string>
     <string name="account_signout">退出登录</string>
     <string name="account_delete">删除账号</string>
     <string name="account_delete_warning">要删除账号吗？本地规则和日记记录仍会保留。删除账号不会取消订阅，请在订阅商店中单独取消。删除前需要验证你的身份。</string>

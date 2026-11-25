@@ -2,7 +2,6 @@
     <string name="account_title">Conta e plano</string>
     <string name="account_done">Concluído</string>
     <string name="account_free_space">Nenhuma assinatura Pro ativa</string>
-    <string name="account_local">Regras, seleções de apps e locais ficam neste dispositivo.</string>
     <string name="account_unavailable">Os serviços de conta não estão disponíveis no momento.</string>
     <string name="account_identity_error">Não conseguimos verificar esta conta. Tente novamente.</string>
     <string name="account_verify_required">Verifique seu e-mail para gerenciar sua conta e compras.</string>
@@ -30,7 +29,6 @@
     <string name="account_link_apple">Vincular Apple</string>
     <string name="account_link_google">Vincular Google</string>
     <string name="account_link_email">Vincular e-mail e senha</string>
-    <string name="account_plan">Seu plano</string>
     <string name="account_journal_local">As entradas do diário ficam neste dispositivo e são excluídas do backup. Exporte antes de trocar de celular ou excluir o Offzone.</string>
     <string name="account_pro_active">Sua assinatura Pro está ativa.</string>
     <string name="account_no_purchase">Nenhuma assinatura Pro ativa foi encontrada.</string>
@@ -39,7 +37,7 @@
     <string name="account_subscribe">Assinar</string>
     <string name="account_restore">Restaurar compras</string>
     <string name="account_manage">Gerenciar assinatura</string>
-    <string name="account_upgrade_pro">Assinar o Offzone Pro</string>
+    <string name="account_manage_account">Gerenciar conta</string>
     <string name="account_signout">Sair</string>
     <string name="account_delete">Excluir conta</string>
     <string name="account_delete_warning">Excluir sua conta? Regras locais e entradas do diário permanecem aqui. Excluir sua conta não cancela assinaturas. Cancele separadamente na loja em que você assinou. Confirme sua identidade para excluir.</string>

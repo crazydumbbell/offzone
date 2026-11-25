@@ -765,6 +765,14 @@ final class RestrictionPolicyTests: XCTestCase {
 
         // Standalone Screen Time check from Home hides progress.
         XCTAssertNil(SetupFlowPolicy.progress(step: .permission, includesPermission: false, permissionOnly: true))
+
+        // First step of initial post-subscription setup hides Back; later steps and Home flows keep Back.
+        XCTAssertFalse(SetupFlowPolicy.showsBackButton(step: .permission, includesPermission: true, canReturnHome: false))
+        XCTAssertTrue(SetupFlowPolicy.showsBackButton(step: .targets, includesPermission: true, canReturnHome: false))
+        XCTAssertTrue(SetupFlowPolicy.showsBackButton(step: .schedule, includesPermission: true, canReturnHome: false))
+        XCTAssertFalse(SetupFlowPolicy.showsBackButton(step: .targets, includesPermission: false, canReturnHome: false))
+        XCTAssertTrue(SetupFlowPolicy.showsBackButton(step: .permission, includesPermission: true, canReturnHome: true))
+        XCTAssertTrue(SetupFlowPolicy.showsBackButton(step: .targets, includesPermission: false, canReturnHome: true))
     }
 
 #if targetEnvironment(simulator)

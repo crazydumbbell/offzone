@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="audit_journal_read_only">你已儲存的計畫與回顧仍可閱讀、匯出或刪除。撰寫新紀錄需要 Pro 訂閱。</string>
     <string name="audit_journal_unsaved">未儲存的變更</string>
     <string name="audit_journal_discard_message">離開前請先儲存變更，或捨棄變更以繼續。</string>
     <string name="audit_journal_discard">捨棄變更</string>
@@ -8,6 +7,4 @@
     <string name="audit_journal_delete_entry">要刪除這筆紀錄嗎？</string>
     <string name="audit_journal_delete_message">此操作無法復原。</string>
     <string name="audit_journal_delete">刪除</string>
-    <string name="audit_pro_unavailable_title">Pro 目前無法使用</string>
-    <string name="audit_pro_unavailable_body">目前無法載入方案。若你已經訂閱 Pro，請於下方回復購買。</string>
 </resources>

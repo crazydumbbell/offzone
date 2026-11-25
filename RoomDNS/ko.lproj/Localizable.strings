@@ -125,9 +125,7 @@
 "Make room for calmer evenings." = "차분한 저녁을 위한 여유를 만들어요.";
 "Make room for being here." = "지금 이 순간에 집중할 여유를 만들어요.";
 "Make room for yourself." = "나를 위한 여유를 만들어요.";
-"Go to home" = "홈으로 이동";
 "Account & plan" = "계정 및 요금제";
-"Explore Pro" = "Pro 살펴보기";
 "Offzone Pro" = "Offzone Pro";
 "Manage subscription" = "구독 관리";
 "Restore purchases" = "구매 복원";
@@ -200,8 +198,6 @@
 "Plans & reflections" = "계획과 회고";
 "Prepare journal export" = "계획과 회고 내보내기 준비";
 "Previous week" = "이전 주";
-"Pro lets you write plans and reflections. Your existing entries remain readable, exportable and deletable." = "Pro로 계획과 회고를 작성해 보세요. 기존 기록은 구독이 없어도 읽고 내보내고 삭제할 수 있어요.";
-"Pro purchases are currently unavailable." = "지금은 Pro를 구매할 수 없어요.";
 "Reflection date" = "회고 날짜";
 "Save reflection" = "회고 저장";
 "Save weekly intention" = "이번 주 다짐 저장";
@@ -281,7 +277,6 @@
 "Nook Cat gives you a quiet hello." = "누크가 조용히 인사해요.";
 "Nook Cat says hello." = "누크가 인사해요.";
 "pro_eyebrow" = "OFFZONE PRO";
-"pro_close" = "닫기";
 "pro_headline_work" = "집중할 시간을 만들어요.";
 "pro_headline_rest" = "차분한 저녁을 만들어요.";
 "pro_headline_presence" = "지금 이 순간에 머물러요.";
@@ -346,12 +341,8 @@
 "Rule ready. Tap Start focus when you are ready." = "규칙이 준비됐어요. 준비되면 집중 시작을 누르세요.";
 "Account" = "계정";
 "Already subscribed? Sign in" = "이미 구독 중이라면 로그인";
-"Unlock Offzone Pro" = "Offzone Pro 잠금 해제";
-"Subscribe to activate rules, focus sessions, and Quick focus." = "구독하면 규칙 활성화, 집중 세션, 바로 집중을 쓸 수 있어요.";
-"See plans" = "요금제 보기";
 "Trigger at a place (optional)" = "장소 조건 추가 (선택)";
 "Plans aren’t available right now. Try again in a moment." = "지금은 요금제를 불러올 수 없어요. 잠시 후 다시 시도해 주세요.";
-"Your rules stay on this iPhone." = "규칙은 이 iPhone에만 저장돼요.";
 "Verify your email to manage your account and purchases." = "계정과 구매를 관리하려면 이메일을 인증해 주세요.";
 "Delete your account? Your local rules stay here. Deleting an account does not cancel an App Store subscription." = "계정을 삭제할까요? 이 기기의 규칙은 유지돼요. 계정을 삭제해도 App Store 구독은 취소되지 않아요.";
 "Sign in to Offzone" = "Offzone 로그인";
@@ -388,3 +379,5 @@
 "This subscription is already linked to another account. Restore purchases on the original account." = "이 구독은 이미 다른 계정에 연결되어 있어요. 원래 계정에서 구매 복원을 눌러 주세요.";
 "Subscription service is unavailable right now. Please try again." = "지금은 구독 서비스를 사용할 수 없어요. 잠시 후 다시 시도해 주세요.";
 "journal_outcome_try_again" = "다시 해볼래요";
+"Manage account" = "계정 관리";
+"No active subscription." = "활성 구독이 없어요.";

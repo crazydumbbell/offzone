@@ -6,11 +6,47 @@ import UIKit
 import UserNotifications
 
 private enum RoomScreen: Int {
-    case welcome
     case permission
     case targets
     case schedule
     case home
+}
+
+enum AppRootGate: Equatable {
+    case welcome
+    case paywall
+    case unlocked
+}
+
+enum HardPaywallPolicy {
+    /// Non-Pro users can only see the welcome screen on fresh launch or the full-screen hard paywall.
+    static func rootGate(
+        hasProAccess: Bool,
+        shouldShowWelcome: Bool,
+        welcomeDismissed: Bool,
+        previewPaywall: Bool = false,
+        holdingPaywallDone: Bool = false
+    ) -> AppRootGate {
+        if previewPaywall || holdingPaywallDone { return .paywall }
+        if hasProAccess { return .unlocked }
+        return (shouldShowWelcome && !welcomeDismissed) ? .welcome : .paywall
+    }
+
+    /// First setup step after Pro unlocks, or nil when Home should open directly.
+    static func postUnlockStep(
+        onboardingCompleted: Bool,
+        hasRules: Bool,
+        storageError: Bool,
+        screenTimeAuthorized: Bool
+    ) -> SetupStep? {
+        guard !onboardingCompleted && !hasRules && !storageError else { return nil }
+        return screenTimeAuthorized ? .targets : .permission
+    }
+
+    /// Active focus session recovery stays reachable over the hard paywall without a subscription.
+    static func showsPaywallRestoreAccess(hasActiveSession: Bool) -> Bool {
+        ProAccessGate.canRestoreActiveSession(hasActiveSession: hasActiveSession)
+    }
 }
 
 enum SetupStep: Int, Equatable {
@@ -31,6 +67,18 @@ enum SetupFlowPolicy {
             : [.targets, .schedule]
         guard let index = steps.firstIndex(of: step) else { return nil }
         return (index + 1, steps.count)
+    }
+
+    static func showsBackButton(
+        step: SetupStep,
+        includesPermission: Bool,
+        canReturnHome: Bool
+    ) -> Bool {
+        switch step {
+        case .permission: return canReturnHome
+        case .targets: return includesPermission || canReturnHome
+        case .schedule: return true
+        }
     }
 }
 
@@ -120,10 +168,9 @@ struct ContentView: View {
     @State private var ruleToDelete: FocusRule?
     @State private var roomieReaction: RoomSpiritState?
     @State private var accountPresented = false
-    @State private var paywallPresented = false
-#if DEBUG
-    @State private var didPresentPreviewPaywall = false
-#endif
+    @State private var accountStartInManage = false
+    @State private var welcomeDismissed = false
+    @State private var holdingPaywallDone = false
     @AppStorage(OnboardingProfile.completedKey) private var onboardingCompleted = false
     @AppStorage(OnboardingProfile.goalKey) private var goalRaw = FocusGoal.work.rawValue
     @AppStorage("roomie.lastVisit") private var lastVisit: Double = 0
@@ -134,13 +181,61 @@ struct ContentView: View {
 
     init(model: AppModel) {
         self.model = model
-        _screen = State(initialValue: OnboardingProfile.shouldShowWelcome(
-            hasRules: !model.rules.isEmpty, storageError: SharedState.rulesStorageError,
-            completed: OnboardingProfile.isCompleted()) ? .welcome : .home)
+        let postStep = HardPaywallPolicy.postUnlockStep(
+            onboardingCompleted: OnboardingProfile.isCompleted(),
+            hasRules: !model.rules.isEmpty,
+            storageError: SharedState.rulesStorageError,
+            screenTimeAuthorized: model.screenTimeAuthorized
+        )
+        switch postStep {
+        case .permission:
+            _screen = State(initialValue: .permission)
+            _setupIncludesPermission = State(initialValue: true)
+            _permissionDestination = State(initialValue: .targets)
+        case .targets:
+            _screen = State(initialValue: .targets)
+            _setupIncludesPermission = State(initialValue: false)
+            _permissionDestination = State(initialValue: .targets)
+        case .schedule:
+            _screen = State(initialValue: .schedule)
+            _setupIncludesPermission = State(initialValue: false)
+            _permissionDestination = State(initialValue: .targets)
+        case nil:
+            _screen = State(initialValue: .home)
+        }
     }
 
     private var isActiveSession: Bool {
         model.isFocused || model.quickEndsAt != nil || SharedState.shouldShield
+    }
+
+    private var previewPaywall: Bool {
+#if DEBUG
+        let args = ProcessInfo.processInfo.arguments
+        guard args.contains("-offzonePreviewPaywall") else { return false }
+        if args.contains("-offzonePreviewWelcome") && !welcomeDismissed { return false }
+        return true
+#else
+        return false
+#endif
+    }
+
+    private var shouldShowWelcome: Bool {
+        OnboardingProfile.shouldShowWelcome(
+            hasRules: !model.rules.isEmpty,
+            storageError: SharedState.rulesStorageError,
+            completed: onboardingCompleted
+        )
+    }
+
+    private var rootGate: AppRootGate {
+        HardPaywallPolicy.rootGate(
+            hasProAccess: account.hasProAccess,
+            shouldShowWelcome: shouldShowWelcome,
+            welcomeDismissed: welcomeDismissed,
+            previewPaywall: previewPaywall,
+            holdingPaywallDone: holdingPaywallDone
+        )
     }
 
     var body: some View {
@@ -148,55 +243,80 @@ struct ContentView: View {
             Color.roomCanvas.ignoresSafeArea()
 
             Group {
-                switch screen {
+                switch rootGate {
                 case .welcome:
                     welcomeScreen
-                case .permission:
-                    permissionScreen
-                case .targets:
-                    targetsScreen
-                case .schedule:
-                    scheduleScreen
-                case .home:
-                    homeScreen
+                case .paywall:
+                    RoomPaywallView(
+                        goal: goal,
+                        activeSessionTitle: isActiveSession
+                            ? roomString(model.quickEndsAt != nil ? "Quick focus" : "In focus")
+                            : nil,
+                        activeSessionRestore: HardPaywallPolicy.showsPaywallRestoreAccess(hasActiveSession: isActiveSession)
+                            ? { safetyReleasePresented = true }
+                            : nil,
+                        onHoldDone: { holdingPaywallDone = $0 },
+                        onUnlocked: {
+                            holdingPaywallDone = false
+                            enterUnlockedDestination()
+                        }
+                    )
+                case .unlocked:
+                    Group {
+                        switch screen {
+                        case .permission:
+                            permissionScreen
+                        case .targets:
+                            targetsScreen
+                        case .schedule:
+                            scheduleScreen
+                        case .home:
+                            homeScreen
+                        }
+                    }
+                    .id(screen)
+                    .transition(reduceMotion ? .identity : .opacity)
                 }
             }
-            .id(screen)
+            .id(rootGate)
             .transition(reduceMotion ? .identity : .opacity)
         }
         .tint(Color.roomAccent)
         .preferredColorScheme(.light)
         .safeAreaInset(edge: .top, spacing: 0) {
-            HStack(spacing: 12) {
-                if !dynamicTypeSize.isAccessibilitySize {
-                    Text("OFFZONE")
-                        .font(.suit(.subheadline, weight: .bold))
-                        .tracking(1.4)
-                        .foregroundStyle(Color.roomInk)
-                }
-                Spacer(minLength: 0)
-                if HomeViewPolicy.showsTopBarRestoreAccess(
-                    onHomeScreen: screen == .home,
-                    hasActiveSession: isActiveSession,
-                    quickFocusActive: model.quickEndsAt != nil,
-                    ruleFocused: model.isFocused,
-                    shouldShield: SharedState.shouldShield
-                ) {
-                    Button {
-                        safetyReleasePresented = true
-                    } label: {
-                        Label(roomString("Restore access"), systemImage: "arrow.counterclockwise")
+            if rootGate != .paywall {
+                HStack(spacing: 12) {
+                    if !dynamicTypeSize.isAccessibilitySize {
+                        Text("OFFZONE")
+                            .font(.suit(.subheadline, weight: .bold))
+                            .tracking(1.4)
+                            .foregroundStyle(Color.roomInk)
                     }
-                    .font(.suit(.subheadline, weight: .medium))
-                    .foregroundStyle(Color.roomInkSecondary)
-                    .frame(minHeight: 44)
+                    Spacer(minLength: 0)
+                    if HomeViewPolicy.showsTopBarRestoreAccess(
+                        onHomeScreen: rootGate == .unlocked && screen == .home,
+                        hasActiveSession: isActiveSession,
+                        quickFocusActive: model.quickEndsAt != nil,
+                        ruleFocused: model.isFocused,
+                        shouldShield: SharedState.shouldShield
+                    ) {
+                        Button {
+                            safetyReleasePresented = true
+                        } label: {
+                            Label(roomString("Restore access"), systemImage: "arrow.counterclockwise")
+                        }
+                        .font(.suit(.subheadline, weight: .medium))
+                        .foregroundStyle(Color.roomInkSecondary)
+                        .frame(minHeight: 44)
+                    }
                 }
+                .padding(.horizontal, 24)
+                .frame(minHeight: 54)
+                .background(Color.roomCanvas)
             }
-            .padding(.horizontal, 24)
-            .frame(minHeight: 54)
-            .background(Color.roomCanvas)
         }
 
+        .animation(reduceMotion ? nil : .easeInOut(duration: 0.2), value: rootGate)
         .animation(reduceMotion ? nil : .easeInOut(duration: 0.2), value: screen)
         .familyActivityPicker(
             headerText: roomString("Choose apps, categories, and websites to put aside."),
@@ -213,7 +333,9 @@ struct ContentView: View {
                     model.safetyRelease()
                 }
                 roomieReaction = model.errorMessage == nil ? .recovered : nil
-                screen = .home
+                if account.hasProAccess {
+                    screen = .home
+                }
             }
             .presentationDetents([.large])
             .presentationCornerRadius(24)
@@ -226,11 +348,7 @@ struct ContentView: View {
             QuickFocusView(model: model)
         }
         .sheet(isPresented: $accountPresented) {
-            RoomAccountView(goal: goal)
-                .presentationCornerRadius(24)
-        }
-        .sheet(isPresented: $paywallPresented) {
-            RoomPaywallView(goal: goal)
+            RoomAccountView(goal: goal, startInManage: accountStartInManage)
                 .presentationCornerRadius(24)
         }
         .confirmationDialog(
@@ -255,9 +373,23 @@ struct ContentView: View {
             if phase == .active { model.refresh(); recordVisit() }
             else { roomieReaction = nil }
         }
-        .task(id: scenePhase == .active && !paywallPresented) {
+        .onChange(of: account.hasProAccess) { wasPro, isPro in
+            if isPro && !wasPro {
+                if !holdingPaywallDone {
+                    accountPresented = false
+                    model.autoArmSavedRuleIfNeeded()
+                    enterUnlockedDestination()
+                }
+            } else if !isPro && wasPro {
+                holdingPaywallDone = false
+                quickFocusPresented = false
+                notificationsPresented = false
+                welcomeDismissed = true
+            }
+        }
+        .task(id: scenePhase == .active && rootGate != .paywall) {
             // The paywall owns its offer session; foregrounding after an OS prompt must not clear its plans.
-            guard scenePhase == .active && !paywallPresented else { return }
+            guard scenePhase == .active && rootGate != .paywall else { return }
             await account.refresh()
             await account.loadOfferings()
         }
@@ -265,13 +397,12 @@ struct ContentView: View {
             recordVisit()
             if !model.rules.isEmpty { onboardingCompleted = true }
 #if DEBUG
-            if !didPresentPreviewPaywall && ProcessInfo.processInfo.arguments.contains("-offzonePreviewPaywall") {
-                didPresentPreviewPaywall = true
-                paywallPresented = true
-            }
             let arguments = ProcessInfo.processInfo.arguments
             if arguments.contains("-offzonePreviewQuick") { quickFocusPresented = true }
-            if arguments.contains("-offzonePreviewAccount") { accountPresented = true }
+            if arguments.contains("-offzonePreviewAccount") {
+                accountStartInManage = arguments.contains("-offzonePreviewAccountManage")
+                accountPresented = true
+            }
             if arguments.contains("-offzonePreviewPlace") {
                 model.beginNewRuleDraft()
                 placeMode = .gps
@@ -332,25 +463,16 @@ struct ContentView: View {
         .scrollBounceBehavior(.basedOnSize)
         .safeAreaInset(edge: .bottom, spacing: 0) {
             VStack(spacing: 4) {
-                primaryButton(roomString(onboardingCompleted || !model.rules.isEmpty ? "Go to home" : "Get started")) {
-                    if onboardingCompleted || !model.rules.isEmpty {
-                        screen = .home
-                    } else {
-                        model.beginNewRuleDraft()
-                        placeMode = .anywhere
-                        setupIncludesPermission = !model.screenTimeAuthorized
-                        permissionDestination = .targets
-                        screen = model.screenTimeAuthorized ? .targets : .permission
-                    }
+                primaryButton(roomString("Get started")) {
+                    welcomeDismissed = true
                 }
-                if !onboardingCompleted && model.rules.isEmpty {
-                    Button(roomString("Already subscribed? Sign in")) {
-                        accountPresented = true
-                    }
-                    .font(.suit(.subheadline, weight: .semibold))
-                    .foregroundStyle(Color.roomAccent)
-                    .frame(minHeight: 44)
+                Button(roomString("Already subscribed? Sign in")) {
+                    accountStartInManage = true
+                    accountPresented = true
                 }
+                .font(.suit(.subheadline, weight: .semibold))
+                .foregroundStyle(Color.roomAccent)
+                .frame(minHeight: 44)
             }.bottomBarStyle()
         }
     }
@@ -730,7 +852,10 @@ struct ContentView: View {
                     Button { notificationsPresented = true } label: { Image(systemName: "bell") }
                         .font(.suit(.title3)).foregroundStyle(Color.roomInk)
                         .frame(minWidth: 44, minHeight: 44).accessibilityLabel("Zone notifications")
-                    Button { accountPresented = true } label: { Image(systemName: "person.crop.circle") }
+                    Button {
+                        accountStartInManage = false
+                        accountPresented = true
+                    } label: { Image(systemName: "person.crop.circle") }
                         .font(.suit(.title3)).foregroundStyle(Color.roomInk)
                         .frame(minWidth: 44, minHeight: 44).accessibilityLabel("Account & plan")
                     Button { addRule() } label: { Label("New rule", systemImage: "plus").fixedSize(horizontal: !dynamicTypeSize.isAccessibilitySize, vertical: true) }
@@ -743,22 +868,6 @@ struct ContentView: View {
                 VStack(spacing: 24) {
                     homeStatusCard
                     actionFeedback
-                    if !account.hasProAccess {
-                        VStack(alignment: .leading, spacing: 12) {
-                            Text("Unlock Offzone Pro")
-                                .font(.suit(.title2, weight: .bold))
-                                .foregroundStyle(Color.roomInk)
-                            Text("Subscribe to activate rules, focus sessions, and Quick focus.")
-                                .font(.suit(.subheadline))
-                                .foregroundStyle(Color.roomInkSecondary)
-                                .fixedSize(horizontal: false, vertical: true)
-                            primaryButton(roomString("See plans")) { paywallPresented = true }
-                        }
-                        .padding(20)
-                        .frame(maxWidth: .infinity, alignment: .leading)
-                        .editorialPanel(Color.roomButter, outlined: false)
-                        .accessibilityIdentifier("home.unlockPro")
-                    }
                     quickFocusSection
                     if SharedState.ruleEnabled && model.activeRule?.placeMode == .gps && !model.isFocused {
                         VStack(alignment: .leading, spacing: 12) {
@@ -843,11 +952,8 @@ struct ContentView: View {
                 primaryButton(rule.placeMode != .nfc ? roomString("Activate %@", rule.name) : roomString("Choose a place"), inverted: dark) { activate(rule) }
             } else if (model.activeRule?.placeMode ?? .nfc) != .nfc && !model.isFocused && model.canStartPlaceFocus {
                 primaryButton(roomString("Start focus"), inverted: dark) {
-                    if ProAccessGate.canStartFocus(hasProAccess: account.hasProAccess) {
-                        model.startPlaceFocus()
-                    } else {
-                        paywallPresented = true
-                    }
+                    guard ProAccessGate.canStartFocus(hasProAccess: account.hasProAccess) else { return }
+                    model.startPlaceFocus()
                 }
             }
         }
@@ -873,20 +979,10 @@ struct ContentView: View {
             .background(Color.roomAccent).clipShape(RoundedRectangle(cornerRadius: 22))
         } else if model.screenTimeAuthorized && !model.isFocused {
             Button {
-                if ProAccessGate.canQuickFocus(hasProAccess: account.hasProAccess) {
-                    quickFocusPresented = true
-                } else {
-                    paywallPresented = true
-                }
+                guard ProAccessGate.canQuickFocus(hasProAccess: account.hasProAccess) else { return }
+                quickFocusPresented = true
             } label: {
-                HStack(spacing: 8) {
-                    Label("Quick focus", systemImage: "timer")
-                    if !ProAccessGate.canQuickFocus(hasProAccess: account.hasProAccess) {
-                        Image(systemName: "lock.fill")
-                            .font(.suit(.subheadline))
-                            .accessibilityHidden(true)
-                    }
-                }
+                Label("Quick focus", systemImage: "timer")
             }
             .roomSecondaryAction()
         }
@@ -924,7 +1020,6 @@ struct ContentView: View {
     private func activate(_ rule: FocusRule) -> Bool {
         guard rule.placeMode != .nfc else { editRule(rule); return false }
         guard ProAccessGate.canActivateRule(hasProAccess: account.hasProAccess) else {
-            paywallPresented = true
             return false
         }
         guard !model.isFocused else { safetyReleasePresented = true; return false }
@@ -961,7 +1056,6 @@ struct ContentView: View {
         let isActive = SharedState.ruleEnabled && model.activeRuleID == rule.id
         let hasChanges = model.hasUnappliedChanges(rule.id)
         let canResume = isActive && SharedState.safetyReleased
-        let isLocked = !ProAccessGate.canActivateRule(hasProAccess: account.hasProAccess)
         // Color carries meaning: soft butter needs attention, mint is active, ivory is saved.
         let tint: Color = hasChanges || rule.placeMode == .nfc ? .roomButter : isActive ? .roomMint : .roomCard
         return VStack(alignment: .leading, spacing: 8) {
@@ -980,18 +1074,10 @@ struct ContentView: View {
                         .accessibilityHidden(true)
 
                     VStack(alignment: .leading, spacing: 5) {
-                        HStack(spacing: 6) {
-                            Text(rule.name)
-                                .font(.suit(.headline, weight: .bold))
-                                .foregroundStyle(Color.roomInk)
-                                .fixedSize(horizontal: false, vertical: true)
-                            if isLocked {
-                                Image(systemName: "lock.fill")
-                                    .font(.suit(.subheadline))
-                                    .foregroundStyle(Color.roomInkSecondary)
-                                    .accessibilityLabel(roomString("Unlock Offzone Pro"))
-                            }
-                        }
+                        Text(rule.name)
+                            .font(.suit(.headline, weight: .bold))
+                            .foregroundStyle(Color.roomInk)
+                            .fixedSize(horizontal: false, vertical: true)
                         if rule.placeMode == .nfc {
                             Text("Choose a place to use this rule")
                                 .font(.suit(.subheadline)).foregroundStyle(Color.roomWarning)
@@ -1031,13 +1117,8 @@ struct ContentView: View {
                     Button {
                         activate(rule)
                     } label: {
-                        HStack(spacing: 6) {
-                            if isLocked && rule.placeMode != .nfc {
-                                Image(systemName: "lock.fill").accessibilityHidden(true)
-                            }
-                            Text(rule.placeMode == .nfc ? roomString("Choose a place") : hasChanges ? roomString("Apply changes") : canResume ? roomString("Resume rule") : roomString("Activate"))
-                                .fixedSize(horizontal: false, vertical: true)
-                        }
+                        Text(rule.placeMode == .nfc ? roomString("Choose a place") : hasChanges ? roomString("Apply changes") : canResume ? roomString("Resume rule") : roomString("Activate"))
+                            .fixedSize(horizontal: false, vertical: true)
                     }
                     .font(.suit(.subheadline, weight: .bold))
                     .foregroundStyle(Color.roomAccent)
@@ -1108,30 +1189,49 @@ struct ContentView: View {
         }
     }
 
+    private var currentSetupStep: SetupStep? {
+        switch screen {
+        case .permission: return .permission
+        case .targets: return .targets
+        case .schedule: return .schedule
+        default: return nil
+        }
+    }
+
     private var setupHeader: some View {
-        VStack(spacing: 12) {
+        let canReturnHome = onboardingCompleted || !model.rules.isEmpty
+        let showsBack = currentSetupStep.map {
+            SetupFlowPolicy.showsBackButton(
+                step: $0,
+                includesPermission: setupIncludesPermission,
+                canReturnHome: canReturnHome
+            )
+        } ?? true
+        return VStack(spacing: 12) {
             HStack {
-                Button {
-                    switch screen {
-                    case .permission:
-                        if onboardingCompleted || !model.rules.isEmpty { cancelEditing() }
-                        else { screen = .welcome }
-                    case .targets:
-                        if setupIncludesPermission { screen = .permission }
-                        else if onboardingCompleted || !model.rules.isEmpty { cancelEditing() }
-                        else { screen = .welcome }
-                    case .schedule:
-                        screen = .targets
-                    default:
-                        screen = .home
+                if showsBack {
+                    Button {
+                        switch screen {
+                        case .permission:
+                            cancelEditing()
+                        case .targets:
+                            if setupIncludesPermission { screen = .permission }
+                            else { cancelEditing() }
+                        case .schedule:
+                            screen = .targets
+                        default:
+                            screen = .home
+                        }
+                    } label: {
+                        Label("Back", systemImage: "chevron.left")
+                            .font(.suit(.subheadline, weight: .semibold))
+                            .frame(minWidth: 44, minHeight: 44)
                     }
-                } label: {
-                    Label("Back", systemImage: "chevron.left")
-                        .font(.suit(.subheadline, weight: .semibold))
-                        .frame(minWidth: 44, minHeight: 44)
+                    .foregroundStyle(Color.roomAccent)
+                    .accessibilityLabel("Back")
+                } else {
+                    Color.clear.frame(width: 44, height: 44)
                 }
-                .foregroundStyle(Color.roomAccent)
-                .accessibilityLabel("Back")
 
                 Spacer()
 
@@ -1143,7 +1243,7 @@ struct ContentView: View {
                     Spacer()
                 }
 
-                if onboardingCompleted || !model.rules.isEmpty {
+                if canReturnHome {
                     Button("Cancel") { cancelEditing() }
                         .font(.suit(.subheadline, weight: .semibold))
                         .foregroundStyle(Color.roomAccent)
@@ -1249,16 +1349,39 @@ struct ContentView: View {
         return model.screenTimeAuthorized ? .confirmed : .attentive
     }
 
+    private func enterUnlockedDestination() {
+        let postStep = HardPaywallPolicy.postUnlockStep(
+            onboardingCompleted: onboardingCompleted,
+            hasRules: !model.rules.isEmpty,
+            storageError: SharedState.rulesStorageError,
+            screenTimeAuthorized: model.screenTimeAuthorized
+        )
+        switch postStep {
+        case .permission:
+            model.beginNewRuleDraft()
+            placeMode = .anywhere
+            setupIncludesPermission = true
+            permissionDestination = .targets
+            screen = .permission
+        case .targets:
+            model.beginNewRuleDraft()
+            placeMode = .anywhere
+            setupIncludesPermission = false
+            permissionDestination = .targets
+            screen = .targets
+        case .schedule:
+            screen = .schedule
+        case nil:
+            screen = .home
+        }
+    }
+
     private func saveAndFinish() {
-        let firstSetup = !onboardingCompleted && model.rules.isEmpty
         if model.saveRule(placeMode: placeMode) {
             onboardingCompleted = true
             setupIncludesPermission = false
             roomieReaction = .celebrating
             screen = .home
-            if firstSetup && !account.hasProAccess {
-                paywallPresented = true
-            }
         }
     }
 

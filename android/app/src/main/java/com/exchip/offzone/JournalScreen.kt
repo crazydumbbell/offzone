@@ -43,7 +43,7 @@ import java.time.temporal.ChronoUnit
 
 @OptIn(ExperimentalLayoutApi::class)
 @Composable
-fun JournalScreen(hasPro: Boolean, onOffer: () -> Unit, onBack: () -> Unit, accessCheck: () -> Boolean = { hasPro }) {
+fun JournalScreen(hasPro: Boolean, onBack: () -> Unit, accessCheck: () -> Boolean = { hasPro }) {
     val context = LocalContext.current
     val access = rememberUpdatedState(accessCheck)
     var store by remember { mutableStateOf<JournalStore?>(null) }
@@ -171,16 +171,6 @@ fun JournalScreen(hasPro: Boolean, onOffer: () -> Unit, onBack: () -> Unit, acce
                         Row(Modifier.fillMaxWidth().padding(20.dp), verticalAlignment = Alignment.CenterVertically) {
                             Text(stringResource(R.string.journal_intro), style = MaterialTheme.typography.titleLarge, modifier = Modifier.weight(1f))
                             NookCatView(NookExpression.REFLECTION, Modifier.size(96.dp))
-                        }
-                    }
-                }
-                if (!hasPro) item {
-                    Surface(color = Mint, shape = RoundedCornerShape(24.dp)) {
-                        Column(Modifier.fillMaxWidth().padding(20.dp), verticalArrangement = Arrangement.spacedBy(10.dp)) {
-                            Text("Pro", style = MaterialTheme.typography.titleLarge)
-                            Text(stringResource(R.string.audit_journal_read_only), style = MaterialTheme.typography.bodyLarge)
-                            if (!BuildConfig.PRO_OFFER_READY) Text(stringResource(R.string.account_plans_unavailable), style = MaterialTheme.typography.bodyMedium, color = InkMuted)
-                            if (BuildConfig.PRO_OFFER_READY) SecondaryButton(onClick = { navigate(onOffer) }) { Text(stringResource(R.string.journal_offer)) }
                         }
                     }
                 }
