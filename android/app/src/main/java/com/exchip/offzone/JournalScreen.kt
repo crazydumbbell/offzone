@@ -43,7 +43,12 @@ import java.time.temporal.ChronoUnit
 
 @OptIn(ExperimentalLayoutApi::class)
 @Composable
-fun JournalScreen(hasPro: Boolean, onBack: () -> Unit, accessCheck: () -> Boolean = { hasPro }) {
+fun JournalScreen(
+    hasPro: Boolean,
+    onBack: () -> Unit,
+    accessCheck: () -> Boolean = { hasPro },
+    onReflectionSaved: () -> Unit = {},
+) {
     val context = LocalContext.current
     val access = rememberUpdatedState(accessCheck)
     var store by remember { mutableStateOf<JournalStore?>(null) }
@@ -105,7 +110,12 @@ fun JournalScreen(hasPro: Boolean, onBack: () -> Unit, accessCheck: () -> Boolea
         data.reflections.filterKeys { it >= week.toString() && it < week.plusDays(7).toString() }.toSortedMap(reverseOrder()).toList()
     }
 
-    fun action(reloadPlan: Boolean = false, reloadReflection: Boolean = false, block: () -> Unit) {
+    fun action(
+        reloadPlan: Boolean = false,
+        reloadReflection: Boolean = false,
+        onSuccess: (() -> Unit)? = null,
+        block: () -> Unit,
+    ) {
         if (busy) return
         busy = true
         scope.launch {
@@ -115,6 +125,7 @@ fun JournalScreen(hasPro: Boolean, onBack: () -> Unit, accessCheck: () -> Boolea
                 if (reloadPlan) { planDirty = false; planRevision++ }
                 if (reloadReflection) { reflectionDirty = false; reflectionRevision++ }
                 exported = null; message = R.string.journal_saved
+                onSuccess?.invoke()
             } catch (_: Exception) {
                 message = R.string.journal_error
             } finally {
@@ -318,7 +329,7 @@ fun JournalScreen(hasPro: Boolean, onBack: () -> Unit, accessCheck: () -> Boolea
                                 } else null,
                             )
                             PrimaryButton(
-                                onClick = { val reflection = JournalReflection(note.trim(), outcome); val selectedDate = date; action(reloadReflection = true) { store!!.reflect(reflection, selectedDate) } },
+                                onClick = { val reflection = JournalReflection(note.trim(), outcome); val selectedDate = date; action(reloadReflection = true, onSuccess = onReflectionSaved) { store!!.reflect(reflection, selectedDate) } },
                                 enabled = !busy && note.isNotBlank(),
                                 modifier = Modifier.fillMaxWidth(),
                             ) { Text(stringResource(R.string.journal_reflect_save)) }

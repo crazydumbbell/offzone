@@ -58,3 +58,45 @@ enum OnboardingProfile {
         !hasRules && !storageError && !completed
     }
 }
+
+/// Schedules Apple's native StoreKit review prompt only after positive milestones (never on errors or early exits).
+enum ReviewPromptPolicy {
+    static let momentsKey = "review.positiveMoments"
+    static let lastPromptedAtKey = "review.lastPromptedAt"
+    static let lastPromptedMomentsKey = "review.lastPromptedMoments"
+    static let firstPromptMoments = 2
+    static let repeatPromptDelta = 3
+    static let cooldownSeconds: TimeInterval = 60 * 86_400
+
+    static func shouldPrompt(
+        momentsCount: Int,
+        lastPromptedAt: Date?,
+        lastPromptedMoments: Int,
+        now: Date = .now
+    ) -> Bool {
+        guard momentsCount >= firstPromptMoments else { return false }
+        guard let lastPromptedAt else { return true }
+        guard now.timeIntervalSince(lastPromptedAt) >= cooldownSeconds else { return false }
+        return momentsCount - lastPromptedMoments >= repeatPromptDelta
+    }
+
+    @discardableResult
+    static func recordPositiveMoment(defaults: UserDefaults = .standard, now: Date = .now) -> Bool {
+        let moments = defaults.integer(forKey: momentsKey) + 1
+        defaults.set(moments, forKey: momentsKey)
+        let lastInterval = defaults.double(forKey: lastPromptedAtKey)
+        let lastPromptedAt = lastInterval > 0 ? Date(timeIntervalSince1970: lastInterval) : nil
+        let lastPromptedMoments = defaults.integer(forKey: lastPromptedMomentsKey)
+        guard shouldPrompt(
+            momentsCount: moments,
+            lastPromptedAt: lastPromptedAt,
+            lastPromptedMoments: lastPromptedMoments,
+            now: now
+        ) else {
+            return false
+        }
+        defaults.set(now.timeIntervalSince1970, forKey: lastPromptedAtKey)
+        defaults.set(moments, forKey: lastPromptedMomentsKey)
+        return true
+    }
+}

@@ -1,6 +1,7 @@
 import CoreLocation
 import FamilyControls
 import MapKit
+import StoreKit
 import SwiftUI
 import UIKit
 import UserNotifications
@@ -151,7 +152,9 @@ struct ContentView: View {
     @Environment(\.scenePhase) private var scenePhase
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
     @Environment(\.dynamicTypeSize) private var dynamicTypeSize
+    @Environment(\.requestReview) private var requestReview
     @State private var screen: RoomScreen
+    @State private var reviewPromptPending = false
     @State private var permissionDestination: RoomScreen = .targets
     @State private var setupIncludesPermission = false
     @State private var isRequestingPermission = false
@@ -427,6 +430,17 @@ struct ContentView: View {
             if wasFocused && !focused && SharedState.ruleEnabled && !SharedState.scheduleActive
                 && !SharedState.safetyReleased && !homeNeedsAction {
                 roomieReaction = .finished
+                if rootGate == .unlocked && ReviewPromptPolicy.recordPositiveMoment() {
+                    reviewPromptPending = true
+                }
+            }
+        }
+        .onChange(of: model.quickEndsAt) { oldEnd, newEnd in
+            if let oldEnd, newEnd == nil, Date.now >= oldEnd.addingTimeInterval(-1), rootGate == .unlocked {
+                roomieReaction = .finished
+                if ReviewPromptPolicy.recordPositiveMoment() {
+                    reviewPromptPending = true
+                }
             }
         }
         .task(id: roomieReaction) {
@@ -434,6 +448,14 @@ struct ContentView: View {
             do { try await Task.sleep(for: .milliseconds(850)) }
             catch { return }
             roomieReaction = nil
+        }
+        .task(id: reviewPromptPending) {
+            guard reviewPromptPending else { return }
+            do { try await Task.sleep(for: .milliseconds(900)) }
+            catch { return }
+            reviewPromptPending = false
+            guard scenePhase == .active, rootGate == .unlocked, !safetyReleasePresented, !quickFocusPresented else { return }
+            requestReview()
         }
     }
 

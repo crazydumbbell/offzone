@@ -1,3 +1,4 @@
+import StoreKit
 import SwiftUI
 
 enum JournalSummaryPolicy {
@@ -23,6 +24,7 @@ struct ProJournalView: View {
     let goal: FocusGoal
     @EnvironmentObject private var account: AccountStore
     @Environment(\.dismiss) private var dismiss
+    @Environment(\.requestReview) private var requestReview
     @State private var store = ProJournalStore()
     @State private var week = ProJournalStore.week(.now)
     @State private var intention = ""
@@ -163,6 +165,9 @@ struct ProJournalView: View {
                         perform(section: "reflection") {
                             try store.reflect(.init(note: note.trimmingCharacters(in: .whitespacesAndNewlines), outcome: outcome), date: reflectionDate, hasAccess: account.hasProAccess)
                             baseline.reflection = reflectionDraft
+                            if ReviewPromptPolicy.recordPositiveMoment() {
+                                requestReview()
+                            }
                         }
                     }.disabled(note.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty)
                     if let reflectionFeedback { Text(reflectionFeedback).font(.suit(.subheadline)).accessibilityAddTraits(.updatesFrequently) }

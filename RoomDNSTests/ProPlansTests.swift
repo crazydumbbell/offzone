@@ -168,4 +168,24 @@ final class ProPlansTests: XCTestCase {
         let withIntro = ProPlansLegalNotice.combined(storage: storage, intro: "Intro offer.", legal: legal)
         XCTAssertEqual(withIntro, "\(storage) Intro offer. \(legal)")
     }
+
+    func testReviewPromptPolicyTriggersOnSecondMomentThenRespectsCooldownAndDelta() {
+        let suiteName = "com.exchip.roomdns.review-test.\(UUID().uuidString)"
+        let defaults = UserDefaults(suiteName: suiteName)!
+        defer { defaults.removePersistentDomain(forName: suiteName) }
+
+        let day0 = Date(timeIntervalSince1970: 1_700_000_000)
+        // First completed moment does not prompt yet.
+        XCTAssertFalse(ReviewPromptPolicy.recordPositiveMoment(defaults: defaults, now: day0))
+        // Second positive moment triggers the first OS review prompt.
+        XCTAssertTrue(ReviewPromptPolicy.recordPositiveMoment(defaults: defaults, now: day0.addingTimeInterval(600)))
+        // Within cooldown: never prompts even after several more moments.
+        XCTAssertFalse(ReviewPromptPolicy.recordPositiveMoment(defaults: defaults, now: day0.addingTimeInterval(86_400)))
+        XCTAssertFalse(ReviewPromptPolicy.recordPositiveMoment(defaults: defaults, now: day0.addingTimeInterval(2 * 86_400)))
+        // After 60-day cooldown, 3rd new moment since last prompt triggers again.
+        let day61 = day0.addingTimeInterval(61 * 86_400)
+        XCTAssertTrue(ReviewPromptPolicy.recordPositiveMoment(defaults: defaults, now: day61))
+        // Immediately after repeat prompt, requires both cooldown and delta again.
+        XCTAssertFalse(ReviewPromptPolicy.recordPositiveMoment(defaults: defaults, now: day61.addingTimeInterval(65 * 86_400)))
+    }
 }

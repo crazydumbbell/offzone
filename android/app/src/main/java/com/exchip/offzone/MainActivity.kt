@@ -135,6 +135,17 @@ class MainActivity : ComponentActivity() {
                 delay(1_000)
             }
         }
+        var hadActiveSession by remember { mutableStateOf(state.session != null) }
+        LaunchedEffect(state.session != null, state.message, activeRoute, foreground) {
+            val isActive = state.session != null
+            if (hadActiveSession && !isActive && state.message == R.string.session_finished &&
+                activeRoute == HardPaywallFlow.ROUTE_HOME && foreground
+            ) {
+                delay(900)
+                InAppReviewPrompt.recordPositiveMomentAndRequestIfEligible(this@MainActivity)
+            }
+            hadActiveSession = isActive
+        }
         var editing by rememberSaveable { mutableStateOf<String?>(null) }
         var accountReturnRoute by rememberSaveable { mutableStateOf(HardPaywallFlow.ROUTE_HOME) }
         var accountInitialManage by rememberSaveable { mutableStateOf(false) }
@@ -371,6 +382,7 @@ class MainActivity : ComponentActivity() {
                     hasPro = hasProAccess,
                     onBack = { route = journalReturnRoute },
                     accessCheck = { account.hasProAccessEffective },
+                    onReflectionSaved = { InAppReviewPrompt.recordPositiveMomentAndRequestIfEligible(this@MainActivity) },
                 )
                 HardPaywallFlow.ROUTE_SETTINGS -> SettingsScreen(
                     state = state,
