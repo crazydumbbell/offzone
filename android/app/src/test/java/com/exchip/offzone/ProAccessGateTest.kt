@@ -246,4 +246,92 @@ class ProAccessGateTest {
             ),
         )
     }
+
+    @Test
+    fun starterAccessGrantsFourteenDaysThenTransitionsToPaywall() {
+        val day0 = 1_700_000_000_000L
+        assertEquals(14, StarterAccess.remainingDays(day0, day0))
+        assertTrue(StarterAccess.isActive(day0, day0))
+        assertFalse(StarterAccess.showsExpiryReminderBanner(hasProAccess = false, remainingDays = 14))
+
+        val day11 = day0 + 11 * StarterAccess.DAY_MS + 60_000L
+        assertEquals(3, StarterAccess.remainingDays(day0, day11))
+        assertTrue(StarterAccess.showsExpiryReminderBanner(hasProAccess = false, remainingDays = 3))
+        assertFalse(StarterAccess.showsExpiryReminderBanner(hasProAccess = true, remainingDays = 3))
+
+        val day14 = day0 + 14 * StarterAccess.DAY_MS
+        assertEquals(0, StarterAccess.remainingDays(day0, day14))
+        assertFalse(StarterAccess.isActive(day0, day14))
+
+        // Fresh user during active starter sees Welcome first, then can reach Home/Edit/Quick/Journal without paywall.
+        assertEquals(
+            HardPaywallFlow.ROUTE_WELCOME,
+            HardPaywallFlow.initialRoute(
+                hasProAccess = false,
+                hasActiveSession = false,
+                onboardingCompleted = false,
+                hasRules = false,
+                storageError = false,
+                hasPreviewPaywall = false,
+                starterAccessActive = true,
+            ),
+        )
+        assertEquals(
+            HardPaywallFlow.ROUTE_HOME,
+            HardPaywallFlow.initialRoute(
+                hasProAccess = false,
+                hasActiveSession = false,
+                onboardingCompleted = true,
+                hasRules = true,
+                storageError = false,
+                hasPreviewPaywall = false,
+                starterAccessActive = true,
+            ),
+        )
+        assertEquals(
+            HardPaywallFlow.ROUTE_QUICK,
+            HardPaywallFlow.resolveRoute(
+                requestedRoute = HardPaywallFlow.ROUTE_QUICK,
+                hasProAccess = false,
+                hasActiveSession = false,
+                onboardingCompleted = true,
+                hasRules = true,
+                storageError = false,
+                hasPreviewPaywall = false,
+                starterAccessActive = true,
+            ),
+        )
+        // Feedback stays reachable even after starter expiry without Pro.
+        assertEquals(
+            HardPaywallFlow.ROUTE_FEEDBACK,
+            HardPaywallFlow.resolveRoute(
+                requestedRoute = HardPaywallFlow.ROUTE_FEEDBACK,
+                hasProAccess = false,
+                hasActiveSession = false,
+                onboardingCompleted = true,
+                hasRules = true,
+                storageError = false,
+                hasPreviewPaywall = false,
+                starterAccessActive = false,
+            ),
+        )
+    }
+
+    @Test
+    fun feedbackValidationTrimsAndRejectsInvalidInputs() {
+        assertNull(FeedbackValidation.sanitize("unknown", "hello world", ""))
+        assertNull(FeedbackValidation.sanitize("bug", "  ", ""))
+        assertNull(FeedbackValidation.sanitize("bug", "ab", ""))
+        assertNull(FeedbackValidation.sanitize("bug", "a".repeat(2001), ""))
+        assertNull(FeedbackValidation.sanitize("bug", "Valid message", "x".repeat(255)))
+
+        val clean = FeedbackValidation.sanitize("feature", "  Add custom durations  ", "  ")
+        assertNotNull(clean)
+        assertEquals("feature", clean!!.category)
+        assertEquals("Add custom durations", clean.message)
+        assertNull(clean.contact)
+
+        val withContact = FeedbackValidation.sanitize("bug", "Crash on pause", " user@example.com ")
+        assertEquals("user@example.com", withContact?.contact)
+    }
 }

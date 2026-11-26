@@ -57,4 +57,21 @@
     <string name="account_error_too_many_requests">尝试次数过多，请稍后再试。</string>
     <string name="account_error_purchase_not_allowed">此设备不允许进行购买。</string>
     <string name="account_error_already_purchased">此订阅已处于有效状态，请尝试恢复购买。</string>
+    <string name="starter_title">免费体验</string>
+    <string name="starter_days_left_one">免费体验剩余 1 天</string>
+    <string name="starter_days_left_many">免费体验剩余 %1$d 天</string>
+    <string name="feedback_open">发送反馈</string>
+    <string name="feedback_category">分类</string>
+    <string name="feedback_category_bug">问题</string>
+    <string name="feedback_category_idea">建议</string>
+    <string name="feedback_category_general">其他</string>
+    <string name="feedback_placeholder">哪些功能好用、哪里出错或希望改进什么？</string>
+    <string name="feedback_contact_placeholder">邮箱（选填，用于回复）</string>
+    <string name="feedback_privacy_note">仅附带应用版本、平台和语言，不包含所选应用列表或位置。</string>
+    <string name="feedback_send">发送</string>
+    <string name="feedback_sent_title">反馈已发送</string>
+    <string name="feedback_sent_body">感谢帮助改进 Offzone。</string>
+    <string name="feedback_message_too_short">发送前请至少输入 3 个字符。</string>
+    <string name="feedback_send_failed">暂时无法发送反馈，请检查网络后重试。</string>
+    <string name="feedback_open_github">打开 GitHub Issues</string>
 </resources>

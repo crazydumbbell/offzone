@@ -98,6 +98,9 @@ class MainActivity : ComponentActivity() {
         val identity by account.state.collectAsState()
         val notifications by FocusController.notificationsEnabled.collectAsState()
         val hasProAccess = remember(identity, debugProVersion) { account.hasProAccessEffective }
+        val starterRemainingDays = remember(identity, debugProVersion, foreground) { account.starterRemainingDays }
+        val starterAccessActive = !hasProAccess && starterRemainingDays > 0
+        val hasAppAccess = hasProAccess || starterAccessActive
         val previewPaywall = remember(intentVersion) { ProPreview.variant(intent) }
         var onboardingCompleted by rememberSaveable { mutableStateOf(OnboardingProfile.completed(this)) }
         var route by rememberSaveable {
@@ -109,6 +112,7 @@ class MainActivity : ComponentActivity() {
                     hasRules = rules.isNotEmpty(),
                     storageError = storageError,
                     hasPreviewPaywall = previewPaywall != null,
+                    starterAccessActive = starterAccessActive,
                 ),
             )
         }
@@ -123,6 +127,7 @@ class MainActivity : ComponentActivity() {
             hasRules = rules.isNotEmpty(),
             storageError = storageError,
             hasPreviewPaywall = previewPaywall != null,
+            starterAccessActive = starterAccessActive,
         )
         LaunchedEffect(activeRoute) {
             if (route != activeRoute) route = activeRoute
@@ -149,6 +154,7 @@ class MainActivity : ComponentActivity() {
         var editing by rememberSaveable { mutableStateOf<String?>(null) }
         var accountReturnRoute by rememberSaveable { mutableStateOf(HardPaywallFlow.ROUTE_HOME) }
         var accountInitialManage by rememberSaveable { mutableStateOf(false) }
+        var feedbackReturnRoute by rememberSaveable { mutableStateOf(HardPaywallFlow.ROUTE_HOME) }
         var journalReturnRoute by rememberSaveable { mutableStateOf(HardPaywallFlow.ROUTE_HOME) }
         var paywallReturnRoute by rememberSaveable { mutableStateOf(HardPaywallFlow.ROUTE_PAYWALL) }
         // D-50: the purchase button sends a signed-out user to the account screen; these bring them back to the same plan.
@@ -176,6 +182,11 @@ class MainActivity : ComponentActivity() {
             route = HardPaywallFlow.ROUTE_ACCOUNT
         }
 
+        fun openFeedback(returnTo: String) {
+            feedbackReturnRoute = returnTo
+            route = HardPaywallFlow.ROUTE_FEEDBACK
+        }
+
         fun enterAfterPro() {
             val destination = HardPaywallFlow.postProRoute(
                 onboardingCompleted = onboardingCompleted,
@@ -191,7 +202,7 @@ class MainActivity : ComponentActivity() {
             error = null
             when (action) {
                 1 -> {
-                    if (!ProAccessGate.canStartFocus(hasProAccess)) openPaywall()
+                    if (!ProAccessGate.canStartFocus(hasAppAccess)) openPaywall()
                     else FocusController.startPlaceFocus(this)
                 }
                 2 -> { FocusController.setNotificationsEnabled(true); FocusController.startPlaceMonitoring(this) }
@@ -243,7 +254,7 @@ class MainActivity : ComponentActivity() {
 
         fun requestPlace(action: Int) {
             error = null
-            if (action == 1 && !ProAccessGate.canStartFocus(hasProAccess)) {
+            if (action == 1 && !ProAccessGate.canStartFocus(hasAppAccess)) {
                 openPaywall()
                 return
             }
@@ -269,20 +280,23 @@ class MainActivity : ComponentActivity() {
                 enterAfterPro()
             }
         }
-        val canPaywallBackToWelcome = activeRoute == HardPaywallFlow.ROUTE_PAYWALL &&
-            paywallReturnRoute == HardPaywallFlow.ROUTE_WELCOME &&
+        val paywallBackTarget: String? = when {
+            activeRoute != HardPaywallFlow.ROUTE_PAYWALL || previewPaywall != null -> null
+            starterAccessActive -> paywallReturnRoute.takeIf { it != HardPaywallFlow.ROUTE_PAYWALL } ?: HardPaywallFlow.ROUTE_HOME
             !hasProAccess &&
-            state.session == null &&
-            previewPaywall == null &&
-            HardPaywallFlow.needsFirstRule(onboardingCompleted, rules.isNotEmpty(), storageError)
+                paywallReturnRoute == HardPaywallFlow.ROUTE_WELCOME &&
+                state.session == null &&
+                HardPaywallFlow.needsFirstRule(onboardingCompleted, rules.isNotEmpty(), storageError) -> HardPaywallFlow.ROUTE_WELCOME
+            else -> null
+        }
         val interceptBack = when (activeRoute) {
             HardPaywallFlow.ROUTE_HOME, HardPaywallFlow.ROUTE_WELCOME -> false
-            HardPaywallFlow.ROUTE_PAYWALL -> canPaywallBackToWelcome
+            HardPaywallFlow.ROUTE_PAYWALL -> paywallBackTarget != null
             else -> true
         }
         BackHandler(interceptBack) {
             route = when (activeRoute) {
-                HardPaywallFlow.ROUTE_PAYWALL -> HardPaywallFlow.ROUTE_WELCOME
+                HardPaywallFlow.ROUTE_PAYWALL -> paywallBackTarget ?: HardPaywallFlow.ROUTE_WELCOME
                 HardPaywallFlow.ROUTE_EDIT -> {
                     if (HardPaywallFlow.needsFirstRule(onboardingCompleted, rules.isNotEmpty(), storageError)) {
                         OnboardingProfile.complete(this)
@@ -298,7 +312,9 @@ class MainActivity : ComponentActivity() {
                     onboardingCompleted = onboardingCompleted,
                     hasRules = rules.isNotEmpty(),
                     storageError = storageError,
+                    starterAccessActive = starterAccessActive,
                 )
+                HardPaywallFlow.ROUTE_FEEDBACK -> feedbackReturnRoute
                 HardPaywallFlow.ROUTE_JOURNAL -> journalReturnRoute
                 else -> HardPaywallFlow.ROUTE_HOME
             }
@@ -307,7 +323,10 @@ class MainActivity : ComponentActivity() {
         Surface(Modifier.fillMaxSize()) {
             when (activeRoute) {
                 HardPaywallFlow.ROUTE_WELCOME -> OnboardingScreen(
-                    onGetStarted = { openPaywall(returnTo = HardPaywallFlow.ROUTE_WELCOME) },
+                    onGetStarted = {
+                        if (hasAppAccess) enterAfterPro()
+                        else openPaywall(returnTo = HardPaywallFlow.ROUTE_WELCOME)
+                    },
                     onSignIn = { openAccount(returnTo = HardPaywallFlow.ROUTE_WELCOME) },
                 )
                 HardPaywallFlow.ROUTE_EDIT -> RuleEditorScreen(
@@ -355,7 +374,7 @@ class MainActivity : ComponentActivity() {
                         paywallResumeRemind = remind
                         openAccount(returnTo = HardPaywallFlow.ROUTE_PAYWALL, manageDirectly = manageDirectly)
                     },
-                    onBack = if (canPaywallBackToWelcome) ({ route = HardPaywallFlow.ROUTE_WELCOME }) else null,
+                    onBack = paywallBackTarget?.let { target -> { route = target } },
                     resumePlanId = paywallResumePlan,
                     resumeRemind = paywallResumeRemind,
                     preview = previewPaywall,
@@ -373,15 +392,23 @@ class MainActivity : ComponentActivity() {
                             onboardingCompleted = onboardingCompleted,
                             hasRules = rules.isNotEmpty(),
                             storageError = storageError,
+                            starterAccessActive = starterAccessActive,
                         )
                     },
-                    onJournal = if (hasProAccess) ({ journalReturnRoute = HardPaywallFlow.ROUTE_ACCOUNT; route = HardPaywallFlow.ROUTE_JOURNAL }) else null,
+                    onJournal = if (hasAppAccess) ({ journalReturnRoute = HardPaywallFlow.ROUTE_ACCOUNT; route = HardPaywallFlow.ROUTE_JOURNAL }) else null,
+                    starterRemainingDays = starterRemainingDays,
+                    onUpgrade = if (!hasProAccess) ({ openPaywall(returnTo = HardPaywallFlow.ROUTE_ACCOUNT) }) else null,
+                    onFeedback = { openFeedback(HardPaywallFlow.ROUTE_ACCOUNT) },
                     initialManage = accountInitialManage,
                 )
+                HardPaywallFlow.ROUTE_FEEDBACK -> FeedbackScreen(
+                    store = account,
+                    onBack = { route = feedbackReturnRoute },
+                )
                 HardPaywallFlow.ROUTE_JOURNAL -> JournalScreen(
-                    hasPro = hasProAccess,
+                    hasPro = hasAppAccess,
                     onBack = { route = journalReturnRoute },
-                    accessCheck = { account.hasProAccessEffective },
+                    accessCheck = { account.hasAppAccessEffective },
                     onReflectionSaved = { InAppReviewPrompt.recordPositiveMomentAndRequestIfEligible(this@MainActivity) },
                 )
                 HardPaywallFlow.ROUTE_SETTINGS -> SettingsScreen(
@@ -392,6 +419,7 @@ class MainActivity : ComponentActivity() {
                     onBack = { route = HardPaywallFlow.ROUTE_HOME },
                     onOpenAccount = { openAccount(returnTo = HardPaywallFlow.ROUTE_SETTINGS) },
                     onOpenJournal = { journalReturnRoute = HardPaywallFlow.ROUTE_SETTINGS; route = HardPaywallFlow.ROUTE_JOURNAL },
+                    onOpenFeedback = { openFeedback(HardPaywallFlow.ROUTE_SETTINGS) },
                     onToggleNotifications = { enabled ->
                         if (enabled && Build.VERSION.SDK_INT >= 33) notificationPermission.launch(Manifest.permission.POST_NOTIFICATIONS)
                         else FocusController.setNotificationsEnabled(enabled)
@@ -407,7 +435,7 @@ class MainActivity : ComponentActivity() {
                     onRestore = { FocusController.stop(); error = null },
                 )
                 HardPaywallFlow.ROUTE_QUICK -> QuickFocus(
-                    hasProAccess = hasProAccess,
+                    hasProAccess = hasAppAccess,
                     onBack = { route = HardPaywallFlow.ROUTE_HOME },
                     onEnable = { disclosure = true },
                     onRequirePro = { openPaywall() },
@@ -454,7 +482,7 @@ class MainActivity : ComponentActivity() {
                         item {
                             val needsAction = storageError || !state.connected
                             val scheduled = remember(homeClock, state.ruleEnabled, active) { state.ruleEnabled && active != null && !RulePolicy.scheduleActive(active) }
-                            val canStart = hasProAccess && active != null && !focused && state.connected && state.ruleEnabled && !scheduled && !state.checkingPlace
+                            val canStart = hasAppAccess && active != null && !focused && state.connected && state.ruleEnabled && !scheduled && !state.checkingPlace
                             val cardColor = when {
                                 focused -> Pine
                                 needsAction -> SoftButter
@@ -519,7 +547,7 @@ class MainActivity : ComponentActivity() {
                                         !state.ruleEnabled -> rules.firstOrNull()?.let { rule ->
                                             PrimaryButton(
                                                 onClick = {
-                                                    if (!ProAccessGate.canActivateRule(hasProAccess)) openPaywall()
+                                                    if (!ProAccessGate.canActivateRule(hasAppAccess)) openPaywall()
                                                     else if (!FocusController.activateRule(rule.id)) error = R.string.save_error
                                                 },
                                                 modifier = Modifier.fillMaxWidth(),
@@ -540,10 +568,30 @@ class MainActivity : ComponentActivity() {
                                 }
                             }
                         }
+                        if (StarterAccess.showsExpiryReminderBanner(hasProAccess, starterRemainingDays)) item {
+                            Surface(color = SoftButter, shape = RoundedCornerShape(16.dp)) {
+                                Row(
+                                    Modifier.fillMaxWidth().padding(horizontal = 18.dp, vertical = 10.dp),
+                                    verticalAlignment = Alignment.CenterVertically,
+                                    horizontalArrangement = Arrangement.spacedBy(12.dp),
+                                ) {
+                                    Text(
+                                        if (starterRemainingDays == 1) stringResource(R.string.starter_days_left_one)
+                                        else stringResource(R.string.starter_days_left_many, starterRemainingDays),
+                                        style = MaterialTheme.typography.bodyMedium,
+                                        color = Ink,
+                                        modifier = Modifier.weight(1f),
+                                    )
+                                    TextButton(onClick = { openPaywall(returnTo = HardPaywallFlow.ROUTE_HOME) }) {
+                                        Text(stringResource(R.string.pro_see_plans), color = Pine)
+                                    }
+                                }
+                            }
+                        }
                         if (state.session == null) item {
                             SecondaryButton(
                                 onClick = {
-                                    if (ProAccessGate.canQuickFocus(hasProAccess)) route = HardPaywallFlow.ROUTE_QUICK
+                                    if (ProAccessGate.canQuickFocus(hasAppAccess)) route = HardPaywallFlow.ROUTE_QUICK
                                     else openPaywall()
                                 },
                                 modifier = Modifier.fillMaxWidth(),
@@ -579,7 +627,7 @@ class MainActivity : ComponentActivity() {
                                             OutlinedButton(onClick = {
                                                 if (isAppliedAndCurrent) {
                                                     FocusController.pauseRule()
-                                                } else if (!ProAccessGate.canActivateRule(hasProAccess)) {
+                                                } else if (!ProAccessGate.canActivateRule(hasAppAccess)) {
                                                     openPaywall()
                                                 } else if (!FocusController.activateRule(rule.id)) {
                                                     error = R.string.save_error
@@ -594,6 +642,12 @@ class MainActivity : ComponentActivity() {
                                     }
                                 }
                             }
+                        }
+                        item {
+                            SecondaryButton(
+                                onClick = { openFeedback(HardPaywallFlow.ROUTE_HOME) },
+                                modifier = Modifier.fillMaxWidth(),
+                            ) { Text(stringResource(R.string.feedback_open)) }
                         }
                     }
                     deleting?.let { rule ->
@@ -689,6 +743,7 @@ private fun SettingsScreen(
     onBack: () -> Unit,
     onOpenAccount: () -> Unit,
     onOpenJournal: () -> Unit,
+    onOpenFeedback: () -> Unit,
     onToggleNotifications: (Boolean) -> Unit,
     onToggleMonitor: () -> Unit,
     onCheckArrival: () -> Unit,
@@ -749,6 +804,8 @@ private fun SettingsScreen(
                 SettingsLinkRow(R.string.m_account, onOpenAccount)
                 HorizontalDivider(color = PineHairline, modifier = Modifier.padding(horizontal = 8.dp))
                 SettingsLinkRow(R.string.m_journal, onOpenJournal)
+                HorizontalDivider(color = PineHairline, modifier = Modifier.padding(horizontal = 8.dp))
+                SettingsLinkRow(R.string.feedback_open, onOpenFeedback)
                 HorizontalDivider(color = PineHairline, modifier = Modifier.padding(horizontal = 8.dp))
                 SettingsLinkRow(R.string.m_settings, onOpenAppSettings)
             }

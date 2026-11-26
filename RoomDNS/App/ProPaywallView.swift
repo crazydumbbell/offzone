@@ -1,3 +1,5 @@
+import FirebaseAnalytics
+import FirebaseCore
 import SwiftUI
 import RevenueCat
 
@@ -5,6 +7,7 @@ struct RoomPaywallView: View {
     let goal: FocusGoal
     var activeSessionTitle: String? = nil
     var activeSessionRestore: (() -> Void)? = nil
+    var onClose: (() -> Void)? = nil
     var onHoldDone: (Bool) -> Void = { _ in }
     var onUnlocked: () -> Void = {}
     @EnvironmentObject private var account: AccountStore
@@ -97,6 +100,12 @@ struct RoomPaywallView: View {
             .background(Color.roomCanvas)
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
+                if let onClose {
+                    ToolbarItem(placement: .cancellationAction) {
+                        Button(roomString("Cancel"), action: onClose)
+                            .accessibilityIdentifier("pro.close")
+                    }
+                }
                 ToolbarItem(placement: .principal) {
                     Text(roomString("pro_eyebrow")).font(.suit(.subheadline, weight: .bold)).tracking(1.4)
                 }
@@ -133,6 +142,9 @@ struct RoomPaywallView: View {
         .onAppear {
             if proAtEntry == nil { proAtEntry = account.hasProAccess }
             updateDisplayPlans()
+            if preview == nil && FirebaseApp.app() != nil {
+                Analytics.logEvent("paywall_opened", parameters: nil)
+            }
 #if DEBUG
             if preview != nil {
                 NSLog("OFFZONE_PRO_PREVIEW variant=%@ reduceMotion=%@ dynamicType=%@", preview ?? "", String(reduceMotion), String(describing: dynamicTypeSize))

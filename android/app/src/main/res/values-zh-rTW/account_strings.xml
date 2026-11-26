@@ -57,4 +57,21 @@
     <string name="account_error_too_many_requests">嘗試次數過多，請稍後再試。</string>
     <string name="account_error_purchase_not_allowed">此裝置不允許進行購買。</string>
     <string name="account_error_already_purchased">此訂閱已在生效中，請嘗試回復購買。</string>
+    <string name="starter_title">免費體驗</string>
+    <string name="starter_days_left_one">免費體驗剩餘 1 天</string>
+    <string name="starter_days_left_many">免費體驗剩餘 %1$d 天</string>
+    <string name="feedback_open">傳送意見回饋</string>
+    <string name="feedback_category">分類</string>
+    <string name="feedback_category_bug">錯誤</string>
+    <string name="feedback_category_idea">建議</string>
+    <string name="feedback_category_general">其他</string>
+    <string name="feedback_placeholder">哪些功能好用、哪裡出錯或希望改進什麼？</string>
+    <string name="feedback_contact_placeholder">電子郵件（選填，用於回覆）</string>
+    <string name="feedback_privacy_note">僅附帶 App 版本、平台與語言，不包含所選 App 清單或位置。</string>
+    <string name="feedback_send">傳送</string>
+    <string name="feedback_sent_title">已傳送意見回饋</string>
+    <string name="feedback_sent_body">感謝協助改進 Offzone。</string>
+    <string name="feedback_message_too_short">傳送前請至少輸入 3 個字元。</string>
+    <string name="feedback_send_failed">目前無法傳送意見回饋，請檢查連線後再試。</string>
+    <string name="feedback_open_github">開啟 GitHub Issues</string>
 </resources>

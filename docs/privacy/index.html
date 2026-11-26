@@ -13,7 +13,7 @@ section{background:var(--ivory);border-radius:18px;padding:4px 22px 18px;margin:
 <main>
 <p>Legal</p>
 <h1>Privacy policy</h1>
-<p class="meta">Last updated October 13, 2026</p>
+<p class="meta">Last updated November 27, 2026</p>
 <p>Offzone is designed to keep sensitive focus information on your device. This policy explains what the app processes, what may be sent to service providers, and the controls available to you.</p>
 <section>
 <h2><span class="n">01</span>Information kept on your device</h2>
@@ -43,7 +43,8 @@ section{background:var(--ivory);border-radius:18px;padding:4px 22px 18px;margin:
 <li>RevenueCat provides purchase validation and entitlement management, using an anonymous identifier until you sign in and your account identifier afterward.</li>
 <li>OpenStreetMap Foundation serves Android map tiles only when you choose to show the map. Your device geocoding provider handles address searches.</li>
 </ul>
-<p>The iOS app uses Firebase Analytics. When Firebase is configured, a successful rule activation sends a rule_activated event without custom parameters. This event records product interaction, not a completed focus session, and does not contain the rule name, selected apps, or place coordinates. Firebase Analytics may also collect automatic app events, app-instance identifiers, and device information for product analytics. These identifiers can associate events with an app instance; we do not describe this information as anonymous. Android does not currently include this Firebase Analytics integration.</p>
+<p>The iOS app uses Firebase Analytics. When Firebase is configured, basic product milestones (welcome started, rule saved, rule activated, focus started, quick focus started, paywall opened, and feedback submitted) may be sent without custom parameters. These events do not contain rule names, selected apps, or place coordinates. Firebase Analytics may also collect automatic app events, app-instance identifiers, and device information for product analytics. These identifiers can associate events with an app instance; we do not describe this information as anonymous. Android does not currently include this Firebase Analytics integration.</p>
+<p>If you choose to submit in-app feedback, Offzone sends your selected topic, message, optional contact email, platform, app version, OS version, app language, access tier, and your Firebase account identifier (only if signed in) to Cloud Firestore so we can diagnose bugs and improve the app. In-app feedback never includes your selected apps, rules, journal entries, or locations.</p>
 <p>Service providers may process technical information such as IP addresses, device or app information, and service diagnostics to deliver, secure, and troubleshoot their services. Offzone does not use this information for advertising or cross-app tracking.</p>
 <p>Offzone does not sell personal information, serve third-party advertising, or use your data for cross-app tracking.</p>
 </section>

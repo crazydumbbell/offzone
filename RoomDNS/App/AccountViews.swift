@@ -17,6 +17,10 @@ enum AccountViewPolicy {
         hasProAccess
     }
 
+    static func showsUpgradeOnOverview(hasProAccess: Bool, starterRemainingDays: Int) -> Bool {
+        !hasProAccess && starterRemainingDays > 0
+    }
+
     static func subscriptionStatusKey(hasProAccess: Bool) -> String {
         hasProAccess ? "Your Pro subscription is active." : "No active subscription."
     }
@@ -33,14 +37,35 @@ private enum AccountRoute: Hashable {
 struct RoomAccountView: View {
     let goal: FocusGoal
     var startInManage = false
+    var onUpgrade: (() -> Void)? = nil
     @EnvironmentObject private var account: AccountStore
     @Environment(\.dismiss) private var dismiss
     @State private var path: [AccountRoute]
+    @State private var feedbackPresented = false
 
-    init(goal: FocusGoal, startInManage: Bool = false) {
+    init(goal: FocusGoal, startInManage: Bool = false, onUpgrade: (() -> Void)? = nil) {
         self.goal = goal
         self.startInManage = startInManage
+        self.onUpgrade = onUpgrade
         _path = State(initialValue: startInManage ? [.manage] : [])
+    }
+
+    private var overviewTitle: String {
+        if account.hasProAccess { return roomString("Offzone Pro") }
+        if account.isStarterAccessActive { return roomString("starter_title") }
+        return roomString("Account")
+    }
+
+    private var overviewStatus: String {
+        if account.hasProAccess {
+            return roomString(AccountViewPolicy.subscriptionStatusKey(hasProAccess: true))
+        }
+        if account.isStarterAccessActive {
+            return account.starterRemainingDays == 1
+                ? roomString("starter_days_left_one")
+                : roomString("starter_days_left_many", account.starterRemainingDays)
+        }
+        return roomString(AccountViewPolicy.subscriptionStatusKey(hasProAccess: false))
     }
 
     var body: some View {
@@ -53,9 +78,9 @@ struct RoomAccountView: View {
                         .background(Color.roomButter)
                         .clipShape(RoundedRectangle(cornerRadius: 24))
                     VStack(alignment: .leading, spacing: 8) {
-                        Text(account.hasProAccess ? roomString("Offzone Pro") : roomString("Account"))
+                        Text(overviewTitle)
                             .font(.suit(.largeTitle, weight: .bold))
-                        Text(roomString(AccountViewPolicy.subscriptionStatusKey(hasProAccess: account.hasProAccess)))
+                        Text(overviewStatus)
                             .font(.suit(.body))
                             .foregroundStyle(Color.roomInkSecondary)
                             .fixedSize(horizontal: false, vertical: true)
@@ -71,7 +96,21 @@ struct RoomAccountView: View {
                                 .background(Color.roomAccent, in: Capsule())
                         }
                         .accessibilityIdentifier("account.manageSubscription")
+                    } else if AccountViewPolicy.showsUpgradeOnOverview(
+                        hasProAccess: account.hasProAccess,
+                        starterRemainingDays: account.starterRemainingDays
+                    ), let onUpgrade {
+                        Button(roomString("pro_see_plans"), action: onUpgrade)
+                            .roomPrimaryAction()
+                            .accessibilityIdentifier("account.seeProPlans")
                     }
+                    Button {
+                        feedbackPresented = true
+                    } label: {
+                        Label(roomString("feedback_open"), systemImage: "bubble.left.and.text.bubble.right")
+                    }
+                    .roomSecondaryAction()
+                    .accessibilityIdentifier("account.feedback")
                     NavigationLink(value: AccountRoute.manage) {
                         HStack(spacing: 6) {
                             Text("Manage account")
@@ -93,6 +132,9 @@ struct RoomAccountView: View {
             .toolbar { ToolbarItem(placement: .confirmationAction) { Button("Done") { dismiss() } } }
             .navigationDestination(for: AccountRoute.self) { _ in
                 AccountManageView(goal: goal, dismissSheet: { dismiss() })
+            }
+            .sheet(isPresented: $feedbackPresented) {
+                FeedbackView().presentationCornerRadius(24)
             }
         }
         .tint(Color.roomAction).preferredColorScheme(.light)
@@ -119,7 +161,7 @@ private struct AccountManageView: View {
 
     private var showsJournalLink: Bool {
         AccountViewPolicy.showsJournalLink(
-            hasProAccess: account.hasProAccess,
+            hasProAccess: account.hasAppAccess,
             hasLocalJournalFile: FileManager.default.fileExists(atPath: ProJournalStore.defaultURL.path)
         )
     }
@@ -270,6 +312,136 @@ private struct AccountManageView: View {
         }
         .signInWithAppleButtonStyle(.whiteOutline).frame(height: 56)
         .disabled(account.isBusy)
+    }
+}
+
+struct FeedbackView: View {
+    @EnvironmentObject private var account: AccountStore
+    @Environment(\.dismiss) private var dismiss
+    @State private var category: FeedbackCategory = .bug
+    @State private var message = ""
+    @State private var contact = ""
+    @State private var sending = false
+    @State private var sent = false
+    @State private var error: String?
+
+    private static let issuesURL = URL(string: "https://github.com/crazydumbbell/offzone/issues")!
+
+    var body: some View {
+        NavigationStack {
+            Form {
+                if sent {
+                    Section {
+                        VStack(alignment: .leading, spacing: 12) {
+                            Text(roomString("feedback_sent_title"))
+                                .font(.suit(.headline, weight: .bold))
+                                .foregroundStyle(Color.roomInk)
+                            Text(roomString("feedback_sent_body"))
+                                .font(.suit(.body))
+                                .foregroundStyle(Color.roomInkSecondary)
+                        }
+                        .padding(.vertical, 6)
+                    }
+                    .listRowBackground(Color.roomMint)
+                } else {
+                    Section {
+                        Picker(roomString("feedback_category"), selection: $category) {
+                            ForEach(FeedbackCategory.allCases) { item in
+                                Text(roomString(item.titleKey)).tag(item)
+                            }
+                        }
+                        .pickerStyle(.segmented)
+                        TextField(
+                            roomString("feedback_placeholder"),
+                            text: $message,
+                            axis: .vertical
+                        )
+                        .lineLimit(4...8)
+                        .onChange(of: message) { _, value in
+                            if value.count > FeedbackValidation.maxMessageLength {
+                                message = String(value.prefix(FeedbackValidation.maxMessageLength))
+                            }
+                        }
+                        TextField(roomString("feedback_contact_placeholder"), text: $contact)
+                            .keyboardType(.emailAddress)
+                            .textInputAutocapitalization(.never)
+                            .autocorrectionDisabled()
+                            .onChange(of: contact) { _, value in
+                                if value.count > FeedbackValidation.maxContactLength {
+                                    contact = String(value.prefix(FeedbackValidation.maxContactLength))
+                                }
+                            }
+                    } footer: {
+                        Text(roomString("feedback_privacy_note"))
+                            .font(.suit(.subheadline))
+                            .foregroundStyle(Color.roomInkSecondary)
+                    }
+                    .listRowBackground(Color.roomCard)
+
+                    if let error {
+                        Section {
+                            Text(error)
+                                .font(.suit(.subheadline))
+                                .foregroundStyle(Color.roomWarning)
+                        }
+                        .listRowBackground(Color.roomCard)
+                    }
+
+                    Section {
+                        Button {
+                            error = nil
+                            sending = true
+                            Task {
+                                let resultError = await account.submitFeedback(
+                                    category: category,
+                                    message: message,
+                                    contact: contact
+                                )
+                                sending = false
+                                if let resultError {
+                                    error = resultError
+                                } else {
+                                    sent = true
+                                }
+                            }
+                        } label: {
+                            Group {
+                                if sending {
+                                    ProgressView().tint(Color.roomCanvas)
+                                } else {
+                                    Text(roomString("feedback_send"))
+                                }
+                            }
+                            .frame(maxWidth: .infinity)
+                        }
+                        .roomPrimaryAction()
+                        .disabled(sending || FeedbackValidation.sanitize(message: message, contact: contact) == nil)
+                        .listRowInsets(EdgeInsets())
+                        .listRowBackground(Color.clear)
+                    }
+                }
+
+                Section {
+                    Link(roomString("feedback_open_github"), destination: Self.issuesURL)
+                        .foregroundStyle(Color.roomAccent)
+                        .frame(minHeight: 44)
+                }
+                .listRowBackground(Color.roomCard)
+            }
+            .font(.suit(.body))
+            .foregroundStyle(Color.roomInk)
+            .scrollContentBackground(.hidden)
+            .background(Color.roomCanvas)
+            .navigationTitle(roomString("feedback_open"))
+            .navigationBarTitleDisplayMode(.inline)
+            .toolbar {
+                ToolbarItem(placement: .confirmationAction) {
+                    Button(roomString("Done")) { dismiss() }
+                }
+            }
+        }
+        .tint(Color.roomAction)
+        .preferredColorScheme(.light)
     }
 }
 

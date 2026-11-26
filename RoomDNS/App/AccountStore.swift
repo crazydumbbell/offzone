@@ -1,6 +1,7 @@
 import AuthenticationServices
 import Combine
 import CryptoKit
+import FirebaseAnalytics
 import FirebaseAuth
 import FirebaseCore
 import FirebaseFirestore
@@ -60,6 +61,16 @@ final class AccountStore: ObservableObject {
         return Self.proAccessIsValid(signedIn: isSignedIn, currentUID: currentPurchaseUID,
                                      entitlementUID: proUID, verifiedActive: isPro,
                                      expirationDate: proExpirationDate, now: Date())
+    }
+    var starterRemainingDays: Int {
+        hasProAccess ? 0 : StarterAccessPolicy.remainingDays()
+    }
+    var isStarterAccessActive: Bool {
+        !hasProAccess && starterRemainingDays > 0
+    }
+    /// Full feature access via paid Offzone Pro or the initial 14-day free starter period.
+    var hasAppAccess: Bool {
+        hasProAccess || StarterAccessPolicy.isActive()
     }
     var canShowOffer: Bool { offersEnabled && purchasesConfigured && !packages.isEmpty }
     var canMakeStorePurchase: Bool { currentPurchaseUID != nil }
@@ -122,6 +133,7 @@ final class AccountStore: ObservableObject {
         unlockPassEnabled = Self.unlockIsReady(
             ready: bundle.object(forInfoDictionaryKey: "RoomUnlockPassReady") as? Bool == true,
             productID: unlockProductID)
+        StarterAccessPolicy.ensureStarted()
         // Missing configuration is an intentional offline/free state, never a fake login.
         guard let path = bundle.path(forResource: "GoogleService-Info", ofType: "plist"),
               let options = FirebaseOptions(contentsOfFile: path),
@@ -389,6 +401,42 @@ final class AccountStore: ObservableObject {
             if Auth.auth().currentUser?.uid == uid { savedGoal = goal }
         } catch {
             if Auth.auth().currentUser?.uid == uid { errorMessage = Self.localizedAuthError(error) }
+        }
+    }
+
+    func submitFeedback(category: FeedbackCategory, message: String, contact: String) async -> String? {
+        guard let clean = FeedbackValidation.sanitize(message: message, contact: contact) else {
+            return roomString("feedback_message_too_short")
+        }
+        guard isConfigured else {
+            return roomString("feedback_send_failed")
+        }
+        let shortVersion = Bundle.main.object(forInfoDictionaryKey: "CFBundleShortVersionString") as? String ?? "0"
+        let buildVersion = Bundle.main.object(forInfoDictionaryKey: "CFBundleVersion") as? String ?? "0"
+        var payload: [String: Any] = [
+            "category": category.rawValue,
+            "message": clean.message,
+            "platform": "ios",
+            "appVersion": String("\(shortVersion) (\(buildVersion))".prefix(40)),
+            "osVersion": String(UIDevice.current.systemVersion.prefix(40)),
+            "locale": String((Bundle.main.preferredLocalizations.first ?? Locale.current.identifier).prefix(35)),
+            "accessTier": hasProAccess ? "pro" : (isStarterAccessActive ? "starter" : "expired"),
+            "createdAt": FieldValue.serverTimestamp()
+        ]
+        if let contact = clean.contact {
+            payload["contact"] = contact
+        }
+        if let uid = Auth.auth().currentUser?.uid {
+            payload["uid"] = uid
+        }
+        do {
+            _ = try await Firestore.firestore().collection("userFeedback").addDocument(data: payload)
+            if FirebaseApp.app() != nil {
+                Analytics.logEvent("feedback_submitted", parameters: nil)
+            }
+            return nil
+        } catch {
+            return roomString("feedback_send_failed")
         }
     }
 

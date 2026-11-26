@@ -50,7 +50,7 @@ struct ProJournalView: View {
         baseline.hasChanges(plan: planDraft, reflection: reflectionDraft)
     }
     private var weekKey: String { ProJournalStore.key(week) }
-    private var hasAccess: Bool { account.hasProAccess }
+    private var hasAccess: Bool { account.hasAppAccess }
     private var weeklyEntries: [(String, ProJournalData.Reflection)] {
         let end = ProJournalStore.key(ProJournalStore.calendar.date(byAdding: .day, value: 7, to: week)!)
         return store.data.reflections.filter { $0.key >= weekKey && $0.key < end }.sorted { $0.key > $1.key }
@@ -123,7 +123,7 @@ struct ProJournalView: View {
                     }
                     Button("Save weekly intention") {
                         perform(section: "plan") {
-                            try store.setPlan(.init(intention: intention.trimmingCharacters(in: .whitespacesAndNewlines), context: context, weekdays: weekdays), week: week, hasAccess: account.hasProAccess)
+                            try store.setPlan(.init(intention: intention.trimmingCharacters(in: .whitespacesAndNewlines), context: context, weekdays: weekdays), week: week, hasAccess: account.hasAppAccess)
                             baseline.plan = planDraft
                         }
                     }.disabled(intention.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty || weekdays.isEmpty)
@@ -163,7 +163,7 @@ struct ProJournalView: View {
                     }
                     Button("Save reflection") {
                         perform(section: "reflection") {
-                            try store.reflect(.init(note: note.trimmingCharacters(in: .whitespacesAndNewlines), outcome: outcome), date: reflectionDate, hasAccess: account.hasProAccess)
+                            try store.reflect(.init(note: note.trimmingCharacters(in: .whitespacesAndNewlines), outcome: outcome), date: reflectionDate, hasAccess: account.hasAppAccess)
                             baseline.reflection = reflectionDraft
                             if ReviewPromptPolicy.recordPositiveMoment() {
                                 requestReview()

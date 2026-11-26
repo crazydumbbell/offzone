@@ -14,5 +14,25 @@ service cloud.firestore {
         && request.resource.data.goal in ['work', 'rest', 'presence', 'personal']
         && request.resource.data.updatedAt == request.time;
     }
+
+    match /userFeedback/{feedbackId} {
+      allow read, update, delete: if false;
+      allow create: if request.resource.data.keys().hasAll(['category', 'message', 'platform', 'appVersion', 'locale', 'createdAt'])
+        && request.resource.data.keys().hasOnly(['category', 'message', 'contact', 'platform', 'appVersion', 'osVersion', 'locale', 'accessTier', 'uid', 'createdAt'])
+        && request.resource.data.category in ['bug', 'feature', 'general']
+        && request.resource.data.message is string
+        && request.resource.data.message.size() >= 3
+        && request.resource.data.message.size() <= 2000
+        && request.resource.data.platform in ['ios', 'android']
+        && request.resource.data.appVersion is string
+        && request.resource.data.appVersion.size() <= 40
+        && request.resource.data.locale is string
+        && request.resource.data.locale.size() <= 35
+        && (!('contact' in request.resource.data) || (request.resource.data.contact is string && request.resource.data.contact.size() <= 254))
+        && (!('osVersion' in request.resource.data) || (request.resource.data.osVersion is string && request.resource.data.osVersion.size() <= 40))
+        && (!('accessTier' in request.resource.data) || request.resource.data.accessTier in ['starter', 'pro', 'expired'])
+        && (!('uid' in request.resource.data) || (request.auth != null && request.resource.data.uid == request.auth.uid))
+        && request.resource.data.createdAt == request.time;
+    }
   }
 }

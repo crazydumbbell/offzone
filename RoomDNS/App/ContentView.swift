@@ -1,5 +1,7 @@
 import CoreLocation
 import FamilyControls
+import FirebaseAnalytics
+import FirebaseCore
 import MapKit
 import StoreKit
 import SwiftUI
@@ -20,9 +22,10 @@ enum AppRootGate: Equatable {
 }
 
 enum HardPaywallPolicy {
-    /// Non-Pro users can only see the welcome screen on fresh launch or the full-screen hard paywall.
+    /// Users get 14-day free starter access from first launch; once expired without Pro, the hard paywall gates access.
     static func rootGate(
         hasProAccess: Bool,
+        starterAccessActive: Bool = false,
         shouldShowWelcome: Bool,
         welcomeDismissed: Bool,
         previewPaywall: Bool = false,
@@ -30,7 +33,8 @@ enum HardPaywallPolicy {
     ) -> AppRootGate {
         if previewPaywall || holdingPaywallDone { return .paywall }
         if hasProAccess { return .unlocked }
-        return (shouldShowWelcome && !welcomeDismissed) ? .welcome : .paywall
+        if shouldShowWelcome && !welcomeDismissed { return .welcome }
+        return starterAccessActive ? .unlocked : .paywall
     }
 
     /// First setup step after Pro unlocks, or nil when Home should open directly.
@@ -172,6 +176,8 @@ struct ContentView: View {
     @State private var roomieReaction: RoomSpiritState?
     @State private var accountPresented = false
     @State private var accountStartInManage = false
+    @State private var upgradePaywallPresented = false
+    @State private var feedbackPresented = false
     @State private var welcomeDismissed = false
     @State private var holdingPaywallDone = false
     @AppStorage(OnboardingProfile.completedKey) private var onboardingCompleted = false
@@ -234,6 +240,7 @@ struct ContentView: View {
     private var rootGate: AppRootGate {
         HardPaywallPolicy.rootGate(
             hasProAccess: account.hasProAccess,
+            starterAccessActive: account.isStarterAccessActive,
             shouldShowWelcome: shouldShowWelcome,
             welcomeDismissed: welcomeDismissed,
             previewPaywall: previewPaywall,
@@ -336,7 +343,7 @@ struct ContentView: View {
                     model.safetyRelease()
                 }
                 roomieReaction = model.errorMessage == nil ? .recovered : nil
-                if account.hasProAccess {
+                if account.hasAppAccess {
                     screen = .home
                 }
             }
@@ -351,7 +358,25 @@ struct ContentView: View {
             QuickFocusView(model: model)
         }
         .sheet(isPresented: $accountPresented) {
-            RoomAccountView(goal: goal, startInManage: accountStartInManage)
+            RoomAccountView(
+                goal: goal,
+                startInManage: accountStartInManage,
+                onUpgrade: account.hasProAccess ? nil : {
+                    accountPresented = false
+                    upgradePaywallPresented = true
+                }
+            )
+            .presentationCornerRadius(24)
+        }
+        .fullScreenCover(isPresented: $upgradePaywallPresented) {
+            RoomPaywallView(
+                goal: goal,
+                onClose: { upgradePaywallPresented = false },
+                onUnlocked: { upgradePaywallPresented = false }
+            )
+        }
+        .sheet(isPresented: $feedbackPresented) {
+            FeedbackView()
                 .presentationCornerRadius(24)
         }
         .confirmationDialog(
@@ -376,15 +401,17 @@ struct ContentView: View {
             if phase == .active { model.refresh(); recordVisit() }
             else { roomieReaction = nil }
         }
-        .onChange(of: account.hasProAccess) { wasPro, isPro in
-            if isPro && !wasPro {
+        .onChange(of: account.hasAppAccess) { hadAccess, hasAccess in
+            if hasAccess && !hadAccess {
                 if !holdingPaywallDone {
                     accountPresented = false
+                    upgradePaywallPresented = false
                     model.autoArmSavedRuleIfNeeded()
                     enterUnlockedDestination()
                 }
-            } else if !isPro && wasPro {
+            } else if !hasAccess && hadAccess {
                 holdingPaywallDone = false
+                upgradePaywallPresented = false
                 quickFocusPresented = false
                 notificationsPresented = false
                 welcomeDismissed = true
@@ -486,7 +513,13 @@ struct ContentView: View {
         .safeAreaInset(edge: .bottom, spacing: 0) {
             VStack(spacing: 4) {
                 primaryButton(roomString("Get started")) {
+                    if FirebaseApp.app() != nil {
+                        Analytics.logEvent("welcome_started", parameters: nil)
+                    }
                     welcomeDismissed = true
+                    if account.hasAppAccess {
+                        enterUnlockedDestination()
+                    }
                 }
                 Button(roomString("Already subscribed? Sign in")) {
                     accountStartInManage = true
@@ -889,6 +922,30 @@ struct ContentView: View {
             ScrollView {
                 VStack(spacing: 24) {
                     homeStatusCard
+                    if StarterAccessPolicy.showsExpiryReminderBanner(
+                        hasProAccess: account.hasProAccess,
+                        remainingDays: account.starterRemainingDays
+                    ) {
+                        HStack(spacing: 12) {
+                            Text(
+                                account.starterRemainingDays == 1
+                                    ? roomString("starter_days_left_one")
+                                    : roomString("starter_days_left_many", account.starterRemainingDays)
+                            )
+                            .font(.suit(.subheadline, weight: .semibold))
+                            .foregroundStyle(Color.roomInk)
+                            Spacer(minLength: 8)
+                            Button(roomString("pro_see_plans")) {
+                                upgradePaywallPresented = true
+                            }
+                            .font(.suit(.subheadline, weight: .bold))
+                            .foregroundStyle(Color.roomAccent)
+                            .frame(minHeight: 44)
+                        }
+                        .padding(.horizontal, 18)
+                        .padding(.vertical, 10)
+                        .editorialPanel(Color.roomButter, cornerRadius: 16, outlined: false)
+                    }
                     actionFeedback
                     quickFocusSection
                     if SharedState.ruleEnabled && model.activeRule?.placeMode == .gps && !model.isFocused {
@@ -931,6 +988,12 @@ struct ContentView: View {
                             }
                         }
                     }
+                    Button {
+                        feedbackPresented = true
+                    } label: {
+                        Label(roomString("feedback_open"), systemImage: "bubble.left.and.text.bubble.right")
+                    }
+                    .roomSecondaryAction()
                 }
                 .frame(maxWidth: 560).padding(.horizontal, 24).padding(.bottom, 32)
                 .frame(maxWidth: .infinity)
@@ -974,8 +1037,11 @@ struct ContentView: View {
                 primaryButton(rule.placeMode != .nfc ? roomString("Activate %@", rule.name) : roomString("Choose a place"), inverted: dark) { activate(rule) }
             } else if (model.activeRule?.placeMode ?? .nfc) != .nfc && !model.isFocused && model.canStartPlaceFocus {
                 primaryButton(roomString("Start focus"), inverted: dark) {
-                    guard ProAccessGate.canStartFocus(hasProAccess: account.hasProAccess) else { return }
+                    guard ProAccessGate.canStartFocus(hasProAccess: account.hasAppAccess) else { return }
                     model.startPlaceFocus()
+                    if model.isFocused && FirebaseApp.app() != nil {
+                        Analytics.logEvent("focus_started", parameters: nil)
+                    }
                 }
             }
         }
@@ -1001,7 +1067,7 @@ struct ContentView: View {
             .background(Color.roomAccent).clipShape(RoundedRectangle(cornerRadius: 22))
         } else if model.screenTimeAuthorized && !model.isFocused {
             Button {
-                guard ProAccessGate.canQuickFocus(hasProAccess: account.hasProAccess) else { return }
+                guard ProAccessGate.canQuickFocus(hasProAccess: account.hasAppAccess) else { return }
                 quickFocusPresented = true
             } label: {
                 Label("Quick focus", systemImage: "timer")
@@ -1041,7 +1107,7 @@ struct ContentView: View {
     @discardableResult
     private func activate(_ rule: FocusRule) -> Bool {
         guard rule.placeMode != .nfc else { editRule(rule); return false }
-        guard ProAccessGate.canActivateRule(hasProAccess: account.hasProAccess) else {
+        guard ProAccessGate.canActivateRule(hasProAccess: account.hasAppAccess) else {
             return false
         }
         guard !model.isFocused else { safetyReleasePresented = true; return false }
@@ -1403,6 +1469,9 @@ struct ContentView: View {
             onboardingCompleted = true
             setupIncludesPermission = false
             roomieReaction = .celebrating
+            if FirebaseApp.app() != nil {
+                Analytics.logEvent("rule_saved", parameters: nil)
+            }
             screen = .home
         }
     }
@@ -1497,8 +1566,13 @@ private struct QuickFocusView: View {
                 .listRowBackground(Color.roomCard)
                 Section {
                     Button {
-                        guard ProAccessGate.canQuickFocus(hasProAccess: account.hasProAccess) else { return }
-                        if model.startQuickFocus(minutes: minutes) { dismiss() }
+                        guard ProAccessGate.canQuickFocus(hasProAccess: account.hasAppAccess) else { return }
+                        if model.startQuickFocus(minutes: minutes) {
+                            if FirebaseApp.app() != nil {
+                                Analytics.logEvent("quick_focus_started", parameters: nil)
+                            }
+                            dismiss()
+                        }
                     } label: {
                         Text("Start focus").font(.suit(.headline, weight: .semibold)).frame(maxWidth: .infinity, minHeight: 44)
                     }

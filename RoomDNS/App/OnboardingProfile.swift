@@ -100,3 +100,79 @@ enum ReviewPromptPolicy {
         return true
     }
 }
+
+/// Grants 14 days of full free starter access from first launch before transitioning to Offzone Pro.
+enum StarterAccessPolicy {
+    static let firstLaunchKey = "starter.firstLaunchAt"
+    static let durationDays = 14
+    static let durationSeconds: TimeInterval = TimeInterval(durationDays) * 86_400
+    static let reminderBannerThresholdDays = 3
+
+    @discardableResult
+    static func ensureStarted(defaults: UserDefaults = .standard, now: Date = .now) -> Date {
+        let existing = defaults.double(forKey: firstLaunchKey)
+        if existing > 0 {
+            return Date(timeIntervalSince1970: existing)
+        }
+        defaults.set(now.timeIntervalSince1970, forKey: firstLaunchKey)
+        return now
+    }
+
+    static func remainingDays(firstLaunchAt: Date, now: Date = .now) -> Int {
+        let elapsed = max(0, now.timeIntervalSince(firstLaunchAt))
+        guard elapsed < durationSeconds else { return 0 }
+        return min(durationDays, Int(ceil((durationSeconds - elapsed) / 86_400)))
+    }
+
+    static func isActive(firstLaunchAt: Date, now: Date = .now) -> Bool {
+        remainingDays(firstLaunchAt: firstLaunchAt, now: now) > 0
+    }
+
+    static func remainingDays(defaults: UserDefaults = .standard, now: Date = .now) -> Int {
+#if DEBUG
+        if ProcessInfo.processInfo.arguments.contains("-offzoneStarterExpired") {
+            return 0
+        }
+#endif
+        let startedAt = ensureStarted(defaults: defaults, now: now)
+        return remainingDays(firstLaunchAt: startedAt, now: now)
+    }
+
+    static func isActive(defaults: UserDefaults = .standard, now: Date = .now) -> Bool {
+        remainingDays(defaults: defaults, now: now) > 0
+    }
+
+    static func showsExpiryReminderBanner(hasProAccess: Bool, remainingDays: Int) -> Bool {
+        !hasProAccess && remainingDays > 0 && remainingDays <= reminderBannerThresholdDays
+    }
+}
+
+enum FeedbackCategory: String, CaseIterable, Identifiable {
+    case bug
+    case feature
+    case general
+
+    var id: String { rawValue }
+
+    var titleKey: String {
+        switch self {
+        case .bug: return "feedback_category_bug"
+        case .feature: return "feedback_category_idea"
+        case .general: return "feedback_category_general"
+        }
+    }
+}
+
+enum FeedbackValidation {
+    static let minMessageLength = 3
+    static let maxMessageLength = 2000
+    static let maxContactLength = 254
+
+    static func sanitize(message: String, contact: String) -> (message: String, contact: String?)? {
+        let cleanMessage = message.trimmingCharacters(in: .whitespacesAndNewlines)
+        guard cleanMessage.count >= minMessageLength, cleanMessage.count <= maxMessageLength else { return nil }
+        let cleanContact = contact.trimmingCharacters(in: .whitespacesAndNewlines)
+        guard cleanContact.count <= maxContactLength else { return nil }
+        return (cleanMessage, cleanContact.isEmpty ? nil : cleanContact)
+    }
+}

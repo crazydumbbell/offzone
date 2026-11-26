@@ -56,4 +56,21 @@
     <string name="account_error_too_many_requests">Trop de tentatives. Veuillez réessayer plus tard.</string>
     <string name="account_error_purchase_not_allowed">Les achats ne sont pas autorisés sur cet appareil.</string>
     <string name="account_error_already_purchased">Cet abonnement est déjà actif. Essayez de restaurer les achats.</string>
+    <string name="starter_title">Accès gratuit</string>
+    <string name="starter_days_left_one">1 jour d’accès gratuit restant</string>
+    <string name="starter_days_left_many">%1$d jours d’accès gratuit restants</string>
+    <string name="feedback_open">Envoyer un avis</string>
+    <string name="feedback_category">Sujet</string>
+    <string name="feedback_category_bug">Bug</string>
+    <string name="feedback_category_idea">Idée</string>
+    <string name="feedback_category_general">Général</string>
+    <string name="feedback_placeholder">Qu’est-ce qui a fonctionné, posé problème ou devrait changer ?</string>
+    <string name="feedback_contact_placeholder">E-mail (facultatif, pour réponse)</string>
+    <string name="feedback_privacy_note">Inclut version, plateforme et langue. Aucune liste d’apps ni position.</string>
+    <string name="feedback_send">Envoyer</string>
+    <string name="feedback_sent_title">Avis envoyé</string>
+    <string name="feedback_sent_body">Merci de nous aider à améliorer Offzone.</string>
+    <string name="feedback_message_too_short">Saisissez au moins 3 caractères avant d’envoyer.</string>
+    <string name="feedback_send_failed">Envoi impossible pour le moment. Vérifiez votre connexion et réessayez.</string>
+    <string name="feedback_open_github">Ouvrir GitHub Issues</string>
 </resources>

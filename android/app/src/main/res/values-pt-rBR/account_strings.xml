@@ -56,4 +56,21 @@
     <string name="account_error_too_many_requests">Muitas tentativas. Tente novamente mais tarde.</string>
     <string name="account_error_purchase_not_allowed">Compras não são permitidas neste dispositivo.</string>
     <string name="account_error_already_purchased">Esta assinatura já está ativa. Tente restaurar as compras.</string>
+    <string name="starter_title">Acesso gratuito</string>
+    <string name="starter_days_left_one">Falta 1 dia de acesso gratuito</string>
+    <string name="starter_days_left_many">Faltam %1$d dias de acesso gratuito</string>
+    <string name="feedback_open">Enviar feedback</string>
+    <string name="feedback_category">Assunto</string>
+    <string name="feedback_category_bug">Erro</string>
+    <string name="feedback_category_idea">Ideia</string>
+    <string name="feedback_category_general">Geral</string>
+    <string name="feedback_placeholder">O que funcionou, o que falhou ou o que deveria mudar?</string>
+    <string name="feedback_contact_placeholder">E-mail (opcional, para resposta)</string>
+    <string name="feedback_privacy_note">Inclui versão do app, plataforma e idioma. Sem listas de apps ou locais.</string>
+    <string name="feedback_send">Enviar</string>
+    <string name="feedback_sent_title">Feedback enviado</string>
+    <string name="feedback_sent_body">Obrigado por ajudar a melhorar o Offzone.</string>
+    <string name="feedback_message_too_short">Escreva pelo menos 3 caracteres antes de enviar.</string>
+    <string name="feedback_send_failed">Não foi possível enviar o feedback agora. Verifique sua conexão e tente novamente.</string>
+    <string name="feedback_open_github">Abrir GitHub Issues</string>
 </resources>

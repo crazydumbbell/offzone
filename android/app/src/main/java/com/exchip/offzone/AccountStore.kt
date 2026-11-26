@@ -99,7 +99,18 @@ class AccountStore(context: Context, firebaseApp: FirebaseApp? = null) {
     val hasProAccessEffective: Boolean
         get() = ProAccessGate.effectiveProAccess(hasProAccess)
 
+    val starterRemainingDays: Int
+        get() = if (hasProAccessEffective) 0 else StarterAccess.remainingDays(context)
+
+    val isStarterAccessActive: Boolean
+        get() = !hasProAccessEffective && starterRemainingDays > 0
+
+    /** Full feature access via paid Offzone Pro or the initial 14-day free starter period. */
+    val hasAppAccessEffective: Boolean
+        get() = hasProAccessEffective || isStarterAccessActive
+
     init {
+        StarterAccess.ensureStarted(this.context)
         val configured = listOf(BuildConfig.FIREBASE_API_KEY, BuildConfig.FIREBASE_APP_ID,
             BuildConfig.FIREBASE_PROJECT_ID).all { it.isNotBlank() }
         val app = firebaseApp ?: if (configured) FirebaseApp.getApps(this.context).firstOrNull { it.name == FirebaseApp.DEFAULT_APP_NAME } ?: FirebaseApp.initializeApp(
@@ -334,6 +345,35 @@ class AccountStore(context: Context, firebaseApp: FirebaseApp? = null) {
         require(goal in AccountIdentity.goals); val uid = verifiedUser().uid; val stamp = generation
         db!!.collection("users").document(uid).set(mapOf("goal" to goal, "updatedAt" to FieldValue.serverTimestamp())).await()
         if (same(uid, stamp)) mutable.update { it.copy(savedGoal = goal) }
+    }
+
+    suspend fun submitFeedback(category: String, message: String, contact: String): Int? {
+        val clean = FeedbackValidation.sanitize(category, message, contact) ?: return R.string.feedback_message_too_short
+        val firestore = db ?: return R.string.feedback_send_failed
+        val localeTag = context.resources.configuration.locales[0]?.toLanguageTag().orEmpty().ifBlank { "en" }.take(35)
+        val accessTier = when {
+            hasProAccessEffective -> "pro"
+            isStarterAccessActive -> "starter"
+            else -> "expired"
+        }
+        val payload = hashMapOf<String, Any>(
+            "category" to clean.category,
+            "message" to clean.message,
+            "platform" to "android",
+            "appVersion" to "${BuildConfig.VERSION_NAME} (${BuildConfig.VERSION_CODE})".take(40),
+            "osVersion" to android.os.Build.VERSION.RELEASE.orEmpty().take(40),
+            "locale" to localeTag,
+            "accessTier" to accessTier,
+            "createdAt" to FieldValue.serverTimestamp(),
+        )
+        clean.contact?.let { payload["contact"] = it }
+        auth?.currentUser?.uid?.let { payload["uid"] = it }
+        return try {
+            firestore.collection("userFeedback").add(payload).await()
+            null
+        } catch (_: Exception) {
+            R.string.feedback_send_failed
+        }
     }
 
     private fun notice(@StringRes id: Int) { mutable.update { it.copy(notice = message(id)) } }

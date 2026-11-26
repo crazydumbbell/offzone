@@ -188,4 +188,60 @@ final class ProPlansTests: XCTestCase {
         // Immediately after repeat prompt, requires both cooldown and delta again.
         XCTAssertFalse(ReviewPromptPolicy.recordPositiveMoment(defaults: defaults, now: day61.addingTimeInterval(65 * 86_400)))
     }
+
+    func testStarterAccessGrantsFourteenDaysThenExpiresCleanly() {
+        let day0 = Date(timeIntervalSince1970: 1_700_000_000)
+        XCTAssertEqual(StarterAccessPolicy.remainingDays(firstLaunchAt: day0, now: day0), 14)
+        XCTAssertTrue(StarterAccessPolicy.isActive(firstLaunchAt: day0, now: day0))
+        XCTAssertFalse(StarterAccessPolicy.showsExpiryReminderBanner(hasProAccess: false, remainingDays: 14))
+
+        let day11 = day0.addingTimeInterval(11 * 86_400 + 60)
+        XCTAssertEqual(StarterAccessPolicy.remainingDays(firstLaunchAt: day0, now: day11), 3)
+        XCTAssertTrue(StarterAccessPolicy.showsExpiryReminderBanner(hasProAccess: false, remainingDays: 3))
+        XCTAssertFalse(StarterAccessPolicy.showsExpiryReminderBanner(hasProAccess: true, remainingDays: 3))
+
+        let day14 = day0.addingTimeInterval(14 * 86_400)
+        XCTAssertEqual(StarterAccessPolicy.remainingDays(firstLaunchAt: day0, now: day14), 0)
+        XCTAssertFalse(StarterAccessPolicy.isActive(firstLaunchAt: day0, now: day14))
+        XCTAssertFalse(StarterAccessPolicy.showsExpiryReminderBanner(hasProAccess: false, remainingDays: 0))
+
+        // Clock skew backward does not exceed 14 days.
+        XCTAssertEqual(StarterAccessPolicy.remainingDays(firstLaunchAt: day0, now: day0.addingTimeInterval(-3600)), 14)
+    }
+
+    func testHardPaywallPolicyUnlocksDuringActiveStarterThenGatesAfterExpiry() {
+        // Fresh user with active 14-day starter still sees Welcome first, then unlocks directly on Get started.
+        XCTAssertEqual(
+            HardPaywallPolicy.rootGate(hasProAccess: false, starterAccessActive: true, shouldShowWelcome: true, welcomeDismissed: false),
+            .welcome
+        )
+        XCTAssertEqual(
+            HardPaywallPolicy.rootGate(hasProAccess: false, starterAccessActive: true, shouldShowWelcome: true, welcomeDismissed: true),
+            .unlocked
+        )
+        // Returning user with active starter lands unlocked.
+        XCTAssertEqual(
+            HardPaywallPolicy.rootGate(hasProAccess: false, starterAccessActive: true, shouldShowWelcome: false, welcomeDismissed: false),
+            .unlocked
+        )
+        // Expired starter without Pro transitions to Paywall.
+        XCTAssertEqual(
+            HardPaywallPolicy.rootGate(hasProAccess: false, starterAccessActive: false, shouldShowWelcome: false, welcomeDismissed: false),
+            .paywall
+        )
+    }
+
+    func testFeedbackValidationTrimsAndBoundsInputs() {
+        XCTAssertNil(FeedbackValidation.sanitize(message: "  ", contact: ""))
+        XCTAssertNil(FeedbackValidation.sanitize(message: "hi", contact: ""))
+        XCTAssertNil(FeedbackValidation.sanitize(message: String(repeating: "a", count: 2001), contact: ""))
+        XCTAssertNil(FeedbackValidation.sanitize(message: "Valid bug report", contact: String(repeating: "x", count: 255)))
+
+        let ok = FeedbackValidation.sanitize(message: "  Rule timer works great  ", contact: "  ")
+        XCTAssertEqual(ok?.message, "Rule timer works great")
+        XCTAssertNil(ok?.contact)
+
+        let withContact = FeedbackValidation.sanitize(message: "Location alert delayed", contact: " test@example.com ")
+        XCTAssertEqual(withContact?.contact, "test@example.com")
+    }
 }

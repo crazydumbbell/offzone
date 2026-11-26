@@ -19,6 +19,8 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.unit.dp
 
+import kotlinx.coroutines.launch
+
 @Composable
 fun AccountScreen(
     store: AccountStore,
@@ -27,6 +29,9 @@ fun AccountScreen(
     onRestoreSession: () -> Unit,
     onBack: () -> Unit,
     onJournal: (() -> Unit)? = null,
+    starterRemainingDays: Int = 0,
+    onUpgrade: (() -> Unit)? = null,
+    onFeedback: (() -> Unit)? = null,
     initialManage: Boolean = false,
 ) {
     val state by store.state.collectAsState()
@@ -81,6 +86,25 @@ fun AccountScreen(
                             ) { Text(stringResource(R.string.account_manage)) }
                         }
                     }
+                } else if (starterRemainingDays > 0) {
+                    Surface(color = WarmIvory, shape = RoundedCornerShape(24.dp), border = BorderStroke(1.dp, PineHairline)) {
+                        Column(Modifier.fillMaxWidth().padding(20.dp), verticalArrangement = Arrangement.spacedBy(14.dp)) {
+                            Text(stringResource(R.string.starter_title), style = MaterialTheme.typography.titleLarge)
+                            Text(
+                                if (starterRemainingDays == 1) stringResource(R.string.starter_days_left_one)
+                                else stringResource(R.string.starter_days_left_many, starterRemainingDays),
+                                style = MaterialTheme.typography.bodyLarge,
+                                color = InkMuted,
+                            )
+                            if (onUpgrade != null) {
+                                PrimaryButton(
+                                    onClick = onUpgrade,
+                                    enabled = !state.busy,
+                                    modifier = Modifier.fillMaxWidth(),
+                                ) { Text(stringResource(R.string.pro_see_plans)) }
+                            }
+                        }
+                    }
                 } else if (state.configured && state.uid == null) {
                     AccountSignInCard(
                         store = store,
@@ -117,6 +141,12 @@ fun AccountScreen(
                     }
                 }
                 if (state.busy) CircularProgressIndicator()
+                if (onFeedback != null) {
+                    SecondaryButton(
+                        onClick = onFeedback,
+                        modifier = Modifier.fillMaxWidth(),
+                    ) { Text(stringResource(R.string.feedback_open)) }
+                }
                 Box(Modifier.fillMaxWidth(), contentAlignment = Alignment.Center) {
                     TextButton(
                         onClick = { managingAccount = true },
@@ -331,4 +361,107 @@ private fun AccountEmailFields(
         visualTransformation = PasswordVisualTransformation(), keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password), modifier = Modifier.fillMaxWidth())
     if (creating) OutlinedTextField(confirmation, onConfirmation, label = { Text(stringResource(R.string.account_confirm_password)) }, singleLine = true,
         visualTransformation = PasswordVisualTransformation(), keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password), modifier = Modifier.fillMaxWidth())
+}
+
+@OptIn(ExperimentalLayoutApi::class)
+@Composable
+fun FeedbackScreen(
+    store: AccountStore,
+    onBack: () -> Unit,
+) {
+    val context = LocalContext.current
+    val scope = rememberCoroutineScope()
+    var category by rememberSaveable { mutableStateOf("bug") }
+    var message by rememberSaveable { mutableStateOf("") }
+    var contact by rememberSaveable { mutableStateOf("") }
+    var sending by remember { mutableStateOf(false) }
+    var sent by rememberSaveable { mutableStateOf(false) }
+    var errorRes by remember { mutableStateOf<Int?>(null) }
+
+    BackHandler { onBack() }
+
+    Column(
+        Modifier.fillMaxSize().safeDrawingPadding().imePadding().verticalScroll(rememberScrollState()).padding(24.dp),
+        verticalArrangement = Arrangement.spacedBy(16.dp),
+    ) {
+        TextButton(onClick = onBack) { Text(stringResource(R.string.m_back)) }
+        Text(stringResource(R.string.feedback_open), style = MaterialTheme.typography.headlineLarge)
+
+        if (sent) {
+            Surface(color = Mint, shape = RoundedCornerShape(24.dp)) {
+                Column(Modifier.fillMaxWidth().padding(20.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
+                    Text(stringResource(R.string.feedback_sent_title), style = MaterialTheme.typography.titleLarge, color = Ink)
+                    Text(stringResource(R.string.feedback_sent_body), style = MaterialTheme.typography.bodyLarge, color = InkMuted)
+                }
+            }
+            PrimaryButton(onClick = onBack, modifier = Modifier.fillMaxWidth()) {
+                Text(stringResource(R.string.account_done))
+            }
+        } else {
+            Surface(color = WarmIvory, shape = RoundedCornerShape(24.dp), border = BorderStroke(1.dp, PineHairline)) {
+                Column(Modifier.fillMaxWidth().padding(20.dp), verticalArrangement = Arrangement.spacedBy(14.dp)) {
+                    FlowRow(horizontalArrangement = Arrangement.spacedBy(8.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
+                        listOf(
+                            "bug" to R.string.feedback_category_bug,
+                            "feature" to R.string.feedback_category_idea,
+                            "general" to R.string.feedback_category_general,
+                        ).forEach { (id, labelRes) ->
+                            OffzoneChip(selected = category == id, onClick = { category = id }) {
+                                Text(stringResource(labelRes))
+                            }
+                        }
+                    }
+                    OutlinedTextField(
+                        value = message,
+                        onValueChange = { if (it.length <= FeedbackValidation.MAX_MESSAGE_LENGTH) message = it },
+                        label = { Text(stringResource(R.string.feedback_placeholder)) },
+                        minLines = 4,
+                        maxLines = 8,
+                        modifier = Modifier.fillMaxWidth(),
+                    )
+                    OutlinedTextField(
+                        value = contact,
+                        onValueChange = { if (it.length <= FeedbackValidation.MAX_CONTACT_LENGTH) contact = it },
+                        label = { Text(stringResource(R.string.feedback_contact_placeholder)) },
+                        singleLine = true,
+                        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Email),
+                        modifier = Modifier.fillMaxWidth(),
+                    )
+                    Text(
+                        stringResource(R.string.feedback_privacy_note),
+                        style = MaterialTheme.typography.bodySmall,
+                        color = InkMuted,
+                    )
+                }
+            }
+
+            errorRes?.let {
+                Text(stringResource(it), style = MaterialTheme.typography.bodyMedium, color = MaterialTheme.colorScheme.error)
+            }
+
+            PrimaryButton(
+                onClick = {
+                    errorRes = null
+                    sending = true
+                    scope.launch {
+                        val err = store.submitFeedback(category, message, contact)
+                        sending = false
+                        if (err != null) errorRes = err else sent = true
+                    }
+                },
+                enabled = !sending && FeedbackValidation.sanitize(category, message, contact) != null,
+                modifier = Modifier.fillMaxWidth(),
+            ) {
+                if (sending) CircularProgressIndicator(Modifier.size(20.dp), color = Butter, strokeWidth = 2.dp)
+                else Text(stringResource(R.string.feedback_send))
+            }
+        }
+
+        TextButton(
+            onClick = { context.openExternalUrl("https://github.com/crazydumbbell/offzone/issues") },
+            modifier = Modifier.fillMaxWidth().heightIn(min = 48.dp),
+        ) {
+            Text(stringResource(R.string.feedback_open_github), color = Pine)
+        }
+    }
 }
