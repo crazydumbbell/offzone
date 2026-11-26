@@ -443,9 +443,9 @@ final class AccountStore: ObservableObject {
             let result = try await Purchases.shared.purchase(package: package)
             guard currentPurchaseUID == uid, !result.userCancelled else { return nil }
             apply(result.customerInfo)
-            guard hasProAccess,
-                  let entitlement = result.customerInfo.entitlements.activeInCurrentEnvironment[entitlementID],
-                  entitlement.productIdentifier == package.storeProduct.productIdentifier else { return nil }
+            // Any active Pro counts: a sandbox Apple ID may already hold the other plan, and the
+            // switch only takes effect at renewal, so the entitlement can name a different product.
+            guard hasProAccess, let entitlement = result.customerInfo.entitlements.active[entitlementID] else { return nil }
             return ProPurchaseOutcome(trialEndsAt: entitlement.periodType == .trial ? entitlement.expirationDate : nil)
         } catch let error as ErrorCode where error == .purchaseCancelledError {
             return nil
@@ -720,7 +720,9 @@ final class AccountStore: ObservableObject {
     private func apply(_ info: CustomerInfo) {
         guard let uid = currentPurchaseUID else { return }
         proExpiryTask?.cancel()
-        let entitlement = info.entitlements.activeInCurrentEnvironment[entitlementID]
+        // Not activeInCurrentEnvironment: RevenueCat guesses sandbox from the receipt path, which recent iOS
+        // releases no longer expose, so App Review's sandbox purchases were filtered out (2.1 rejection).
+        let entitlement = info.entitlements.active[entitlementID]
         proUID = uid
         proExpirationDate = entitlement?.expirationDate
         isPro = Self.proAccessIsValid(
