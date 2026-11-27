@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://crazydumbbell.github.io/offzone/sitemap.xml

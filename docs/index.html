@@ -1,37 +1,686 @@
 <!doctype html>
-<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Offzone</title><meta name="description" content="Block distracting apps by schedule or place. Quick focus timer &amp; daily journal."><meta name="robots" content="index,follow"><style>:root{--butter:#F7F0C7;--ivory:#FAF7E8;--pine:#3D5B3F;--ink:#1F2A22;--soft:#5E6660}
-*{box-sizing:border-box}body{margin:0;min-height:100vh;display:flex;flex-direction:column;background:var(--butter);color:var(--ink);font:17px/1.65 -apple-system,BlinkMacSystemFont,"Segoe UI","Apple SD Gothic Neo",sans-serif}
-header{width:100%;max-width:760px;margin:0 auto;padding:28px 24px 0;display:flex;gap:20px;align-items:baseline;flex-wrap:wrap}
-header a{color:var(--pine);text-decoration:none;font-weight:600;letter-spacing:.08em;font-size:15px}header a.brand{font-size:17px;margin-right:auto}
-main{width:100%;max-width:760px;margin:0 auto;padding:12px 24px 72px;flex:1}
-h1{font-size:2.1rem;line-height:1.2;margin:48px 0 12px}h2{font-size:1.2rem;margin:36px 0 6px;color:var(--pine)}h2 .n{opacity:.55;margin-right:.6em;font-variant-numeric:tabular-nums}
-p,li{color:var(--ink)}p.meta{color:var(--soft)}ul{padding-left:1.2em}li{margin:.35em 0}a{color:var(--pine)}
-section{background:var(--ivory);border-radius:18px;padding:4px 22px 18px;margin:18px 0}
-.tagline{margin:0 0 28px}
-.links{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px;margin:28px 0 0}
-.links a{display:flex;align-items:center;justify-content:space-between;background:var(--ivory);border:1px solid rgba(61,91,63,.12);border-radius:18px;padding:20px 22px;color:var(--pine);text-decoration:none;font-weight:600;transition:border-color .15s ease,transform .15s ease}
-.links a:hover{border-color:rgba(61,91,63,.38);transform:translateY(-1px)}
-.links .arrow{opacity:.65}
-footer{width:100%;max-width:760px;margin:0 auto;padding:0 24px 28px;font-size:13px;color:var(--soft)}
-footer a{color:var(--soft);text-decoration:none}footer a:hover{color:var(--pine);text-decoration:underline}
-a:focus-visible{outline:2px solid var(--pine);outline-offset:3px;border-radius:4px}
-.links a:focus-visible{border-radius:18px}
-@media (max-width:520px){h1{margin-top:32px}.links{grid-template-columns:1fr}}
-@media (prefers-reduced-motion:reduce){.links a{transition:none}.links a:hover{transform:none}}
-</style></head>
-<body><header><a class="brand" href="./" aria-current="page">OFFZONE</a></header>
-<main>
-<h1>Offzone</h1>
-<p class="tagline">Block distracting apps by schedule or place. Quick focus timer &amp; daily journal.</p>
-<nav class="links" aria-label="Download Offzone">
-<a href="https://apps.apple.com/us/app/offzone-app-blocker-focus/id6809377856"><span>App Store</span><span class="arrow" aria-hidden="true">&#8594;</span></a>
-<a href="https://play.google.com/store/apps/details?id=com.exchip.roomdns"><span>Google Play</span><span class="arrow" aria-hidden="true">&#8594;</span></a>
-</nav>
-<nav class="links" aria-label="Offzone pages">
-<a href="privacy/"><span>Privacy Policy</span><span class="arrow" aria-hidden="true">&#8594;</span></a>
-<a href="support/"><span>Support</span><span class="arrow" aria-hidden="true">&#8594;</span></a>
-</nav>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Offzone — App Blocker &amp; Focus Timer for iOS and Android</title>
+<meta name="description" content="Block distracting apps by schedule or optional 150 m place. Try Offzone free for 14 days from first launch on iOS and Android. Restore access stays free.">
+<meta name="robots" content="index,follow">
+<meta name="theme-color" content="#F7F0C7">
+<link rel="canonical" href="https://crazydumbbell.github.io/offzone/">
+<link rel="icon" type="image/png" sizes="32x32" href="assets/favicon-32.png">
+<link rel="apple-touch-icon" sizes="180x180" href="assets/apple-touch-icon.png">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Offzone">
+<meta property="og:title" content="Offzone — Block distracting apps on your schedule">
+<meta property="og:description" content="Start with 14 days free on iOS and Android. Set two-step rules, run 15/25/50 min Quick focus, and restore access anytime for free.">
+<meta property="og:url" content="https://crazydumbbell.github.io/offzone/">
+<meta property="og:image" content="https://crazydumbbell.github.io/offzone/assets/og-card.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="Offzone app screens showing scheduled focus rules and the calm pause screen with Nook Cat">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Offzone — Block distracting apps on your schedule">
+<meta name="twitter:description" content="Start with 14 days free on iOS and Android. Two-step rules, Quick focus timer, local daily reflections, and always-free Restore access.">
+<meta name="twitter:image" content="https://crazydumbbell.github.io/offzone/assets/og-card.png">
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "SoftwareApplication",
+  "name": "Offzone: App Blocker & Focus",
+  "operatingSystem": "iOS, Android",
+  "applicationCategory": "ProductivityApplication",
+  "url": "https://crazydumbbell.github.io/offzone/",
+  "image": "https://crazydumbbell.github.io/offzone/assets/og-card.png",
+  "description": "Block distracting apps by schedule or optional 150 m place, run 15/25/50 min Quick focus, and keep weekly plans and daily reflections on your device. Includes 14 days of free starter access from first launch.",
+  "downloadUrl": [
+    "https://apps.apple.com/us/app/offzone-app-blocker-focus/id6809377856",
+    "https://play.google.com/store/apps/details?id=com.exchip.roomdns"
+  ],
+  "offers": {
+    "@type": "Offer",
+    "price": "0",
+    "priceCurrency": "USD",
+    "description": "14 days free from first launch; optional Offzone Pro subscription afterward ($4.99/month or $29.99/year in the US)."
+  }
+}
+</script>
+<style>
+@font-face{
+  font-family:"Fredoka";
+  src:url("assets/Fredoka-SemiBold.ttf") format("truetype");
+  font-weight:600;
+  font-style:normal;
+  font-display:swap;
+}
+:root{
+  --butter:#F7F0C7;
+  --ivory:#FAF7E8;
+  --mint:#E8EEDD;
+  --soft-butter:#EFE5AB;
+  --pine:#3D5B3F;
+  --pine-hover:#2F4831;
+  --ink:#1F2A22;
+  --soft:#556058;
+  --line:rgba(61,91,63,.16);
+  --line-strong:rgba(61,91,63,.32);
+  --radius-card:24px;
+  --radius-pill:999px;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{
+  margin:0;
+  min-height:100vh;
+  display:flex;
+  flex-direction:column;
+  background:var(--butter);
+  color:var(--ink);
+  font:16px/1.6 -apple-system,BlinkMacSystemFont,"Segoe UI","Apple SD Gothic Neo",sans-serif;
+  -webkit-font-smoothing:antialiased;
+}
+img{display:block;max-width:100%;height:auto}
+a{color:var(--pine)}
+a:focus-visible,button:focus-visible{
+  outline:2px solid var(--pine);
+  outline-offset:3px;
+}
+.wrap{
+  width:100%;
+  max-width:1020px;
+  margin:0 auto;
+  padding:0 20px;
+}
+
+/* Header */
+header{
+  padding:20px 0 8px;
+}
+.nav{
+  display:flex;
+  align-items:center;
+  gap:16px;
+}
+.brand{
+  display:inline-flex;
+  align-items:center;
+  gap:10px;
+  margin-right:auto;
+  text-decoration:none;
+  color:var(--pine);
+  font:600 20px/1 "Fredoka",-apple-system,BlinkMacSystemFont,sans-serif;
+  letter-spacing:.01em;
+}
+.brand-badge{
+  width:34px;
+  height:34px;
+  border-radius:10px;
+  background:var(--pine);
+  display:grid;
+  place-items:center;
+  flex:none;
+}
+.brand-badge img{
+  width:24px;
+  height:24px;
+}
+.nav-links{
+  display:flex;
+  align-items:center;
+  gap:18px;
+}
+.nav-links a{
+  color:var(--pine);
+  text-decoration:none;
+  font-weight:600;
+  font-size:15px;
+}
+.nav-links a:hover{text-decoration:underline}
+
+/* Hero */
+.hero{
+  padding:28px 0 40px;
+  display:grid;
+  grid-template-columns:minmax(0,1.12fr) minmax(0,.88fr);
+  gap:36px;
+  align-items:center;
+}
+.badge-pill{
+  display:inline-flex;
+  align-items:center;
+  gap:8px;
+  background:var(--mint);
+  border:1px solid var(--line);
+  color:var(--pine);
+  border-radius:var(--radius-pill);
+  padding:6px 14px;
+  font-size:14px;
+  font-weight:600;
+  margin:0 0 16px;
+}
+h1,h2,h3{
+  font-family:"Fredoka",-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+  font-weight:600;
+  color:var(--ink);
+  letter-spacing:-.01em;
+}
+h1{
+  margin:0 0 14px;
+  font-size:clamp(2.1rem,5vw,3.15rem);
+  line-height:1.1;
+}
+.lead{
+  margin:0 0 24px;
+  font-size:18px;
+  line-height:1.55;
+  color:var(--soft);
+  max-width:46ch;
+}
+.cta-group{
+  display:flex;
+  flex-wrap:wrap;
+  gap:12px;
+  margin:0 0 14px;
+}
+.cta{
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  gap:10px;
+  min-height:54px;
+  padding:0 24px;
+  border-radius:var(--radius-pill);
+  text-decoration:none;
+  font-weight:600;
+  font-size:16px;
+  border:1.5px solid var(--line-strong);
+  background:var(--ivory);
+  color:var(--ink);
+  transition:transform .14s ease,background-color .14s ease,border-color .14s ease;
+}
+.cta:hover{
+  transform:translateY(-1px);
+  border-color:var(--pine);
+}
+.cta.primary{
+  background:var(--pine);
+  border-color:var(--pine);
+  color:var(--butter);
+}
+.cta.primary:hover{
+  background:var(--pine-hover);
+  border-color:var(--pine-hover);
+}
+.cta svg{
+  width:20px;
+  height:20px;
+  flex:none;
+}
+.hero-note{
+  margin:0;
+  font-size:14px;
+  color:var(--soft);
+}
+
+/* Hero visual */
+.hero-stage{
+  position:relative;
+  background:var(--ivory);
+  border:1px solid var(--line);
+  border-radius:32px;
+  padding:28px 24px 24px;
+  display:flex;
+  justify-content:center;
+  align-items:flex-end;
+  min-height:420px;
+  overflow:hidden;
+}
+.phone-frame{
+  width:236px;
+  background:var(--ink);
+  border-radius:30px;
+  padding:8px;
+  box-shadow:0 18px 38px rgba(31,42,34,.16);
+}
+.phone-frame img{
+  width:100%;
+  border-radius:22px;
+}
+.hero-nook{
+  position:absolute;
+  right:14px;
+  bottom:12px;
+  width:128px;
+  pointer-events:none;
+  filter:drop-shadow(0 8px 14px rgba(31,42,34,.12));
+}
+
+/* Sections */
+.section{
+  padding:32px 0;
+}
+.section-head{
+  margin:0 0 20px;
+}
+.section-head h2{
+  margin:0 0 6px;
+  font-size:clamp(1.5rem,3.2vw,2rem);
+  line-height:1.2;
+}
+.section-head p{
+  margin:0;
+  color:var(--soft);
+  max-width:56ch;
+}
+
+/* Screens showcase */
+.screens{
+  display:grid;
+  grid-template-columns:repeat(4,minmax(0,1fr));
+  gap:16px;
+}
+.screen-card{
+  background:var(--ivory);
+  border:1px solid var(--line);
+  border-radius:var(--radius-card);
+  padding:16px 14px 18px;
+  display:flex;
+  flex-direction:column;
+  gap:12px;
+}
+.screen-shot{
+  background:var(--ink);
+  border-radius:22px;
+  padding:6px;
+  box-shadow:0 10px 22px rgba(31,42,34,.10);
+}
+.screen-shot img{
+  width:100%;
+  border-radius:16px;
+}
+.screen-card h3{
+  margin:2px 0 0;
+  font-size:17px;
+  line-height:1.25;
+}
+.screen-card p{
+  margin:0;
+  font-size:14px;
+  line-height:1.5;
+  color:var(--soft);
+}
+
+/* Feature grid */
+.features{
+  display:grid;
+  grid-template-columns:repeat(2,minmax(0,1fr));
+  gap:16px;
+}
+.feature-card{
+  background:var(--ivory);
+  border:1px solid var(--line);
+  border-radius:var(--radius-card);
+  padding:22px 24px;
+}
+.feature-card h3{
+  margin:0 0 6px;
+  font-size:19px;
+  color:var(--pine);
+}
+.feature-card p{
+  margin:0;
+  color:var(--ink);
+  font-size:15px;
+  line-height:1.6;
+}
+
+/* Pricing / Starter access */
+.pricing-card{
+  background:var(--ivory);
+  border:1px solid var(--line);
+  border-radius:28px;
+  padding:28px;
+  display:grid;
+  grid-template-columns:minmax(0,1fr) minmax(0,1fr);
+  gap:24px;
+  align-items:stretch;
+}
+.price-tier{
+  background:var(--mint);
+  border:1px solid var(--line);
+  border-radius:20px;
+  padding:20px 22px;
+}
+.price-tier.pro{
+  background:var(--butter);
+}
+.tier-kicker{
+  display:inline-block;
+  font-size:13px;
+  font-weight:700;
+  letter-spacing:.04em;
+  text-transform:uppercase;
+  color:var(--pine);
+  margin:0 0 6px;
+}
+.price-tier h3{
+  margin:0 0 8px;
+  font-size:22px;
+}
+.price-tier p{
+  margin:0;
+  font-size:15px;
+  line-height:1.55;
+  color:var(--ink);
+}
+.pricing-foot{
+  grid-column:1 / -1;
+  margin:0;
+  padding-top:4px;
+  font-size:14px;
+  color:var(--soft);
+}
+
+/* Bottom CTA banner */
+.closing{
+  background:var(--pine);
+  color:var(--butter);
+  border-radius:28px;
+  padding:32px 28px;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:24px;
+  flex-wrap:wrap;
+}
+.closing h2{
+  margin:0 0 6px;
+  color:var(--butter);
+  font-size:clamp(1.45rem,3vw,1.9rem);
+}
+.closing p{
+  margin:0;
+  color:rgba(247,240,199,.86);
+  max-width:46ch;
+}
+.closing .cta{
+  background:var(--butter);
+  border-color:var(--butter);
+  color:var(--ink);
+}
+.closing .cta:hover{
+  background:var(--ivory);
+  border-color:var(--ivory);
+}
+.closing .cta.alt{
+  background:transparent;
+  border-color:rgba(247,240,199,.5);
+  color:var(--butter);
+}
+.closing .cta.alt:hover{
+  background:rgba(247,240,199,.12);
+  border-color:var(--butter);
+}
+
+/* Footer */
+footer{
+  margin-top:auto;
+  padding:28px 0 36px;
+  font-size:14px;
+  color:var(--soft);
+}
+.foot-inner{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:16px;
+  flex-wrap:wrap;
+  border-top:1px solid var(--line);
+  padding-top:20px;
+}
+.foot-links{
+  display:flex;
+  flex-wrap:wrap;
+  gap:18px;
+}
+footer a{
+  color:var(--soft);
+  text-decoration:none;
+}
+footer a:hover{
+  color:var(--pine);
+  text-decoration:underline;
+}
+
+/* Responsive */
+@media (max-width:860px){
+  .hero{
+    grid-template-columns:1fr;
+    padding:16px 0 24px;
+    gap:24px;
+  }
+  .hero-stage{
+    min-height:360px;
+    padding:24px 16px 20px;
+  }
+  .phone-frame{width:214px}
+  .hero-nook{width:112px;right:10px;bottom:8px}
+  .screens{
+    display:flex;
+    overflow-x:auto;
+    scroll-snap-type:x mandatory;
+    -webkit-overflow-scrolling:touch;
+    padding-bottom:8px;
+    margin:0 -20px;
+    padding-left:20px;
+    padding-right:20px;
+  }
+  .screen-card{
+    flex:0 0 236px;
+    scroll-snap-align:start;
+  }
+  .pricing-card{
+    grid-template-columns:1fr;
+    padding:20px;
+  }
+}
+@media (max-width:560px){
+  .cta-group{
+    flex-direction:column;
+  }
+  .cta{
+    width:100%;
+  }
+  .features{
+    grid-template-columns:1fr;
+  }
+  .closing{
+    padding:24px 20px;
+  }
+  .closing .cta-group{
+    width:100%;
+  }
+}
+@media (prefers-reduced-motion:reduce){
+  html{scroll-behavior:auto}
+  .cta{transition:none}
+  .cta:hover{transform:none}
+}
+</style>
+</head>
+<body>
+<header>
+  <div class="wrap nav">
+    <a class="brand" href="./" aria-current="page">
+      <span class="brand-badge" aria-hidden="true"><img src="assets/offzone-mark-ivory.svg" alt="" width="24" height="24"></span>
+      <span>Offzone</span>
+    </a>
+    <nav class="nav-links" aria-label="Site navigation">
+      <a href="privacy/">Privacy</a>
+      <a href="support/">Support</a>
+    </nav>
+  </div>
+</header>
+
+<main class="wrap">
+  <section class="hero" aria-labelledby="hero-title">
+    <div>
+      <p class="badge-pill">14 days free from first launch</p>
+      <h1 id="hero-title">Block distracting apps on your schedule.</h1>
+      <p class="lead">Set up a rule in two steps, add an optional 150 m place, or start a 15, 25, or 50 minute Quick focus timer. No sign-in or payment up front.</p>
+      <div class="cta-group" id="hero-ctas">
+        <a class="cta primary" data-platform="ios" href="https://apps.apple.com/us/app/offzone-app-blocker-focus/id6809377856">
+          <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M16.37 12.63c-.02-2.26 1.84-3.35 1.92-3.4-1.05-1.54-2.68-1.74-3.26-1.77-1.38-.14-2.7.82-3.4.82-.71 0-1.79-.8-2.95-.78-1.51.02-2.92.88-3.7 2.24-1.58 2.75-.4 6.82 1.13 9.04.75 1.09 1.65 2.31 2.83 2.27 1.14-.05 1.57-.73 2.95-.73 1.37 0 1.76.73 2.96.71 1.23-.02 2-.1 2.74-1.2.86-1.26 1.21-2.49 1.23-2.55-.03-.01-2.43-.94-2.45-3.65zM14.12 5.95c.63-.76 1.05-1.82.93-2.88-.9.04-2 .6-2.64 1.36-.58.67-1.08 1.75-.95 2.79 1.01.08 2.04-.51 2.66-1.27z"/></svg>
+          <span>Download for iOS</span>
+        </a>
+        <a class="cta" data-platform="android" href="https://play.google.com/store/apps/details?id=com.exchip.roomdns">
+          <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M3.6 2.4c-.37.38-.6.96-.6 1.72v15.76c0 .76.23 1.34.6 1.72l.09.08 8.83-8.83v-.2L3.69 2.32l-.09.08zm11.86 11.86-2.94-2.95v-.2l2.94-2.95.07.04 3.49 1.98c1 .56 1 1.49 0 2.05l-3.49 1.99-.07.04zm-11.2 7.52 9.48-9.48 2.22 2.22-10.76 6.12c-.43.24-.75.29-.94.14zm0-19.56c.19-.15.51-.1.94.14l10.76 6.12-2.22 2.22-9.48-9.48z"/></svg>
+          <span>Get on Android</span>
+        </a>
+      </div>
+      <p class="hero-note">Available in 10 languages. Restore access stays free whenever a session is active.</p>
+    </div>
+
+    <div class="hero-stage" aria-hidden="true">
+      <div class="phone-frame">
+        <img src="assets/screen-home.webp" alt="" width="540" height="1200" fetchpriority="high">
+      </div>
+      <img class="hero-nook" src="assets/nook-welcome.webp" alt="" width="408" height="420">
+    </div>
+  </section>
+
+  <section class="section" aria-labelledby="screens-title">
+    <div class="section-head">
+      <h2 id="screens-title">Inside the app</h2>
+      <p>Four screens from the live iOS and Android app.</p>
+    </div>
+    <div class="screens">
+      <article class="screen-card">
+        <div class="screen-shot">
+          <img src="assets/screen-schedule.webp" alt="Two-step rule schedule screen with weekday buttons, start and end times, and an optional place toggle" width="540" height="1173" loading="lazy">
+        </div>
+        <h3>Two-step schedule</h3>
+        <p>Pick apps first, then set weekdays, hours, and an optional 150 m map zone.</p>
+      </article>
+      <article class="screen-card">
+        <div class="screen-shot">
+          <img src="assets/screen-quick.webp" alt="Quick focus screen with 15, 25, and 50 minute options" width="540" height="1173" loading="lazy">
+        </div>
+        <h3>Quick focus</h3>
+        <p>Run a 15, 25, or 50 minute block anywhere without setting up a place.</p>
+      </article>
+      <article class="screen-card">
+        <div class="screen-shot">
+          <img src="assets/screen-pause.webp" alt="Calm pause screen over a blocked app showing remaining time, Back to home screen, and Restore access" width="540" height="1200" loading="lazy">
+        </div>
+        <h3>Calm pause screen</h3>
+        <p>Paused apps show time left, a return button, and free emergency Restore access.</p>
+      </article>
+      <article class="screen-card">
+        <div class="screen-shot">
+          <img src="assets/screen-journal.webp" alt="Plans and reflections screen showing weekly overview counters and on-device privacy notice" width="540" height="1200" loading="lazy">
+        </div>
+        <h3>Plans &amp; reflections</h3>
+        <p>Write a weekly intention and short daily check-ins kept only on your device.</p>
+      </article>
+    </div>
+  </section>
+
+  <section class="section" aria-labelledby="how-title">
+    <div class="section-head">
+      <h2 id="how-title">Built around clear boundaries</h2>
+    </div>
+    <div class="features">
+      <article class="feature-card">
+        <h3>You start every session</h3>
+        <p>During a saved window (and inside your 150 m map zone if you added one), tap Start focus. Arriving at a place never locks your phone automatically.</p>
+      </article>
+      <article class="feature-card">
+        <h3>Restore access stays free</h3>
+        <p>If something urgent comes up while a block is active, open Offzone or the pause screen and tap Restore access. Emergency recovery never requires payment.</p>
+      </article>
+      <article class="feature-card">
+        <h3>Private on your phone</h3>
+        <p>Selected apps, schedules, saved places, weekly plans, and daily reflections stay on your device. Offzone runs no ads and does not track you across apps.</p>
+      </article>
+      <article class="feature-card">
+        <h3>Weekly plans &amp; reflections</h3>
+        <p>Jot down a short weekly intention and check in after focus sessions. Journal notes are stored locally and can be exported or deleted anytime.</p>
+      </article>
+    </div>
+  </section>
+
+  <section class="section" aria-labelledby="pricing-title">
+    <div class="section-head">
+      <h2 id="pricing-title">Start free, decide after two weeks</h2>
+    </div>
+    <div class="pricing-card">
+      <div class="price-tier">
+        <span class="tier-kicker">Days 1–14</span>
+        <h3>Free starter access</h3>
+        <p>Every new install unlocks rules, Quick focus, and local daily reflections for 14 days from first launch—without signing in or entering payment details.</p>
+      </div>
+      <div class="price-tier pro">
+        <span class="tier-kicker">After day 14</span>
+        <h3>Offzone Pro</h3>
+        <p>Continue activating rules, starting focus, and writing new reflections with Offzone Pro (US$4.99/month or US$29.99/year; exact local prices shown in the App Store and Google Play).</p>
+      </div>
+      <p class="pricing-foot">Manage or cancel anytime in App Store or Google Play settings. Even without Pro, you can always read, export, or delete saved reflections and use Restore access on any active session.</p>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="closing">
+      <div>
+        <h2>Ready for a quieter hour?</h2>
+        <p>Install Offzone and try it free for 14 days.</p>
+      </div>
+      <div class="cta-group" id="footer-ctas">
+        <a class="cta" data-platform="ios" href="https://apps.apple.com/us/app/offzone-app-blocker-focus/id6809377856">App Store</a>
+        <a class="cta alt" data-platform="android" href="https://play.google.com/store/apps/details?id=com.exchip.roomdns">Google Play</a>
+      </div>
+    </div>
+  </section>
 </main>
-<footer><a href="play-review/">Play review videos</a></footer>
-</body></html>
+
+<footer>
+  <div class="wrap foot-inner">
+    <span>Offzone</span>
+    <nav class="foot-links" aria-label="Footer links">
+      <a href="privacy/">Privacy Policy</a>
+      <a href="support/">Support</a>
+      <a href="https://github.com/crazydumbbell/offzone/issues">Report a bug</a>
+      <a href="play-review/">Play review videos</a>
+    </nav>
+  </div>
+</footer>
+
+<script>
+(function(){
+  var ua = navigator.userAgent || "";
+  var isAndroid = /Android/i.test(ua);
+  if (!isAndroid) return;
+  var hero = document.getElementById("hero-ctas");
+  if (hero) {
+    var ios = hero.querySelector('[data-platform="ios"]');
+    var andr = hero.querySelector('[data-platform="android"]');
+    if (ios && andr) {
+      ios.classList.remove("primary");
+      andr.classList.add("primary");
+      hero.insertBefore(andr, ios);
+    }
+  }
+  var foot = document.getElementById("footer-ctas");
+  if (foot) {
+    var fios = foot.querySelector('[data-platform="ios"]');
+    var fandr = foot.querySelector('[data-platform="android"]');
+    if (fios && fandr) {
+      fios.classList.add("alt");
+      fandr.classList.remove("alt");
+      foot.insertBefore(fandr, fios);
+    }
+  }
+})();
+</script>
+</body>
+</html>
